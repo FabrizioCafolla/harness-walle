@@ -1,0 +1,5 @@
+import? 'justfile.project'
+import? 'justfile.local'
+
+default:
+  @just --list

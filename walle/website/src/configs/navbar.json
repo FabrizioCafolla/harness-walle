@@ -1,0 +1,32 @@
+{
+  "$schema": "../../walle/schemas/navbar.schema.json",
+  "logo": {
+    "title": "Walle",
+    "url": "/"
+  },
+  "items": [
+    {
+      "name": "Home",
+      "url": "/"
+    },
+    {
+      "name": "Blog",
+      "url": "/blog",
+      "dropdown": [
+        { "name": "Posts", "url": "/blog" },
+        { "name": "Example 1", "url": "/blog/example" },
+        { "name": "Example 2", "url": "/blog/example-2" }
+      ]
+    },
+    {
+      "icon": "fa:linkedin",
+      "url": "https://www.linkedin.com/in/fabrizio-cafolla/",
+      "target": "_blank"
+    },
+    {
+      "icon": "fa:github",
+      "url": "https://github.com/FabrizioCafolla",
+      "target": "_blank"
+    }
+  ]
+}

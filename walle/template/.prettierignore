@@ -1,0 +1,8 @@
+dist
+node_modules
+.astro
+
+# walle marker blocks — the [walle:START]/[walle:END] lines must stay unindented for exact-match
+# injection (see cli.sh's inject_marker_block); reformatting them would break the next `update`.
+.vscode/settings.json
+.vscode/extensions.json

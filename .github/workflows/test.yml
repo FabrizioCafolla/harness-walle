@@ -1,0 +1,120 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-data:
+    name: Test
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Test
+        id: test
+        uses: ./walle/ci/managed/website-tests
+        timeout-minutes: 5
+        with:
+          working_dir: 'walle/website'
+
+  playwright:
+    name: Playwright
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    # Disabled for now: burns CI minutes without proportional signal. Playwright suites
+    # (navbar + astrobook) run locally via `just playwright-test-navbar` / `just astrobook-test`
+    # and are gated by the pre-commit/pre-push hooks' lint+unit checks instead. Re-enable by
+    # removing this line once the suite is stable enough to justify the cost.
+    if: false
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      # Must run before setup-node's cache: yarn — that step shells out to `yarn` to resolve
+      # the cache dir, and the runner's global Yarn 1.x refuses once package.json pins
+      # packageManager: yarn@4.17.0. Enabling Corepack first makes `yarn` resolve to the
+      # pinned version via the Corepack shim.
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: walle/website/.nvmrc
+          cache: yarn
+
+      - name: Install just
+        uses: extractions/setup-just@v4
+
+      - name: Install dependencies
+        timeout-minutes: 3
+        run: |
+          corepack prepare --activate
+          yarn install --immutable
+
+      # Chromium + headless-shell (~115MB) is the slowest step here on a cold cache; keyed on
+      # yarn.lock so a playwright version bump (which changes the lockfile) invalidates it.
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        timeout-minutes: 3
+        run: just playwright-setup
+
+      - name: Navbar functional suite
+        timeout-minutes: 4
+        run: just playwright-test-navbar
+
+      - name: Astrobook visual regression
+        # Snapshot rendering can drift by CI runner/font stack; keep it report-only until
+        # baselines are proven stable across runs. Promote to required once confirmed.
+        continue-on-error: true
+        timeout-minutes: 4
+        run: just astrobook-test
+
+  e2e:
+    name: E2E
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      # Must run before setup-node's cache: yarn — see comment in the playwright job above.
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: walle/website/.nvmrc
+          cache: yarn
+
+      - name: Install just
+        uses: extractions/setup-just@v4
+
+      - name: Install dependencies
+        timeout-minutes: 3
+        run: |
+          corepack prepare --activate
+          just yarn install --immutable
+
+      - name: Run e2e harness
+        timeout-minutes: 8
+        run: just e2e

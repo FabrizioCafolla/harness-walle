@@ -1,0 +1,21 @@
+---
+import { BaseLayout } from "@walle/layouts";
+import { Section, SectionHeaderStandard } from "@walle/components";
+---
+
+<BaseLayout
+  headerTitle="My Walle Site"
+  headerDescription="A starter homepage scaffolded by the Walle design system."
+>
+  <SectionHeaderStandard
+    title="Welcome to Walle"
+    subtitle="Edit src/pages/index.astro and the JSON files in src/configs/ to make this site your own."
+  />
+
+  <Section title="Getting started" centered={true}>
+    <p>
+      The <code>@walle/</code> directories are read-only and updated by the CLI. Your pages, configs,
+      and styles live in consumer zones and are never overwritten on update.
+    </p>
+  </Section>
+</BaseLayout>

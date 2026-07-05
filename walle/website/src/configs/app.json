@@ -1,0 +1,17 @@
+{
+  "$schema": "../../walle/schemas/app.schema.json",
+  "website": {
+    "title": "Walle",
+    "description": "Design System",
+    "favicon": "/images/profile.jpeg",
+    "image": "/images/banner.png",
+    "robots": "index, follow",
+    "language": "en-US"
+  },
+  "astro": {
+    "baseUrl": "https://fabriziocafolla.github.io",
+    "basePath": "/harness-walle",
+    "trailingSlash": "never",
+    "analyticsScriptContent": ""
+  }
+}

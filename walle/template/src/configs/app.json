@@ -1,0 +1,14 @@
+{
+  "$schema": "../../schemas/app.schema.json",
+  "website": {
+    "title": "My Walle Site",
+    "description": "A site built with the Walle design system",
+    "robots": "index, follow",
+    "language": "en-US"
+  },
+  "astro": {
+    "baseUrl": "http://localhost:4321",
+    "basePath": "/",
+    "trailingSlash": "never"
+  }
+}

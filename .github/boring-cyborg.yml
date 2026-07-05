@@ -1,0 +1,24 @@
+labelPRBasedOnFilePath:
+  ci:
+    - .github/*
+    - .github/**/*
+
+  dependencies:
+    - package.json
+    - yarn.lock
+
+  website:
+    - src/**/*
+    - public/**/*
+    - astro.config.mjs
+
+firstPRWelcomeComment: >
+  Thanks for opening this pull request! Please check out our contributing guidelines.
+
+verifyTitles:
+  titleRegexp: ^(feat|feat!|fix|fix!|docs|refactor|refactor!|test|chore|build)\((ci|main|docs|deps|deps-dev|website|infrastructure)\):.*
+  alwaysUsePrTitle: true
+  validateEitherPrOrSingleCommitTitle: true
+  statusTitle: "Title Validator"
+  successMessage: "Validation successful!"
+  failureMessage: "Wrong ${type} title: ${title}"
