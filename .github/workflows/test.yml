@@ -53,7 +53,7 @@ jobs:
           cache: yarn
 
       - name: Install just
-        uses: extractions/setup-just@v3
+        uses: extractions/setup-just@v4
 
       - name: Install dependencies
         timeout-minutes: 3
@@ -105,7 +105,7 @@ jobs:
           cache: yarn
 
       - name: Install just
-        uses: extractions/setup-just@v3
+        uses: extractions/setup-just@v4
 
       - name: Install terraform
         uses: hashicorp/setup-terraform@v3
