@@ -1,0 +1,157 @@
+---
+import { BaseLayout } from "@walle/layouts";
+import { Button, Section, SectionHeaderStandard, SectionFlow } from "@walle/components";
+import { resolveInternalUrl } from "@walle/utils";
+
+const howItWorksSteps = [
+  {
+    title: "Init",
+    description:
+      "Run the CLI to scaffold a full project: website, DevContainer, CI/CD workflows, and infrastructure stubs ready to deploy.",
+  },
+  {
+    title: "Configure",
+    description:
+      "Edit JSON configs for branding, navigation, and metadata. Override CSS variables for colors and fonts. Adjust the DevContainer and workflows to match your stack.",
+  },
+  {
+    title: "Build",
+    description:
+      "Add pages, content collections, and custom components. Write your infrastructure with OpenTofu. The @walle/ directories stay read-only your code lives in consumer zones.",
+  },
+  {
+    title: "Update",
+    description:
+      "When a new version ships, run `just walle-update`. Only @walle/ paths are replaced your content, config, and infra are untouched.",
+  },
+];
+---
+
+<BaseLayout
+  headerTitle="Walle Design System"
+  headerDescription="A ready-to-deploy design system: Astro website, DevContainer, GitHub Actions CI/CD, and infrastructure all in one scaffold."
+>
+  <SectionHeaderStandard
+    title="Walle Design System"
+    subtitle="A production-ready scaffold that ships an Astro website, a DevContainer, GitHub Actions pipelines, and infrastructure stubs so you go from zero to deployed in minutes."
+  />
+
+  <Section title="What is Walle" centered={true}>
+    <p>
+      Walle is a <strong>copy-based design system</strong> for deploying web applications. It is not an
+      npm package it is a full project scaffold distributed via a CLI that copies everything into your
+      repository.
+    </p>
+    <p>Each project gets four integrated layers out of the box:</p>
+    <ul class="feature-list">
+      <li>
+        <strong>Website</strong> Astro 6 with layouts, components, blog support, sitemap, RSS, and SEO
+        defaults.
+      </li>
+      <li>
+        <strong>DevContainer</strong> Docker-based development environment with Node, OpenTofu, GitHub
+        CLI, and pre-configured VS Code extensions.
+      </li>
+      <li>
+        <strong>CI/CD</strong> GitHub Actions workflows for testing (lint, build) and deploying to GitHub
+        Pages, with reusable composite actions.
+      </li>
+      <li>
+        <strong>Infrastructure</strong> OpenTofu-ready directory for managing DNS, CDN, or any cloud resource
+        alongside your site.
+      </li>
+    </ul>
+    <p>
+      Customizations live in consumer zones. The <code>@walle/</code> directories are read-only and replaced
+      on update your code, config, and content are never touched.
+    </p>
+  </Section>
+
+  <SectionFlow title="How it works" steps={howItWorksSteps} />
+
+  <Section title="Quick start" centered={true} type="gray">
+    <p>Create a new project with everything included:</p>
+    <pre><code>curl -fsSL https://raw.githubusercontent.com/FabrizioCafolla/walle-design-system/main/lib/scripts/@walle/cli.sh \
+  | bash -s -- init --project-name my-site</code></pre>
+
+    <p>Update <code>@walle/</code> layers in an existing project:</p>
+    <pre><code>just walle-update</code></pre>
+
+    <p>Start developing locally inside the DevContainer:</p>
+    <pre><code>just setup && just dev</code></pre>
+  </Section>
+
+  <Section title="Customization" centered={true}>
+    <p>
+      <strong>Website config</strong> JSON files in <code>src/configs/</code> control logo, navbar, footer,
+      and app metadata.
+    </p>
+    <p>
+      <strong>CSS variables</strong> Override brand colors, spacing, and typography in <code
+        >src/styles/global.css</code
+      >.
+    </p>
+    <p>
+      <strong>Layout slots</strong> Replace navbar, footer, or inject extra <code>&lt;head&gt;</code
+      > tags via named slots.
+    </p>
+    <p>
+      <strong>CI/CD & Infra</strong> Extend or override the provided GitHub Actions and OpenTofu modules
+      without modifying <code>@walle/</code> sources.
+    </p>
+    <p class="home-actions">
+      <Button text="View the demo blog" link={resolveInternalUrl("/blog")} type="primary" />
+      <Button
+        text="GitHub"
+        link="https://github.com/FabrizioCafolla/walle-design-system"
+        type="secondary"
+        outline={true}
+        target="_blank"
+      />
+    </p>
+  </Section>
+</BaseLayout>
+
+<style>
+  pre {
+    max-width: 960px;
+    margin: 1rem auto;
+    text-align: left;
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    overflow-x: auto;
+    font-size: 0.9rem;
+  }
+
+  code {
+    font-family: "Fira Code", "JetBrains Mono", monospace;
+  }
+
+  .feature-list {
+    text-align: left;
+    max-width: 720px;
+    margin: 1.5rem auto;
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .feature-list li {
+    padding: 0.75rem 1rem;
+    border-left: 3px solid var(--primary, #0046ad);
+    background: var(--gray, #f8f9fa);
+    border-radius: 0 8px 8px 0;
+  }
+
+  .home-actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+</style>

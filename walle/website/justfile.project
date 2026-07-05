@@ -1,0 +1,9 @@
+# justfile.project — team-wide just commands
+#
+# This file is imported by justfile and is NOT managed by the template update script.
+# Committed to git: shared defaults for everyone working on this project.
+#
+# Example:
+#   [group('dev')]
+#   run:
+#     @python -m myapp

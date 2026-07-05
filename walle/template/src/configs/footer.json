@@ -1,0 +1,13 @@
+{
+  "$schema": "../../schemas/footer.schema.json",
+  "logo": {
+    "title": "My Walle Site",
+    "url": "/"
+  },
+  "items": [
+    {
+      "name": "Home",
+      "url": "/"
+    }
+  ]
+}
