@@ -1,0 +1,18 @@
+---
+// Injects the walle global CSS (CSS variables, typography, reset) so all stories
+// render with the correct design tokens. Used as a decorator in every story file.
+import "@walle/styles/global.css";
+---
+
+<div class="story-wrapper">
+  <slot />
+</div>
+
+<style>
+  .story-wrapper {
+    padding: 1.5rem;
+    font-family: var(--font-body, system-ui, -apple-system, sans-serif);
+    color: var(--black, #161616);
+    background: var(--white, #fefefe);
+  }
+</style>

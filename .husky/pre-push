@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+cd "$(dirname -- "$0")/.." || exit 1
+
+just yarn lint
+just yarn test:unit

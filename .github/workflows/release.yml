@@ -1,0 +1,63 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create GitHub release
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+
+      # Extracts the CHANGELOG section for this tag to a file, then the next step hands that
+      # file straight to softprops/action-gh-release via body_path — the notes (free-form
+      # Markdown: backticks, quotes, $(...), all fair game) never pass through a shell string or
+      # a workflow expression. Two prior incidents to keep in mind if you're tempted to change
+      # this: (1) interpolating the notes directly into a shell command broke the v0.1.0 release;
+      # (2) passing them via a step's env: mapping looked safe but wasn't — GitHub Actions
+      # renders an env: value that references another step's output as a literal shell
+      # assignment line in the generated script, so backticks in the notes were still evaluated
+      # as command substitution there too, which is what broke the v0.3.0 release. Do not
+      # reintroduce a shell-string or expression path for the notes' content — keep threading it
+      # through as a file. (Also: never write the literal double-curly expression delimiter
+      # inside a run: block's text, even in a comment or as an example — GitHub's own expression
+      # scanner evaluates it wherever it appears in the file, comment or not, which is exactly
+      # how an earlier version of this very comment broke the workflow it was explaining.)
+      - name: Extract changelog entry
+        id: changelog
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          NOTES_FILE="${RUNNER_TEMP}/release-notes.md"
+          # The version must be followed by whitespace/EOL (not just optional "]") so e.g. tag
+          # "0.1.0" doesn't also match (and swallow everything up to) headings like
+          # "## [0.1.0-beta.3]" that merely start with the same prefix — a real bug that broke
+          # the v0.1.0 release.
+          awk -v tag="$TAG" '
+            $0 ~ ("^## \\[?" tag "\\]?([[:space:]]|$)") { found=1; next }
+            found && /^## / { exit }
+            found { print }
+          ' CHANGELOG.md >"$NOTES_FILE"
+          if [ ! -s "$NOTES_FILE" ]; then
+            echo "::error::CHANGELOG.md has no (or an empty) section for tag ${GITHUB_REF_NAME} — add one before tagging, or delete and re-push the tag after fixing it." >&2
+            exit 1
+          fi
+          echo "notes_file=${NOTES_FILE}" >>"$GITHUB_OUTPUT"
+          case "$GITHUB_REF_NAME" in
+          *-alpha* | *-beta* | *-rc*) echo "prerelease=true" >>"$GITHUB_OUTPUT" ;;
+          *) echo "prerelease=false" >>"$GITHUB_OUTPUT" ;;
+          esac
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          body_path: ${{ steps.changelog.outputs.notes_file }}
+          prerelease: ${{ steps.changelog.outputs.prerelease == 'true' }}

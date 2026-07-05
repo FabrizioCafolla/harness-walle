@@ -1,0 +1,6 @@
+services:
+  devcontainer:
+    build:
+      args:
+        - CLAUDE_CLI_ENABLE=true
+        - OPENSPEC_ENABLE=true

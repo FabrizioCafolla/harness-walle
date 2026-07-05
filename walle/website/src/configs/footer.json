@@ -1,0 +1,25 @@
+{
+  "$schema": "../../walle/schemas/footer.schema.json",
+  "logo": {
+    "title": "Walle",
+    "url": "/"
+  },
+  "items": [
+    {
+      "name": "Privacy Policy",
+      "url": "/privacy-policy"
+    },
+    {
+      "name": "Terms & Conditions",
+      "url": "/terms-and-conditions"
+    },
+    {
+      "icon": "fa:linkedin",
+      "url": "https://www.linkedin.com/in/fabrizio-cafolla/"
+    },
+    {
+      "icon": "fa:github",
+      "url": "https://github.com/FabrizioCafolla"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+# Consumer-owned CI workflow (walle SEED): created once, never overwritten by `walle update`.
+# Edit freely. The reusable test logic lives in the walle-managed composite action below,
+# so a walle update improves it without touching this file.
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v5
+
+      - name: Run walle website tests
+        uses: ./.github/workflows/actions/@walle/website-tests
+        timeout-minutes: 5

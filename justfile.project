@@ -1,0 +1,104 @@
+set working-directory := 'walle/website'
+
+# Run yarn commands
+[group('walle')]
+yarn *args:
+    yarn {{args}}
+
+# Validate consumer configs against the published JSON Schemas
+[group('walle')]
+validate-configs:
+    node ./scripts/@walle/validate-configs.mjs
+
+# Start development server
+[group('walle')]
+dev:
+    just yarn install
+    just yarn "dev --host"
+
+# Build the project
+[group('walle')]
+build:
+    just yarn install
+    just yarn build
+
+# Run the e2e harness — fast core (init, SSR, update-idempotent, CLI commands, component
+# variants). Auto-cleans .sandbox on a fully green run; kept on failure for debugging
+# (opt out entirely with E2E_KEEP_SANDBOX=1).
+[group('walle')]
+e2e:
+    bash {{justfile_directory()}}/tests/e2e/run.sh
+
+# Run the full e2e suite (core + scenarios-extended/: marker injection edge cases,
+# migration paths, schema enforcement, devcontainer sync details, etc.). Slower — run
+# before merging a change that touches the CLI's sync/inject logic, or in pre-release CI.
+[group('walle')]
+e2e-extended:
+    bash {{justfile_directory()}}/tests/e2e/run-extended.sh
+
+# Remove the e2e sandbox tree (~GBs of generated consumer projects across runs)
+[group('walle')]
+e2e-clean:
+    rm -rf {{justfile_directory()}}/tests/e2e/.sandbox
+
+# Start the Astrobook component catalog at /astrobook (repo-internal)
+[group('walle')]
+astrobook:
+    yarn astrobook
+
+# Install the Playwright chromium browser needed for visual regression (run once per container).
+# Playwright 1.52+ requires both chromium and chromium-headless-shell (headless tests use the shell).
+[group('walle')]
+playwright-setup:
+    yarn playwright install --with-deps chromium chromium-headless-shell
+
+# Run the navbar functional Playwright suite (explicit config — see playwright.config.ts
+# testIgnore for why this must not fall back to the default `playwright test` invocation)
+[group('walle')]
+playwright-test-navbar:
+    yarn playwright test --config playwright.config.ts
+
+# Run Astrobook visual regression tests (compare against stored baselines)
+# Requires: just playwright-setup (run once per container)
+[group('walle')]
+astrobook-test:
+    yarn playwright test --config playwright.astrobook.config.ts
+
+# Update Astrobook visual regression baselines (run after intentional component changes)
+# Requires: just playwright-setup (run once per container)
+[group('walle')]
+astrobook-update-snapshots:
+    yarn playwright test --config playwright.astrobook.config.ts --update-snapshots
+
+# Cut a release: verifies a clean tree and a non-empty CHANGELOG section, bumps
+# package.json's version, commits, tags, and pushes. Usage: just release v0.2.0
+[group('walle')]
+release version:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ -n "$(git status --porcelain)" ]; then
+      echo "[ERROR] working tree is not clean — commit or stash pending changes first." >&2
+      exit 1
+    fi
+    tag="{{version}}"
+    ver="${tag#v}"
+    notes="$(awk -v tag="$ver" '
+      $0 ~ ("^## \\[?" tag "\\]?([[:space:]]|$)") { found=1; next }
+      found && /^## / { exit }
+      found { print }
+    ' CHANGELOG.md)"
+    if [ -z "$(echo "$notes" | tr -d '[:space:]')" ]; then
+      echo "[ERROR] CHANGELOG.md has no (or an empty) section for ${tag} — add one before releasing." >&2
+      exit 1
+    fi
+    node -e "
+      const fs=require('fs');
+      const p='package.json';
+      const j=JSON.parse(fs.readFileSync(p,'utf8'));
+      j.version='${ver}';
+      fs.writeFileSync(p, JSON.stringify(j,null,2)+'\n');
+    "
+    git add CHANGELOG.md package.json
+    git commit -m "chore: release {{version}}"
+    git tag -a {{version}} -m "release {{version}}"
+    git push origin HEAD --tags
