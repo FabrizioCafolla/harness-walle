@@ -92,4 +92,4 @@ More patterns (theming tokens, backend routes, adding a variant): [wiki/componen
 
 - [wiki/repo-guide.md](wiki/repo-guide.md) how _this repo_ works (for contributors see [CONTRIBUTING.md](CONTRIBUTING.md))
 - [wiki/modules.md](wiki/modules.md) · [wiki/managed-vs-seed.md](wiki/managed-vs-seed.md) · [wiki/components.md](wiki/components.md) · [wiki/cli.md](wiki/cli.md) · [wiki/astrobook.md](wiki/astrobook.md) · [wiki/versioning.md](wiki/versioning.md)
-- [walle/website/CHANGELOG.md](walle/website/CHANGELOG.md) release history
+- [CHANGELOG.md](CHANGELOG.md) release history

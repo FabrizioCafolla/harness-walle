@@ -2,7 +2,7 @@
 
 All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
-[Semantic Versioning](../../wiki/versioning.md).
+[Semantic Versioning](wiki/versioning.md).
 
 ## [0.1.0] — 2026-07-06
 

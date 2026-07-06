@@ -80,13 +80,14 @@ release version:
       echo "[ERROR] working tree is not clean — commit or stash pending changes first." >&2
       exit 1
     fi
+    changelog="{{justfile_directory()}}/CHANGELOG.md"
     tag="{{version}}"
     ver="${tag#v}"
     notes="$(awk -v tag="$ver" '
       $0 ~ ("^## \\[?" tag "\\]?([[:space:]]|$)") { found=1; next }
       found && /^## / { exit }
       found { print }
-    ' CHANGELOG.md)"
+    ' "$changelog")"
     if [ -z "$(echo "$notes" | tr -d '[:space:]')" ]; then
       echo "[ERROR] CHANGELOG.md has no (or an empty) section for ${tag} — add one before releasing." >&2
       exit 1
@@ -98,7 +99,7 @@ release version:
       j.version='${ver}';
       fs.writeFileSync(p, JSON.stringify(j,null,2)+'\n');
     "
-    git add CHANGELOG.md package.json
+    git add "$changelog" package.json
     git commit -m "chore: release {{version}}"
     git tag -a {{version}} -m "release {{version}}"
     git push origin HEAD --tags
