@@ -41,17 +41,20 @@ greenfield flow). Omitted, the target is `--dir-path` itself (default: current d
    `cli.sh update` or `cli.sh add <module>` instead." Nothing is written.
 3. **Exists without a `.walle/manifest.json`** ("adoption") → prints a warning and the sync plan
    (same shape as `--dry-run`), then asks `Proceed? [y/N]`. Pass `--yes` to skip the prompt
-   (for scripts/CI). Declining aborts with nothing written. `template/` files are written
+   (for scripts/CI). Declining aborts with nothing written. Seed (starter) files are written
    **only if absent** — an adoption never overwrites a file already in the directory; MANAGED
    module paths (`src/@walle/`, etc.) are always synced as usual.
 
 **What it does (cases 1 and 3):**
 
-1. Resolves the source (latest published tag by default, or `--source` / `--walle-version`).
-2. Writes `template/` files that aren't already present in the target.
-3. Syncs each declared module's MANAGED paths.
-4. Seeds each module's SEED paths (written once if absent).
-5. Seeds `.devcontainer/` unless `--no-devcontainer`.
+1. Establishes the harness-coding base (unless `--no-harness-coding`).
+2. Resolves the source (latest published tag by default, or `--source` / `--walle-version`).
+3. Seeds the starter site from `walle/website/` — every file not already present in the target.
+4. Syncs each declared module's MANAGED paths.
+5. Seeds each module's SEED paths (written once if absent).
+6. Injects walle's marker-bounded blocks into consumer-owned files.
+
+What is managed, seed, or inject is declared in `walle/walle.yml`.
 6. Writes `.walle/manifest.json`, `.walle/config.yml` (if absent), `.walle/lock`, and (unless
    `config.yml`'s `docs: false`) `.walle/docs/`.
 

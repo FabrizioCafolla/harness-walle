@@ -13,19 +13,37 @@ bash <(curl -fsSL https://raw.githubusercontent.com/FabrizioCafolla/harness-wall
 cd my-site && yarn install && yarn dev   # → http://localhost:4321
 ```
 
+## What `init` does
+
+One command scaffolds a complete, ready-to-run project, in order:
+
+1. **Establishes the [harness-coding](https://github.com/FabrizioCafolla/harness-coding) base** —
+   `justfile`, `.devcontainer/`, git hooks, `.pre-commit-config.yaml`. Walle runs harness-coding's
+   own CLI so these are always current, never a stale vendored copy. Skip with `--no-harness-coding`.
+2. **Seeds the starter site** — `package.json`, `astro.config.mjs`, `src/configs/`, `src/pages/`,
+   a starter `README.md`. Written once; yours to edit afterwards.
+3. **Syncs the managed design system** — `src/@walle/`, schemas, the `walle` CLI. Overwritten on
+   every `update`; never hand-edit.
+4. **Injects module blocks** — walle's `justfile.project` targets, CI workflows (`--no-ci`),
+   AGENTS.md + skills (`--no-ai`), into files you own, between markers.
+
+No step needs a separate command — `init` is the whole thing. To exclude a module, pass its flag
+at `init` (`--no-ci`, `--no-ai`, `--no-harness-coding`); `backend` and `infrastructure` are opt-in
+via `cli.sh add <module>`.
+
 ## How it works
 
-Files land in one of three classes:
+Every file walle writes falls into one of three classes:
 
-- **Managed** the design system itself (`src/@walle/`, plus a few shared files). Read-only:
-  `walle update` overwrites them with the latest release. Never hand-edit these.
-- **Seed** starter files (a README, a CI workflow, an API route) written once, then yours to
-  change freely; `update` never touches them again.
-- **Inject** small snippets kept in sync inside files you own (e.g. `justfile.project`),
-  bounded by markers; the rest of the file is yours.
+- **Managed** — the design system itself (`src/@walle/`, schemas). Read-only: `walle update`
+  overwrites it with the latest release. Never hand-edit.
+- **Seed** — starter files (README, CI workflow, API route). Written once, then yours; `update`
+  never touches them again.
+- **Inject** — small blocks kept in sync inside files you own (e.g. `justfile.project`), bounded
+  by markers. Everything outside the markers is yours.
 
-Everything you're meant to customize configs, styles, pages, content lives outside both,
-in files walle never writes to after the first scaffold. Full model:
+Everything you customize — configs, styles, pages, content — lives outside all three, in files
+walle writes only at the first scaffold and never again. Full model:
 [wiki/managed-vs-seed.md](wiki/managed-vs-seed.md).
 
 ```bash
@@ -50,7 +68,7 @@ Details per module: [wiki/modules.md](wiki/modules.md).
 
 ## Examples
 
-**Change the navbar** `src/configs/navbar.json`, no code:
+**Change the navbar** — edit `src/configs/navbar.json`, no code:
 
 ```json
 {
@@ -62,13 +80,13 @@ Details per module: [wiki/modules.md](wiki/modules.md).
 }
 ```
 
-**Switch a component to its minimal variant** add to your existing `src/configs/app.json`:
+**Switch a component to its minimal variant** — add to `src/configs/app.json`:
 
 ```json
 { "components": { "navbar": "minimal", "footer": "minimal" } }
 ```
 
-**Rebrand colors and fonts** override CSS variables in `src/styles/global.css`:
+**Rebrand colors and fonts** — override CSS variables in `src/styles/global.css`:
 
 ```css
 :root {
@@ -77,7 +95,7 @@ Details per module: [wiki/modules.md](wiki/modules.md).
 }
 ```
 
-**Replace a component entirely** Astro slots, no forking:
+**Replace a component entirely** — use Astro slots, no forking:
 
 ```astro
 <BaseLayout>

@@ -42,8 +42,7 @@ scenario_init_minimal() {
   # title/heading text — a broken component or config load would leave these absent even on
   # a 200 response.
   assert_file_contains "$dir/dist/index.html" 'data-component="Navbar"' || return 1
-  assert_file_contains "$dir/dist/index.html" "Welcome to Walle" || return 1
-  assert_file_contains "$dir/dist/index.html" "My Walle Site" || return 1
+  assert_file_contains "$dir/dist/index.html" "Walle Design System" || return 1
 
   http_expect_200 "http://127.0.0.1:4501/" "$dir" "$(astro_bin "$dir")" preview --host 127.0.0.1 --port 4501
 }

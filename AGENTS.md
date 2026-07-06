@@ -65,14 +65,28 @@ just help
 
 ## Project-specific context
 
-<!-- TODO: Add anything specific to this project that an AI agent should know.
-     This is the most important section to fill in when using this template.
+Walle is a **copy-based Astro design system**. It isn't published as an npm package — its `cli.sh`
+copies the design-system source into a consumer project under `@walle/` namespaces, which the
+consumer then updates by re-running the CLI. This repo is both the product and its own demo site.
 
-Suggested content:
-- Architecture overview or diagram reference
-- Key files and their purpose
-- Known limitations or areas to avoid
-- External dependencies (APIs, databases, services)
-- Links to internal documentation or runbooks
-- Ongoing work or areas under active development
--->
+**Two zones, and which one you're in decides everything:**
+
+- `walle/` — **the product**, everything shipped to consumers: `website/` (managed `src/@walle/`
+  source + the demo site), per-module dirs (`ci/`, `ai/`, `backend/`, `infrastructure/`,
+  `harness-coding/`), `template/` (seed-once starter), `cli/cli.sh` (the sync engine).
+- everything else — dev tooling and repo meta, never shipped: `tests/e2e/`, `wiki/`, `.github/`.
+
+**The rules that matter:**
+
+- Changing what consumers receive (a component, schema, CLI behavior, seed file, CI action) means
+  working in `walle/`. **Test it with `just e2e`** — it scaffolds a real consumer from your working
+  tree via `--source`. Run it before anything else.
+- Don't hand-edit anything under a `@walle/` namespace in a *consumer* — that read-only contract is
+  the whole point. Editing the walle *source* here is exactly the job.
+- `cli.sh` change → add/update an e2e scenario under `tests/e2e/scenarios/`, don't test by hand.
+- `init` runs harness-coding's CLI first to establish the base (`justfile`, `.devcontainer/`), then
+  seeds and injects walle on top. Override the harness-coding source offline with
+  `WALLE_HARNESS_CODING_CLI=<path-to-cli.sh>`.
+
+Full detail: [CONTRIBUTING.md](CONTRIBUTING.md), [wiki/repo-guide.md](wiki/repo-guide.md), and the
+per-topic refs in [wiki/README.md](wiki/README.md).

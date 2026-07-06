@@ -25,5 +25,5 @@ scenario_init_ssr() {
 
   # Component markup in the SSR-rendered response, not just a 200.
   assert_body_contains 'data-component="Navbar"' || return 1
-  assert_body_contains "Welcome to Walle" || return 1
+  assert_body_contains "Walle Design System" || return 1
 }

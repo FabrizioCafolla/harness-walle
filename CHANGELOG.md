@@ -4,6 +4,25 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/versioning.md).
 
+## [0.2.0] — 2026-07-06
+
+### Changed
+
+- **Seed a fresh consumer from `walle/website/` directly; removed `walle/template/`.** One source
+  of truth instead of a template that could drift. Walle's own GH-Pages `baseUrl`/`basePath` in
+  `app.json` are reset to neutral defaults on seed.
+- **What is managed / seed / inject is declared in `walle/walle.yml`.** The CLI reads this config
+  instead of hardcoded per-module maps — add or move a path by editing the config, no code change.
+- **`.walle/manifest.json` records a `files` map** grouping every written path by class → module;
+  `.walle/config.yml` lists the enabled modules explicitly.
+
+### Fixed
+
+- **`init` now establishes the harness-coding base itself**, running its CLI first (`justfile`,
+  `.devcontainer/`, git hooks) before seeding and injecting — previously it only warned, leaving a
+  broken half-state. `--no-harness-coding` skips it; `WALLE_HARNESS_CODING_CLI` points at a local
+  `cli.sh` for offline runs.
+
 ## [0.1.2] — 2026-07-06
 
 ### Changed

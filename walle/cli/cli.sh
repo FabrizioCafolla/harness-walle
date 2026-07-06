@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 #
-# Walle CLI. Scaffolds/updates a consumer from the curated template/ and syncs the declared
-# modules' @walle paths. Supports --dry-run, `add <module>`, and `walle check`.
+# Walle CLI. Scaffolds/updates a consumer: seeds the starter site from walle/website/ and
+# syncs the declared modules' @walle paths. What is managed/seed/inject is declared in
+# walle/walle.yml. Supports --dry-run, `add <module>`, and `walle check`.
 
 set -Ee
 set -u
@@ -13,6 +14,7 @@ set -o functrace
 # =============================================================================
 
 GITHUB_WALLE_REPO="https://github.com/FabrizioCafolla/harness-walle"
+HARNESS_CODING_CLI_URL="https://raw.githubusercontent.com/FabrizioCafolla/harness-coding/main/cli.sh"
 
 # Markers
 WALLE_START="<!-- [walle:START] -->"
@@ -30,6 +32,7 @@ SEED_ENABLED=0
 HARNESS_CODING_ENABLED=1
 AGENTS_MODULES=""
 TEMP_DIR=""
+FILES_LOG=""
 
 # Error Handling Trap
 trap 'catch_error $? $LINENO ${BASH_SOURCE[0]}' EXIT
@@ -43,6 +46,15 @@ catch_error() {
   if [ -n "${TEMP_DIR:-}" ] && [ -d "${TEMP_DIR}" ]; then
     rm -rf "${TEMP_DIR}"
   fi
+  if [ -n "${FILES_LOG:-}" ] && [ -f "${FILES_LOG}" ]; then
+    rm -f "${FILES_LOG}"
+  fi
+}
+
+# Record a written path for the manifest's files map: <category> <dest> <module>.
+record_file() {
+  [ -n "${FILES_LOG:-}" ] || return 0
+  printf '%s\t%s\t%s\n' "$1" "$2" "$3" >>"$FILES_LOG"
 }
 
 # =============================================================================
@@ -95,32 +107,49 @@ ssr_enabled() {
   node -e "try{const a=require('$1/src/configs/app.json');process.exit(a&&a.astro&&a.astro.ssr&&a.astro.ssr.enabled===true?0:1)}catch(e){process.exit(1)}" 2>/dev/null
 }
 
-module_managed_map() {
-  case "$1" in
-    website) echo "walle/website/src/@walle:src/@walle walle/website/schemas:schemas walle/cli:scripts/@walle" ;;
-    ci) echo "walle/ci/managed:.github/workflows/actions/@walle" ;;
-    ai) echo "walle/ai/managed/skills:.claude/skills/@walle" ;;
-    *) echo "" ;;
-  esac
+# --- Config-driven paths (walle/walle.yml is the single source of truth) -------------
+# The config is real YAML but every entry is pipe-delimited, so awk alone parses it — no
+# YAML runtime dep (the CLI must run as `curl | bash`).
+# ponytail: purpose-built reader for our flat schema, not a general YAML parser.
+
+# Config location: the source tree during init/update, or the copy shipped beside cli.sh
+# (scripts/@walle/walle.yml) when the consumer runs `check` standalone.
+walle_config() {
+  if [ -n "${SOURCE_DIR:-}" ] && [ -f "${SOURCE_DIR}/walle/walle.yml" ]; then
+    echo "${SOURCE_DIR}/walle/walle.yml"
+  else
+    echo "$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd)/walle.yml"
+  fi
 }
 
-module_managed_paths() {
-  local pair dests=""
-  for pair in $(module_managed_map "$1"); do
-    dests="${dests}${dests:+ }${pair#*:}"
-  done
-  echo "$dests"
+# Print a section's entries as TAB-separated columns (pipe fields, trimmed).
+# No-op when the config isn't reachable (e.g. `check` with no resolved source).
+config_section() {
+  local cfg; cfg="$(walle_config)"
+  [ -f "$cfg" ] || return 0
+  awk -v sec="$1" '
+    /^[A-Za-z_-]+:[[:space:]]*$/ { insec = ($0 ~ ("^" sec ":[[:space:]]*$")); next }
+    insec && /^[[:space:]]*-[[:space:]]/ {
+      line = $0; sub(/^[[:space:]]*-[[:space:]]*/, "", line)
+      n = split(line, f, /[[:space:]]*\|[[:space:]]*/)
+      out = f[1]; for (i = 2; i <= n; i++) out = out "\t" f[i]
+      print out
+    }
+  ' "$cfg"
 }
 
-module_seed_paths() {
-  case "$1" in
-    ci) echo ".github/workflows/test.yml .github/workflows/deploy.yml" ;;
-    backend) echo "src/pages/api/health.ts src/pages/api/echo.ts src/middleware.ts" ;;
-    infrastructure) echo "infrastructure/main.tf infrastructure/variables.tf infrastructure/providers.tf infrastructure/outputs.tf infrastructure/README.md infrastructure/.gitignore" ;;
-    harness-coding|devcontainer) echo "justfile.project .husky/pre-commit .husky/pre-push" ;;
-    *) echo "" ;;
-  esac
+# devcontainer is the CLI flag name; harness-coding is the module id used in the config.
+norm_module() { [ "$1" = "devcontainer" ] && echo "harness-coding" || echo "$1"; }
+
+# Dest column (3rd field) for a section+module, space-joined on one line.
+# Pure-pipe (no `while read`) so it stays exit-0 under `set -o pipefail`.
+config_dests() {
+  local module; module="$(norm_module "$2")"
+  config_section "$1" | awk -F'\t' -v m="$module" '$1==m{print $3}' | tr '\n' ' ' | sed 's/ *$//'
 }
+
+module_managed_paths() { config_dests managed "$1"; }
+module_seed_paths()    { config_dests seed "$1"; }
 
 module_purpose() {
   case "$1" in
@@ -332,15 +361,15 @@ ensure_json_array_markers() {
       const needsComma = /[^{,\s]$/.test(before);
       before = before + (needsComma ? "," : "") + `\n  "${key}": [\n${start}\n${end}\n  ]\n`;
       fs.writeFileSync(path, before + after);
-      return;
+    } else {
+      const arrOpen = raw.indexOf("[", keyIdx);
+      const arrClose = raw.indexOf("]", arrOpen);
+      let before = raw.slice(0, arrClose).replace(/\s+$/, "");
+      const after = raw.slice(arrClose);
+      const needsComma = /[^\[,\s]$/.test(before);
+      before = before + (needsComma ? "," : "") + `\n${start}\n${end}\n  `;
+      fs.writeFileSync(path, before + after);
     }
-    const arrOpen = raw.indexOf("[", keyIdx);
-    const arrClose = raw.indexOf("]", arrOpen);
-    let before = raw.slice(0, arrClose).replace(/\s+$/, "");
-    const after = raw.slice(arrClose);
-    const needsComma = /[^\[,\s]$/.test(before);
-    before = before + (needsComma ? "," : "") + `\n${start}\n${end}\n  `;
-    fs.writeFileSync(path, before + after);
   '
 }
 
@@ -348,55 +377,64 @@ ensure_json_array_markers() {
 # 6. DOMAIN SYNCING LOGIC
 # =============================================================================
 
-seed_template() {
+# Seed the starter site straight from walle/website/ (the source of truth), minus the
+# paths in `website-seed-exclude` (managed zones, dev tooling) and build artifacts. Each
+# file is written once (seed_path skips anything already present).
+seed_from_website() {
   local src_dir="$1" tgt_dir="$2"
-  local tpl_root="${src_dir}/walle/template"
-  local f rel
-
+  local web="${src_dir}/walle/website"
+  [ -d "$web" ] || print_error "missing walle/website source: ${web}"
+  local had_app=0
+  [ -f "${tgt_dir}/src/configs/app.json" ] && had_app=1
+  local excludes; excludes="$(config_section website-seed-exclude)"
+  local f rel skip e
   while IFS= read -r f; do
-    rel="${f#"$tpl_root"/}"
-
+    rel="${f#"$web"/}"
+    skip=0
+    while IFS= read -r e; do
+      [ -n "$e" ] || continue
+      case "$rel" in "$e"|"$e"/*) skip=1; break ;; esac
+    done <<EOF
+${excludes}
+EOF
+    [ "$skip" = "1" ] && continue
     if [ "$DRY_RUN" = "1" ]; then
       plan_seed_path "$f" "${tgt_dir}/${rel}"
     else
       seed_path "$f" "${tgt_dir}/${rel}"
+      record_file seed "$rel" website
     fi
-  done < <(find "$tpl_root" -type f)
+  done < <(find "$web" -type f \
+    -not -path '*/node_modules/*' -not -path '*/.astro/*' \
+    -not -path '*/.yarn/*' -not -name 'yarn.lock')
+
+  # app.json in website/ carries Walle's own GH-Pages deployment identity; reset it to neutral
+  # defaults for a fresh consumer (only when we just created the file, never on a re-seed).
+  local app="${tgt_dir}/src/configs/app.json"
+  if [ "$had_app" = "0" ] && [ "$DRY_RUN" != "1" ] && [ -f "$app" ]; then
+    APP_JSON="$app" node -e '
+      const fs = require("fs"), p = process.env.APP_JSON;
+      const c = JSON.parse(fs.readFileSync(p, "utf8"));
+      if (c.astro) { c.astro.baseUrl = "http://localhost:4321"; c.astro.basePath = "/"; }
+      if (c.website) { c.website.title = "My Walle Site"; }
+      fs.writeFileSync(p, JSON.stringify(c, null, 2) + "\n");
+    '
+  fi
 }
 
-sync_devcontainer() {
+# harness-coding module: inject walle's blocks into files harness-coding already created,
+# and seed its once-only files (justfile.project stub, .husky/ hooks). Injects/seeds run in
+# update too; both are idempotent (marker-bounded / seed-once).
+sync_harness_coding() {
   local src_dir="$1" tgt_dir="$2"
   [ "$HARNESS_CODING_ENABLED" = "1" ] || return 0
 
   if [ ! -d "${tgt_dir}/.devcontainer" ]; then
-    print_warn "no .devcontainer/ found at ${tgt_dir}. Run: curl -fsSL https://raw.githubusercontent.com/FabrizioCafolla/harness-coding/main/cli.sh | bash -s -- update --force --workspace ${tgt_dir}"
+    print_warn "no .devcontainer/ at ${tgt_dir}. Run: curl -fsSL ${HARNESS_CODING_CLI_URL} | bash -s -- update --force --workspace ${tgt_dir}"
   fi
 
-  local setup_tgt="${tgt_dir}/.devcontainer/scripts/setup-devcontainer.project.sh"
-  local compose_tgt="${tgt_dir}/.devcontainer/docker-compose.project.yml"
-  local setup_blk="${src_dir}/walle/harness-coding/inject/setup-devcontainer.project.block.sh"
-  local compose_blk="${src_dir}/walle/harness-coding/inject/docker-compose.project.block.yml"
-
-  if [ "$DRY_RUN" = "1" ]; then
-    plan_inject_marker_block "$setup_tgt" "$setup_blk" "$WALLE_START_SH" "$WALLE_END_SH"
-    plan_inject_marker_block "$compose_tgt" "$compose_blk" "$WALLE_START_SH" "$WALLE_END_SH"
-  else
-    inject_marker_block "$setup_tgt" "$setup_blk" "$WALLE_START_SH" "$WALLE_END_SH"
-    inject_marker_block "$compose_tgt" "$compose_blk" "$WALLE_START_SH" "$WALLE_END_SH"
-  fi
-}
-
-seed_devcontainer() {
-  local src_dir="$1" tgt_dir="$2"
-  [ "$HARNESS_CODING_ENABLED" = "1" ] || return 0
-  for rel in $(module_seed_paths "devcontainer"); do
-    if [ "$DRY_RUN" = "1" ]; then
-      # Modificato per mappare il percorso reale "walle/harness-coding/seed/"
-      plan_seed_path "${src_dir}/walle/harness-coding/seed/${rel}" "${tgt_dir}/${rel}"
-    else
-      seed_path "${src_dir}/walle/harness-coding/seed/${rel}" "${tgt_dir}/${rel}"
-    fi
-  done
+  run_injects "$src_dir" "$tgt_dir" harness-coding
+  seed_module_files "$src_dir" "$tgt_dir" harness-coding
 }
 
 generate_agents_block() {
@@ -447,117 +485,185 @@ sync_agents_marker() {
   rm -f "$block_file"
 }
 
+# MANAGED: overwrite each of a module's src→dest mappings from the config.
 sync_managed_map() {
-  local src_dir="$1" tgt_dir="$2" module="$3"
-  for pair in $(module_managed_map "$module"); do
-    local src="${pair%%:*}" dest="${pair#*:}"
+  local src_dir="$1" tgt_dir="$2" module="$3" mod src dest
+  while IFS=$'\t' read -r mod src dest; do
+    [ "$mod" = "$module" ] || continue
     if [ "$DRY_RUN" = "1" ]; then
-      plan_path "${src_dir}/${src}" "${tgt_dir}/${dest}"
+      plan_path "${src_dir}/walle/${src}" "${tgt_dir}/${dest}"
     else
-      sync_path "${src_dir}/${src}" "${tgt_dir}/${dest}"
+      sync_path "${src_dir}/walle/${src}" "${tgt_dir}/${dest}"
+      record_file managed "$dest" "$module"
       if [ -d "${tgt_dir}/${dest}" ] && [[ "$dest" == *"@walle"* ]] && [ -f "${src_dir}/LICENSE" ]; then
         cp "${src_dir}/LICENSE" "${tgt_dir}/${dest}/LICENSE"
       fi
     fi
-  done
+  done < <(config_section managed)
 }
 
-sync_website_justfile() {
-  local src_dir="$1" tgt_dir="$2"
-  local tgt="${tgt_dir}/justfile.project"
-  local blk="${src_dir}/walle/harness-coding/inject/justfile.project.block"
-  local old="${tgt_dir}/walle.justfile"
+# SEED: write a module's once-only files from the config (skips anything present).
+seed_module_files() {
+  local src_dir="$1" tgt_dir="$2" module="$3" mod src dest
+  while IFS=$'\t' read -r mod src dest; do
+    [ "$mod" = "$module" ] || continue
+    if [ "$DRY_RUN" = "1" ]; then
+      plan_seed_path "${src_dir}/walle/${src}" "${tgt_dir}/${dest}"
+    else
+      seed_path "${src_dir}/walle/${src}" "${tgt_dir}/${dest}"
+      record_file seed "$dest" "$module"
+    fi
+  done < <(config_section seed)
+}
+
+# One-time migration: older consumers had a separate walle.justfile + import line.
+migrate_legacy_justfile() {
+  local tgt_dir="$1"
+  local tgt="${tgt_dir}/justfile.project" old="${tgt_dir}/walle.justfile"
   local imp="import 'walle.justfile'"
-
-  if [ "$DRY_RUN" = "1" ]; then
-    [ -f "$old" ] && print_plan "- ${old} (migrated to injected block)"
-    [ -f "$tgt" ] && grep -qF "$imp" "$tgt" && print_plan "~ ${tgt} (remove legacy import)"
-    plan_inject_marker_block "$tgt" "$blk" "$WALLE_START_SH" "$WALLE_END_SH"
-    return 0
-  fi
-
+  [ "$DRY_RUN" = "1" ] && return 0
   if [ -f "$old" ]; then rm -f "$old"; print_info "removed legacy walle.justfile."; fi
   if [ -f "$tgt" ] && grep -qF "$imp" "$tgt"; then
     sed -i.bak "\#^${imp}\$#d" "$tgt" && rm -f "${tgt}.bak"
   fi
-  inject_marker_block "$tgt" "$blk" "$WALLE_START_SH" "$WALLE_END_SH"
 }
 
-sync_vscode_inject() {
-  local src_dir="$1" tgt_dir="$2"
-  local s_tgt="${tgt_dir}/.vscode/settings.json"
-  local e_tgt="${tgt_dir}/.vscode/extensions.json"
-  local s_blk="${src_dir}/walle/harness-coding/inject/vscode-settings.block.json"
-  local e_blk="${src_dir}/walle/harness-coding/inject/vscode-extensions.block.json"
+# INJECT: apply one marker-bounded block. `kind` picks the marker style and any JSON
+# scaffolding; `agents` is the generated AGENTS.md block rather than a copied file.
+apply_inject() {
+  local src_dir="$1" tgt_dir="$2" src="$3" dest="$4" kind="$5" module="$6"
+  local tgt="${tgt_dir}/${dest}"
 
-  if [ "$DRY_RUN" != "1" ]; then
-    ensure_json_object_markers "$s_tgt"
-    ensure_json_array_markers "$e_tgt" "recommendations"
-    inject_marker_block "$s_tgt" "$s_blk" "$WALLE_START_JS" "$WALLE_END_JS"
-    inject_marker_block "$e_tgt" "$e_blk" "$WALLE_START_JS" "$WALLE_END_JS"
-  else
-    plan_inject_marker_block "$s_tgt" "$s_blk" "$WALLE_START_JS" "$WALLE_END_JS"
-    plan_inject_marker_block "$e_tgt" "$e_blk" "$WALLE_START_JS" "$WALLE_END_JS"
+  if [ "$kind" = "agents" ]; then
+    sync_agents_marker "$src_dir" "$tgt_dir"
+    [ "$DRY_RUN" = "1" ] || record_file inject "$dest" "$module"
+    return 0
   fi
+
+  local blk="${src_dir}/walle/${src}" start end
+  case "$kind" in
+    sh)                    start="$WALLE_START_SH"; end="$WALLE_END_SH" ;;
+    json-object|json-array:*) start="$WALLE_START_JS"; end="$WALLE_END_JS" ;;
+    *) print_error "unknown inject kind '${kind}' for ${dest}" ;;
+  esac
+
+  if [ "$DRY_RUN" = "1" ]; then
+    plan_inject_marker_block "$tgt" "$blk" "$start" "$end"
+  else
+    case "$kind" in
+      json-object)  ensure_json_object_markers "$tgt" ;;
+      json-array:*) ensure_json_array_markers "$tgt" "${kind#json-array:}" ;;
+    esac
+    inject_marker_block "$tgt" "$blk" "$start" "$end"
+    record_file inject "$dest" "$module"
+  fi
+}
+
+run_injects() {
+  local src_dir="$1" tgt_dir="$2" module="$3" mod src dest kind
+  while IFS=$'\t' read -r mod src dest kind; do
+    [ "$mod" = "$module" ] || continue
+    apply_inject "$src_dir" "$tgt_dir" "$src" "$dest" "$kind" "$module"
+  done < <(config_section inject)
 }
 
 sync_module() {
   local src_dir="$1" tgt_dir="$2" mod="$3"
   sync_managed_map "$src_dir" "$tgt_dir" "$mod"
-
-  if [ "$SEED_ENABLED" = "1" ]; then
-    for rel in $(module_seed_paths "$mod"); do
-      if [ "$DRY_RUN" = "1" ]; then plan_seed_path "${src_dir}/walle/${mod}/seed/${rel}" "${tgt_dir}/${rel}"
-      else seed_path "${src_dir}/walle/${mod}/seed/${rel}" "${tgt_dir}/${rel}"; fi
-    done
-  fi
-
-  [ "$mod" = "ai" ] && sync_agents_marker "$src_dir" "$tgt_dir"
-  if [ "$mod" = "website" ]; then
-    sync_website_justfile "$src_dir" "$tgt_dir"
-    sync_vscode_inject "$src_dir" "$tgt_dir"
-  fi
+  [ "$SEED_ENABLED" = "1" ] && seed_module_files "$src_dir" "$tgt_dir" "$mod"
+  [ "$mod" = "website" ] && migrate_legacy_justfile "$tgt_dir"
+  run_injects "$src_dir" "$tgt_dir" "$mod"
   [ "$DRY_RUN" = "1" ] || print_info "Module '${mod}' synced."
+}
+
+# Establish the harness-coding base (real justfile with markers, justfile.tooling,
+# .devcontainer/*, .pre-commit-config.yaml, AGENTS.md base block) BEFORE walle seeds and
+# injects. Walle owns none of these — it only injects its own blocks into files harness-coding
+# already created. Runs harness-coding's own CLI so the base is always current, not a stale
+# copy vendored here. Override the source with WALLE_HARNESS_CODING_CLI (path to a local
+# cli.sh) for offline/e2e runs; defaults to fetching main over the network.
+establish_harness_coding_base() {
+  local tgt_dir="$1"
+  [ "$HARNESS_CODING_ENABLED" = "1" ] || return 0
+
+  if [ "$DRY_RUN" = "1" ]; then
+    print_plan "run harness-coding update --force (establishes justfile, .devcontainer/, base files)"
+    return 0
+  fi
+
+  print_info "Establishing harness-coding base (justfile, .devcontainer/, hooks)..."
+  local local_cli="${WALLE_HARNESS_CODING_CLI:-}"
+  if [ -n "$local_cli" ]; then
+    [ -f "$local_cli" ] || print_error "WALLE_HARNESS_CODING_CLI not a file: ${local_cli}"
+    bash "$local_cli" update --force --workspace "$tgt_dir" ||
+      print_error "harness-coding base setup failed"
+  else
+    command -v curl >/dev/null 2>&1 ||
+      print_error "curl required to fetch harness-coding base (or set WALLE_HARNESS_CODING_CLI)"
+    curl -fsSL "$HARNESS_CODING_CLI_URL" | bash -s -- update --force --workspace "$tgt_dir" ||
+      print_error "harness-coding base setup failed"
+  fi
 }
 
 run_init_sync() {
   local src_dir="$1" tgt_dir="$2"; shift 2
   local mods=("$@")
-  seed_template "$src_dir" "$tgt_dir"
+  establish_harness_coding_base "$tgt_dir"
+  seed_from_website "$src_dir" "$tgt_dir"
   for m in "${mods[@]}"; do sync_module "$src_dir" "$tgt_dir" "$m"; done
-  sync_devcontainer "$src_dir" "$tgt_dir"
-  seed_devcontainer "$src_dir" "$tgt_dir"
+  sync_harness_coding "$src_dir" "$tgt_dir"
 }
 
 # =============================================================================
 # 7. MANIFEST & CONFIGURATIONS
 # =============================================================================
 
+# Writes .walle/manifest.json. The `files` map records every path walle wrote, grouped by
+# class (managed | seed | inject) → module — same idea as harness-coding's manifest. Node
+# assembles the JSON from the FILES_LOG the sync functions accumulate (single parser: awk
+# reads the config, node only groups what was recorded).
 write_manifest() {
   local tgt_dir="$1" name="$2"; shift 2
-  local mods=("$@") mods_json="" sep=""
-
-  for m in "${mods[@]}"; do
-    mods_json="${mods_json}${sep}\"${m}\""
-    sep=", "
-  done
-
-  local ref_line=""
-  [ -n "${SOURCE_REF}" ] && ref_line="  \"sourceRef\": \"${SOURCE_REF}\","$'\n'
-  local dc_val=$([ "$HARNESS_CODING_ENABLED" = "1" ] && echo true || echo false)
-
+  local mods=("$@")
   mkdir -p "${tgt_dir}/.walle"
-  cat >"${tgt_dir}/.walle/manifest.json" <<EOF
-{
-  "\$schema": "../schemas/walle.config.schema.json",
-  "schemaVersion": 2,
-  "name": "${name}",
-  "walleVersion": "${WALLE_VERSION}",
-${ref_line}  "modules": [${mods_json}],
-  "devcontainer": { "enabled": ${dc_val} },
-  "updatedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-}
-EOF
+  WM_NAME="$name" \
+  WM_VERSION="$WALLE_VERSION" \
+  WM_REF="${SOURCE_REF:-}" \
+  WM_MODULES="${mods[*]}" \
+  WM_DC="$([ "$HARNESS_CODING_ENABLED" = "1" ] && echo true || echo false)" \
+  WM_FILES="${FILES_LOG:-}" \
+  WM_OUT="${tgt_dir}/.walle/manifest.json" \
+  WM_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  node -e '
+    const fs = require("fs");
+    const files = { managed: {}, seed: {}, inject: {} };
+    // Preload from an existing manifest so `add` (which only re-syncs one module) keeps the
+    // other modules files entries; update re-syncs everything, so it self-heals.
+    try {
+      const prev = JSON.parse(fs.readFileSync(process.env.WM_OUT, "utf8")).files || {};
+      for (const c of ["managed", "seed", "inject"]) Object.assign(files[c], prev[c] || {});
+    } catch (_) {}
+    const log = process.env.WM_FILES;
+    if (log && fs.existsSync(log)) {
+      for (const line of fs.readFileSync(log, "utf8").split("\n")) {
+        if (!line.trim()) continue;
+        const [cat, dest, mod] = line.split("\t");
+        if (files[cat]) files[cat][dest] = mod;
+      }
+    }
+    const m = {
+      "$schema": "../schemas/walle.config.schema.json",
+      schemaVersion: 2,
+      name: process.env.WM_NAME,
+      walleVersion: process.env.WM_VERSION,
+      ...(process.env.WM_REF ? { sourceRef: process.env.WM_REF } : {}),
+      modules: process.env.WM_MODULES.split(" ").filter(Boolean),
+      devcontainer: { enabled: process.env.WM_DC === "true" },
+      files,
+      updatedAt: process.env.WM_DATE,
+    };
+    fs.writeFileSync(process.env.WM_OUT, JSON.stringify(m, null, 2) + "\n");
+  '
   print_info "Manifest written: ${tgt_dir}/.walle/manifest.json"
 }
 
@@ -566,11 +672,23 @@ write_lock() {
   printf '%s\n' "${SOURCE_REF:-$WALLE_VERSION}" >"${1}/.walle/lock"
 }
 
+# Human-readable consumer config. Lists the enabled modules explicitly (mirrors the manifest,
+# which stays authoritative for `update`) plus the editable `docs` toggle. Refreshed on
+# init/update; a `docs:` value the user changed is preserved.
 write_walle_config_yml() {
-  local tgt="${1}/.walle/config.yml"
-  [ -f "$tgt" ] && return 0
-  mkdir -p "${1}/.walle"
-  echo "docs: true" > "$tgt"
+  local tgt_dir="$1"; shift
+  local mods=("$@") tgt="${tgt_dir}/.walle/config.yml"
+  mkdir -p "${tgt_dir}/.walle"
+  local docs="true"
+  [ -f "$tgt" ] && grep -Eq '^docs:[[:space:]]*false' "$tgt" && docs="false"
+  {
+    echo "# Walle consumer config. Modules mirror .walle/manifest.json (authoritative)."
+    echo "# Add/remove modules with 'walle add <module>' or the init flags, not by hand."
+    echo "modules:"
+    local m; for m in "${mods[@]}"; do echo "  - ${m}"; done
+    echo "# Copy the walle wiki into .walle/docs/ on update. Set false to skip."
+    echo "docs: ${docs}"
+  } >"$tgt"
 }
 
 walle_docs_enabled() {
@@ -693,9 +811,10 @@ cmd_init() {
 
   mkdir -p "$proj_dir"
   print_info "Scaffolding ${PROJ_NAME}..."
+  FILES_LOG="$(mktemp)"
   run_init_sync "$SOURCE_DIR" "$proj_dir" "${mods[@]}"
   write_manifest "$proj_dir" "$PROJ_NAME" "${mods[@]}"
-  write_walle_config_yml "$proj_dir"
+  write_walle_config_yml "$proj_dir" "${mods[@]}"
   sync_walle_docs "$SOURCE_DIR" "$proj_dir"
   write_lock "$proj_dir"
   print_info "Project ${PROJ_NAME} initialized."
@@ -734,18 +853,17 @@ cmd_update() {
   if [ "$DRY_RUN" = "1" ]; then
     print_plan "update plan for '${MF_NAME}' (${MF_VERSION} -> ${WALLE_VERSION})"
     for m in "${mods[@]}"; do sync_module "$SOURCE_DIR" "$PROJ_PATH" "$m"; done
-    sync_devcontainer "$SOURCE_DIR" "$PROJ_PATH"
-    seed_devcontainer "$SOURCE_DIR" "$PROJ_PATH"
+    sync_harness_coding "$SOURCE_DIR" "$PROJ_PATH"
     sync_walle_docs "$SOURCE_DIR" "$PROJ_PATH"
     return 0
   fi
 
   print_info "Updating ${MF_NAME}..."
+  FILES_LOG="$(mktemp)"
   for m in "${mods[@]}"; do sync_module "$SOURCE_DIR" "$PROJ_PATH" "$m"; done
-  sync_devcontainer "$SOURCE_DIR" "$PROJ_PATH"
-  seed_devcontainer "$SOURCE_DIR" "$PROJ_PATH"
+  sync_harness_coding "$SOURCE_DIR" "$PROJ_PATH"
   write_manifest "$PROJ_PATH" "$MF_NAME" "${mods[@]}"
-  write_walle_config_yml "$PROJ_PATH"
+  write_walle_config_yml "$PROJ_PATH" "${mods[@]}"
   sync_walle_docs "$SOURCE_DIR" "$PROJ_PATH"
   write_lock "$PROJ_PATH"
   print_info "Project updated."
@@ -783,8 +901,8 @@ cmd_add() {
       print_plan "add plan: devcontainer"
       return 0
     fi
-    sync_devcontainer "$SOURCE_DIR" "$PROJ_PATH"
-    seed_devcontainer "$SOURCE_DIR" "$PROJ_PATH"
+    FILES_LOG="$(mktemp)"
+    sync_harness_coding "$SOURCE_DIR" "$PROJ_PATH"
     write_manifest "$PROJ_PATH" "$MF_NAME" "${mods[@]}"
     print_info "devcontainer added."
     return 0
@@ -799,10 +917,12 @@ cmd_add() {
     return 0
   fi
 
+  FILES_LOG="$(mktemp)"
   sync_module "$SOURCE_DIR" "$PROJ_PATH" "$NEW_MOD"
   [ "$present" = "1" ] || mods+=("$NEW_MOD")
 
   write_manifest "$PROJ_PATH" "$MF_NAME" "${mods[@]}"
+  write_walle_config_yml "$PROJ_PATH" "${mods[@]}"
   print_info "Module '${NEW_MOD}' added."
 
   if [ "$NEW_MOD" = "backend" ] && ! ssr_enabled "$PROJ_PATH"; then

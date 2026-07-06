@@ -92,14 +92,15 @@ release version:
       echo "[ERROR] CHANGELOG.md has no (or an empty) section for ${tag} — add one before releasing." >&2
       exit 1
     fi
+    pkg="{{justfile_directory()}}/walle/website/package.json"
     node -e "
       const fs=require('fs');
-      const p='package.json';
+      const p='${pkg}';
       const j=JSON.parse(fs.readFileSync(p,'utf8'));
       j.version='${ver}';
       fs.writeFileSync(p, JSON.stringify(j,null,2)+'\n');
     "
-    git add "$changelog" package.json
+    git add "$changelog" "$pkg"
     git commit -m "chore: release {{version}}"
     git tag -a {{version}} -m "release {{version}}"
     git push origin HEAD --tags

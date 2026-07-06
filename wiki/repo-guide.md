@@ -9,10 +9,10 @@ touching tells you where to work and what breaks if you get it wrong.
 harness-walle/
 ├── walle/                    ← THE PRODUCT — everything shipped to consumers (except website's src/@walle/),
 │                                grouped by module — each answers "what does module X ship" on its own
-│   ├── template/                 curated starter scaffold (justfile, configs, index.astro) seeded
-│   │                                write-once into every fresh consumer, ahead of any module
-│   ├── website/                  MANAGED source: website/src/@walle/, website/schemas/, plus the
-│   │                                justfile.project inject/ block below — no separate seed/ of its own
+│   ├── walle.yml                 the config: declares every managed/seed/inject path per module
+│   ├── website/                  MANAGED source (website/src/@walle/, website/schemas/) AND the
+│   │                                write-once seed for a fresh consumer (the whole site, minus the
+│   │                                excludes in walle.yml's website-seed-exclude)
 │   ├── ci/                       managed/ (composite actions), seed/ (starter workflows)
 │   ├── ai/                       managed/skills/ (managed Claude Code skills)
 │   ├── backend/                  seed/ (starter API routes, middleware)
@@ -33,8 +33,9 @@ harness-walle/
 **Placement rule inside `walle/`:** if a file is re-synced on every `walle update` → `<module>/managed/`.
 If it's written once and then belongs to the consumer → `<module>/seed/`. If it's a block injected
 into a file walle doesn't own outright (a file that harness-coding or the consumer's own
-`justfile.project` created) → `<module>/inject/`. `cli/`, `schemas/`, `template/` are cross-module —
-shared engine/scaffold, not tied to one module.
+`justfile.project` created) → `<module>/inject/`. Whichever it is, add the src→dest mapping to
+`walle.yml` — the CLI reads only the config, so no code change is needed. `cli/` and the `website/`
+seed are cross-cutting — shared engine/starter, not tied to one module.
 
 **Why `harness-coding` has no `managed/`/`seed/`:** walle doesn't vendor any BASE devcontainer file
 (`Dockerfile`, `docker-compose.yml`, the setup script — all harness-coding's own). It only

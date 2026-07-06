@@ -191,17 +191,20 @@ Injects walle's own extensions into harness-coding's devcontainer scaffold. Unli
 modules, it is **not** tracked in the manifest `modules` array — it is a standalone flag
 (`devcontainer.enabled`) because it is opt-out at `init` (seeded by default) rather than opt-in.
 
-Walle does not vendor any devcontainer BASE file — `Dockerfile`, `docker-compose.yml`, the setup
-script, and harness-coding's own CLI stay exclusively harness-coding's to own and update. This
-module's only job is injecting its own small extensions into files harness-coding already seeds
-write-once.
+Walle vendors no devcontainer BASE file — `Dockerfile`, `docker-compose.yml`, the setup script,
+`justfile`, and harness-coding's own CLI stay exclusively harness-coding's to own and update.
+Instead, `init` **runs harness-coding's CLI first** (`update --force`) to establish that base,
+then injects walle's own small extensions into the files harness-coding just created. So a single
+`init` yields a complete, current base — no separate harness-coding step. The base is fetched from
+harness-coding `main` over the network; override the source with the `WALLE_HARNESS_CODING_CLI`
+env var (path to a local `cli.sh`) for offline or e2e runs.
 
 **Activate:**
 
 ```bash
-cli.sh init -n <name>                    # seeded by default
-cli.sh init -n <name> --no-devcontainer  # skip it
-cli.sh add devcontainer                  # re-seed later on a consumer that skipped it
+cli.sh init -n <name>                       # runs harness-coding + injects, by default
+cli.sh init -n <name> --no-harness-coding   # skip it (stub justfile fallback, no base)
+cli.sh add devcontainer                     # re-inject later on a consumer that skipped it
 ```
 
 **MANAGED paths (marker blocks, injected — not whole files):**

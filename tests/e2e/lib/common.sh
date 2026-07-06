@@ -6,6 +6,24 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../" && pwd)"
 SANDBOX_DIR="${REPO_ROOT}/tests/e2e/.sandbox"
 CLI="${REPO_ROOT}/walle/cli/cli.sh"
 
+# init runs harness-coding's CLI to establish the base. Point it at an offline stub so the
+# suite never reaches the network — it creates the minimal base files walle injects into.
+_HC_STUB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.hc-stub.sh"
+cat >"$_HC_STUB" <<'STUB'
+#!/usr/bin/env bash
+ws=""
+while [ $# -gt 0 ]; do case "$1" in --workspace) ws="$2"; shift 2 ;; *) shift ;; esac; done
+[ -n "$ws" ] || exit 0
+mkdir -p "$ws/.devcontainer/scripts"
+printf '#!/usr/bin/env bash\n' >"$ws/.devcontainer/scripts/setup-devcontainer.project.sh"
+printf 'services:\n' >"$ws/.devcontainer/docker-compose.project.yml"
+# Base justfile mirrors harness-coding: it imports the consumer's justfile.project where
+# walle injects its recipes (walle-setup, dev, build, ...).
+printf "import? 'justfile.project'\n\ndefault:\n    @just --list\n" >"$ws/justfile"
+STUB
+chmod +x "$_HC_STUB"
+export WALLE_HARNESS_CODING_CLI="$_HC_STUB"
+
 # --- logging -----------------------------------------------------------------
 
 c_reset=$'\033[0m'; c_red=$'\033[31m'; c_grn=$'\033[32m'; c_ylw=$'\033[33m'; c_dim=$'\033[2m'

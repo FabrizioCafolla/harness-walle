@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # Scenario: harness-coding scaffold is seeded by default at init and respects --no-harness-coding.
-# Walle never vendors a full .devcontainer/devcontainer.json (that stays harness-coding's own) —
-# it only injects reduced-form blocks into setup-devcontainer.project.sh/docker-compose.project.yml
-# and seeds justfile.project + .husky/ (see wiki/modules.md).
+# init runs harness-coding's own CLI (update --force) to establish the base, then injects walle's
+# reduced-form blocks into setup-devcontainer.project.sh/docker-compose.project.yml and seeds
+# justfile.project + .husky/ (see wiki/modules.md). Walle vendors no base devcontainer file itself.
+# The default case reaches the network to fetch harness-coding; set WALLE_HARNESS_CODING_CLI to a
+# local cli.sh to run it offline (the env var inherits into the cli() subshell).
 
 scenario_devcontainer_seed() {
   local dir_default="${SANDBOX_DIR}/devcontainer_default"

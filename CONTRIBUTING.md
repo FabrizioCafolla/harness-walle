@@ -40,9 +40,9 @@ work and what breaks if you get it wrong. Full rationale in
 ```
 harness-walle/
 ├── walle/                ← THE PRODUCT — everything shipped to consumers, grouped by module
-│   ├── template/            curated starter scaffold seeded write-once into every fresh consumer
-│   ├── website/             MANAGED source (src/@walle/, schemas/) — also this repo's own
-│   │                          demo/showcase Astro site, dogfooding the product
+│   ├── walle.yml            the config: declares every managed/seed/inject path per module
+│   ├── website/             MANAGED source (src/@walle/, schemas/) AND the write-once starter
+│   │                          seeded into a fresh consumer — this repo's own demo site, dogfooded
 │   ├── ci/, ai/, backend/, infrastructure/, harness-coding/   one dir per optional module
 │   └── cli/                 cli.sh — the sync/scaffold engine, vendored into every consumer
 ├── tests/e2e/             ← dev tooling, never shipped: shell-script CLI harness (`just e2e`)

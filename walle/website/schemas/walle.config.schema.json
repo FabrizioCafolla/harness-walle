@@ -54,6 +54,16 @@
           "description": "Seed a .devcontainer/ scaffold at init. Default: true."
         }
       }
+    },
+    "files": {
+      "type": "object",
+      "description": "Every path walle wrote, grouped by class then keyed by dest path → module.",
+      "additionalProperties": false,
+      "properties": {
+        "managed": { "type": "object", "additionalProperties": { "type": "string" } },
+        "seed": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inject": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
     }
   },
   "if": {
