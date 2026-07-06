@@ -4,6 +4,13 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/versioning.md).
 
+## [0.1.1] — 2026-07-06
+
+### Fixed
+
+- **`harness-coding` module** — the reduced-form warning (no `.devcontainer/` at `init`) now
+  names the exact harness-coding bootstrap command to run, instead of a generic message.
+
 ## [0.1.0] — 2026-07-06
 
 First release.

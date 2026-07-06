@@ -367,7 +367,7 @@ sync_devcontainer() {
   [ "$HARNESS_CODING_ENABLED" = "1" ] || return 0
 
   if [ ! -d "${tgt_dir}/.devcontainer" ]; then
-    print_warn "no .devcontainer/ found at ${tgt_dir}. Run harness-coding first."
+    print_warn "no .devcontainer/ found at ${tgt_dir}. Run: curl -fsSL https://raw.githubusercontent.com/FabrizioCafolla/harness-coding/main/cli.sh | bash -s -- update --force --workspace ${tgt_dir}"
   fi
 
   local setup_tgt="${tgt_dir}/.devcontainer/scripts/setup-devcontainer.project.sh"
