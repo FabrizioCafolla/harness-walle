@@ -4,6 +4,12 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/versioning.md).
 
+## [0.2.1] — 2026-07-06
+
+### Changed
+
+- Fix and update harness-coding
+
 ## [0.2.0] — 2026-07-06
 
 ### Changed

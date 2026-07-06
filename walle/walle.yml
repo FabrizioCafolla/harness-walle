@@ -39,13 +39,13 @@ seed:
   - harness-coding | harness-coding/seed/justfile.project | justfile.project
   - harness-coding | harness-coding/seed/.husky/pre-commit | .husky/pre-commit
   - harness-coding | harness-coding/seed/.husky/pre-push | .husky/pre-push
+  - harness-coding | harness-coding/seed/docker-compose.project.yml | .devcontainer/docker-compose.project.yml
 
 inject:
   - website | harness-coding/inject/justfile.project.block | justfile.project | sh
   - website | harness-coding/inject/vscode-settings.block.json | .vscode/settings.json | json-object
   - website | harness-coding/inject/vscode-extensions.block.json | .vscode/extensions.json | json-array:recommendations
   - harness-coding | harness-coding/inject/setup-devcontainer.project.block.sh | .devcontainer/scripts/setup-devcontainer.project.sh | sh
-  - harness-coding | harness-coding/inject/docker-compose.project.block.yml | .devcontainer/docker-compose.project.yml | sh
   - ai | - | AGENTS.md | agents
 
 website-seed-exclude:

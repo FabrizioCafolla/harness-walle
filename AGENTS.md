@@ -4,7 +4,7 @@
 
 This repository was bootstrapped from the [harness-coding](https://github.com/FabrizioCafolla/harness-coding) template.
 
-The `cli.sh` script keeps template-managed files in sync with upstream. Run `./cli.sh check` to see what changed, and `./cli.sh update` to apply updates.
+Template-managed files are kept in sync with upstream via `just harness-coding check` / `just harness-coding update` — `cli.sh` is never vendored locally, it's always fetched fresh from `main`.
 
 Instructions and context for AI agents (Claude Code, GitHub Copilot, etc.) working in this repository.
 
@@ -32,7 +32,7 @@ All work happens inside the DevContainer. Do not assume tools are installed on t
 
 This project follows a **three-layer model** for configuration:
 
-1. **BASE** (template-managed, auto-updated): `docker-compose.yml`, `setup-devcontainer.sh`, `justfile`, `justfile.tooling` — updated when you run `cli.sh update`
+1. **BASE** (template-managed, auto-updated): `docker-compose.yml`, `setup-devcontainer.sh`, `justfile`, `justfile.tooling` — updated when you run `just harness-coding update`
 2. **PROJECT** (versionated, `.project` files): Shared defaults for all team members — `justfile.project`, `setup-devcontainer.project.sh`, `docker-compose.project.yml`, `.env.project`
 3. **LOCAL** (dev-specific, `.local` files, gitignored): Personal customizations that are never committed — `justfile.local`, `setup-devcontainer.local.sh`, `docker-compose.local.yml`, `.env`
 
@@ -60,7 +60,6 @@ just help
 - Do not modify `.project` files unless making changes that should be shared with the team — these are versionated
 - Do edit `.local` files for personal/local customizations — these are gitignored and won't be committed
 - Do not install packages globally inside the container without updating the Dockerfile or devcontainer features
-
 <!-- [harness-coding:END] -->
 
 ## Project-specific context

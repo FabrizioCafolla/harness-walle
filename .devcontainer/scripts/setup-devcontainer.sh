@@ -40,32 +40,34 @@ mkdir -p ~/.zsh/completions
 echo "[INFO] Generating just completions from local binary"
 just --completions zsh > ~/.zsh/completions/_just
 
-# ── Optional tools (update only installation is handled by the Dockerfile) ──
+# ── Optional tools (update only; installation is handled by the Dockerfile) ──
+# Each update is capped with `timeout` — copilot in particular can otherwise
+# hang forever on an interactive auth prompt that `yes` doesn't satisfy.
 
 if command -v claude &>/dev/null; then
   echo "[INFO] Updating claude-code: $(claude --version)"
-  claude update || echo "[WARN] Failed to update claude-code, continuing"
+  timeout 60 claude update || echo "[WARN] Failed to update claude-code, continuing"
 else
   echo "[INFO] claude-code not installed, skipping"
 fi
 
 if command -v copilot &>/dev/null; then
   echo "[INFO] Updating copilot: $(copilot --version)"
-  yes | copilot update || echo "[WARN] Failed to update copilot, continuing"
+  timeout 60 bash -c 'yes | copilot update' || echo "[WARN] copilot update failed or timed out, continuing"
 else
   echo "[INFO] copilot not installed, skipping"
 fi
 
 if command -v opencode &>/dev/null; then
   echo "[INFO] Updating opencode: $(opencode --version)"
-  opencode upgrade || echo "[WARN] Failed to update opencode, continuing"
+  timeout 60 opencode upgrade || echo "[WARN] Failed to update opencode, continuing"
 else
   echo "[INFO] opencode not installed, skipping"
 fi
 
 if command -v openspec &>/dev/null; then
   echo "[INFO] Updating openspec: $(openspec --version)"
-  openspec update --force || echo "[ERROR] Failed to update openspec."
+  timeout 60 openspec update --force || echo "[ERROR] Failed to update openspec."
 else
   if [[ "${OPENSPEC_ENABLE:-true}" == "true" ]]; then
     echo "[INFO] openspec not installed, installing"

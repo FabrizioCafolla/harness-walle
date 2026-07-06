@@ -33,8 +33,8 @@ tools-update:
   command -v openspec &>/dev/null && { echo "[INFO] Updating openspec"; openspec update --force || true; }
 
 [group('tools')]
-harness-coding-update:
-  @curl -fsSL https://raw.githubusercontent.com/FabrizioCafolla/harness-coding/main/cli.sh | bash -s -- update --force
+harness-coding *args:
+  @curl -fsSL https://raw.githubusercontent.com/FabrizioCafolla/harness-coding/main/cli.sh | bash -s -- {{args}}
 
 [group('tools')]
 harness-ai-cli:
