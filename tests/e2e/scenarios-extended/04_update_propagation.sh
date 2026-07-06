@@ -37,7 +37,7 @@ scenario_update_propagation() {
   # Build a mutated fixture source and mutate a @walle file + the marker block.
   make_source_subset "$src"
   printf '\n/* WALLE-MUTATION-MARKER */\n' >>"$src/walle/website/src/@walle/styles/global.css"
-  printf '\nMutated-by-fixture line.\n' >>"$src/walle/cli/agents.block.md"
+  printf '\nMutated-by-fixture line.\n' >>"$src/walle/ai/agents.block.md"
 
   cli update --source "$src" -p "$dir" >/dev/null || fail "cli update failed" || return 1
 

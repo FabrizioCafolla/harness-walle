@@ -35,17 +35,16 @@ just walle check     # validate the project: manifest, version pin, configs
 
 ## Features
 
-Everything beyond the base site is an explicit module — turn on only what you need. None of
-them require anything beyond Node/Yarn: no harness-coding, no Claude Code, unless you opt into
-`harness-coding` or `ai`.
+`ci`, `ai`, and `harness-coding` are on by default at `init` — opt out per-module if you don't
+want them. `backend` and `infrastructure` stay opt-in.
 
-| Module           | Adds                                                                     | Enable                       |
+| Module           | Adds                                                                     | Enable / disable             |
 | ---------------- | ------------------------------------------------------------------------ | ---------------------------- |
-| `ci`             | GitHub Actions standard workflows                                        | `--modules website,ci`       |
+| `ci`             | GitHub Actions standard workflows                                        | on by default, `--no-ci` to skip |
+| `ai`             | AGENTS.md + skills for this project                                      | on by default, `--no-ai` to skip |
+| `harness-coding` | [Devcontainer environment](https://github.com/FabrizioCafolla/harness-coding) | on by default, `--no-harness-coding` to skip |
 | `backend`        | Astro API routes (health check, echo, middleware)                        | `cli.sh add backend`         |
 | `infrastructure` | Terraform/OpenTofu starter scaffold                                      | `cli.sh add infrastructure`  |
-| `ai`             | AGENTS.md + skills for this project                                      | `cli.sh add ai`              |
-| `harness-coding` | [Devcontainer environment](https://github.com/FabrizioCafolla/harness-coding) | `--no-harness-coding` to skip |
 
 Details per module: [wiki/modules.md](wiki/modules.md).
 

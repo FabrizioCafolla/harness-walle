@@ -74,6 +74,8 @@ Common options:
       --dry-run               Show the sync plan without writing anything
       --yes                   Skip confirmation prompts
       --no-harness-coding     Skip .devcontainer/ scaffold at init
+      --no-ai                 Skip AGENTS.md + skills at init (default: on)
+      --no-ci                 Skip GitHub Actions workflows at init (default: on)
   -h, --help                  Show this help
 EOF
 }
@@ -399,7 +401,7 @@ seed_devcontainer() {
 
 generate_agents_block() {
   local src_dir="$1"
-  local preamble="${src_dir}/walle/cli/agents.block.md"
+  local preamble="${src_dir}/walle/ai/agents.block.md"
   [ -f "$preamble" ] || print_error "missing AGENTS preamble source: ${preamble}"
 
   cat "$preamble"
@@ -625,7 +627,8 @@ read_manifest() {
 # =============================================================================
 
 cmd_init() {
-  local PROJ_NAME="" DIR_PATH MODULES_CSV="website" SRC_PATH="" VER=""
+  local PROJ_NAME="" DIR_PATH MODULES_CSV="website,ai,ci" SRC_PATH="" VER=""
+  local no_ai=0 no_ci=0
   DIR_PATH="$(pwd)"
 
   while [[ $# -gt 0 ]]; do
@@ -638,6 +641,8 @@ cmd_init() {
       --dry-run)          DRY_RUN=1; shift ;;
       --yes)              ASSUME_YES=1; shift ;;
       --no-harness-coding)HARNESS_CODING_ENABLED=0; shift ;;
+      --no-ai)            no_ai=1; shift ;;
+      --no-ci)            no_ci=1; shift ;;
       -h|--help)          usage; exit 0 ;;
       *)                  usage; print_error "unknown option: $1" ;;
     esac
@@ -650,6 +655,8 @@ cmd_init() {
     validate_module "$m"
     [ "$m" = "website" ] && has_web=1
     if [ "$m" = "devcontainer" ]; then HARNESS_CODING_ENABLED=1; continue; fi
+    [ "$m" = "ai" ] && [ "$no_ai" = "1" ] && continue
+    [ "$m" = "ci" ] && [ "$no_ci" = "1" ] && continue
     mods+=("$m")
   done
 

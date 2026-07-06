@@ -4,6 +4,25 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/versioning.md).
 
+## [0.1.2] — 2026-07-06
+
+### Changed
+
+- **`ai` and `ci` modules are now default-on at `init`** (opt-out, same pattern as
+  `harness-coding`), instead of opt-in. Use `--no-ai` / `--no-ci` to skip them.
+  `backend` and `infrastructure` remain opt-in.
+
+### Fixed
+
+- Removed `walle/website/AGENTS.md` — a stray, unreferenced duplicate left over from before
+  the repo restructured `website/` under `walle/`.
+- Moved the AGENTS block source (`agents.block.md`) from `walle/cli/` to `walle/ai/`, matching
+  the convention that each module owns its template content.
+- Aligned `walle/template/package.json`'s Astro dependency versions (`astro`, `@astrojs/mdx`,
+  `@astrojs/node`, `@astrojs/rss`) with `walle/website/package.json` — the consumer scaffold
+  was pinning Astro 6 while the `@walle` components it ships (from `website/`) are built and
+  tested against Astro 7.
+
 ## [0.1.1] — 2026-07-06
 
 ### Fixed
