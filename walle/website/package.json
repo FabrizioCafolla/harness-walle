@@ -36,6 +36,7 @@
     "astro-icon": "^1.1.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.61.1",
     "@typescript-eslint/eslint-plugin": "^8.65.0",
     "@typescript-eslint/parser": "^8.65.0",

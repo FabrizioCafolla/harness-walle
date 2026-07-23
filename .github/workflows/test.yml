@@ -28,6 +28,51 @@ jobs:
         with:
           working_dir: 'walle/website'
 
+  a11y:
+    name: Accessibility (axe-core)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      # Must run before setup-node's cache: yarn — see comment in the playwright job below.
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: walle/website/.nvmrc
+          cache: yarn
+
+      - name: Install dependencies
+        timeout-minutes: 3
+        working-directory: walle/website
+        run: |
+          corepack prepare --activate
+          yarn install --immutable
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('walle/website/yarn.lock') }}
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        timeout-minutes: 3
+        working-directory: walle/website
+        run: yarn playwright install --with-deps chromium chromium-headless-shell
+
+      # Blocking gate: fails on any serious/critical axe violation across every
+      # Astrobook story page and the demo-site pages (layout-level checks).
+      - name: Axe accessibility suite
+        timeout-minutes: 6
+        working-directory: walle/website
+        run: yarn playwright test --config playwright.astrobook.config.ts a11y.spec.ts
+
   playwright:
     name: Playwright
     runs-on: ubuntu-22.04

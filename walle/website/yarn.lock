@@ -327,6 +327,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@axe-core/playwright@npm:^4.12.1":
+  version: 4.12.1
+  resolution: "@axe-core/playwright@npm:4.12.1"
+  dependencies:
+    axe-core: "npm:~4.12.1"
+  peerDependencies:
+    playwright-core: ">= 1.0.0"
+  checksum: 10c0/7a52498c8a09f7427581473ee9253b986efca7c61870187f5c64a1d04c4e4db43d4f26b0cf7650f75840ce7a7d69c7d07547ef76eb93704fa927a4fcf4020139
+  languageName: node
+  linkType: hard
+
 "@babel/helper-string-parser@npm:^7.29.7":
   version: 7.29.7
   resolution: "@babel/helper-string-parser@npm:7.29.7"
@@ -2179,6 +2190,13 @@ __metadata:
     astro:
       optional: true
   checksum: 10c0/c1dcbc30a0e619b5f168e0edd08719ff53a27b568c4b8a232ab913c45a7c7c317cdb7edd1630efa1371753af07e63d27cc969fe48c081fb8dd07afa287267efe
+  languageName: node
+  linkType: hard
+
+"axe-core@npm:~4.12.1":
+  version: 4.12.1
+  resolution: "axe-core@npm:4.12.1"
+  checksum: 10c0/03438bd98cef38ad57554feea0d8de21705001db2655c27e0c33ff55e16dd7d6f49c28fb420dc93f7532e68ff363c0953056a5836e6f47068f193eb1765c7db7
   languageName: node
   linkType: hard
 
@@ -6833,6 +6851,7 @@ __metadata:
     "@astrojs/node": "npm:^11.0.2"
     "@astrojs/rss": "npm:^4.0.19"
     "@astrojs/sitemap": "npm:^3.7.3"
+    "@axe-core/playwright": "npm:^4.12.1"
     "@iconify-json/fa": "npm:^1.2.2"
     "@iconify-json/mdi": "npm:^1.2.3"
     "@playwright/test": "npm:^1.61.1"
