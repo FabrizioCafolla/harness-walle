@@ -25,6 +25,13 @@ All notable changes to Walle are documented here. Format follows
     collapses to one on narrow viewports).
 - **320px reflow gate** (WCAG 1.4.10) in the Playwright a11y suite: every story page and demo
   page must render without page-level horizontal overflow at 320px.
+- **`features/CollectionFilters`** — config-driven client-side filtering (search + multi-select
+  facets over `data-*` attributes, live result count, progressive enhancement). **Replaces
+  `BlogFilters`** (which was only used internally by `BlogPostsLayout`); generalises the
+  filter pattern duplicated by consumer sites.
+- **`layouts/DetailLayout`** — generic detail page (header with badges slot, back link,
+  breadcrumbs, responsive main/aside grid), generalised from europeopensource.eu's
+  `ProjectDetailLayout`; composes into product detail pages.
 
 ### Changed
 
@@ -58,6 +65,8 @@ All notable changes to Walle are documented here. Format follows
   | `Breadcrumbs` | `extraClass`            | `class`                         |
 
   Consumer config files (`navbar.json`, `footer.json`) are **not** affected.
+- **`BlogFilters` removed** — superseded by `CollectionFilters` (no consumer imported it
+  directly; `BlogPostsLayout` migrated internally).
 - **`Button` no longer nests `<button>` inside `<a>`** (invalid HTML, nested interactive
   elements). With `href` it renders a single `<a>` styled as a button; otherwise a `<button>`.
 - **`rel="noopener"` is added automatically** on every `@walle` link with `target="_blank"`.

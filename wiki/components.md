@@ -276,12 +276,23 @@ Full-width page header with optional image and 3D tilt on hover.
 | `centered`   | `boolean`                                 | `true`      |
 | `effect`     | `boolean`                                 | `false`     |
 
+### `CollectionFilters`
+
+Config-driven client-side filtering (text search + multi-select facets) over any rendered collection. Items carry `data-filter-item` plus one `data-<key>` attribute per facet (comma-separated values) and optional `data-search`; the component hides non-matching items and announces the visible count in a live region. With JavaScript disabled the filter UI stays hidden and every item remains visible. Replaces the former `BlogFilters` (used internally by `BlogPostsLayout`).
+
+| Prop           | Type                                                | Default                |
+| -------------- | --------------------------------------------------- | ---------------------- |
+| `facets`       | `{ key: string; label: string; options: string[] }[]` | `[]`                 |
+| `itemSelector` | `string`                                            | `"[data-filter-item]"` |
+| `search`       | `boolean`                                           | `true`                 |
+| `labels`       | object — English defaults, override for localization | —                     |
+| `class`        | `string`                                            | —                      |
+
 ### Blog components
 
 | Component               | Purpose                     |
 | ----------------------- | --------------------------- |
 | `BlogArticleNavigation` | Previous/next article links |
-| `BlogFilters`           | Tag/category filter UI      |
 | `BlogReadingProgress`   | Scroll progress bar         |
 | `BlogTableOfContents`   | Sticky TOC from headings    |
 
@@ -348,6 +359,14 @@ Base HTML wrapper. Loads `Head`, `global.css`, and `Analytics`. Renders a skip l
 Extends `AbstractLayout`. Adds `<Navbar>` and `<Footer>`. Inherits all `AbstractLayout` props.
 
 **Slots:** `head` (forwarded to `AbstractLayout`), `navbar` (replaces default `<Navbar>`), `footer` (replaces default `<Footer>`), default (page content inside `<main>`)
+
+### `DetailLayout`
+
+Generic detail page: `SectionHeaderStandard` (title + `badges` slot) over a responsive two-column grid — default slot as main column, `aside` slot as sidebar — with optional `backLink` and `breadcrumbs`. Composes with `ProductData` content for product detail pages.
+
+**Props:** `title` (required), `description`, `ogImage`, `breadcrumbs` (`BreadcrumbItem[]`), `backLink` (`{ href, label? }`, label defaults to `"Back"`), `headerEffect`
+
+**Slots:** `badges`, default (main), `aside`
 
 ### `BlogPostLayout`
 
