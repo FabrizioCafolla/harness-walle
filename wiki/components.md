@@ -332,6 +332,14 @@ CSS-grid column section: `columns` caps the count on wide screens, `auto-fit`/`m
 | `variant`        | `"primary"` \| `"gray"` \| `null` | `null`    |
 | `class`          | `string`                          | —         |
 
+### `StructuredData`
+
+Renders schema.org JSON-LD from a plain object (or array); `@context` is added automatically. Builders for the common shapes live in `@walle/utils/structured-data`: `websiteJsonLd`, `organizationJsonLd`, `articleJsonLd`, `productJsonLd`. Layouts wire it automatically — `AbstractLayout` emits `WebSite` + `Organization` from config, `BlogPostLayout` emits `Article`, `DetailLayout` emits `Product`/`Offer` when given a `product` — so pages only add their own extra shapes.
+
+| Prop   | Type                   | Default  |
+| ------ | ---------------------- | -------- |
+| `data` | `JsonLd \| JsonLd[]`   | required |
+
 ### Other features
 
 | Component     | Purpose                                     |

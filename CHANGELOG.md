@@ -31,7 +31,16 @@ All notable changes to Walle are documented here. Format follows
   filter pattern duplicated by consumer sites.
 - **`layouts/DetailLayout`** — generic detail page (header with badges slot, back link,
   breadcrumbs, responsive main/aside grid), generalised from europeopensource.eu's
-  `ProjectDetailLayout`; composes into product detail pages.
+  `ProjectDetailLayout`; composes into product detail pages (see the seeded
+  `/products/example` demo page).
+- **SEO / AI structured data.** `features/StructuredData` renders schema.org JSON-LD from plain
+  objects (builders in `@walle/utils/structured-data`); layouts wire it automatically:
+  `AbstractLayout` → `WebSite` + `Organization` from config, `BlogPostLayout` → `Article`,
+  `DetailLayout` → `Product`/`Offer` from the same `ProductData` that feeds the visible page.
+- **`/llms.txt`** ([llmstxt.org](https://llmstxt.org)) — build-time markdown index of the site
+  (identity + page tree + blog posts with descriptions), seeded as `src/pages/llms.txt.ts`.
+- **`Head` metadata**: `og:locale` from the site language, `article:published_time` (and
+  `og:type: article`) when the layout provides a publish date.
 
 ### Changed
 
