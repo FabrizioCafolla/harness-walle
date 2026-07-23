@@ -4,6 +4,33 @@ All `@walle` components are MANAGED — they live in `src/@walle/components/` an
 
 ---
 
+## API conventions
+
+Every `@walle` component uses one shared prop vocabulary. If a component accepts one of these concepts, it uses exactly this name and type:
+
+| Concept          | Prop                  | Type                                          | Notes                                                                                                     |
+| ---------------- | --------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Destination URL  | `href`                | `string`                                      | Matches HTML. A component with `href` renders a link.                                                     |
+| Link target      | `target`              | `"_blank"` \| `"_self"`                       | `rel="noopener"` is added automatically when `_blank`.                                                    |
+| Visual variant   | `variant`             | union per component                           | Never `color` or `type` for visual style.                                                                 |
+| Size             | `size`                | `"small"` \| `"medium"` \| `"large"`          |                                                                                                            |
+| Image            | `image`               | `{ src: ImageMetadata \| string; alt: string }` | `alt` is required; empty string only for decorative images.                                              |
+| Label text       | `text`                | `string`                                      | Label-only components (Button, Badge). Rich content uses slots.                                            |
+| Icon             | `icon` / `iconPosition` | `string` / `"start"` \| `"end"`             |                                                                                                            |
+| Extra classes    | `class`               | `string`                                      | Appended to the component root element.                                                                    |
+| Native button type | `type`              | `"button"` \| `"submit"` \| `"reset"`         | Only on Button; freed by the `variant` rename.                                                             |
+| Element id       | `id`                  | `string`                                      |                                                                                                            |
+
+Rules:
+
+- **English only**: source, comments, docs, and every user-facing or screen-reader-announced string ships an English default, overridable via props or `config.app` for localization.
+- Boolean modifiers are positive and unprefixed: `outline`, `centered`, `reversed`, `fullWidth`, `disabled`.
+- Polymorphic components (Button as `<a>` or `<button>`) decide from `href` presence — there is no `as` prop.
+- Slots over content props whenever content is rich (cards, sections).
+- The vocabulary applies to **component props**. Consumer config files (`navbar.json`, `footer.json`) keep their own schema (`url`, `name`, …) — they are a stable consumer-facing contract, not component APIs.
+
+---
+
 ## Config files
 
 Four JSON files in `src/configs/`, all schema-validated (`just validate-configs`):
@@ -110,33 +137,33 @@ Inline label with optional icon and link.
 | Prop           | Type                                                                                                    | Default    |
 | -------------- | ------------------------------------------------------------------------------------------------------- | ---------- |
 | `text`         | `string`                                                                                                | required   |
-| `color`        | `"primary"` \| `"secondary"` \| `"alternative"` \| `"gray"` \| `"success"` \| `"warning"` \| `"danger"` | `"gray"`   |
-| `iconName`     | `string`                                                                                                | —          |
+| `variant`      | `"primary"` \| `"secondary"` \| `"alternative"` \| `"gray"` \| `"success"` \| `"warning"` \| `"danger"` | `"gray"`   |
+| `icon`         | `string`                                                                                                | —          |
 | `iconPosition` | `"start"` \| `"end"`                                                                                    | `"end"`    |
-| `link`         | `string`                                                                                                | —          |
-| `target`       | `string`                                                                                                | —          |
+| `href`         | `string`                                                                                                | —          |
+| `target`       | `"_blank"` \| `"_self"`                                                                                 | —          |
 | `size`         | `"small"` \| `"medium"` \| `"large"`                                                                    | `"medium"` |
-| `extraClass`   | `string`                                                                                                | —          |
+| `class`        | `string`                                                                                                | —          |
 
 ### `Button`
 
-Button or link-wrapped button.
+Renders an `<a>` styled as a button when `href` is set, a `<button>` otherwise.
 
-| Prop             | Type                                      | Default     |
-| ---------------- | ----------------------------------------- | ----------- |
-| `text`           | `string`                                  | required    |
-| `link`           | `string`                                  | —           |
-| `type`           | `"primary"` \| `"secondary"` \| `"white"` | `"primary"` |
-| `outline`        | `boolean`                                 | `false`     |
-| `size`           | `"small"` \| `"medium"` \| `"large"`      | `"medium"`  |
-| `fullWidth`      | `boolean`                                 | `false`     |
-| `iconName`       | `string`                                  | —           |
-| `target`         | `string`                                  | —           |
-| `disabled`       | `boolean`                                 | `false`     |
-| `disableEffects` | `boolean`                                 | `false`     |
-| `buttonType`     | `"button"` \| `"submit"` \| `"reset"`     | `"button"`  |
-| `id`             | `string`                                  | —           |
-| `extraClass`     | `string`                                  | —           |
+| Prop        | Type                                      | Default     |
+| ----------- | ----------------------------------------- | ----------- |
+| `text`      | `string`                                  | required    |
+| `href`      | `string`                                  | —           |
+| `variant`   | `"primary"` \| `"secondary"` \| `"white"` | `"primary"` |
+| `outline`   | `boolean`                                 | `false`     |
+| `size`      | `"small"` \| `"medium"` \| `"large"`      | `"medium"`  |
+| `fullWidth` | `boolean`                                 | `false`     |
+| `icon`      | `string`                                  | —           |
+| `target`    | `"_blank"` \| `"_self"`                   | —           |
+| `disabled`  | `boolean`                                 | `false`     |
+| `effects`   | `boolean`                                 | `true`      |
+| `type`      | `"button"` \| `"submit"` \| `"reset"`     | `"button"`  |
+| `id`        | `string`                                  | —           |
+| `class`     | `string`                                  | —           |
 
 ---
 
@@ -169,22 +196,25 @@ Renders all `<head>` meta tags. Used inside layouts — not imported directly in
 
 Content section wrapper.
 
-| Prop       | Type                              | Default |
-| ---------- | --------------------------------- | ------- |
-| `title`    | `string`                          | —       |
-| `centered` | `boolean`                         | `true`  |
-| `type`     | `"primary"` \| `"gray"` \| `null` | `null`  |
+| Prop       | Type                                        | Default |
+| ---------- | ------------------------------------------- | ------- |
+| `title`    | `string`                                    | —       |
+| `image`    | `{ src: ImageMetadata \| string; alt: string }` | —   |
+| `reversed` | `boolean`                                   | `false` |
+| `centered` | `boolean`                                   | `false` |
+| `variant`  | `"primary"` \| `"gray"` \| `null`           | `null`  |
 
 ### `SectionFlow`
 
 Animated step list with scroll-triggered reveal.
 
-| Prop       | Type                              | Default  |
-| ---------- | --------------------------------- | -------- |
-| `title`    | `string`                          | required |
-| `steps`    | `FlowStep[]`                      | required |
-| `centered` | `boolean`                         | `true`   |
-| `type`     | `"primary"` \| `"gray"` \| `null` | `null`   |
+| Prop       | Type                              | Default           |
+| ---------- | --------------------------------- | ----------------- |
+| `title`    | `string`                          | required          |
+| `steps`    | `FlowStep[]`                      | required          |
+| `centered` | `boolean`                         | `true`            |
+| `variant`  | `"primary"` \| `"gray"` \| `null` | `null`            |
+| `label`    | `string` (a11y label of the list) | `"Process steps"` |
 
 ```typescript
 interface FlowStep {
@@ -203,8 +233,7 @@ Full-width page header with optional image and 3D tilt on hover.
 | ------------ | ----------------------------------------- | ----------- |
 | `title`      | `string`                                  | required    |
 | `subtitle`   | `string`                                  | —           |
-| `imageSrc`   | `ImageMetadata`                           | —           |
-| `imageAlt`   | `string`                                  | `""`        |
+| `image`      | `{ src: ImageMetadata; alt: string }`     | —           |
 | `imageRight` | `boolean`                                 | `false`     |
 | `variant`    | `"primary"` \| `"secondary"` \| `"white"` | `"primary"` |
 | `centered`   | `boolean`                                 | `true`      |
