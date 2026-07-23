@@ -58,21 +58,23 @@ const allCategories: string[] = Array.from(
           <div class="blog-layout__grid">
             {sortedPosts.map((post: PostsEntry) => {
               const badge = post.data.tags?.length
-                ? { text: post.data.tags[0], color: "secondary" as const }
+                ? { text: post.data.tags[0], variant: "secondary" as const }
                 : undefined;
 
               return (
                 <BasicCard
                   title={post.data.title}
                   content={post.data.description}
-                  linkUrl={resolveInternalUrl(`/blog/${post.id}`)}
-                  imageUrl={resolveInternalUrl(post.data.image || "/img/posts/default.jpg")}
-                  imageAlt={post.data.title}
+                  href={resolveInternalUrl(`/blog/${post.id}`)}
+                  image={{
+                    src: resolveInternalUrl(post.data.image || "/img/posts/default.jpg"),
+                    alt: post.data.title,
+                  }}
                   badge={badge}
                   publishDate={
                     post.data.publishDate ? formatDate(post.data.publishDate.toString()) : null
                   }
-                  linkTarget="_self"
+                  target="_self"
                 />
               );
             })}

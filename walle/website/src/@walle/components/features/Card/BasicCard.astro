@@ -2,42 +2,49 @@
 export interface Props {
   title: string;
   content: string;
-  imageUrl?: string;
-  imageAlt?: string;
-  linkUrl: string;
-  linkTarget?: "_blank" | "_self";
-  extraClass?: string;
+  image?: {
+    src: string;
+    alt: string;
+  };
+  href: string;
+  target?: "_blank" | "_self";
+  class?: string;
   publishDate?: Date | string | null;
   badge?: {
     text: string;
-    color?: "primary" | "secondary";
+    variant?: "primary" | "secondary";
   };
 }
 
 const {
   title,
   content,
-  imageUrl,
-  imageAlt = title,
-  linkUrl,
-  linkTarget = "_self",
-  extraClass = "",
+  image,
+  href,
+  target = "_self",
+  class: className = "",
   badge,
   publishDate,
 } = Astro.props;
 
-const cardClasses = ["card", extraClass].filter(Boolean).join(" ");
+const cardClasses = ["card", className].filter(Boolean).join(" ");
 
 // Truncate description to 120 characters for minimalist design
 const truncatedContent = content.length > 120 ? content.substring(0, 120) + "..." : content;
 ---
 
-<a href={linkUrl} target={linkTarget} class={cardClasses} aria-label={`Read ${title}`}>
+<a
+  href={href}
+  target={target}
+  rel={target === "_blank" ? "noopener" : undefined}
+  class={cardClasses}
+  aria-label={`Read ${title}`}
+>
   <article class="card__wrapper">
     {
-      imageUrl && (
+      image && (
         <div class="card__image">
-          <img src={imageUrl} alt={imageAlt} loading="lazy" width="120" height="120" />
+          <img src={image.src} alt={image.alt} loading="lazy" width="120" height="120" />
         </div>
       )
     }
@@ -46,7 +53,9 @@ const truncatedContent = content.length > 120 ? content.substring(0, 120) + "...
       <div class="card__meta">
         {
           badge && (
-            <span class={`card__badge card__badge--${badge.color || "primary"}`}>{badge.text}</span>
+            <span class={`card__badge card__badge--${badge.variant || "primary"}`}>
+              {badge.text}
+            </span>
           )
         }
         {publishDate && <span class="card__date">{publishDate}</span>}
