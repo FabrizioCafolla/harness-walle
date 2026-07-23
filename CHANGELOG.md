@@ -4,6 +4,47 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/versioning.md).
 
+## [Unreleased — 0.3.0]
+
+### Changed
+
+- **BREAKING — unified component prop vocabulary.** Every `@walle` component now uses the shared
+  API convention documented in [wiki/components.md](wiki/components.md#api-conventions). Consumer
+  usages of `@walle` components need the following mechanical renames (find/replace):
+
+  | Component     | Old prop                | New prop                        |
+  | ------------- | ----------------------- | ------------------------------- |
+  | `Button`      | `link`                  | `href`                          |
+  | `Button`      | `type` (visual style)   | `variant`                       |
+  | `Button`      | `buttonType`            | `type`                          |
+  | `Button`      | `iconName`              | `icon`                          |
+  | `Button`      | `disableEffects={true}` | `effects={false}`               |
+  | `Button`      | `extraClass`            | `class`                         |
+  | `Badge`       | `color`                 | `variant`                       |
+  | `Badge`       | `link`                  | `href`                          |
+  | `Badge`       | `iconName`              | `icon`                          |
+  | `Badge`       | `extraClass`            | `class`                         |
+  | `BasicCard`   | `linkUrl`               | `href`                          |
+  | `BasicCard`   | `linkTarget`            | `target`                        |
+  | `BasicCard`   | `imageUrl` + `imageAlt` | `image={{ src, alt }}`          |
+  | `BasicCard`   | `badge.color`           | `badge.variant`                 |
+  | `BasicCard`   | `extraClass`            | `class`                         |
+  | `HeaderStandard` | `imageSrc` + `imageAlt` | `image={{ src, alt }}`       |
+  | `Section`     | `type`                  | `variant`                       |
+  | `Section`     | `imageSrc` + `imageAlt` | `image={{ src, alt }}`          |
+  | `SectionFlow` | `type`                  | `variant`                       |
+  | `Breadcrumbs` | `items[].url`           | `items[].href`                  |
+  | `Breadcrumbs` | `items[].iconName`      | `items[].icon`                  |
+  | `Breadcrumbs` | `extraClass`            | `class`                         |
+
+  Consumer config files (`navbar.json`, `footer.json`) are **not** affected.
+- **`Button` no longer nests `<button>` inside `<a>`** (invalid HTML, nested interactive
+  elements). With `href` it renders a single `<a>` styled as a button; otherwise a `<button>`.
+- **`rel="noopener"` is added automatically** on every `@walle` link with `target="_blank"`.
+- Updated all website dependencies to latest (astro 7.1.3, eslint 10.7, eslint-plugin-astro 3,
+  vitest 4, playwright 1.61); yarn 4.17.1. TypeScript stays on 6.0.3 until typescript-eslint
+  supports TS 7.
+
 ## [0.2.1] — 2026-07-06
 
 ### Changed
