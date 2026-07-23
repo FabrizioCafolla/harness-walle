@@ -6,12 +6,12 @@ export { default as Price } from "./elements/Price.astro";
 
 export { default as Analytics } from "./features/Analytics.astro";
 export { default as BlogArticleNavigation } from "./features/Blog/BlogArticleNavigation.astro";
-export { default as BlogFilters } from "./features/Blog/BlogFilters.astro";
 export { default as BlogReadingProgress } from "./features/Blog/BlogReadingProgress.astro";
 export { default as BlogTableOfContents } from "./features/Blog/BlogTableOfContents.astro";
 
 export { default as Breadcrumbs } from "./features/Breadcrumbs.astro";
 export { default as Carousel } from "./features/Carousel.astro";
+export { default as CollectionFilters } from "./features/CollectionFilters.astro";
 export { default as BasicCard } from "./features/Card/BasicCard.astro";
 export { default as ProductCard } from "./features/Card/ProductCard.astro";
 export { default as Footer } from "./features/FooterResolver.astro";
