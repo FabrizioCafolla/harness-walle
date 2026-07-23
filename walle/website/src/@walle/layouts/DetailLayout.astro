@@ -1,7 +1,9 @@
 ---
-import { Breadcrumbs, SectionHeaderStandard } from "@walle/components";
+import { Breadcrumbs, SectionHeaderStandard, StructuredData } from "@walle/components";
 import type { BreadcrumbItem } from "@walle/components/features/Breadcrumbs.astro";
+import type { ProductData } from "@walle/components/features/Card/ProductCard.astro";
 import { BaseLayout } from "@walle/layouts";
+import { productJsonLd } from "@walle/utils/structured-data";
 import { Icon } from "astro-icon/components";
 
 /**
@@ -49,6 +51,12 @@ export interface Props {
    * @default false
    */
   headerEffect?: boolean;
+
+  /**
+   * Product rendered by this page — emits Product/Offer JSON-LD from the
+   * same object that feeds the visible content (one shape, two renderings)
+   */
+  product?: ProductData;
 }
 
 const {
@@ -58,10 +66,12 @@ const {
   breadcrumbs = [],
   backLink,
   headerEffect = false,
+  product,
 } = Astro.props;
 ---
 
 <BaseLayout headerTitle={title} headerDescription={description} headerOgImage={ogImage}>
+  {product && <StructuredData data={productJsonLd(product, Astro.url.href)} />}
   <SectionHeaderStandard title={title} effect={headerEffect}>
     <div class="detail-badges">
       <slot name="badges" />

@@ -1,7 +1,13 @@
 ---
-import { BlogReadingProgress, BlogTableOfContents, SectionHeaderStandard } from "@walle/components";
+import {
+  BlogReadingProgress,
+  BlogTableOfContents,
+  SectionHeaderStandard,
+  StructuredData,
+} from "@walle/components";
 import { BaseLayout } from "@walle/layouts";
 import { formatDate } from "@walle/utils";
+import { articleJsonLd } from "@walle/utils/structured-data";
 
 interface Props {
   title: string;
@@ -26,8 +32,28 @@ const {
 } = Astro.props;
 ---
 
-<BaseLayout headerTitle={title} headerDescription={description} headerImage={image}>
+<BaseLayout
+  headerTitle={title}
+  headerDescription={description}
+  headerImage={image}
+  headerPublishedTime={publishDate}
+>
   <slot name="head" slot="head" />
+  {
+    !draft && (
+      <StructuredData
+        data={articleJsonLd({
+          title,
+          description,
+          url: Astro.url.href,
+          publishDate,
+          author,
+          image: image ? new URL(image, Astro.site).href : undefined,
+          tags,
+        })}
+      />
+    )
+  }
   <slot name="before" />
   {
     draft ? (
