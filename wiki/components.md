@@ -264,9 +264,9 @@ Import from `@walle/layouts/<Name>.astro`.
 
 ### `AbstractLayout`
 
-Base HTML wrapper. Loads `Head`, `global.css`, and `Analytics`.
+Base HTML wrapper. Loads `Head`, `global.css`, and `Analytics`. Renders a skip link as the first focusable element, targeting `#main-content` (provided by `BaseLayout`).
 
-**Props:** `headerTitle`, `headerDescription`, `headerImage`, `headerOgImage`, `headerRobots`, `headerLanguage`
+**Props:** `headerTitle`, `headerDescription`, `headerImage`, `headerOgImage`, `headerRobots`, `headerLanguage`, `skipLinkLabel` (default `"Skip to content"`)
 
 **Slots:** `head` (injected inside `<head>` after `<Head />`), default (body content)
 

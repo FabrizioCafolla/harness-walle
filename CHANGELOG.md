@@ -54,10 +54,18 @@ All notable changes to Walle are documented here. Format follows
   - Badge `success` `#2ecc71` → `#1f874b`, `warning` `#f39c12` → `#a36708`,
     `danger` `#e74c3c` → `#da2d1b` (white badge text was 2.1–3.9:1)
 
+- **WCAG 2.2 AA accessibility baseline.** Skip link in `AbstractLayout` (label overridable via
+  `skipLinkLabel`), global `prefers-reduced-motion` kill-switch, Navbar Esc-to-close returns
+  focus to the trigger and dropdowns expose `aria-expanded`, `aria-current="page"` on
+  breadcrumbs. Enforced in CI by an axe-core Playwright suite (`just a11y-test`) covering every
+  Astrobook story page plus the demo-site pages — fails on serious/critical violations.
+
 ### Fixed
 
 - `global.css` used invalid `rgb(var(--gray-light))` for `code` background and `hr` border —
   the value resolved to nothing; both now use semantic tokens.
+- `BlogPostsLayout` rendered a second `<main>` nested inside `BaseLayout`'s — invalid landmark
+  structure; now a `<div>`.
 
 ## [0.2.1] — 2026-07-06
 
