@@ -40,7 +40,7 @@ const allCategories: string[] = Array.from(
 
 <BaseLayout headerTitle={headerTitle}>
   <slot name="head" slot="head" />
-  <main class="blog-layout">
+  <div class="blog-layout">
     <div class="blog-layout__header">
       <slot />
     </div>
@@ -83,7 +83,7 @@ const allCategories: string[] = Array.from(
       }
       <slot name="after" />
     </div>
-  </main>
+  </div>
 </BaseLayout>
 
 <style>

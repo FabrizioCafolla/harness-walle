@@ -13,6 +13,7 @@ const {
   headerOgImage = null,
   headerRobots = config.app.website.robots || "index, follow",
   headerLanguage = config.app.website.language || "",
+  skipLinkLabel = "Skip to content",
 } = Astro.props;
 ---
 
@@ -29,6 +30,7 @@ const {
     <slot name="head" />
   </head>
   <body>
+    <a href="#main-content" class="skip-link">{skipLinkLabel}</a>
     <slot />
     <Analytics
       enable={config.env.IS_PRODUCTION || false}
