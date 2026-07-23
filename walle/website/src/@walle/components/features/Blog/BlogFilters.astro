@@ -349,7 +349,7 @@ const { categories } = Astro.props;
     transform: translateY(-50%);
     width: 18px;
     height: 18px;
-    color: var(--gray-dark);
+    color: var(--text-muted);
     pointer-events: none;
   }
 
@@ -374,7 +374,7 @@ const { categories } = Astro.props;
   }
 
   .filters__input::placeholder {
-    color: var(--gray-dark);
+    color: var(--text-muted);
     font-weight: 400;
   }
 
@@ -396,7 +396,7 @@ const { categories } = Astro.props;
     align-items: center;
     justify-content: space-between;
     padding: 12px 16px;
-    background: var(--white);
+    background: var(--surface);
     border: 2px solid var(--gray-light);
     border-radius: var(--radius-sm);
     font-size: 14px;
@@ -420,7 +420,7 @@ const { categories } = Astro.props;
   .filters__dropdown-icon {
     width: 14px;
     height: 14px;
-    color: var(--gray-dark);
+    color: var(--text-muted);
     transition: transform 0.2s ease;
     flex-shrink: 0;
   }
@@ -436,7 +436,7 @@ const { categories } = Astro.props;
     left: 0;
     right: 0;
     z-index: 1000;
-    background: var(--white);
+    background: var(--surface);
     border: 2px solid var(--gray-light);
     border-radius: var(--radius-sm);
     max-height: 200px;
@@ -471,11 +471,11 @@ const { categories } = Astro.props;
   }
 
   .filters__option:hover {
-    background: var(--gray-light);
+    background: var(--surface-alt);
   }
 
   .filters__option:focus-within {
-    background: var(--gray-light);
+    background: var(--surface-alt);
     outline: 2px solid var(--primary);
     outline-offset: -2px;
   }
@@ -545,7 +545,7 @@ const { categories } = Astro.props;
   .blog-layout__empty {
     text-align: center;
     padding: 60px 20px;
-    color: var(--gray-dark);
+    color: var(--text-muted);
   }
 
   .blog-layout__empty p {

@@ -94,7 +94,7 @@ const { title, steps, centered = true, variant = null, label = "Process steps" }
   }
 
   .step-content {
-    background: var(--white);
+    background: var(--surface);
     border-radius: 8px;
     box-shadow: var(--box-shadow);
     padding: 1.5rem 2rem;
@@ -109,7 +109,7 @@ const { title, steps, centered = true, variant = null, label = "Process steps" }
 
   .step-content p {
     margin: 0;
-    color: var(--gray-dark);
+    color: var(--text-muted);
   }
 
   .step-icon {
@@ -144,11 +144,11 @@ const { title, steps, centered = true, variant = null, label = "Process steps" }
 
   /* Ensure text is readable in all color themes */
   :global(.section-content-primary) .step-content {
-    color: var(--black);
+    color: var(--text);
   }
 
   :global(.section-content-primary) .step-content p {
-    color: var(--gray-dark);
+    color: var(--text-muted);
   }
 </style>
 
