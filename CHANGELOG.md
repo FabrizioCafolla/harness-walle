@@ -44,6 +44,20 @@ All notable changes to Walle are documented here. Format follows
 - Updated all website dependencies to latest (astro 7.1.3, eslint 10.7, eslint-plugin-astro 3,
   vitest 4, playwright 1.61); yarn 4.17.1. TypeScript stays on 6.0.3 until typescript-eslint
   supports TS 7.
+- **Semantic design tokens.** `global.css` now exposes `--surface`, `--surface-alt`, `--text`,
+  `--text-muted`, `--border`, `--link`, `--link-hover`, `--focus-ring`, `--disabled-opacity` on
+  top of the palette; `@walle` components reference these for neutral surfaces/text/borders/focus.
+  Override the semantic block to restyle every component at once.
+- **WCAG 2.2 AA contrast fixes to default colors** (lightness only, hue unchanged; enforced by
+  `tests/unit/contrast.test.ts`):
+  - `--gray-dark` `#6b7280` → `#69707d` (muted text on gray sections was 4.43:1)
+  - Badge `success` `#2ecc71` → `#1f874b`, `warning` `#f39c12` → `#a36708`,
+    `danger` `#e74c3c` → `#da2d1b` (white badge text was 2.1–3.9:1)
+
+### Fixed
+
+- `global.css` used invalid `rgb(var(--gray-light))` for `code` background and `hr` border —
+  the value resolved to nothing; both now use semantic tokens.
 
 ## [0.2.1] — 2026-07-06
 
