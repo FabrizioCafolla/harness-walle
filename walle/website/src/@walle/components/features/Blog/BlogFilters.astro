@@ -338,7 +338,8 @@ const { categories } = Astro.props;
   .filters__search {
     position: relative;
     flex: 1;
-    min-width: 280px;
+    /* min() keeps the row from forcing horizontal overflow on narrow viewports */
+    min-width: min(280px, 100%);
     max-width: 400px;
   }
 
@@ -381,7 +382,7 @@ const { categories } = Astro.props;
   /* Category Dropdown */
   .filters__categories {
     flex-shrink: 0;
-    min-width: 200px;
+    min-width: min(200px, 100%);
     max-width: 250px;
     position: relative;
   }

@@ -43,6 +43,7 @@ export function contrastRatio(fg: string, bg: string): number {
 }
 
 const palette = {
+  gray: tokenDefault("--gray"),
   primary: tokenDefault("--primary"),
   primaryLight: tokenDefault("--primary-light"),
   secondary: tokenDefault("--secondary"),
@@ -63,6 +64,7 @@ const pairings: [string, string, string, number][] = [
   ["text on surface", palette.foreground, palette.background, NORMAL],
   ["muted text on surface (p on body)", palette.grayDark, palette.background, NORMAL],
   ["muted text on surface-alt (p in gray Section)", palette.grayDark, palette.grayLight, NORMAL],
+  ["muted text on gray (Footer)", palette.grayDark, palette.gray, NORMAL],
   ["body text on surface", palette.grayDarker, palette.background, NORMAL],
   ["link on surface", palette.primary, palette.background, NORMAL],
   ["link on surface-alt", palette.primary, palette.grayLight, NORMAL],
