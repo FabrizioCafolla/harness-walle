@@ -1,0 +1,59 @@
+---
+// Story-only wrapper: provides sample filterable items for CollectionFilters stories.
+import CollectionFilters from "@walle/components/features/CollectionFilters.astro";
+
+interface Props {
+  withSearch?: boolean;
+}
+
+const { withSearch = true } = Astro.props;
+
+const items = [
+  { title: "Alpha article", category: "Tech", lang: "en" },
+  { title: "Beta guide", category: "Travel", lang: "en" },
+  { title: "Gamma notes", category: "Tech", lang: "it" },
+  { title: "Delta story", category: "Travel", lang: "it" },
+];
+---
+
+<CollectionFilters
+  search={withSearch}
+  facets={[
+    { key: "category", label: "Category", options: ["Tech", "Travel"] },
+    { key: "lang", label: "Language", options: ["en", "it"] },
+  ]}
+/>
+
+<div class="demo-grid">
+  {
+    items.map((item) => (
+      <div
+        data-filter-item
+        data-category={item.category}
+        data-lang={item.lang}
+        data-search={item.title}
+      >
+        <div class="demo-item">
+          <h3>{item.title}</h3>
+          <p>
+            {item.category} · {item.lang}
+          </p>
+        </div>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: 1rem;
+  }
+
+  .demo-item {
+    padding: 1rem;
+    border: 1px solid var(--border, #d1d5db);
+    border-radius: 0.5rem;
+  }
+</style>
