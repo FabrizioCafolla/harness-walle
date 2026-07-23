@@ -22,8 +22,13 @@ export default defineConfig({
     // AI-agent environment, which makes Playwright's webServer see the process
     // "exit early" (or silently reuse a stale daemon with outdated story routes).
     // Unsetting the detection vars forces a normal foreground server. No-op on CI.
-    command: "env -u CLAUDECODE -u CLAUDE_CODE_ENTRYPOINT yarn astrobook",
-    url: "http://localhost:4321/astrobook",
+    // --force: replace a stale-locked astro dev server (interrupted runs leave a
+    // lock that blocks the next spawn; reuseExistingServer already covers the
+    // healthy-server case, so force only fires on the broken one).
+    command: "env -u CLAUDECODE -u CLAUDE_CODE_ENTRYPOINT yarn astrobook --force",
+    // Base-prefixed: routes mount under astro's base (see storyRoutes.ts) — the
+    // unprefixed /astrobook answers inconsistently depending on the Accept header.
+    url: "http://localhost:4321/harness-walle/astrobook",
     reuseExistingServer: true,
     // 120s, not 60s: right after a fresh `yarn install` (no warm Vite dep-optimization cache),
     // cold astro dev boot has been observed to take 50s+; 60s left too little margin on CI.

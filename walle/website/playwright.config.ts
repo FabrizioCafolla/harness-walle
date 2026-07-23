@@ -12,7 +12,7 @@ export default defineConfig({
   webServer: {
     // env -u CLAUDECODE …: see playwright.astrobook.config.ts — prevents astro 7's
     // AI-agent auto-daemonization from breaking Playwright's webServer lifecycle.
-    command: "env -u CLAUDECODE -u CLAUDE_CODE_ENTRYPOINT yarn dev",
+    command: "env -u CLAUDECODE -u CLAUDE_CODE_ENTRYPOINT yarn dev --force",
     // Must match use.baseURL: astro.config's base ("/harness-walle", from
     // src/configs/app.json's astro.basePath) means the bare root 404s — a readiness check
     // against it never gets a 2xx, so Playwright polls until timeout even though the server

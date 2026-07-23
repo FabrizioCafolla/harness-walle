@@ -12,7 +12,9 @@ import { siteBase, storyRoutes } from "./storyRoutes";
 // Fails on any serious or critical violation.
 
 // Demo-site pages (served by the same dev server under the configured base path).
-const demoPages = ["/", "/blog", "/blog/example"].map((p) => `${siteBase}${p}`);
+const demoPages = ["/", "/blog", "/blog/example", "/products/example"].map(
+  (p) => `${siteBase}${p}`
+);
 
 /** Guard against silent route drift: astrobook's 404 fallback renders `<pre>Path: …`. */
 async function expectNotFallback(page: Page) {
