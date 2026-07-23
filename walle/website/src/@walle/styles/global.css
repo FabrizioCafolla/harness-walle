@@ -14,9 +14,22 @@
   --gray: #ebebeb;
   --gray-light: #f5f5f5;
   --gray-medium: #d1d5db;
-  --gray-dark: #6b7280;
+  --gray-dark: #69707d;
   --gray-darker: #374151;
   --gray-gradient: rgba(245, 245, 245, 0.5), var(--white);
+
+  /* Semantic tokens — components reference these for neutral surfaces, text,
+     borders and focus. Consumers restyle by overriding this block. */
+  --surface: var(--white);
+  --surface-alt: var(--gray-light);
+  --text: var(--black);
+  --text-muted: var(--gray-dark);
+  --border: var(--gray-medium);
+  --link: var(--primary);
+  --link-hover: var(--primary-dark);
+  --focus-ring: var(--primary);
+  --disabled-opacity: 0.65;
+
   --box-shadow:
     0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 15px rgba(0, 0, 0, 0.05);
   --box-shadow-hover: 0 4px 12px rgba(0, 70, 173, 0.15), 0 8px 24px rgba(0, 0, 0, 0.08);
@@ -58,7 +71,7 @@ body {
   margin: 0;
   padding: 0;
   text-align: left;
-  background-color: var(--white);
+  background-color: var(--surface);
   word-wrap: break-word;
   overflow-wrap: break-word;
   color: var(--gray-darker);
@@ -86,7 +99,7 @@ h5,
 h6 {
   margin: 0 0 var(--space-lg) 0;
   line-height: 1.2;
-  color: var(--black);
+  color: var(--text);
   font-weight: 700;
   font-family: var(--font-heading);
 }
@@ -117,29 +130,29 @@ strong,
 b {
   font-weight: 700;
   font-family: var(--font-heading);
-  color: var(--black);
+  color: var(--text);
 }
 
 p {
   margin: 0 0 var(--space-lg) 0;
   line-height: 1.6;
-  color: var(--gray-dark);
+  color: var(--text-muted);
 }
 
 a {
-  color: var(--primary);
+  color: var(--link);
   text-decoration: none;
   transition: var(--transition);
   font-weight: 500;
 }
 
 a:hover {
-  color: var(--primary-dark);
+  color: var(--link-hover);
   text-decoration: none;
 }
 
 a:focus {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
   border-radius: 2px;
 }
@@ -147,7 +160,7 @@ a:focus {
 p {
   margin-bottom: var(--space-lg);
   line-height: 1.6;
-  color: var(--gray-dark);
+  color: var(--text-muted);
 }
 
 .prose p {
@@ -198,7 +211,7 @@ img {
 }
 code {
   padding: 2px 5px;
-  background-color: rgb(var(--gray-light));
+  background-color: var(--surface-alt);
   border-radius: 2px;
 }
 pre {
@@ -209,20 +222,20 @@ pre > code {
   all: unset;
 }
 blockquote {
-  border-left: 4px solid var(--primary);
+  border-left: 4px solid var(--link);
   padding: 0 0 0 20px;
   margin: 0px;
   font-size: 1.333em;
 }
 hr {
   border: none;
-  border-top: 1px solid rgb(var(--gray-light));
+  border-top: 1px solid var(--border);
 }
 
 section {
   padding: 4rem 1.5rem;
-  background-color: var(--white);
-  color: var(--black);
+  background-color: var(--surface);
+  color: var(--text);
 }
 
 @media (max-width: 768px) {
@@ -254,8 +267,8 @@ section {
   top: 0;
   left: 0;
   transform: translateY(-100%);
-  background: var(--black);
-  color: var(--white);
+  background: var(--text);
+  color: var(--surface);
   padding: 0.75rem 1rem;
   z-index: 1000;
   text-decoration: none;
@@ -275,7 +288,7 @@ a.skip-link:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 3px solid var(--primary);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 3px;
   box-shadow: none;
 }
