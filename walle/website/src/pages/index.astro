@@ -69,7 +69,7 @@ const howItWorksSteps = [
 
   <SectionFlow title="How it works" steps={howItWorksSteps} />
 
-  <Section title="Quick start" centered={true} type="gray">
+  <Section title="Quick start" centered={true} variant="gray">
     <p>Create a new project with everything included:</p>
     <pre><code>curl -fsSL https://raw.githubusercontent.com/FabrizioCafolla/harness-walle/main/lib/scripts/@walle/cli.sh \
   | bash -s -- init --project-name my-site</code></pre>
@@ -100,11 +100,11 @@ const howItWorksSteps = [
       without modifying <code>@walle/</code> sources.
     </p>
     <p class="home-actions">
-      <Button text="View the demo blog" link={resolveInternalUrl("/blog")} type="primary" />
+      <Button text="View the demo blog" href={resolveInternalUrl("/blog")} variant="primary" />
       <Button
         text="GitHub"
-        link="https://github.com/FabrizioCafolla/harness-walle"
-        type="secondary"
+        href="https://github.com/FabrizioCafolla/harness-walle"
+        variant="secondary"
         outline={true}
         target="_blank"
       />
