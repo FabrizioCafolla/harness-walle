@@ -3,37 +3,38 @@ import { Image } from "astro:assets";
 
 interface Props {
   title: string;
-  imageSrc?: string;
-  imageAlt?: string;
+  image?: {
+    src: ImageMetadata | string;
+    alt: string;
+  };
   reversed?: boolean;
   centered?: boolean;
-  type?: "primary" | "gray" | null;
+  variant?: "primary" | "gray" | null;
 }
 
 const {
   title,
-  imageSrc = null,
+  image = null,
   centered = false,
-  imageAlt = null,
-  type = null,
+  variant = null,
   reversed = false,
 } = Astro.props;
 ---
 
 <section
-  class={`section ${type ? `section-content-${type}` : ""} ${reversed ? "reversed" : ""} ${centered ? "text-centered" : ""}`}
+  class={`section ${variant ? `section-content-${variant}` : ""} ${reversed ? "reversed" : ""} ${centered ? "text-centered" : ""}`}
 >
-  <div class={`section-content ${imageSrc ? `section-content-image` : ""}`}>
+  <div class={`section-content ${image ? `section-content-image` : ""}`}>
     <div class="text-container">
-      <h2 class={`section-title ${type ? `section-title-${type}` : ""}`}>{title}</h2>
+      <h2 class={`section-title ${variant ? `section-title-${variant}` : ""}`}>{title}</h2>
       <slot />
     </div>
     {
-      imageSrc && (
+      image && (
         <div class="image-container">
           <Image
-            src={imageSrc}
-            alt={imageAlt}
+            src={image.src}
+            alt={image.alt}
             width={500}
             height={400}
             loading="lazy"

@@ -13,14 +13,19 @@ export interface Props {
   title: string;
   steps: FlowStep[];
   centered?: boolean;
-  type?: "primary" | "gray" | null;
+  variant?: "primary" | "gray" | null;
+  /**
+   * Accessible label for the step list
+   * @default "Process steps"
+   */
+  label?: string;
 }
 
-const { title, steps, centered = true, type = null } = Astro.props;
+const { title, steps, centered = true, variant = null, label = "Process steps" } = Astro.props;
 ---
 
-<Section title={title} centered={centered} type={type}>
-  <ol class="flow-steps" aria-label="Fasi del processo">
+<Section title={title} centered={centered} variant={variant}>
+  <ol class="flow-steps" aria-label={label}>
     {
       steps.map((step) => (
         <li class="flow-step" tabindex="0">
