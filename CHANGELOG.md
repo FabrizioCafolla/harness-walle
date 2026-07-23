@@ -6,6 +6,26 @@ All notable changes to Walle are documented here. Format follows
 
 ## [Unreleased — 0.3.0]
 
+### Added
+
+- **New base components**, all following the shared prop vocabulary, each with full Astrobook
+  story coverage and passing the axe + 320px-reflow gates:
+  - `elements/Link` — styled anchor with external-link detection (`rel="noopener noreferrer"`,
+    external icon, `target` defaulting to `_blank` for other hosts).
+  - `elements/Image` — `astro:assets` wrapper; remote URL sources render a plain `<img>` and
+    require explicit `width`/`height` (CLS prevention); `alt` is required.
+  - `elements/Price` — locale-aware `Intl.NumberFormat` price with accessible struck-through
+    `compareAt` rendering.
+  - `features/Carousel` — native CSS scroll-snap, prev/next controls, per-slide "i of N"
+    labels, reduced-motion aware. No library, no autoplay, no infinite loop.
+  - `features/Card/ProductCard` — renders a `ProductData` shape (schema.org-aligned: price,
+    availability, badge) for headless-ecommerce data. Card boundary: has a price →
+    `ProductCard`; no price → `BasicCard`.
+  - `features/Sections/SectionColumns` — CSS-only responsive column grid (2–4 columns,
+    collapses to one on narrow viewports).
+- **320px reflow gate** (WCAG 1.4.10) in the Playwright a11y suite: every story page and demo
+  page must render without page-level horizontal overflow at 320px.
+
 ### Changed
 
 - **BREAKING — unified component prop vocabulary.** Every `@walle` component now uses the shared
@@ -50,7 +70,8 @@ All notable changes to Walle are documented here. Format follows
   Override the semantic block to restyle every component at once.
 - **WCAG 2.2 AA contrast fixes to default colors** (lightness only, hue unchanged; enforced by
   `tests/unit/contrast.test.ts`):
-  - `--gray-dark` `#6b7280` → `#69707d` (muted text on gray sections was 4.43:1)
+  - `--gray-dark` `#6b7280` → `#636a76` (muted text was 4.43:1 on gray sections and 4.1:1 on
+    the Footer's gray background; the new value passes AA on all three gray surfaces)
   - Badge `success` `#2ecc71` → `#1f874b`, `warning` `#f39c12` → `#a36708`,
     `danger` `#e74c3c` → `#da2d1b` (white badge text was 2.1–3.9:1)
 
@@ -66,6 +87,17 @@ All notable changes to Walle are documented here. Format follows
   the value resolved to nothing; both now use semantic tokens.
 - `BlogPostsLayout` rendered a second `<main>` nested inside `BaseLayout`'s — invalid landmark
   structure; now a `<div>`.
+- **Astrobook visual regression was screenshotting 404 pages.** The spec's hardcoded
+  `/astrobook/<group>/<Name>` URLs never matched astrobook's real route scheme —
+  `<basePath>/astrobook/stories/<module>/<story>` (the site base prefix is required: in dev the
+  unprefixed form answers 200 to `Accept: */*` but 404 to a browser's `Accept: text/html`).
+  Story routes are now auto-discovered from the `astrobook/` directory with the base read from
+  `app.json` (shared with the a11y suite), baselines regenerated, and both suites fail loudly
+  if the page is the not-found fallback.
+- Footer text (`--text-muted` on the `--gray` background) was below AA contrast — covered by
+  the darker `--gray-dark` default and a new pairing in `contrast.test.ts`. The license lines
+  additionally applied `opacity: 0.8` on top of the muted color, dropping effective contrast
+  below AA again — removed in both footer variants.
 
 ## [0.2.1] — 2026-07-06
 

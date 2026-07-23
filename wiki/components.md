@@ -145,6 +145,43 @@ Inline label with optional icon and link.
 | `size`         | `"small"` \| `"medium"` \| `"large"`                                                                    | `"medium"` |
 | `class`        | `string`                                                                                                | —          |
 
+### `Link`
+
+Styled `<a>` with external-link detection: absolute URLs pointing at another host get `rel="noopener noreferrer"`, `target="_blank"` and an external icon (disable with `externalIcon={false}`).
+
+| Prop           | Type                                      | Default                                  |
+| -------------- | ----------------------------------------- | ---------------------------------------- |
+| `href`         | `string`                                  | required                                 |
+| `text`         | `string` (slot fallback)                  | —                                        |
+| `variant`      | `"default"` \| `"muted"` \| `"unstyled"`  | `"default"`                              |
+| `target`       | `"_blank"` \| `"_self"`                   | `_blank` if external, `_self` otherwise  |
+| `externalIcon` | `boolean`                                 | `true`                                   |
+| `class`, `id`  | `string`                                  | —                                        |
+
+### `Image`
+
+Wrapper over `astro:assets`. An `ImageMetadata` import renders optimized with responsive `srcset`; a remote URL string renders a plain `<img>` and **requires `width`/`height`** (CLS prevention). `alt` is required (empty string only for decorative images).
+
+| Prop            | Type                                              | Default    |
+| --------------- | ------------------------------------------------- | ---------- |
+| `image`         | `{ src: ImageMetadata \| string; alt: string }`   | required   |
+| `width`/`height`| `number`                                          | required for remote src |
+| `loading`       | `"lazy"` \| `"eager"`                             | `"lazy"`   |
+| `ratio`         | `string` (CSS aspect-ratio)                       | —          |
+| `sizes`/`widths`| passthrough to astro:assets                       | —          |
+| `class`, `id`   | `string`                                          | —          |
+
+### `Price`
+
+Locale-aware price via `Intl.NumberFormat` (locale defaults to the site language from config). `compareAt` renders struck-through with accessible original/discounted labels (English defaults, overridable).
+
+| Prop     | Type                                                    | Default            |
+| -------- | ------------------------------------------------------- | ------------------ |
+| `price`  | `{ amount: number; currency: string; compareAt?: number }` | required        |
+| `locale` | `string` (BCP 47)                                       | site language      |
+| `size`   | `"small"` \| `"medium"` \| `"large"`                    | `"medium"`         |
+| `class`  | `string`                                                | —                  |
+
 ### `Button`
 
 Renders an `<a>` styled as a button when `href` is set, a `<button>` otherwise.
@@ -248,13 +285,49 @@ Full-width page header with optional image and 3D tilt on hover.
 | `BlogReadingProgress`   | Scroll progress bar         |
 | `BlogTableOfContents`   | Sticky TOC from headings    |
 
+### `Carousel`
+
+Native CSS scroll-snap carousel — no library, no autoplay, no infinite loop. Swipe is native scrolling; prev/next buttons and slide position labels are the only JavaScript. Slides go in the default slot; each gets `role="group"` and an "i of N" label (template overridable via `slideLabel`). Reduced motion disables smooth scrolling.
+
+| Prop                            | Type                     | Default            |
+| ------------------------------- | ------------------------ | ------------------ |
+| `label`                         | `string` (a11y, required)| required           |
+| `perView`                       | `1` \| `2` \| `3` \| `4` | `1` (always 1 on mobile) |
+| `controls`                      | `boolean`                | `true`             |
+| `previousLabel` / `nextLabel`   | `string`                 | English defaults   |
+| `slideLabel`                    | `string` template        | `"{i} of {n}"`     |
+| `class`, `id`                   | `string`                 | —                  |
+
+### `ProductCard`
+
+Renders a `ProductData` object (name, description, `image`, `price` with optional `compareAt`, `availability`, `badge`, `href`) — the same shape feeds Product JSON-LD. Availability is communicated as text, never color alone. **Card boundary: has a price → `ProductCard`; no price → `BasicCard`.**
+
+| Prop                 | Type                          | Default          |
+| -------------------- | ----------------------------- | ---------------- |
+| `product`            | `ProductData`                 | required         |
+| `availabilityLabels` | `{ out_of_stock?, preorder? }`| English defaults |
+| `class`              | `string`                      | —                |
+
+### `SectionColumns`
+
+CSS-grid column section: `columns` caps the count on wide screens, `auto-fit`/`minmax` collapses to one column on narrow viewports — no JavaScript, no breakpoint props. Content goes in the default slot.
+
+| Prop             | Type                              | Default   |
+| ---------------- | --------------------------------- | --------- |
+| `title`          | `string`                          | —         |
+| `columns`        | `2` \| `3` \| `4`                 | `3`       |
+| `minColumnWidth` | `string` (CSS length)             | `"16rem"` |
+| `centered`       | `boolean`                         | `false`   |
+| `variant`        | `"primary"` \| `"gray"` \| `null` | `null`    |
+| `class`          | `string`                          | —         |
+
 ### Other features
 
 | Component     | Purpose                                     |
 | ------------- | ------------------------------------------- |
 | `Analytics`   | Injects analytics script in production only |
 | `Breadcrumbs` | Structured breadcrumb trail                 |
-| `BasicCard`   | General-purpose content card                |
+| `BasicCard`   | General-purpose content card (no price)     |
 
 ---
 
