@@ -20,6 +20,7 @@ Walle is a **copy-based Astro design system**. Instead of being installed as an 
 - [Modules](modules.md) — what each module installs (MANAGED and SEED paths)
 - [Managed vs seed](managed-vs-seed.md) — the two-class file model and update safety contract
 - [Components](components.md) — component variants and customization patterns
+- [Styling](styling.md) — theme config, semantic tokens, and the accessibility contract
 - [Astrobook](astrobook.md) — visual component catalog (dev-only)
 - [Versioning](versioning.md) — pinning `walleVersion`, update policy, `schemaVersion`
 

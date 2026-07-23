@@ -10,7 +10,7 @@ Walle ships a visual component catalog powered by [Astrobook](https://github.com
 just astrobook
 ```
 
-Opens the catalog at `http://localhost:4321/astrobook`. The `just dev` and `just build` targets are unaffected — Astrobook only mounts when the `WALLE_ASTROBOOK=1` env var is set, which the `astrobook` just target handles.
+Opens the catalog at `http://localhost:4321/<basePath>/astrobook` (the repo's own base path is `/harness-walle`). Story preview pages live at `<basePath>/astrobook/stories/<module>/<story>` — always use the base-prefixed form; the unprefixed one answers inconsistently in dev depending on the `Accept` header. The `just dev` and `just build` targets are unaffected — Astrobook only mounts when the `WALLE_ASTROBOOK=1` env var is set, which the `astrobook` just target handles.
 
 ---
 
@@ -59,8 +59,8 @@ export default {
   decorators: [{ component: StoryWrapper }],
 };
 
-export const Primary = { args: { text: "Primary", type: "primary" } satisfies ButtonProps };
-export const Secondary = { args: { text: "Secondary", type: "secondary" } satisfies ButtonProps };
+export const Primary = { args: { text: "Primary", variant: "primary" } satisfies ButtonProps };
+export const Secondary = { args: { text: "Secondary", variant: "secondary" } satisfies ButtonProps };
 export const Outline = { args: { text: "Outline", outline: true } satisfies ButtonProps };
 ```
 
@@ -77,9 +77,16 @@ Every new `@walle` component or variant **must** ship with a story. No exception
 1. Create `astrobook/<group>/<Component>.stories.ts`.
 2. Import the concrete `.astro` file (not the resolver, unless you want to test variant routing).
 3. Import `StoryWrapper` and add `decorators: [{ component: StoryWrapper }]` to the default export.
-4. Export at least one named preview with realistic `args`.
-5. Add a visual regression test in `tests/playwright/astrobook.visual.spec.ts`.
-6. Run `just astrobook-update-snapshots` to generate the baseline screenshot.
+4. Export one named preview per variant/size/notable state with realistic `args`.
+5. Run `just astrobook-update-snapshots` to generate the visual baseline.
+
+Components that need slot content (Carousel, SectionColumns, CollectionFilters) use a
+story-only `<Name>Demo.astro` wrapper next to the story file that provides sample children —
+Astrobook passes props, not slots.
+
+The a11y and visual suites **auto-discover** stories from the `astrobook/` directory
+(`tests/playwright/storyRoutes.ts`): a new story is covered by both gates with no extra
+configuration.
 
 For a new variant, create a separate file: `astrobook/features/Footer.newvariant.stories.ts` importing `Footer.newvariant.astro` directly.
 
@@ -87,13 +94,25 @@ No registration step is required — Astrobook picks up `*.stories.*` files auto
 
 ---
 
-## Visual regression tests
+## Test suites over the stories
 
-Stories are covered by Playwright visual regression tests in `tests/playwright/astrobook.visual.spec.ts`. Each test navigates to the story URL and compares the page screenshot against a stored baseline.
+Stories double as the fixtures for two Playwright suites (routes auto-discovered by
+`tests/playwright/storyRoutes.ts`, one entry per story export):
 
 ```bash
-just astrobook-test               # run visual regression (requires: just playwright-setup)
+just a11y-test                    # axe-core gate + 320px reflow check (blocking in CI)
+just astrobook-test               # visual regression against stored baselines
 just astrobook-update-snapshots   # regenerate baselines after intentional changes
 ```
 
-Baselines live in `tests/playwright/snapshots/` and are committed to git. If a test fails because of an intentional visual change, update the baselines and commit them together with the code change.
+- **`a11y-test`** runs axe-core on every story preview page plus the demo-site pages
+  (layout-level checks: skip link, landmarks) and fails on serious/critical violations;
+  a second pass asserts no page-level horizontal overflow at 320px (WCAG 1.4.10). This is
+  the blocking `a11y` job in CI — a component without a story is invisible to the gate,
+  which is why stories are mandatory.
+- **`astrobook-test`** screenshots the first story of each module and compares against
+  baselines in `tests/playwright/snapshots/` (committed to git). If a test fails because of
+  an intentional visual change, update the baselines and commit them with the code change.
+
+Both suites fail loudly if a page renders astrobook's not-found fallback, so story route
+drift cannot silently turn the gates into no-ops.
