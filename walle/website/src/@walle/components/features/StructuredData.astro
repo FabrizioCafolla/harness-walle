@@ -1,0 +1,21 @@
+---
+import type { JsonLd } from "@walle/utils/structured-data";
+
+/**
+ * Renders schema.org JSON-LD. Pass one object or an array; the
+ * `@context` is added automatically. Builders for the common shapes
+ * (WebSite, Organization, Article, Product) live in
+ * `@walle/utils/structured-data`.
+ */
+export interface Props {
+  data: JsonLd | JsonLd[];
+}
+
+const { data } = Astro.props;
+
+const payload = Array.isArray(data)
+  ? data.map((d) => ({ "@context": "https://schema.org", ...d }))
+  : { "@context": "https://schema.org", ...data };
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(payload)} is:inline />

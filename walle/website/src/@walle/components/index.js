@@ -17,6 +17,7 @@ export { default as ProductCard } from "./features/Card/ProductCard.astro";
 export { default as Footer } from "./features/FooterResolver.astro";
 export { default as Head } from "./features/Head.astro";
 export { default as Navbar } from "./features/Navbar/NavbarResolver.astro";
+export { default as StructuredData } from "./features/StructuredData.astro";
 export { default as SectionHeaderStandard } from "./features/Sections/HeaderStandard.astro";
 export { default as Section } from "./features/Sections/Section.astro";
 export { default as SectionColumns } from "./features/Sections/SectionColumns.astro";
