@@ -78,8 +78,11 @@ assert_file_contains() { grep -qF "$2" "$1" || fail "expected '$2' in $1"; }
 assert_manifest_valid() {
   local manifest="$1"
 
-  # Force deterministic local installation of ajv in the repo root for tests
-  if [ ! -d "${REPO_ROOT}/node_modules/ajv" ] || [ ! -d "${REPO_ROOT}/node_modules/ajv-formats" ]; then
+  # ajv/ajv-formats are declared devDependencies of walle/website, so a repo with
+  # the site deps installed already has them — no network needed. Only fall back
+  # to a repo-root install if neither location resolves (e.g. a bare checkout).
+  if [ ! -d "${REPO_ROOT}/node_modules/ajv" ] &&
+    [ ! -d "${REPO_ROOT}/walle/website/node_modules/ajv" ]; then
     log "Installing local ajv for schema validation..."
     ( cd "$REPO_ROOT" && npm install --no-save ajv ajv-formats --silent ) >/dev/null 2>&1 || true
   fi
@@ -92,11 +95,23 @@ assert_manifest_valid() {
     const manifestPath = process.env.WALLE_MANIFEST;
     const repoRoot = process.env.WALLE_REPO_ROOT;
 
+    // Try the repo root first, then walle/website (where they are declared).
+    const roots = [repoRoot, path.join(repoRoot, "walle/website")];
+    const load = (name) => {
+      for (const r of roots) {
+        try {
+          return require(path.join(r, "node_modules", name));
+        } catch {
+          /* try next */
+        }
+      }
+      throw new Error(name + " not found");
+    };
+
     let Ajv, af;
     try {
-      // Require deterministically from the local repo root node_modules
-      Ajv = require(path.join(repoRoot, "node_modules", "ajv"));
-      af = require(path.join(repoRoot, "node_modules", "ajv-formats"));
+      Ajv = load("ajv");
+      af = load("ajv-formats");
     } catch (err) {
       console.error(" [ERROR] Failed to require local ajv. Manifest validation skipped/failed.");
       process.exit(1);
