@@ -163,11 +163,15 @@ jobs:
       - name: Install just
         uses: extractions/setup-just@v4
 
+      # Install the website deps (corepack prepare needs the packageManager field,
+      # which lives in walle/website/package.json, not the repo root). The e2e
+      # harness reuses these node_modules (e.g. ajv for manifest validation).
       - name: Install dependencies
         timeout-minutes: 3
+        working-directory: walle/website
         run: |
           corepack prepare --activate
-          just yarn install --immutable
+          yarn install --immutable
 
       - name: Run e2e harness
         timeout-minutes: 8
