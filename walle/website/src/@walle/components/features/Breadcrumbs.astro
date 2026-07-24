@@ -57,7 +57,10 @@ const breadcrumbsClasses = ["breadcrumbs", className].filter(Boolean).join(" ");
               <span>{item.label}</span>
             </a>
           ) : (
-            <span class="current-item" aria-current={index === items.length - 1 ? "page" : undefined}>
+            <span
+              class="current-item"
+              aria-current={index === items.length - 1 ? "page" : undefined}
+            >
               {item.icon && <Icon name={item.icon} class="item-icon" aria-hidden="true" />}
               <span>{item.label}</span>
             </span>

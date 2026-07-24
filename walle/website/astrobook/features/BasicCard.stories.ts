@@ -32,7 +32,8 @@ export const WithBadgeAndDate = {
 export const WithImage = {
   args: {
     title: "Card with image",
-    content: "A card with a cover image, truncated description text that runs a bit longer to exercise the 120 character clamp behaviour of the component.",
+    content:
+      "A card with a cover image, truncated description text that runs a bit longer to exercise the 120 character clamp behaviour of the component.",
     href: "/blog/example",
     image: { src: "/img/posts/default.jpg", alt: "Post cover" },
   } satisfies BasicCardProps,

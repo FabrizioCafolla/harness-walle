@@ -70,9 +70,7 @@ const labelClasses = [
 
 const Element = href ? "a" : "span";
 
-const attrs = href
-  ? { href, target, rel: target === "_blank" ? "noopener" : undefined }
-  : {};
+const attrs = href ? { href, target, rel: target === "_blank" ? "noopener" : undefined } : {};
 ---
 
 <Element class={labelClasses} {...attrs}>
