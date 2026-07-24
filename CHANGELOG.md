@@ -116,6 +116,26 @@ All notable changes to Walle are documented here. Format follows
   the darker `--gray-dark` default and a new pairing in `contrast.test.ts`. The license lines
   additionally applied `opacity: 0.8` on top of the muted color, dropping effective contrast
   below AA again — removed in both footer variants.
+- **`StructuredData` now escapes `<`/`>`/`&`** in the JSON-LD output, so an untrusted value
+  (e.g. a product name from a headless-commerce source) containing `</script>` cannot close the
+  element early or inject markup. Covered by `tests/unit/structured-data.test.ts`.
+- `productJsonLd` emits the `Product` image for local `ImageMetadata` sources too (was
+  string-only, dropping the image for the recommended optimized-asset path).
+- `Price` normalizes a POSIX-style locale (`it_IT` → `it-IT`) so an `Intl.NumberFormat`
+  `RangeError` can't crash the build on a config typo.
+- Blog `data-search` and `/llms.txt` guard an absent `description` (no literal `"undefined"`);
+  `CollectionFilters` option ids include the index so same-slug options don't collide.
+- **CI: `setup-node` yarn cache** pointed at `walle/website/yarn.lock` (the lockfile is in the
+  website subdir) — without it the a11y gate and the e2e job failed at setup with "lock file is
+  not found".
+- **Playwright configs** hardened: the functional config runs only `navbar.test.ts` (was also
+  picking up the astrobook-served a11y suite against the wrong server) and navigates to the base
+  path without a trailing slash (`trailingSlash: never`) — which also closed a latent hole where
+  the home demo page was axe-testing the 404 page; both webServer commands use `--force` to
+  replace stale astro dev locks.
+- **e2e manifest validation** resolves `ajv`/`ajv-formats` from `walle/website/node_modules`
+  (declared devDependencies) instead of a repo-root network install, so the harness passes
+  offline.
 
 ## [0.2.1] — 2026-07-06
 
