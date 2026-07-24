@@ -45,6 +45,9 @@ jobs:
         with:
           node-version-file: walle/website/.nvmrc
           cache: yarn
+          # The lockfile lives in the website subdir, not the repo root — without
+          # this, setup-node's yarn cache fails with "lock file is not found".
+          cache-dependency-path: walle/website/yarn.lock
 
       - name: Install dependencies
         timeout-minutes: 3
@@ -98,6 +101,9 @@ jobs:
         with:
           node-version-file: walle/website/.nvmrc
           cache: yarn
+          # The lockfile lives in the website subdir, not the repo root — without
+          # this, setup-node's yarn cache fails with "lock file is not found".
+          cache-dependency-path: walle/website/yarn.lock
 
       - name: Install just
         uses: extractions/setup-just@v4
@@ -150,6 +156,9 @@ jobs:
         with:
           node-version-file: walle/website/.nvmrc
           cache: yarn
+          # The lockfile lives in the website subdir, not the repo root — without
+          # this, setup-node's yarn cache fails with "lock file is not found".
+          cache-dependency-path: walle/website/yarn.lock
 
       - name: Install just
         uses: extractions/setup-just@v4
