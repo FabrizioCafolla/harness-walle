@@ -72,7 +72,7 @@ const allCategories: string[] = Array.from(
                 <div
                   data-filter-item
                   data-category={(post.data.tags || []).join(",")}
-                  data-search={`${post.data.title} ${post.data.description}`}
+                  data-search={`${post.data.title} ${post.data.description ?? ""}`}
                 >
                   <BasicCard
                     title={post.data.title}

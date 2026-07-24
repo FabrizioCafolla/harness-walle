@@ -33,9 +33,10 @@ export const GET: APIRoute = async ({ site }) => {
     "",
     "## Blog posts",
     "",
-    ...posts.map(
-      (post) => `- [${post.data.title}](${url(`/blog/${post.id}`)}): ${post.data.description}`
-    ),
+    ...posts.map((post) => {
+      const desc = post.data.description ? `: ${post.data.description}` : "";
+      return `- [${post.data.title}](${url(`/blog/${post.id}`)})${desc}`;
+    }),
     "",
   ];
 

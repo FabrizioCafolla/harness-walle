@@ -152,8 +152,10 @@ const classes = ["filters", className].filter(Boolean).join(" ");
                 aria-label={facet.label}
                 aria-multiselectable="true"
               >
-                {facet.options.map((option) => {
-                  const optionId = `facet-${facet.key}-${option.toLowerCase().replace(/\s+/g, "-")}`;
+                {facet.options.map((option, i) => {
+                  // Index keeps ids unique even when two options normalize to the
+                  // same slug (e.g. "C#" and "C++"), so the label `for` never collides.
+                  const optionId = `facet-${facet.key}-${i}-${option.toLowerCase().replace(/\s+/g, "-")}`;
                   return (
                     <label class="filters__option" for={optionId}>
                       <input

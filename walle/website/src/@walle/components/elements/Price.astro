@@ -63,8 +63,11 @@ const {
   class: className = "",
 } = Astro.props;
 
+// Intl wants BCP 47 (hyphens); tolerate a POSIX-style "it_IT" so a config typo
+// can't throw a RangeError at build.
+const bcp47 = locale.replace(/_/g, "-");
 const format = (amount: number) =>
-  new Intl.NumberFormat(locale, { style: "currency", currency: price.currency }).format(amount);
+  new Intl.NumberFormat(bcp47, { style: "currency", currency: price.currency }).format(amount);
 
 const hasDiscount = price.compareAt != null && price.compareAt > price.amount;
 const classes = ["price", `price-${size}`, className].filter(Boolean).join(" ");
