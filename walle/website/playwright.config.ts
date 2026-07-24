@@ -2,12 +2,14 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./tests/playwright",
-  // Astrobook visual regression has its own config/webServer (playwright.astrobook.config.ts)
-  // — without this, the default testDir glob also picks up *.visual.spec.ts, which needs a
-  // different integration (astrobook subpath) mounted only under `yarn astrobook`.
-  testIgnore: "**/*.visual.spec.ts",
+  // This config is the functional suite against the plain `yarn dev` site.
+  // The astrobook-served suites (visual regression + axe a11y) have their own
+  // config/webServer (playwright.astrobook.config.ts) — exclude them here so
+  // they don't run against a server that doesn't mount the astrobook routes.
+  testMatch: "**/navbar.test.ts",
   use: {
-    baseURL: "http://localhost:4321/harness-walle",
+    // Root origin; tests navigate to `${siteBase}/...` (base path from app.json).
+    baseURL: "http://localhost:4321",
   },
   webServer: {
     // env -u CLAUDECODE …: see playwright.astrobook.config.ts — prevents astro 7's

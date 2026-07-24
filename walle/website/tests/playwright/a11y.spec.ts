@@ -12,8 +12,11 @@ import { siteBase, storyRoutes } from "./storyRoutes";
 // Fails on any serious or critical violation.
 
 // Demo-site pages (served by the same dev server under the configured base path).
-const demoPages = ["/", "/blog", "/blog/example", "/products/example"].map(
-  (p) => `${siteBase}${p}`
+// No trailing slash — app.json sets trailingSlash "never", so `${siteBase}/`
+// would 404 (and axe would trivially pass on the 404 page). The home page is
+// `${siteBase}` exactly.
+const demoPages = ["", "/blog", "/blog/example", "/products/example"].map(
+  (p) => `${siteBase}${p}` || "/"
 );
 
 /** Guard against silent route drift: astrobook's 404 fallback renders `<pre>Path: …`. */
