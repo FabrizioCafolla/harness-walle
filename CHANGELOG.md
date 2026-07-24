@@ -136,6 +136,13 @@ All notable changes to Walle are documented here. Format follows
 - **e2e manifest validation** resolves `ajv`/`ajv-formats` from `walle/website/node_modules`
   (declared devDependencies) instead of a repo-root network install, so the harness passes
   offline.
+- **CI e2e job** installs dependencies in `walle/website` (where the `packageManager` field
+  lives) instead of the repo root, where `corepack prepare --activate` had nothing to resolve.
+- **Navbar dropdown** dropped its invalid `role="menu"` (which requires `role="menuitem"`
+  children): a navigation dropdown is a plain `<ul>`/`<li>`/`<a>` list. Fixes the
+  `aria-required-children` (critical) and `listitem` (serious) violations Lighthouse flagged.
+- **`SectionFlow` step titles are `<h3>`** (were `<h5>`, skipping heading levels after the
+  section's `<h2>`) with their compact size preserved — fixes the heading-order violation.
 
 ## [0.2.1] — 2026-07-06
 
