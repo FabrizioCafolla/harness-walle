@@ -33,7 +33,7 @@ const { title, steps, centered = true, variant = null, label = "Process steps" }
             {step.icon && <Icon name={step.icon} aria-hidden="true" size={20} />}
           </div>
           <div class="step-content">
-            <h5>{step.title}</h5>
+            <h3>{step.title}</h3>
             <p>{step.description}</p>
           </div>
         </li>
@@ -103,6 +103,9 @@ const { title, steps, centered = true, variant = null, label = "Process steps" }
   }
 
   .step-content h3 {
+    /* Step titles are h3 for correct heading order (the section title is h2);
+       keep the compact visual size the design used. */
+    font-size: 1.25rem;
     margin-top: 0;
     margin-bottom: 0.5rem;
   }
