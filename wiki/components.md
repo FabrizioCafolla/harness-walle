@@ -4,6 +4,33 @@ All `@walle` components are MANAGED — they live in `src/@walle/components/` an
 
 ---
 
+## API conventions
+
+Every `@walle` component uses one shared prop vocabulary. If a component accepts one of these concepts, it uses exactly this name and type:
+
+| Concept          | Prop                  | Type                                          | Notes                                                                                                     |
+| ---------------- | --------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Destination URL  | `href`                | `string`                                      | Matches HTML. A component with `href` renders a link.                                                     |
+| Link target      | `target`              | `"_blank"` \| `"_self"`                       | `rel="noopener"` is added automatically when `_blank`.                                                    |
+| Visual variant   | `variant`             | union per component                           | Never `color` or `type` for visual style.                                                                 |
+| Size             | `size`                | `"small"` \| `"medium"` \| `"large"`          |                                                                                                            |
+| Image            | `image`               | `{ src: ImageMetadata \| string; alt: string }` | `alt` is required; empty string only for decorative images.                                              |
+| Label text       | `text`                | `string`                                      | Label-only components (Button, Badge). Rich content uses slots.                                            |
+| Icon             | `icon` / `iconPosition` | `string` / `"start"` \| `"end"`             |                                                                                                            |
+| Extra classes    | `class`               | `string`                                      | Appended to the component root element.                                                                    |
+| Native button type | `type`              | `"button"` \| `"submit"` \| `"reset"`         | Only on Button; freed by the `variant` rename.                                                             |
+| Element id       | `id`                  | `string`                                      |                                                                                                            |
+
+Rules:
+
+- **English only**: source, comments, docs, and every user-facing or screen-reader-announced string ships an English default, overridable via props or `config.app` for localization.
+- Boolean modifiers are positive and unprefixed: `outline`, `centered`, `reversed`, `fullWidth`, `disabled`.
+- Polymorphic components (Button as `<a>` or `<button>`) decide from `href` presence — there is no `as` prop.
+- Slots over content props whenever content is rich (cards, sections).
+- The vocabulary applies to **component props**. Consumer config files (`navbar.json`, `footer.json`) keep their own schema (`url`, `name`, …) — they are a stable consumer-facing contract, not component APIs.
+
+---
+
 ## Config files
 
 Four JSON files in `src/configs/`, all schema-validated (`just validate-configs`):
@@ -110,33 +137,70 @@ Inline label with optional icon and link.
 | Prop           | Type                                                                                                    | Default    |
 | -------------- | ------------------------------------------------------------------------------------------------------- | ---------- |
 | `text`         | `string`                                                                                                | required   |
-| `color`        | `"primary"` \| `"secondary"` \| `"alternative"` \| `"gray"` \| `"success"` \| `"warning"` \| `"danger"` | `"gray"`   |
-| `iconName`     | `string`                                                                                                | —          |
+| `variant`      | `"primary"` \| `"secondary"` \| `"alternative"` \| `"gray"` \| `"success"` \| `"warning"` \| `"danger"` | `"gray"`   |
+| `icon`         | `string`                                                                                                | —          |
 | `iconPosition` | `"start"` \| `"end"`                                                                                    | `"end"`    |
-| `link`         | `string`                                                                                                | —          |
-| `target`       | `string`                                                                                                | —          |
+| `href`         | `string`                                                                                                | —          |
+| `target`       | `"_blank"` \| `"_self"`                                                                                 | —          |
 | `size`         | `"small"` \| `"medium"` \| `"large"`                                                                    | `"medium"` |
-| `extraClass`   | `string`                                                                                                | —          |
+| `class`        | `string`                                                                                                | —          |
+
+### `Link`
+
+Styled `<a>` with external-link detection: absolute URLs pointing at another host get `rel="noopener noreferrer"`, `target="_blank"` and an external icon (disable with `externalIcon={false}`).
+
+| Prop           | Type                                      | Default                                  |
+| -------------- | ----------------------------------------- | ---------------------------------------- |
+| `href`         | `string`                                  | required                                 |
+| `text`         | `string` (slot fallback)                  | —                                        |
+| `variant`      | `"default"` \| `"muted"` \| `"unstyled"`  | `"default"`                              |
+| `target`       | `"_blank"` \| `"_self"`                   | `_blank` if external, `_self` otherwise  |
+| `externalIcon` | `boolean`                                 | `true`                                   |
+| `class`, `id`  | `string`                                  | —                                        |
+
+### `Image`
+
+Wrapper over `astro:assets`. An `ImageMetadata` import renders optimized with responsive `srcset`; a remote URL string renders a plain `<img>` and **requires `width`/`height`** (CLS prevention). `alt` is required (empty string only for decorative images).
+
+| Prop            | Type                                              | Default    |
+| --------------- | ------------------------------------------------- | ---------- |
+| `image`         | `{ src: ImageMetadata \| string; alt: string }`   | required   |
+| `width`/`height`| `number`                                          | required for remote src |
+| `loading`       | `"lazy"` \| `"eager"`                             | `"lazy"`   |
+| `ratio`         | `string` (CSS aspect-ratio)                       | —          |
+| `sizes`/`widths`| passthrough to astro:assets                       | —          |
+| `class`, `id`   | `string`                                          | —          |
+
+### `Price`
+
+Locale-aware price via `Intl.NumberFormat` (locale defaults to the site language from config). `compareAt` renders struck-through with accessible original/discounted labels (English defaults, overridable).
+
+| Prop     | Type                                                    | Default            |
+| -------- | ------------------------------------------------------- | ------------------ |
+| `price`  | `{ amount: number; currency: string; compareAt?: number }` | required        |
+| `locale` | `string` (BCP 47)                                       | site language      |
+| `size`   | `"small"` \| `"medium"` \| `"large"`                    | `"medium"`         |
+| `class`  | `string`                                                | —                  |
 
 ### `Button`
 
-Button or link-wrapped button.
+Renders an `<a>` styled as a button when `href` is set, a `<button>` otherwise.
 
-| Prop             | Type                                      | Default     |
-| ---------------- | ----------------------------------------- | ----------- |
-| `text`           | `string`                                  | required    |
-| `link`           | `string`                                  | —           |
-| `type`           | `"primary"` \| `"secondary"` \| `"white"` | `"primary"` |
-| `outline`        | `boolean`                                 | `false`     |
-| `size`           | `"small"` \| `"medium"` \| `"large"`      | `"medium"`  |
-| `fullWidth`      | `boolean`                                 | `false`     |
-| `iconName`       | `string`                                  | —           |
-| `target`         | `string`                                  | —           |
-| `disabled`       | `boolean`                                 | `false`     |
-| `disableEffects` | `boolean`                                 | `false`     |
-| `buttonType`     | `"button"` \| `"submit"` \| `"reset"`     | `"button"`  |
-| `id`             | `string`                                  | —           |
-| `extraClass`     | `string`                                  | —           |
+| Prop        | Type                                      | Default     |
+| ----------- | ----------------------------------------- | ----------- |
+| `text`      | `string`                                  | required    |
+| `href`      | `string`                                  | —           |
+| `variant`   | `"primary"` \| `"secondary"` \| `"white"` | `"primary"` |
+| `outline`   | `boolean`                                 | `false`     |
+| `size`      | `"small"` \| `"medium"` \| `"large"`      | `"medium"`  |
+| `fullWidth` | `boolean`                                 | `false`     |
+| `icon`      | `string`                                  | —           |
+| `target`    | `"_blank"` \| `"_self"`                   | —           |
+| `disabled`  | `boolean`                                 | `false`     |
+| `effects`   | `boolean`                                 | `true`      |
+| `type`      | `"button"` \| `"submit"` \| `"reset"`     | `"button"`  |
+| `id`        | `string`                                  | —           |
+| `class`     | `string`                                  | —           |
 
 ---
 
@@ -169,22 +233,25 @@ Renders all `<head>` meta tags. Used inside layouts — not imported directly in
 
 Content section wrapper.
 
-| Prop       | Type                              | Default |
-| ---------- | --------------------------------- | ------- |
-| `title`    | `string`                          | —       |
-| `centered` | `boolean`                         | `true`  |
-| `type`     | `"primary"` \| `"gray"` \| `null` | `null`  |
+| Prop       | Type                                        | Default |
+| ---------- | ------------------------------------------- | ------- |
+| `title`    | `string`                                    | —       |
+| `image`    | `{ src: ImageMetadata \| string; alt: string }` | —   |
+| `reversed` | `boolean`                                   | `false` |
+| `centered` | `boolean`                                   | `false` |
+| `variant`  | `"primary"` \| `"gray"` \| `null`           | `null`  |
 
 ### `SectionFlow`
 
 Animated step list with scroll-triggered reveal.
 
-| Prop       | Type                              | Default  |
-| ---------- | --------------------------------- | -------- |
-| `title`    | `string`                          | required |
-| `steps`    | `FlowStep[]`                      | required |
-| `centered` | `boolean`                         | `true`   |
-| `type`     | `"primary"` \| `"gray"` \| `null` | `null`   |
+| Prop       | Type                              | Default           |
+| ---------- | --------------------------------- | ----------------- |
+| `title`    | `string`                          | required          |
+| `steps`    | `FlowStep[]`                      | required          |
+| `centered` | `boolean`                         | `true`            |
+| `variant`  | `"primary"` \| `"gray"` \| `null` | `null`            |
+| `label`    | `string` (a11y label of the list) | `"Process steps"` |
 
 ```typescript
 interface FlowStep {
@@ -203,21 +270,75 @@ Full-width page header with optional image and 3D tilt on hover.
 | ------------ | ----------------------------------------- | ----------- |
 | `title`      | `string`                                  | required    |
 | `subtitle`   | `string`                                  | —           |
-| `imageSrc`   | `ImageMetadata`                           | —           |
-| `imageAlt`   | `string`                                  | `""`        |
+| `image`      | `{ src: ImageMetadata; alt: string }`     | —           |
 | `imageRight` | `boolean`                                 | `false`     |
 | `variant`    | `"primary"` \| `"secondary"` \| `"white"` | `"primary"` |
 | `centered`   | `boolean`                                 | `true`      |
 | `effect`     | `boolean`                                 | `false`     |
+
+### `CollectionFilters`
+
+Config-driven client-side filtering (text search + multi-select facets) over any rendered collection. Items carry `data-filter-item` plus one `data-<key>` attribute per facet (comma-separated values) and optional `data-search`; the component hides non-matching items and announces the visible count in a live region. With JavaScript disabled the filter UI stays hidden and every item remains visible. Replaces the former `BlogFilters` (used internally by `BlogPostsLayout`).
+
+| Prop           | Type                                                | Default                |
+| -------------- | --------------------------------------------------- | ---------------------- |
+| `facets`       | `{ key: string; label: string; options: string[] }[]` | `[]`                 |
+| `itemSelector` | `string`                                            | `"[data-filter-item]"` |
+| `search`       | `boolean`                                           | `true`                 |
+| `labels`       | object — English defaults, override for localization | —                     |
+| `class`        | `string`                                            | —                      |
 
 ### Blog components
 
 | Component               | Purpose                     |
 | ----------------------- | --------------------------- |
 | `BlogArticleNavigation` | Previous/next article links |
-| `BlogFilters`           | Tag/category filter UI      |
 | `BlogReadingProgress`   | Scroll progress bar         |
 | `BlogTableOfContents`   | Sticky TOC from headings    |
+
+### `Carousel`
+
+Native CSS scroll-snap carousel — no library, no autoplay, no infinite loop. Swipe is native scrolling; prev/next buttons and slide position labels are the only JavaScript. Slides go in the default slot; each gets `role="group"` and an "i of N" label (template overridable via `slideLabel`). Reduced motion disables smooth scrolling.
+
+| Prop                            | Type                     | Default            |
+| ------------------------------- | ------------------------ | ------------------ |
+| `label`                         | `string` (a11y, required)| required           |
+| `perView`                       | `1` \| `2` \| `3` \| `4` | `1` (always 1 on mobile) |
+| `controls`                      | `boolean`                | `true`             |
+| `previousLabel` / `nextLabel`   | `string`                 | English defaults   |
+| `slideLabel`                    | `string` template        | `"{i} of {n}"`     |
+| `class`, `id`                   | `string`                 | —                  |
+
+### `ProductCard`
+
+Renders a `ProductData` object (name, description, `image`, `price` with optional `compareAt`, `availability`, `badge`, `href`) — the same shape feeds Product JSON-LD. Availability is communicated as text, never color alone. **Card boundary: has a price → `ProductCard`; no price → `BasicCard`.**
+
+| Prop                 | Type                          | Default          |
+| -------------------- | ----------------------------- | ---------------- |
+| `product`            | `ProductData`                 | required         |
+| `availabilityLabels` | `{ out_of_stock?, preorder? }`| English defaults |
+| `class`              | `string`                      | —                |
+
+### `SectionColumns`
+
+CSS-grid column section: `columns` caps the count on wide screens, `auto-fit`/`minmax` collapses to one column on narrow viewports — no JavaScript, no breakpoint props. Content goes in the default slot.
+
+| Prop             | Type                              | Default   |
+| ---------------- | --------------------------------- | --------- |
+| `title`          | `string`                          | —         |
+| `columns`        | `2` \| `3` \| `4`                 | `3`       |
+| `minColumnWidth` | `string` (CSS length)             | `"16rem"` |
+| `centered`       | `boolean`                         | `false`   |
+| `variant`        | `"primary"` \| `"gray"` \| `null` | `null`    |
+| `class`          | `string`                          | —         |
+
+### `StructuredData`
+
+Renders schema.org JSON-LD from a plain object (or array); `@context` is added automatically. Builders for the common shapes live in `@walle/utils/structured-data`: `websiteJsonLd`, `organizationJsonLd`, `articleJsonLd`, `productJsonLd`. Layouts wire it automatically — `AbstractLayout` emits `WebSite` + `Organization` from config, `BlogPostLayout` emits `Article`, `DetailLayout` emits `Product`/`Offer` when given a `product` — so pages only add their own extra shapes.
+
+| Prop   | Type                   | Default  |
+| ------ | ---------------------- | -------- |
+| `data` | `JsonLd \| JsonLd[]`   | required |
 
 ### Other features
 
@@ -225,7 +346,7 @@ Full-width page header with optional image and 3D tilt on hover.
 | ------------- | ------------------------------------------- |
 | `Analytics`   | Injects analytics script in production only |
 | `Breadcrumbs` | Structured breadcrumb trail                 |
-| `BasicCard`   | General-purpose content card                |
+| `BasicCard`   | General-purpose content card (no price)     |
 
 ---
 
@@ -235,9 +356,9 @@ Import from `@walle/layouts/<Name>.astro`.
 
 ### `AbstractLayout`
 
-Base HTML wrapper. Loads `Head`, `global.css`, and `Analytics`.
+Base HTML wrapper. Loads `Head`, `global.css`, and `Analytics`. Renders a skip link as the first focusable element, targeting `#main-content` (provided by `BaseLayout`).
 
-**Props:** `headerTitle`, `headerDescription`, `headerImage`, `headerOgImage`, `headerRobots`, `headerLanguage`
+**Props:** `headerTitle`, `headerDescription`, `headerImage`, `headerOgImage`, `headerRobots`, `headerLanguage`, `skipLinkLabel` (default `"Skip to content"`)
 
 **Slots:** `head` (injected inside `<head>` after `<Head />`), default (body content)
 
@@ -246,6 +367,14 @@ Base HTML wrapper. Loads `Head`, `global.css`, and `Analytics`.
 Extends `AbstractLayout`. Adds `<Navbar>` and `<Footer>`. Inherits all `AbstractLayout` props.
 
 **Slots:** `head` (forwarded to `AbstractLayout`), `navbar` (replaces default `<Navbar>`), `footer` (replaces default `<Footer>`), default (page content inside `<main>`)
+
+### `DetailLayout`
+
+Generic detail page: `SectionHeaderStandard` (title + `badges` slot) over a responsive two-column grid — default slot as main column, `aside` slot as sidebar — with optional `backLink` and `breadcrumbs`. Composes with `ProductData` content for product detail pages.
+
+**Props:** `title` (required), `description`, `ogImage`, `breadcrumbs` (`BreadcrumbItem[]`), `backLink` (`{ href, label? }`, label defaults to `"Back"`), `headerEffect`
+
+**Slots:** `badges`, default (main), `aside`
 
 ### `BlogPostLayout`
 

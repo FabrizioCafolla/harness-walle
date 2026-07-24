@@ -1,0 +1,230 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface Props {
+  /**
+   * Accessible name of the carousel region (required)
+   */
+  label: string;
+
+  /**
+   * Slides per view on wide screens; narrow screens always show 1
+   * @default 1
+   */
+  perView?: 1 | 2 | 3 | 4;
+
+  /**
+   * Show prev/next controls
+   * @default true
+   */
+  controls?: boolean;
+
+  /**
+   * Accessible label of the previous button
+   * @default "Previous slide"
+   */
+  previousLabel?: string;
+
+  /**
+   * Accessible label of the next button
+   * @default "Next slide"
+   */
+  nextLabel?: string;
+
+  /**
+   * Slide label template announced to screen readers; `{i}` and `{n}` are
+   * replaced with the slide index and total
+   * @default "{i} of {n}"
+   */
+  slideLabel?: string;
+
+  /**
+   * Additional CSS classes appended to the root element
+   */
+  class?: string;
+
+  /**
+   * Optional HTML ID
+   */
+  id?: string;
+}
+
+const {
+  label,
+  perView = 1,
+  controls = true,
+  previousLabel = "Previous slide",
+  nextLabel = "Next slide",
+  slideLabel = "{i} of {n}",
+  class: className = "",
+  id,
+} = Astro.props;
+
+const classes = ["carousel", className].filter(Boolean).join(" ");
+---
+
+<section
+  class={classes}
+  id={id}
+  role="region"
+  aria-roledescription="carousel"
+  aria-label={label}
+  data-component="Carousel"
+  data-per-view={perView}
+  data-slide-label={slideLabel}
+>
+  <div class="carousel-track" tabindex="0">
+    <slot />
+  </div>
+  {
+    controls && (
+      <div class="carousel-controls">
+        <button type="button" class="carousel-prev" aria-label={previousLabel} disabled>
+          <Icon name="fa:chevron-left" aria-hidden="true" />
+        </button>
+        <button type="button" class="carousel-next" aria-label={nextLabel}>
+          <Icon name="fa:chevron-right" aria-hidden="true" />
+        </button>
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .carousel {
+    position: relative;
+  }
+
+  .carousel-track {
+    display: grid;
+    grid-auto-flow: column;
+    /* One slide per view by default; desktop density comes from data-per-view */
+    grid-auto-columns: 100%;
+    gap: var(--space-lg);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    padding-bottom: var(--space-xs);
+  }
+
+  .carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .carousel-track > :global(*) {
+    scroll-snap-align: start;
+    min-width: 0;
+  }
+
+  @media (min-width: 769px) {
+    .carousel[data-per-view="2"] .carousel-track {
+      grid-auto-columns: calc((100% - var(--space-lg)) / 2);
+    }
+
+    .carousel[data-per-view="3"] .carousel-track {
+      grid-auto-columns: calc((100% - 2 * var(--space-lg)) / 3);
+    }
+
+    .carousel[data-per-view="4"] .carousel-track {
+      grid-auto-columns: calc((100% - 3 * var(--space-lg)) / 4);
+    }
+  }
+
+  .carousel-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
+  }
+
+  .carousel-prev,
+  .carousel-next {
+    /* WCAG 2.5.8: >= 24x24 target */
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .carousel-prev:hover:not(:disabled),
+  .carousel-next:hover:not(:disabled) {
+    background: var(--surface-alt);
+  }
+
+  .carousel-prev:disabled,
+  .carousel-next:disabled {
+    opacity: var(--disabled-opacity);
+    cursor: default;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carousel-track {
+      scroll-behavior: auto;
+    }
+  }
+</style>
+
+<script>
+  function initCarousels() {
+    document.querySelectorAll<HTMLElement>("[data-component='Carousel']").forEach((root) => {
+      const track = root.querySelector<HTMLElement>(".carousel-track");
+      if (!track || track.dataset.ready) return;
+      track.dataset.ready = "true";
+
+      // Slide semantics + accessible position labels
+      const slides = Array.from(track.children) as HTMLElement[];
+      const template = root.dataset.slideLabel || "{i} of {n}";
+      slides.forEach((slide, i) => {
+        slide.setAttribute("role", "group");
+        slide.setAttribute("aria-roledescription", "slide");
+        slide.setAttribute(
+          "aria-label",
+          template.replace("{i}", String(i + 1)).replace("{n}", String(slides.length))
+        );
+      });
+
+      const prev = root.querySelector<HTMLButtonElement>(".carousel-prev");
+      const next = root.querySelector<HTMLButtonElement>(".carousel-next");
+      if (!prev || !next) return;
+
+      const step = () =>
+        (slides[0]?.getBoundingClientRect().width || track.clientWidth) +
+        (parseFloat(getComputedStyle(track).columnGap) || 0);
+      prev.addEventListener("click", () => track.scrollBy({ left: -step() }));
+      next.addEventListener("click", () => track.scrollBy({ left: step() }));
+
+      const sync = () => {
+        prev.disabled = track.scrollLeft <= 1;
+        next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 1;
+      };
+      sync();
+      // scrollend where supported, throttled scroll as fallback
+      if ("onscrollend" in track) {
+        track.addEventListener("scrollend", sync);
+      } else {
+        let raf = 0;
+        track.addEventListener(
+          "scroll",
+          () => {
+            cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(sync);
+          },
+          { passive: true }
+        );
+      }
+      window.addEventListener("resize", sync, { passive: true });
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", initCarousels);
+  document.addEventListener("astro:page-load", initCarousels);
+</script>

@@ -25,3 +25,20 @@ export const Secondary = {
     variant: "secondary",
   } satisfies SectionHeaderStandardProps,
 };
+
+export const White = {
+  args: {
+    title: "Minimal header",
+    subtitle: "Transparent background for content-first pages.",
+    variant: "white",
+  } satisfies SectionHeaderStandardProps,
+};
+
+export const WithEffect = {
+  args: {
+    title: "Animated gradient",
+    subtitle: "Header with the gradient background effect enabled.",
+    variant: "primary",
+    effect: true,
+  } satisfies SectionHeaderStandardProps,
+};

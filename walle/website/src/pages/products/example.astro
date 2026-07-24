@@ -1,0 +1,62 @@
+---
+// Demo product detail page: shows DetailLayout composed with ProductData —
+// the same object feeds the visible content and the Product/Offer JSON-LD.
+import { Badge, Button, Image, Price } from "@walle/components";
+import type { ProductData } from "@walle/components/features/Card/ProductCard.astro";
+import { DetailLayout } from "@walle/layouts";
+import { resolveInternalUrl } from "@walle/utils";
+
+const product: ProductData = {
+  name: "Example product",
+  description: "A demo product detail page built with DetailLayout and ProductData.",
+  image: { src: resolveInternalUrl("/img/posts/default.jpg"), alt: "Example product photo" },
+  price: { amount: 49.9, currency: "EUR", compareAt: 69.9 },
+  availability: "in_stock",
+  href: resolveInternalUrl("/products/example"),
+};
+---
+
+<DetailLayout
+  title={product.name}
+  description={product.description}
+  breadcrumbs={[
+    { label: "Home", href: resolveInternalUrl("/") },
+    { label: "Products" },
+    { label: product.name },
+  ]}
+  backLink={{ href: resolveInternalUrl("/"), label: "Back to home" }}
+  product={product}
+>
+  <Badge slot="badges" text="Demo" variant="alternative" size="large" />
+
+  <Image image={product.image} width={800} height={533} ratio="3 / 2" />
+  <p>{product.description}</p>
+  <p>
+    This page demonstrates the product-detail composition: <code>DetailLayout</code> with a
+    <code>ProductData</code> object emitting Product/Offer JSON-LD, plus <code>Price</code> and availability
+    rendered from the same shape.
+  </p>
+
+  <div slot="aside" class="purchase-card">
+    <Price price={product.price} size="large" />
+    <Button text="Add to cart" fullWidth={true} effects={false} />
+    <p class="purchase-note">Commerce logic (cart, checkout) lives in the consumer site.</p>
+  </div>
+</DetailLayout>
+
+<style>
+  .purchase-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+  }
+
+  .purchase-note {
+    font-size: 0.8rem;
+    margin: 0;
+  }
+</style>

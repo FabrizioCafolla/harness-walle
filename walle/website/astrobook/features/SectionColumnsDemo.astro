@@ -1,0 +1,33 @@
+---
+// Story-only wrapper: provides sample column content for SectionColumns stories.
+import SectionColumns from "@walle/components/features/Sections/SectionColumns.astro";
+
+interface Props {
+  title?: string;
+  columns?: 2 | 3 | 4;
+  centered?: boolean;
+  variant?: "primary" | "gray" | null;
+  items?: number;
+}
+
+const { title, columns = 3, centered = false, variant = null, items = 3 } = Astro.props;
+---
+
+<SectionColumns title={title} columns={columns} centered={centered} variant={variant}>
+  {
+    Array.from({ length: items }, (_, i) => (
+      <div class="demo-column">
+        <h3>Column {i + 1}</h3>
+        <p>Sample content for column {i + 1}. Collapses to one column on narrow viewports.</p>
+      </div>
+    ))
+  }
+</SectionColumns>
+
+<style>
+  .demo-column {
+    padding: 1rem;
+    border: 1px dashed var(--border, #d1d5db);
+    border-radius: 0.5rem;
+  }
+</style>

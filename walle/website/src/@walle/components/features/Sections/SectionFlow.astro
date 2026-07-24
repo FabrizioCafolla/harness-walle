@@ -13,14 +13,19 @@ export interface Props {
   title: string;
   steps: FlowStep[];
   centered?: boolean;
-  type?: "primary" | "gray" | null;
+  variant?: "primary" | "gray" | null;
+  /**
+   * Accessible label for the step list
+   * @default "Process steps"
+   */
+  label?: string;
 }
 
-const { title, steps, centered = true, type = null } = Astro.props;
+const { title, steps, centered = true, variant = null, label = "Process steps" } = Astro.props;
 ---
 
-<Section title={title} centered={centered} type={type}>
-  <ol class="flow-steps" aria-label="Fasi del processo">
+<Section title={title} centered={centered} variant={variant}>
+  <ol class="flow-steps" aria-label={label}>
     {
       steps.map((step) => (
         <li class="flow-step" tabindex="0">
@@ -28,7 +33,7 @@ const { title, steps, centered = true, type = null } = Astro.props;
             {step.icon && <Icon name={step.icon} aria-hidden="true" size={20} />}
           </div>
           <div class="step-content">
-            <h5>{step.title}</h5>
+            <h3>{step.title}</h3>
             <p>{step.description}</p>
           </div>
         </li>
@@ -89,7 +94,7 @@ const { title, steps, centered = true, type = null } = Astro.props;
   }
 
   .step-content {
-    background: var(--white);
+    background: var(--surface);
     border-radius: 8px;
     box-shadow: var(--box-shadow);
     padding: 1.5rem 2rem;
@@ -98,13 +103,16 @@ const { title, steps, centered = true, type = null } = Astro.props;
   }
 
   .step-content h3 {
+    /* Step titles are h3 for correct heading order (the section title is h2);
+       keep the compact visual size the design used. */
+    font-size: 1.25rem;
     margin-top: 0;
     margin-bottom: 0.5rem;
   }
 
   .step-content p {
     margin: 0;
-    color: var(--gray-dark);
+    color: var(--text-muted);
   }
 
   .step-icon {
@@ -139,11 +147,11 @@ const { title, steps, centered = true, type = null } = Astro.props;
 
   /* Ensure text is readable in all color themes */
   :global(.section-content-primary) .step-content {
-    color: var(--black);
+    color: var(--text);
   }
 
   :global(.section-content-primary) .step-content p {
-    color: var(--gray-dark);
+    color: var(--text-muted);
   }
 </style>
 
