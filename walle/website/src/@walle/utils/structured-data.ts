@@ -61,11 +61,14 @@ const SCHEMA_AVAILABILITY: Record<NonNullable<ProductData["availability"]>, stri
 };
 
 export function productJsonLd(product: ProductData, url: string): JsonLd {
+  // Local ImageMetadata carries its built path on `.src`; remote sources are
+  // already a URL string. Either way the image belongs in the structured data.
+  const image = typeof product.image.src === "string" ? product.image.src : product.image.src.src;
   return {
     "@type": "Product",
     name: product.name,
     ...(product.description ? { description: product.description } : {}),
-    ...(typeof product.image.src === "string" ? { image: product.image.src } : {}),
+    ...(image ? { image } : {}),
     url,
     offers: {
       "@type": "Offer",
