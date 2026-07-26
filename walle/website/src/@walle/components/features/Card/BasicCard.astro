@@ -88,16 +88,19 @@ const truncatedContent = content.length > 120 ? content.substring(0, 120) + "...
     height: 100%;
     min-height: 380px;
     padding: var(--card-padding);
-    border: 1px solid var(--card-border-color);
     border-radius: var(--radius-md);
     background: var(--surface);
-    transition: var(--card-transition);
+    box-shadow: var(--box-shadow);
+    transition:
+      transform var(--card-transition),
+      box-shadow var(--card-transition);
     box-sizing: border-box;
+    overflow: hidden;
   }
 
   .card:hover .card__wrapper {
-    border-color: var(--card-hover-border-color);
-    box-shadow: 0 8px 16px rgba(0, 70, 173, 0.12);
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow-hover);
   }
 
   .card:focus {
@@ -107,12 +110,14 @@ const truncatedContent = content.length > 120 ? content.substring(0, 120) + "...
   }
 
   .card__image {
-    width: 100%;
+    /* Full-bleed to the card's top edges: cancel the wrapper padding so the image
+       reaches the border, with only the top corners rounded (the wrapper clips
+       them) and a square bottom. No inset, no double border. */
     aspect-ratio: 1;
     overflow: hidden;
-    border-radius: var(--radius-sm);
     background: var(--surface-alt);
-    margin-bottom: var(--space-lg);
+    margin: calc(var(--card-padding) * -1) calc(var(--card-padding) * -1) var(--space-lg);
+    border-radius: 0;
   }
 
   .card__image img {

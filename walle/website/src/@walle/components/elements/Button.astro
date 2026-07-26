@@ -201,27 +201,27 @@ const tagAttrs = isLink
     transform: none !important;
   }
 
-  /* Variants */
+  /* Variants — flat fills, subtle hover */
   .button-primary {
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    background: var(--primary);
     color: var(--white);
   }
 
   .button-primary:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-    transform: translateY(-4px);
-    box-shadow: var(--box-shadow-hover);
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--box-shadow);
   }
 
   .button-secondary {
-    background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+    background: var(--secondary);
     color: var(--white);
   }
 
   .button-secondary:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--secondary-dark), var(--secondary));
-    transform: translateY(-4px);
-    box-shadow: var(--box-shadow-hover);
+    background: var(--secondary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--box-shadow);
   }
 
   .button-white {
@@ -233,8 +233,8 @@ const tagAttrs = isLink
   .button-white:hover:not(:disabled) {
     background: var(--surface-alt);
     color: var(--primary-dark);
-    transform: translateY(-4px);
-    box-shadow: var(--box-shadow-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--box-shadow);
     border-color: var(--primary-light);
   }
 

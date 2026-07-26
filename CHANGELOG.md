@@ -41,8 +41,84 @@ All notable changes to Walle are documented here. Format follows
   (identity + page tree + blog posts with descriptions), seeded as `src/pages/llms.txt.ts`.
 - **`Head` metadata**: `og:locale` from the site language, `article:published_time` (and
   `og:type: article`) when the layout provides a publish date.
+- **`/robots.txt`** — config-driven endpoint (`src/pages/robots.txt.ts`): emits `Allow`/`Disallow`
+  from `app.json` `website.robots` and a `Sitemap:` pointer built from the resolved site URL, so it
+  stays correct per consumer. Fixes the dev-server `404 /robots.txt`.
+- **Showcase page** (`/showcase`, in the navbar): a live tour of every component — buttons, badges,
+  links, price, cards, responsive columns, carousel — driven by the same semantic tokens. Added to
+  `/llms.txt` and the axe gate.
+- **Legal pages** `/privacy-policy` and `/terms-and-conditions` (already linked from the footer):
+  neutral English placeholder copy, clearly marked as templates, `noindex`. Now covered by the axe
+  gate.
+- **Redesigned home page**: a flat hero with a terminal snippet, a "four layers" module grid
+  (Website · CI/CD · Harness coding), the how-it-works flow, quick-start, and a showcase CTA.
+  Reframed around the website, GitHub Actions CI/CD and the AI-ready harness-coding base
+  (infrastructure references removed).
+- **Shopify headless commerce module** (`src/@walle/commerce/`, [wiki/commerce.md](wiki/commerce.md)):
+  a `products` content collection sourced from the Storefront API at build time (with a bundled
+  fixture fallback so the demo builds with no credentials), static `/products` listing and
+  `/products/[handle]` detail pages (zoomable gallery, `descriptionHtml` body, `RELATED` upsell,
+  Product/Offer JSON-LD), a vanilla variant picker, and a client-side cart (`nanostores` + Storefront
+  Cart API + hosted Shopify checkout). `commerce.showBuyButton` in `app.json` toggles vetrina (catalog
+  only, zero cart JS) vs shop. When commerce is on but no store is connected, an in-memory **mock
+  backend** (`cart-mock.ts`) runs the full add-to-cart/drawer/checkout flow from the fixture, so the
+  demo (and any consumer) is fully reviewable with zero credentials; it switches to the live Cart API
+  the moment the env vars are set. No SSR. Follows the project investigation report.
+- **Product image galleries**: `Carousel` gains an optional `zoom` prop — image slides open full
+  screen in a native `<dialog>` lightbox. The two demo blog posts and the products use real
+  placeholder photography and professional English copy with search-friendly tags.
 
 ### Changed
+
+- **New default look: flat and editorial.** Replaced the blue + magenta + yellow palette with a
+  restrained navy (`--primary #243b6b`) + muted teal (`--secondary #2f5d57`) + warm gold
+  (`--alternative #c99a3f`) system, kept deep enough that white text clears AA on every brand surface
+  (verified by `contrast.test.ts`). Removed the gradient fills that read as dated: buttons, the hero,
+  section headers, and the blog progress bars are now solid. Tightened the `--radius-*` scale to a
+  crisp 2/4/6/8px and retired pill shapes on badges, nav chrome and tag chips. Consumers with a
+  `theme.json` palette/radii override are unaffected.
+- **`HeaderStandard` rebuilt** to integrate with the token system: proportionate type scale, token
+  spacing, no mouse-parallax/reveal scripts; the `secondary` variant sits on `--surface-alt` with a
+  bottom border so it reads as a distinct band.
+- **`SectionFlow` fixed**: step circles now render the step number (were empty), and steps are visible
+  without JavaScript (dropped the scroll-reveal that left them at `opacity:0`).
+- **Navbar**: title-only brand constrained by a `.brand-title` class (plus a defensive `.brand-link h2`
+  reset) so it no longer inherits the global heading clamp; the blog dropdown of individual article
+  links was removed in favour of plain Blog and Products links.
+- **`Carousel` reworked**: overlay side arrows (circular, token-styled) replace the right-aligned row;
+  new `fit` prop (`uniform` = all image slides same height vs `auto` = native aspect), optional
+  `counter` position indicator, click-to-zoom `<dialog>` lightbox, and a consistent inline-SVG icon
+  set. The full-screen close button is pinned to the viewport corner (no longer overflows off-screen).
+- **Cards restyled**: `BasicCard` and `ProductCard` drop the boxy 1px border for a clean shadow, and
+  the image is full-bleed (top corners rounded, square bottom) instead of inset-and-rounded with a
+  visible border gap.
+- **Commerce cards & cart UX**: new `ProductBuyCard` (listing) with per-prop controls (add-to-cart,
+  size chips with sold-out values disabled, quantity, "View details"), using an accessible
+  stretched-link card; `VariantPicker` gains `showQuantity`/`hideOptions`/`compact`, an icon+label
+  add-to-cart (label customizable per-prop and via `commerce.addToCartLabel`), and a
+  discount-percentage badge on sale prices. The cart trigger can
+  live in the navbar (`commerce.cartInNavbar`) or float, and the (mock or live) cart persists across
+  navigation. Product detail upsell cards now show the price.
+- **`tests/scaffold-check/`**: a manual smoke test that scaffolds a fresh consumer project from the
+  working tree (`cli init --source`), installs, builds, and boots `just dev`, asserting HTTP 200 —
+  the "builds in the repo, runs for a consumer" guarantee. Output is gitignored.
+- **Commerce refinements**: listing cards drop the quantity stepper, keeping an icon+label add-to-cart
+  (customizable text); the cart drawer shows the selected variant/size per line and uses the same
+  grouped, bordered quantity stepper as the picker (fixed: its CSS was scoped and never matched the
+  JS-built lines — now `:global`). [wiki/commerce.md](wiki/commerce.md) has a full step-by-step Shopify
+  setup guide
+  (Headless channel, public token, publishing, env vars, webhooks/build hook) and a "managing the
+  store" table.
+- **Dead code removed**: the `HeaderStandard` `effect` prop and `DetailLayout` `headerEffect` (no-ops
+  after the redesign), the orphaned header/section-flow reveal scripts, and `pages/blog/interfaces.ts`
+  (its one type inlined) — which also clears the stray `/blog/interfaces` build warning.
+- **A11y (WCAG 2.2 AA / EAA 2026)**: commerce controls meet the 24px target-size minimum, the text
+  logo is a `<span>` (out of the heading outline), product pages keep a correct heading order, and the
+  new `/products`, product, and `/checkout-demo` pages are covered by the axe gate.
+- **Blog markdown images** use relative, co-located paths (`![](./img.jpg)`) so `astro:assets`
+  optimizes them and emits correct base-path URLs. Root-absolute `/img/...` paths 404 under a base
+  path; the relative form is the Astro-native fix (and removes the deprecated `markdown.rehypePlugins`
+  config, silencing the Astro 7 deprecation warning).
 
 - **BREAKING — unified component prop vocabulary.** Every `@walle` component now uses the shared
   API convention documented in [wiki/components.md](wiki/components.md#api-conventions). Consumer

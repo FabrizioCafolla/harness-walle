@@ -2,12 +2,23 @@
 import { Footer, Navbar } from "@walle/components";
 import config from "@walle/config";
 import { AbstractLayout } from "@walle/layouts";
+import CartMount from "@walle/commerce/CartMount.astro";
+import CartBadge from "@walle/commerce/CartBadge.astro";
+
+// Cart UI only in commerce mode; a vetrina site ships none of it. `cartInNavbar` puts
+// the trigger in the navbar, otherwise it floats bottom-right.
+const commerce = (config.app as { commerce?: { showBuyButton?: boolean; cartInNavbar?: boolean } })
+  .commerce;
+const showCart = commerce?.showBuyButton ?? false;
+const cartInNavbar = commerce?.cartInNavbar ?? false;
 ---
 
 <AbstractLayout {...Astro.props}>
   <slot name="head" slot="head" />
   <slot name="navbar">
-    <Navbar config={config.navbar || {}} />
+    <Navbar config={config.navbar || {}}>
+      {showCart && cartInNavbar && <CartBadge slot="actions" floating={false} />}
+    </Navbar>
   </slot>
   <main id="main-content" tabindex="-1">
     <slot />
@@ -15,4 +26,6 @@ import { AbstractLayout } from "@walle/layouts";
   <slot name="footer">
     <Footer />
   </slot>
+  {showCart && <CartMount />}
+  {showCart && !cartInNavbar && <CartBadge floating={true} />}
 </AbstractLayout>

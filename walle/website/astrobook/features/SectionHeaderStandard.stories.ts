@@ -34,11 +34,11 @@ export const White = {
   } satisfies SectionHeaderStandardProps,
 };
 
-export const WithEffect = {
+export const Centered = {
   args: {
-    title: "Animated gradient",
-    subtitle: "Header with the gradient background effect enabled.",
+    title: "Centered header",
+    subtitle: "The default: title and subtitle centered in the band.",
     variant: "primary",
-    effect: true,
+    centered: true,
   } satisfies SectionHeaderStandardProps,
 };

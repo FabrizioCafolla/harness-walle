@@ -298,14 +298,16 @@ Config-driven client-side filtering (text search + multi-select facets) over any
 
 ### `Carousel`
 
-Native CSS scroll-snap carousel — no library, no autoplay, no infinite loop. Swipe is native scrolling; prev/next buttons and slide position labels are the only JavaScript. Slides go in the default slot; each gets `role="group"` and an "i of N" label (template overridable via `slideLabel`). Reduced motion disables smooth scrolling.
+Native CSS scroll-snap carousel — no library, no autoplay, no infinite loop. Swipe is native scrolling; overlay prev/next buttons and slide position labels are the only JavaScript. Slides go in the default slot; each gets `role="group"` and an "i of N" label (template overridable via `slideLabel`). Reduced motion disables smooth scrolling. With `zoom`, image slides gain an expand affordance and open full screen in a native `<dialog>` lightbox (Esc/backdrop/close button to dismiss).
 
 | Prop                            | Type                     | Default            |
 | ------------------------------- | ------------------------ | ------------------ |
 | `label`                         | `string` (a11y, required)| required           |
 | `perView`                       | `1` \| `2` \| `3` \| `4` | `1` (always 1 on mobile) |
 | `controls`                      | `boolean`                | `true`             |
+| `zoom`                          | `boolean`                | `false` (click image slides to open a full-screen lightbox) |
 | `previousLabel` / `nextLabel`   | `string`                 | English defaults   |
+| `zoomLabel` / `closeLabel`      | `string`                 | English defaults   |
 | `slideLabel`                    | `string` template        | `"{i} of {n}"`     |
 | `class`, `id`                   | `string`                 | —                  |
 

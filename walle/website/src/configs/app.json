@@ -13,5 +13,11 @@
     "basePath": "/harness-walle",
     "trailingSlash": "never",
     "analyticsScriptContent": ""
+  },
+  "commerce": {
+    "showBuyButton": true,
+    "cartInNavbar": true,
+    "locale": "en-US",
+    "addToCartLabel": "Add to cart"
   }
 }

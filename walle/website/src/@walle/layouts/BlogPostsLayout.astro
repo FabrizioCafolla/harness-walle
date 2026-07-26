@@ -2,8 +2,9 @@
 import { BasicCard, CollectionFilters } from "@walle/components";
 import { BaseLayout } from "@walle/layouts";
 import { formatDate, resolveInternalUrl } from "@walle/utils";
-import { getCollection } from "astro:content";
-import type { PostsEntry } from "src/pages/blog/interfaces";
+import { getCollection, type CollectionEntry } from "astro:content";
+
+type PostsEntry = CollectionEntry<"posts">;
 
 const {
   headerTitle = "Blog",

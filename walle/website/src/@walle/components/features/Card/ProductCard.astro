@@ -96,15 +96,17 @@ const classes = ["card", "product-card", className].filter(Boolean).join(" ");
     display: flex;
     flex-direction: column;
     height: 100%;
-    border: 1px solid var(--border);
     border-radius: var(--radius-md);
     background: var(--surface);
+    box-shadow: var(--box-shadow);
     overflow: hidden;
-    transition: var(--transition);
+    transition:
+      transform var(--transition),
+      box-shadow var(--transition);
   }
 
   .product-card:hover .product-card__wrapper {
-    border-color: var(--primary);
+    transform: translateY(-2px);
     box-shadow: var(--box-shadow-hover);
   }
 

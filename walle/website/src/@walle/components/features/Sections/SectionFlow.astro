@@ -28,9 +28,9 @@ const { title, steps, centered = true, variant = null, label = "Process steps" }
   <ol class="flow-steps" aria-label={label}>
     {
       steps.map((step) => (
-        <li class="flow-step" tabindex="0">
+        <li class="flow-step">
           <div class="step-number" aria-hidden="true">
-            {step.icon && <Icon name={step.icon} aria-hidden="true" size={20} />}
+            {step.icon ? <Icon name={step.icon} aria-hidden="true" size={20} /> : step.number}
           </div>
           <div class="step-content">
             <h3>{step.title}</h3>
@@ -59,17 +59,7 @@ const { title, steps, centered = true, variant = null, label = "Process steps" }
   .flow-step {
     display: flex;
     align-items: center;
-    margin-bottom: 3rem;
-    opacity: 0;
-    transform: translateY(40px);
-    transition:
-      opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-      transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .flow-step.visible {
-    opacity: 1;
-    transform: translateY(0);
+    margin-bottom: var(--space-xl);
   }
 
   .flow-step:last-child {
@@ -95,8 +85,8 @@ const { title, steps, centered = true, variant = null, label = "Process steps" }
 
   .step-content {
     background: var(--surface);
-    border-radius: 8px;
-    box-shadow: var(--box-shadow);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
     padding: 1.5rem 2rem;
     flex: 1;
     position: relative;
@@ -154,7 +144,3 @@ const { title, steps, centered = true, variant = null, label = "Process steps" }
     color: var(--text-muted);
   }
 </style>
-
-<script>
-  import "@walle/scripts/sectionFlow.ts";
-</script>

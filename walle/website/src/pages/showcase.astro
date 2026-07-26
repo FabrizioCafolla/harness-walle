@@ -1,0 +1,313 @@
+---
+import { BaseLayout } from "@walle/layouts";
+import {
+  Badge,
+  BasicCard,
+  Breadcrumbs,
+  Button,
+  Carousel,
+  Link,
+  Price,
+  ProductCard,
+  Section,
+  SectionColumns,
+} from "@walle/components";
+import { resolveInternalUrl } from "@walle/utils";
+
+const img = (p: string) => resolveInternalUrl(p);
+
+const groups = [
+  { id: "elements", label: "Elements" },
+  { id: "cards", label: "Cards" },
+  { id: "layout", label: "Layout" },
+  { id: "media", label: "Media" },
+  { id: "catalog", label: "Catalog" },
+];
+---
+
+<BaseLayout
+  headerTitle="Showcase"
+  headerDescription="Every Walle component in one place: buttons, badges, cards, sections, carousels and more, live and accessible."
+>
+  <section class="showcase-hero">
+    <div class="showcase-hero__inner">
+      <Breadcrumbs
+        items={[{ label: "Home", href: resolveInternalUrl("/") }, { label: "Showcase" }]}
+      />
+      <h1>Component showcase</h1>
+      <p>
+        A live tour of the Walle design system. Every element below is a real component from
+        <code>@walle/components</code>: accessible, responsive, and driven by the same semantic
+        tokens your site inherits. Browse the interactive catalog with
+        <code>just astrobook</code> during development.
+      </p>
+      <nav class="showcase-nav" aria-label="Showcase sections">
+        {groups.map((g) => <a href={`#${g.id}`}>{g.label}</a>)}
+      </nav>
+    </div>
+  </section>
+
+  <!-- ELEMENTS -->
+  <span id="elements" class="anchor"></span>
+  <Section title="Elements">
+    <div class="demo">
+      <h3 class="demo__title">Buttons</h3>
+      <div class="demo__row">
+        <Button text="Primary" variant="primary" />
+        <Button text="Secondary" variant="secondary" />
+        <Button text="Outline" variant="primary" outline={true} />
+        <Button text="With icon" variant="primary" icon="fa:github" />
+        <Button text="Large" variant="primary" size="large" />
+        <Button text="Small" variant="secondary" size="small" />
+        <Button text="Disabled" variant="primary" disabled={true} />
+      </div>
+    </div>
+
+    <div class="demo">
+      <h3 class="demo__title">Badges</h3>
+      <div class="demo__row">
+        <Badge text="Primary" variant="primary" />
+        <Badge text="Secondary" variant="secondary" />
+        <Badge text="Alternative" variant="alternative" />
+        <Badge text="Success" variant="success" />
+        <Badge text="Warning" variant="warning" />
+        <Badge text="Danger" variant="danger" />
+        <Badge text="Gray" variant="gray" />
+      </div>
+    </div>
+
+    <div class="demo">
+      <h3 class="demo__title">Links</h3>
+      <div class="demo__row demo__row--text">
+        <Link href={resolveInternalUrl("/blog")} text="Internal link" />
+        <Link href="https://astro.build" text="External link" target="_blank" />
+        <Link href={resolveInternalUrl("/")} text="Muted link" variant="muted" />
+      </div>
+    </div>
+
+    <div class="demo">
+      <h3 class="demo__title">Price</h3>
+      <div class="demo__row">
+        <Price price={{ amount: 49.9, currency: "EUR" }} />
+        <Price price={{ amount: 39.9, currency: "EUR", compareAt: 59.9 }} />
+        <Price price={{ amount: 1299, currency: "USD" }} locale="en-US" size="large" />
+      </div>
+    </div>
+  </Section>
+
+  <!-- CARDS -->
+  <span id="cards" class="anchor"></span>
+  <Section title="Cards" variant="gray">
+    <div class="card-grid">
+      <BasicCard
+        title="Designing an accessible component library"
+        content="A flexible content card with image, badge and optional date, used across the blog and listing pages."
+        href={resolveInternalUrl("/blog/example")}
+        image={{ src: img("/img/blog-demo-1.jpg"), alt: "Blog post preview" }}
+        badge={{ text: "Guide", variant: "secondary" }}
+        publishDate="2026-01-12"
+        target="_self"
+      />
+      <ProductCard
+        product={{
+          name: "Aurora Merino Overshirt",
+          description: "Commerce-ready card with price, availability and structured-data support.",
+          image: { src: img("/img/product-demo-1.jpg"), alt: "Aurora Merino Overshirt" },
+          price: { amount: 129, currency: "EUR", compareAt: 159 },
+          availability: "in_stock",
+          badge: { text: "New season", variant: "primary" },
+          href: resolveInternalUrl("/products/aurora-merino-overshirt"),
+        }}
+      />
+    </div>
+  </Section>
+
+  <!-- LAYOUT -->
+  <span id="layout" class="anchor"></span>
+  <SectionColumns title="Layout: responsive columns" columns={3} centered={true}>
+    <div class="feature">
+      <h3>Semantic tokens</h3>
+      <p>Every color, space and radius is a CSS variable. Override the token layer to rebrand.</p>
+    </div>
+    <div class="feature">
+      <h3>Accessible by default</h3>
+      <p>Skip links, focus rings, reduced-motion and 320px reflow are built in, not bolted on.</p>
+    </div>
+    <div class="feature">
+      <h3>SEO &amp; AI ready</h3>
+      <p>JSON-LD, sitemap, RSS and an llms.txt endpoint ship with the scaffold.</p>
+    </div>
+  </SectionColumns>
+
+  <!-- MEDIA -->
+  <span id="media" class="anchor"></span>
+  <Section title="Media: image carousel">
+    <p class="media-hint">
+      Scroll-snap track with overlay controls. Hover an image and use the expand button (or click
+      it) to open it full screen.
+    </p>
+    <Carousel
+      label="Image gallery"
+      perView={1}
+      controls={true}
+      counter={true}
+      zoom={true}
+      class="showcase-gallery"
+    >
+      <div class="gallery-slide">
+        <img
+          src={img("/img/blog-demo-1.jpg")}
+          alt="Accessible component library, cover art"
+          width="1200"
+          height="800"
+          loading="lazy"
+        />
+      </div>
+      <div class="gallery-slide">
+        <img
+          src={img("/img/blog-demo-2.jpg")}
+          alt="CI/CD pipeline, cover art"
+          width="1200"
+          height="800"
+          loading="lazy"
+        />
+      </div>
+    </Carousel>
+  </Section>
+
+  <!-- CATALOG -->
+  <span id="catalog" class="anchor"></span>
+  <Section title="Catalog & content" variant="gray" centered={true}>
+    <p>
+      Listing pages combine <code>BasicCard</code> with <code>CollectionFilters</code>: generic
+      search and facets driven by your content collection. The demo blog wires it to post tags, and
+      the products catalog is sourced from Shopify at build time.
+    </p>
+    <div class="demo__row demo__row--center">
+      <Button text="Open the demo blog" href={resolveInternalUrl("/blog")} variant="primary" />
+      <Button
+        text="Browse products"
+        href={resolveInternalUrl("/products")}
+        variant="secondary"
+        outline={true}
+      />
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  .anchor {
+    display: block;
+    position: relative;
+    top: -80px;
+    visibility: hidden;
+  }
+
+  .showcase-hero {
+    background: var(--surface-alt);
+    padding: var(--space-3xl) var(--space-xl) var(--space-2xl);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .showcase-hero__inner {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .showcase-hero h1 {
+    margin-top: var(--space-md);
+  }
+
+  .showcase-hero p {
+    font-size: 1.1rem;
+    max-width: 46rem;
+  }
+
+  .showcase-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-top: var(--space-lg);
+  }
+
+  .showcase-nav a {
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 0.35rem 0.9rem;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+  }
+
+  .showcase-nav a:hover {
+    background: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+  }
+
+  .demo {
+    margin-bottom: var(--space-2xl);
+    text-align: left;
+  }
+
+  .demo__title {
+    font-size: 1.15rem;
+    margin-bottom: var(--space-md);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .demo__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    align-items: center;
+  }
+
+  .demo__row--text {
+    gap: var(--space-xl);
+  }
+
+  .demo__row--center {
+    justify-content: center;
+    margin-top: var(--space-lg);
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-xl);
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .feature {
+    text-align: left;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+  }
+
+  .feature h3 {
+    font-size: 1.2rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .feature p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .media-hint {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: var(--space-lg);
+  }
+
+  /* Image sizing is owned by the Carousel (fit="uniform" by default). */
+</style>

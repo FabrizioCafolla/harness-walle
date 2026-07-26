@@ -47,32 +47,18 @@ export interface Props {
   };
 
   /**
-   * Enable the header background effect
-   * @default false
-   */
-  headerEffect?: boolean;
-
-  /**
    * Product rendered by this page — emits Product/Offer JSON-LD from the
    * same object that feeds the visible content (one shape, two renderings)
    */
   product?: ProductData;
 }
 
-const {
-  title,
-  description,
-  ogImage,
-  breadcrumbs = [],
-  backLink,
-  headerEffect = false,
-  product,
-} = Astro.props;
+const { title, description, ogImage, breadcrumbs = [], backLink, product } = Astro.props;
 ---
 
 <BaseLayout headerTitle={title} headerDescription={description} headerOgImage={ogImage}>
   {product && <StructuredData data={productJsonLd(product, Astro.url.href)} />}
-  <SectionHeaderStandard title={title} effect={headerEffect}>
+  <SectionHeaderStandard title={title}>
     <div class="detail-badges">
       <slot name="badges" />
     </div>

@@ -1,157 +1,449 @@
 ---
 import { BaseLayout } from "@walle/layouts";
-import { Button, Section, SectionHeaderStandard, SectionFlow } from "@walle/components";
+import { Button, Section, SectionFlow } from "@walle/components";
 import { resolveInternalUrl } from "@walle/utils";
+
+const modules = [
+  {
+    tag: "Website",
+    title: "Component library",
+    description:
+      "Accessible Astro components: buttons, cards, sections, carousels, navbar, footer and blog. WCAG 2.2 AA, responsive, SEO and structured data ready out of the box.",
+    points: [
+      "WCAG 2.2 AA + 320px reflow",
+      "JSON-LD, sitemap, RSS, llms.txt",
+      "Semantic design tokens",
+    ],
+  },
+  {
+    tag: "CI/CD",
+    title: "GitHub Actions",
+    description:
+      "Ready-made workflows for lint, build, accessibility and end-to-end tests, plus deploy to GitHub Pages, wired through reusable composite actions.",
+    points: ["Test + a11y + e2e pipelines", "Deploy to GitHub Pages", "Reusable composite actions"],
+  },
+  {
+    tag: "Harness coding",
+    title: "AI-ready dev base",
+    description:
+      "The harness-coding base ships a DevContainer, a justfile task runner, git hooks and AGENTS.md skills, so agents like Claude Code and Copilot work with full project context from day one.",
+    points: ["DevContainer + justfile", "AGENTS.md + agent skills", "Pre-commit hooks"],
+  },
+];
 
 const howItWorksSteps = [
   {
+    number: 1,
     title: "Init",
     description:
-      "Run the CLI to scaffold a full project: website, DevContainer, CI/CD workflows, and infrastructure stubs ready to deploy.",
+      "Run the CLI once. It scaffolds the harness-coding base, seeds the starter site, and syncs the managed design system into a complete, ready-to-run project.",
   },
   {
+    number: 2,
     title: "Configure",
     description:
-      "Edit JSON configs for branding, navigation, and metadata. Override CSS variables for colors and fonts. Adjust the DevContainer and workflows to match your stack.",
+      "Edit JSON configs for branding, navigation and metadata. Override CSS variables for colors, fonts and spacing. No component code to touch.",
   },
   {
+    number: 3,
     title: "Build",
     description:
-      "Add pages, content collections, and custom components. Write your infrastructure with OpenTofu. The @walle/ directories stay read-only your code lives in consumer zones.",
+      "Add pages, content collections and your own components. The @walle/ directories stay managed, so your code lives in consumer zones that updates never overwrite.",
   },
   {
+    number: 4,
     title: "Update",
     description:
-      "When a new version ships, run `just walle-update`. Only @walle/ paths are replaced your content, config, and infra are untouched.",
+      "When a new version ships, run `just walle update`. Only @walle/ paths are replaced. Your content, config and pages are untouched.",
   },
 ];
 ---
 
 <BaseLayout
   headerTitle="Walle Design System"
-  headerDescription="A ready-to-deploy design system: Astro website, DevContainer, GitHub Actions CI/CD, and infrastructure all in one scaffold."
+  headerDescription="A copy-based Astro design system: accessible components, GitHub Actions CI/CD, and an AI-ready dev base, scaffolded by one CLI command."
 >
-  <SectionHeaderStandard
-    title="Walle Design System"
-    subtitle="A production-ready scaffold that ships an Astro website, a DevContainer, GitHub Actions pipelines, and infrastructure stubs so you go from zero to deployed in minutes."
-  />
+  <section class="hero">
+    <div class="hero__inner">
+      <div class="hero__copy">
+        <p class="hero__eyebrow">Astro · copy-based · dev to deploy</p>
+        <h1 class="hero__title">Ship a website, not a setup.</h1>
+        <p class="hero__lead">
+          Walle is an Astro <strong>design system you copy into your repo</strong>: accessible
+          components, GitHub Actions pipelines, and an AI-ready dev base. One CLI command scaffolds
+          a complete project, and <code>update</code> keeps the managed parts current without touching
+          your code.
+        </p>
+        <div class="hero__actions">
+          <Button
+            text="Explore the showcase"
+            href={resolveInternalUrl("/showcase")}
+            variant="primary"
+            size="large"
+          />
+          <Button
+            text="View on GitHub"
+            href="https://github.com/FabrizioCafolla/harness-walle"
+            variant="white"
+            outline={true}
+            size="large"
+            target="_blank"
+          />
+        </div>
+        <p class="hero__note">No package to install. Nothing to eject. The source is yours.</p>
+      </div>
 
-  <Section title="What is Walle" centered={true}>
-    <p>
-      Walle is a <strong>copy-based design system</strong> for deploying web applications. It is not an
-      npm package it is a full project scaffold distributed via a CLI that copies everything into your
-      repository.
-    </p>
-    <p>Each project gets four integrated layers out of the box:</p>
-    <ul class="feature-list">
-      <li>
-        <strong>Website</strong> Astro 6 with layouts, components, blog support, sitemap, RSS, and SEO
-        defaults.
-      </li>
-      <li>
-        <strong>DevContainer</strong> Docker-based development environment with Node, OpenTofu, GitHub
-        CLI, and pre-configured VS Code extensions.
-      </li>
-      <li>
-        <strong>CI/CD</strong> GitHub Actions workflows for testing (lint, build) and deploying to GitHub
-        Pages, with reusable composite actions.
-      </li>
-      <li>
-        <strong>Infrastructure</strong> OpenTofu-ready directory for managing DNS, CDN, or any cloud resource
-        alongside your site.
-      </li>
+      <div class="hero__terminal">
+        <div class="term">
+          <div class="term__bar">
+            <span></span><span></span><span></span>
+            <em>bash</em>
+          </div>
+          <pre
+            class="term__body"><code><span class="c">$</span> bash &lt;(curl -fsSL walle/cli.sh) \
+    init --project-name my-site
+
+<span class="ok">✓</span> harness-coding base
+<span class="ok">✓</span> starter site + configs
+<span class="ok">✓</span> managed design system
+<span class="ok">✓</span> CI/CD workflows
+
+<span class="c">$</span> cd my-site &amp;&amp; yarn dev
+  → http://localhost:4321</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="modules">
+    <div class="modules__head">
+      <h2>Four layers, one scaffold</h2>
+      <p>Everything an Astro site needs to go live and stay maintainable, enabled by default.</p>
+    </div>
+    <ul class="modules__grid">
+      {
+        modules.map((m) => (
+          <li class="module-card">
+            <span class="module-card__tag">{m.tag}</span>
+            <h3 class="module-card__title">{m.title}</h3>
+            <p class="module-card__desc">{m.description}</p>
+            <ul class="module-card__points">
+              {m.points.map((p) => (
+                <li>{p}</li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
     </ul>
-    <p>
-      Customizations live in consumer zones. The <code>@walle/</code> directories are read-only and replaced
-      on update your code, config, and content are never touched.
-    </p>
+  </section>
+
+  <SectionFlow title="How it works" steps={howItWorksSteps} variant="gray" />
+
+  <Section title="Quick start" centered={true}>
+    <p>Scaffold a new project with everything included:</p>
+    <pre
+      class="code-block"><code>bash &lt;(curl -fsSL https://raw.githubusercontent.com/FabrizioCafolla/harness-walle/main/walle/cli/cli.sh) \
+  init --project-name my-site</code></pre>
+
+    <p>Pull the latest managed release into an existing project:</p>
+    <pre class="code-block"><code>just walle update</code></pre>
+
+    <p>Develop locally inside the DevContainer:</p>
+    <pre class="code-block"><code>just setup &amp;&amp; just dev</code></pre>
   </Section>
 
-  <SectionFlow title="How it works" steps={howItWorksSteps} />
-
-  <Section title="Quick start" centered={true} variant="gray">
-    <p>Create a new project with everything included:</p>
-    <pre><code>curl -fsSL https://raw.githubusercontent.com/FabrizioCafolla/harness-walle/main/lib/scripts/@walle/cli.sh \
-  | bash -s -- init --project-name my-site</code></pre>
-
-    <p>Update <code>@walle/</code> layers in an existing project:</p>
-    <pre><code>just walle-update</code></pre>
-
-    <p>Start developing locally inside the DevContainer:</p>
-    <pre><code>just setup && just dev</code></pre>
-  </Section>
-
-  <Section title="Customization" centered={true}>
-    <p>
-      <strong>Website config</strong> JSON files in <code>src/configs/</code> control logo, navbar, footer,
-      and app metadata.
-    </p>
-    <p>
-      <strong>CSS variables</strong> Override brand colors, spacing, and typography in <code
-        >src/styles/global.css</code
-      >.
-    </p>
-    <p>
-      <strong>Layout slots</strong> Replace navbar, footer, or inject extra <code>&lt;head&gt;</code
-      > tags via named slots.
-    </p>
-    <p>
-      <strong>CI/CD & Infra</strong> Extend or override the provided GitHub Actions and OpenTofu modules
-      without modifying <code>@walle/</code> sources.
-    </p>
-    <p class="home-actions">
-      <Button text="View the demo blog" href={resolveInternalUrl("/blog")} variant="primary" />
-      <Button
-        text="GitHub"
-        href="https://github.com/FabrizioCafolla/harness-walle"
-        variant="secondary"
-        outline={true}
-        target="_blank"
-      />
-    </p>
-  </Section>
+  <section class="cta">
+    <div class="cta__inner">
+      <h2>See every component in action</h2>
+      <p>
+        Browse the live showcase, then read the demo blog to see the content pipeline end to end.
+      </p>
+      <div class="cta__actions">
+        <Button
+          text="Open the showcase"
+          href={resolveInternalUrl("/showcase")}
+          variant="white"
+          size="large"
+        />
+        <Button
+          text="Read the blog"
+          href={resolveInternalUrl("/blog")}
+          variant="white"
+          outline={true}
+          size="large"
+        />
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
-  pre {
-    max-width: 960px;
-    margin: 1rem auto;
-    text-align: left;
-    background: #0f172a;
-    color: #e2e8f0;
-    padding: 1rem 1.25rem;
-    border-radius: 12px;
-    overflow-x: auto;
+  /* ---- Hero ---- */
+  .hero {
+    background: var(--primary-dark);
+    color: var(--white);
+    padding: clamp(3rem, 8vw, 6rem) var(--space-xl);
+  }
+
+  .hero__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  .hero__eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--alternative-light);
+    margin-bottom: var(--space-md);
+  }
+
+  .hero__title {
+    font-size: clamp(2.5rem, 6vw, 3.75rem);
+    line-height: 1.05;
+    color: var(--white);
+    margin-bottom: var(--space-lg);
+    letter-spacing: -0.02em;
+  }
+
+  .hero__lead {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.88);
+    max-width: 34rem;
+    margin-bottom: var(--space-xl);
+  }
+
+  /* strong inherits the hero's light color instead of the global near-black */
+  .hero__lead strong {
+    color: var(--white);
+  }
+
+  .hero__lead code {
+    background: rgba(255, 255, 255, 0.14);
+    padding: 0.1em 0.35em;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+
+  .hero__actions {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+
+  .hero__note {
+    margin-top: var(--space-lg);
     font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.65);
   }
 
-  code {
-    font-family: "Fira Code", "JetBrains Mono", monospace;
+  /* Terminal */
+  .term {
+    background: #101725;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  .feature-list {
-    text-align: left;
-    max-width: 720px;
-    margin: 1.5rem auto;
+  .term__bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.7rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .term__bar span {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #ff5f56;
+  }
+
+  .term__bar span:nth-child(2) {
+    background: #ffbd2e;
+  }
+
+  .term__bar span:nth-child(3) {
+    background: #27c93f;
+  }
+
+  .term__bar em {
+    margin-left: auto;
+    font-style: normal;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.65);
+    font-family: var(--font-mono);
+  }
+
+  .term__body {
+    margin: 0;
+    padding: 1.25rem 1.5rem;
+    color: #cbd5e1;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.7;
+    overflow-x: auto;
+  }
+
+  .term__body .c {
+    color: #94a3b8;
+  }
+
+  .term__body .ok {
+    color: #4ade80;
+  }
+
+  /* ---- Modules ---- */
+  .modules {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(3rem, 7vw, 5rem) var(--space-xl);
+  }
+
+  .modules__head {
+    text-align: center;
+    max-width: 40rem;
+    margin: 0 auto var(--space-3xl);
+  }
+
+  .modules__head p {
+    font-size: 1.1rem;
+  }
+
+  .modules__grid {
     list-style: none;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--space-xl);
   }
 
-  .feature-list li {
-    padding: 0.75rem 1rem;
-    border-left: 3px solid var(--primary, #0046ad);
-    background: var(--gray, #f8f9fa);
-    border-radius: 0 8px 8px 0;
+  .module-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    transition:
+      border-color var(--transition),
+      box-shadow var(--transition);
   }
 
-  .home-actions {
-    margin-top: 2rem;
+  .module-card:hover {
+    box-shadow: var(--box-shadow);
+    border-color: var(--primary);
+  }
+
+  .module-card__tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--primary);
+    background: var(--surface-alt);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-md);
+  }
+
+  .module-card__title {
+    font-size: 1.35rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .module-card__desc {
+    font-size: 0.98rem;
+    margin-bottom: var(--space-lg);
+  }
+
+  .module-card__points {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--border);
+    padding-top: var(--space-md);
+  }
+
+  .module-card__points li {
+    position: relative;
+    padding-left: 1.4rem;
+    margin-bottom: var(--space-xs);
+    color: var(--text);
+    font-size: 0.92rem;
+  }
+
+  .module-card__points li::before {
+    content: "›";
+    position: absolute;
+    left: 0.1rem;
+    color: var(--secondary);
+    font-weight: 700;
+  }
+
+  /* ---- Shared code blocks ---- */
+  .code-block {
+    max-width: 820px;
+    margin: 1rem auto;
+    text-align: left;
+    background: #101725;
+    color: #e2e8f0;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+
+  /* ---- CTA ---- */
+  .cta {
+    background: var(--primary);
+    color: var(--white);
+    padding: clamp(3rem, 7vw, 5rem) var(--space-xl);
+    text-align: center;
+  }
+
+  .cta__inner {
+    max-width: 40rem;
+    margin: 0 auto;
+  }
+
+  .cta h2 {
+    color: var(--white);
+  }
+
+  .cta p {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.1rem;
+    margin-bottom: var(--space-xl);
+  }
+
+  .cta__actions {
     display: flex;
-    gap: 1rem;
+    gap: var(--space-md);
     justify-content: center;
     flex-wrap: wrap;
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 900px) {
+    .hero__inner {
+      grid-template-columns: 1fr;
+    }
+
+    .hero__terminal {
+      order: 2;
+    }
   }
 </style>

@@ -3,12 +3,11 @@ import config from "@walle/config";
 import { getCollection } from "astro:content";
 
 /**
- * /llms.txt — a build-time markdown index of the site for AI crawlers
- * (https://llmstxt.org). Lists the site identity and the page tree with
- * descriptions from content frontmatter.
+ * /llms.txt (https://llmstxt.org): a build-time markdown index of the site for AI
+ * crawlers. Lists the site identity and the page tree with descriptions from content.
  *
- * Seed file: owned by the consumer after scaffold — extend the `sections`
- * array with your own page groups.
+ * Seed file: owned by the consumer after scaffold. Extend the `lines` array with your
+ * own page groups.
  */
 export const GET: APIRoute = async ({ site }) => {
   const base = (config.app.astro.basePath || "").replace(/\/$/, "");
@@ -21,6 +20,8 @@ export const GET: APIRoute = async ({ site }) => {
         new Date(b.data.publishDate ?? 0).getTime() - new Date(a.data.publishDate ?? 0).getTime()
     );
 
+  const products = await getCollection("products");
+
   const lines = [
     `# ${config.app.website.title}`,
     "",
@@ -29,13 +30,22 @@ export const GET: APIRoute = async ({ site }) => {
     "## Pages",
     "",
     `- [Home](${url("/")})`,
+    `- [Showcase](${url("/showcase")})`,
     `- [Blog](${url("/blog")})`,
+    `- [Products](${url("/products")})`,
     "",
     "## Blog posts",
     "",
     ...posts.map((post) => {
       const desc = post.data.description ? `: ${post.data.description}` : "";
       return `- [${post.data.title}](${url(`/blog/${post.id}`)})${desc}`;
+    }),
+    "",
+    "## Products",
+    "",
+    ...products.map((p) => {
+      const desc = p.data.seo.description ? `: ${p.data.seo.description}` : "";
+      return `- [${p.data.title}](${url(`/products/${p.data.handle}`)})${desc}`;
     }),
     "",
   ];

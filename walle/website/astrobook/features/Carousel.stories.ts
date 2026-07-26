@@ -21,3 +21,17 @@ export const ThreePerView = {
 export const NoControls = {
   args: { label: "Swipe only", controls: false } satisfies CarouselDemoProps,
 };
+
+export const ImagesUniformWithZoom = {
+  args: {
+    label: "Image gallery",
+    images: true,
+    zoom: true,
+    counter: true,
+    fit: "uniform",
+  } satisfies CarouselDemoProps,
+};
+
+export const ImagesNativeAspect = {
+  args: { label: "Native aspect", images: true, fit: "auto" } satisfies CarouselDemoProps,
+};

@@ -16,4 +16,9 @@ const selected = config.app.components?.navbar ?? "standard";
 const Variant = VARIANTS[selected as keyof typeof VARIANTS] ?? Standard;
 ---
 
-<Variant config={navbarConfig} />
+{/* Forward a slot only when the consumer actually filled it: an always-present
+   `<slot slot="brand" />` counts as "provided" and would suppress Navbar's default brand. */}
+<Variant config={navbarConfig}>
+  {Astro.slots.has("brand") && <slot name="brand" slot="brand" />}
+  {Astro.slots.has("actions") && <slot name="actions" slot="actions" />}
+</Variant>

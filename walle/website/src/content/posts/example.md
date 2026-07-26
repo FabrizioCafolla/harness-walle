@@ -1,72 +1,73 @@
 ---
-title: Example
-description: Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam
+title: Designing an Accessible Component Library with Astro
+description: How to structure reusable, WCAG 2.2 AA components in Astro with semantic tokens, slots, and stories that stay maintainable as the system grows.
 author: Fabrizio Cafolla
-publishDate: 2025-07-06
-tags: ["lorem", "ipsum", "example", "tech"]
-image: /img/posts/example/img-1.jpg
+publishDate: 2026-01-12
+tags: ["Astro", "Accessibility", "Design Systems", "Performance"]
+image: /img/blog-demo-1.jpg
 ---
 
-## Lorem Ipsum
+## Why a component library, not a theme
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+A theme decorates markup you have already written. A component library gives you
+the markup itself: buttons, cards, sections, navigation, with accessibility,
+responsiveness, and metadata already handled. The difference shows up six months
+later, when a redesign is a token change instead of a rewrite.
 
-### Sed ut perspiciatis unde omnis
+This post walks through the principles behind the Walle library, a small set of
+rules that keep components consistent without freezing them.
 
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+### Semantic tokens over hardcoded colors
 
-- Nemo enim ipsam voluptatem quia voluptas sit aspernatur
-- Aut odit aut fugit, sed quia consequuntur magni dolores
-- Eos qui ratione voluptatem sequi nesciunt
-- Neque porro quisquam est, qui dolorem ipsum
+Every color, space, and radius is a CSS variable with a semantic name, such as
+`--surface`, `--text-muted`, or `--border`, mapped onto a palette. Components never
+reference a hex value directly. Rebranding is editing one layer, and the components
+inherit it everywhere.
 
-### At vero eos et accusamus
+- One source of truth for the visual language
+- Contrast pairings verified once, in a unit test
+- Consumers restyle by overriding tokens, not forking components
 
-At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.
+### Accessibility is a default, not a checklist
 
-> Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis."
+Skip links, focus-visible rings, reduced-motion handling, and 320px reflow are
+built into the layouts and enforced by an automated axe gate. A component that
+fails the gate does not ship.
 
-#### Temporibus autem quibusdam
+> Accessibility that lives in a review checklist gets skipped under deadline.
+> Accessibility that lives in the test suite does not.
 
-1. Et harum quidem rerum facilis est et expedita distinctio
-2. Nam libero tempore, cum soluta nobis est eligendi optio
-3. Cumque nihil impedit quo minus id quod maxime placeat
-4. Facere possimus, omnis voluptas assumenda est
+### Stories keep the surface honest
 
-Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
+Every component ships with a catalog story. If a prop exists, there is a story
+that renders it, so the documented API and the real API never drift apart.
+
+```astro
+---
+import { Button } from "@walle/components";
+---
+
+<Button text="Primary" variant="primary" />
+<Button text="With icon" icon="fa:github" variant="secondary" />
+```
 
 ### Image
 
-![img 1](/img/posts/example/img-1.jpg)
+![Component library preview](./blog-demo-1.jpg)
 
-### Esempio di codice
+### Where the boundaries sit
 
-Ecco un esempio di codice JavaScript:
+| Concern          | Lives in          | Updated by        |
+| ---------------- | ----------------- | ----------------- |
+| Visual language  | Semantic tokens   | Consumer override |
+| Component markup | Managed `@walle/` | Library release   |
+| Page content     | Consumer zones    | You               |
 
-```javascript
-function loremIpsum() {
-  const text = "Lorem ipsum dolor sit amet";
-  console.log(text);
-  return text;
-}
+## Takeaways
 
-loremIpsum();
-```
+Keep the rules few and enforce them automatically. Tokens for the look,
+accessibility in the test suite, a story per component. That is most of what
+keeps a design system usable long after the first launch.
 
-### Tabella di esempio
-
-| Lorem      | Ipsum   | Dolor       |
-| ---------- | ------- | ----------- |
-| Sit        | Amet    | Consectetur |
-| Adipiscing | Elit    | Sed         |
-| Do         | Eiusmod | Tempor      |
-
-## Ut enim ad minim veniam
-
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-
-**Excepteur sint** occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. _Sed ut perspiciatis_ unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
-
----
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
+Have a pattern you keep re-implementing across projects? That is usually the next
+component worth generalizing.

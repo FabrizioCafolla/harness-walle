@@ -7,15 +7,52 @@ interface Props {
   label?: string;
   perView?: 1 | 2 | 3 | 4;
   controls?: boolean;
+  counter?: boolean;
   slides?: number;
+  images?: boolean;
+  zoom?: boolean;
+  fit?: "uniform" | "auto";
 }
 
-const { label = "Demo carousel", perView = 1, controls = true, slides = 5 } = Astro.props;
+const {
+  label = "Demo carousel",
+  perView = 1,
+  controls = true,
+  counter = false,
+  slides = 5,
+  images = false,
+  zoom = false,
+  fit = "uniform",
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const sampleImages = [`${base}/img/blog-demo-1.jpg`, `${base}/img/blog-demo-2.jpg`];
 ---
 
-<Carousel label={label} perView={perView} controls={controls}>
-  {Array.from({ length: slides }, (_, i) => <div class="demo-slide">Slide {i + 1}</div>)}
-</Carousel>
+{
+  images ? (
+    <Carousel
+      label={label}
+      perView={perView}
+      controls={controls}
+      counter={counter}
+      zoom={zoom}
+      fit={fit}
+    >
+      {sampleImages.map((src, i) => (
+        <div class="demo-image">
+          <img src={src} alt={`Sample slide ${i + 1}`} width="1200" height="800" loading="lazy" />
+        </div>
+      ))}
+    </Carousel>
+  ) : (
+    <Carousel label={label} perView={perView} controls={controls} counter={counter}>
+      {Array.from({ length: slides }, (_, i) => (
+        <div class="demo-slide">Slide {i + 1}</div>
+      ))}
+    </Carousel>
+  )
+}
 
 <style>
   .demo-slide {
@@ -25,7 +62,7 @@ const { label = "Demo carousel", perView = 1, controls = true, slides = 5 } = As
     min-height: 200px;
     background: var(--surface-alt, #f5f5f5);
     border: 1px solid var(--border, #d1d5db);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-lg, 0.375rem);
     font-size: 1.25rem;
     font-weight: 600;
   }

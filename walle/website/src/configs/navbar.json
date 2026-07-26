@@ -10,13 +10,16 @@
       "url": "/"
     },
     {
+      "name": "Showcase",
+      "url": "/showcase"
+    },
+    {
       "name": "Blog",
-      "url": "/blog",
-      "dropdown": [
-        { "name": "Posts", "url": "/blog" },
-        { "name": "Example 1", "url": "/blog/example" },
-        { "name": "Example 2", "url": "/blog/example-2" }
-      ]
+      "url": "/blog"
+    },
+    {
+      "name": "Products",
+      "url": "/products"
     },
     {
       "icon": "fa:linkedin",

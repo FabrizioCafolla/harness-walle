@@ -35,11 +35,13 @@ const shouldShowBrand = hasLogo || hasTitle;
                     width={config.logo.width || 50}
                     height={config.logo.height || 50}
                     loading="eager"
-                    class={config.logo.cssClasses || ""}
+                    class:list={["brand-logo", config.logo.cssClasses]}
                     fetchpriority="high"
                   />
                 ) : hasTitle ? (
-                  <h2 class={config.logo.cssClasses || ""}>{config.logo.title}</h2>
+                  <span class:list={["brand-title", config.logo.cssClasses]}>
+                    {config.logo.title}
+                  </span>
                 ) : null}
               </a>
             </div>
@@ -119,6 +121,38 @@ const shouldShowBrand = hasLogo || hasTitle;
     box-shadow: none;
   }
 
+  /* Text logo: a wordmark, not a section heading (kept out of the heading outline).
+     `.brand-title` is the tuning knob for its size. */
+  .brand-link .brand-title {
+    display: inline-block;
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--primary);
+  }
+
+  /* Image logo default: sizes reliably for both raster and SVG (SVGs often lack
+     intrinsic dimensions, so we constrain by height and let width follow). Height
+     is a token knob; consumers extend/override via the logo `cssClasses`. */
+  .brand-link .brand-logo {
+    display: block;
+    height: var(--navbar-logo-height, 40px);
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+  }
+
+  @media (max-width: 480px) {
+    .brand-link .brand-title {
+      font-size: 1.2rem;
+    }
+    .brand-link .brand-logo {
+      height: var(--navbar-logo-height-mobile, 34px);
+    }
+  }
+
   .nav-container {
     display: flex;
     align-items: center;
@@ -151,7 +185,7 @@ const shouldShowBrand = hasLogo || hasTitle;
     border: none;
     cursor: pointer;
     font-family: inherit;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     letter-spacing: -0.01em;
@@ -214,7 +248,7 @@ const shouldShowBrand = hasLogo || hasTitle;
     width: max-content;
     max-width: min(calc(100vw - 2rem), 520px);
     background: white;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
     opacity: 0;
     visibility: hidden;
@@ -254,7 +288,7 @@ const shouldShowBrand = hasLogo || hasTitle;
     font-family: inherit;
     width: 100%;
     text-align: left;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     letter-spacing: -0.01em;
     outline: none;
@@ -280,7 +314,7 @@ const shouldShowBrand = hasLogo || hasTitle;
     justify-content: center;
     align-items: center;
     position: relative;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
