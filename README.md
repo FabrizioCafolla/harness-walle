@@ -51,6 +51,18 @@ just walle update    # pull the latest release (managed files only)
 just walle check     # validate the project: manifest, version pin, configs
 ```
 
+Your `package.json` is a **seed** file, so `update` never rewrites it — it would clobber the deps you
+added. Instead, `update` reports any Walle-owned dependency that has fallen behind the release's tested
+set, and `walle deps --apply` aligns just those (leaving your own dependencies alone):
+
+```bash
+cli.sh deps           # report Walle-owned dependency drift (read-only)
+cli.sh deps --apply   # bump the behind Walle-owned deps, then run: yarn install
+```
+
+See [wiki/versioning.md](wiki/versioning.md#keeping-dependencies-current) and each release's
+[CHANGELOG](CHANGELOG.md) `Dependencies` section.
+
 ## Features
 
 `ci`, `ai`, and `harness-coding` are on by default at `init` — opt out per-module if you don't

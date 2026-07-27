@@ -1,0 +1,61 @@
+name: Update visual snapshots
+
+# Manually-triggered maintenance job. Astrobook visual baselines are rendered by the
+# browser + font stack, so they must be regenerated on the same runner the visual suite
+# uses (ubuntu-22.04) — a contributor on a different OS cannot produce matching PNGs.
+# Run this from the Actions tab against the branch whose baselines you want to refresh
+# (e.g. after an intentional component or fixture change); it commits the updated
+# snapshots back to that branch.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-snapshots:
+    name: Regenerate baselines
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: walle/website/.nvmrc
+          cache: yarn
+          cache-dependency-path: walle/website/yarn.lock
+
+      - name: Install dependencies
+        working-directory: walle/website
+        run: |
+          corepack prepare --activate
+          yarn install --immutable
+
+      - name: Install Playwright browsers
+        working-directory: walle/website
+        run: yarn playwright install --with-deps chromium chromium-headless-shell
+
+      - name: Regenerate visual snapshots
+        working-directory: walle/website
+        run: >-
+          yarn playwright test --config playwright.astrobook.config.ts
+          astrobook.visual.spec.ts --update-snapshots
+
+      - name: Commit updated snapshots
+        run: |
+          snapshots="walle/website/tests/playwright/snapshots"
+          if [ -z "$(git status --porcelain "$snapshots")" ]; then
+            echo "No snapshot changes — baselines already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$snapshots"
+          git commit -m "chore(walle): refresh visual snapshots [skip ci]"
+          git push

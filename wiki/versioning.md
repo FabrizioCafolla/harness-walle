@@ -135,6 +135,41 @@ latest stable tag).
 
 Do not push tags from a devcontainer session where git-write is blocked.
 
+## Keeping dependencies current
+
+`package.json` is a **seed** file: Walle writes it once at `init`, and from then on it belongs to
+the consumer (who adds their own dependencies to it). `walle update` only rewrites MANAGED
+`@walle/` paths, so it deliberately **never touches `package.json`** — otherwise it would erase the
+deps a consumer added. The trade-off is that npm dependency bumps do not arrive with `walle update`.
+
+How to stay current:
+
+1. **`walle update` tells you.** After it syncs the managed paths, it compares your `package.json`
+   against the release's seed and prints any Walle-owned dependency that is behind (disable with
+   `--no-deps-check`):
+   ```
+   ⚠ 2 Walle dependency(ies) in your package.json are behind the tested set
+        package   yours     walle
+        astro     ^7.0.6    ^7.1.3
+        vitest    ^3.2.7    ^4.1.10   ⚠ major — check breaking changes
+   ```
+2. **Align them** — either apply Walle's tested ranges automatically (only the Walle-owned deps; your
+   own dependencies are never touched)…
+   ```bash
+   walle deps --apply   # then: yarn install
+   ```
+   …or bump the ones you want by hand (majors flagged above deserve a changelog read first):
+   ```bash
+   yarn up astro@^7.1.3 vitest@^4.1.10
+   ```
+3. **CI actions are different** — the GitHub Actions used by the `ci` module (e.g.
+   `actions/setup-node`) live under MANAGED paths, so those **do** update on `walle update`.
+
+`walle deps` (without `--apply`) is a read-only report you can run any time; the reference is always
+the seed `package.json` of the resolved release. Dependabot/Renovate on the consumer repo remains a
+good complement between Walle releases, and each release's [CHANGELOG](../CHANGELOG.md) `Dependencies`
+section records the exact set Walle validated.
+
 ## Tag format
 
 ```

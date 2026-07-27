@@ -62,7 +62,13 @@ playwright-test-navbar:
 # Requires: just playwright-setup (run once per container)
 [group('walle')]
 astrobook-test:
-    yarn playwright test --config playwright.astrobook.config.ts
+    yarn playwright test --config playwright.astrobook.config.ts astrobook.visual.spec.ts
+
+# Run the axe-core accessibility gate (all Astrobook stories + demo-site pages).
+# Fails on serious/critical violations. Requires: just playwright-setup
+[group('walle')]
+a11y-test:
+    yarn playwright test --config playwright.astrobook.config.ts a11y.spec.ts
 
 # Update Astrobook visual regression baselines (run after intentional component changes)
 # Requires: just playwright-setup (run once per container)

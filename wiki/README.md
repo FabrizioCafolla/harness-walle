@@ -20,6 +20,8 @@ Walle is a **copy-based Astro design system**. Instead of being installed as an 
 - [Modules](modules.md) — what each module installs (MANAGED and SEED paths)
 - [Managed vs seed](managed-vs-seed.md) — the two-class file model and update safety contract
 - [Components](components.md) — component variants and customization patterns
+- [Styling](styling.md) — theme config, semantic tokens, and the accessibility contract
+- [Commerce](commerce.md) — the Shopify headless catalog + cart module (vetrina vs shop)
 - [Astrobook](astrobook.md) — visual component catalog (dev-only)
 - [Versioning](versioning.md) — pinning `walleVersion`, update policy, `schemaVersion`
 
@@ -31,3 +33,31 @@ Walle is a **copy-based Astro design system**. Instead of being installed as an 
 4. `cli.sh check` reads the manifest and validates the consumer is on a v2 schema with a valid version pin.
 
 The consumer manifest (`.walle/manifest.json`) records the project name, active modules, pinned `walleVersion`, and `schemaVersion: 2`.
+
+## Why Walle exists
+
+Walle is the source you build many sites from and maintain from **one** place. Improvements — a new
+component, an accessibility fix, a design refinement — land once in this repo, cut a release, and every
+site that runs `update` pulls them in without re-doing custom work. Each site owns its content, config,
+and pages; Walle owns the `@walle/` engine underneath. That split is what makes running several sites
+sustainable for one developer.
+
+## End-to-end: from zero to a deployed site
+
+1. **Scaffold** — `cli.sh init -p my-site --modules website,ci,ai` creates the project: base
+   environment (justfile, devcontainer, git hooks), the starter site, and the selected modules.
+2. **Make it yours** — edit `src/configs/*.json` (site metadata, navbar, footer), set the palette and
+   radii through the [semantic tokens](styling.md) (the extension interface — never fork `@walle/`),
+   and write pages/content. The navbar logo takes an image (SVG or raster) or a text wordmark.
+3. **Add commerce (optional)** — flip `commerce.showBuyButton` on and point two env vars at a Shopify
+   Headless store, or ship the bundled demo catalog with none. See [Commerce](commerce.md).
+4. **Run & review** — `just dev` serves the site; `just astrobook` opens the component catalog;
+   `just a11y-test` runs the axe gate (WCAG 2.2 AA / EAA 2026).
+5. **Ship** — the `ci` module installs the GitHub Actions workflows (lint, build, accessibility,
+   deploy). Push, and the pipeline builds and deploys the static site.
+6. **Keep current** — when a new Walle release lands, `just walle-update` re-syncs the `@walle/` engine
+   only; your content, config, and custom pages are never touched. `cli.sh check` verifies the pin.
+
+> Walle is open source: keep secrets (Shopify tokens, build-hook URLs) in environment variables and CI
+> secrets, never in the committed config. Only the **public** Shopify Storefront token belongs in the
+> site bundle.

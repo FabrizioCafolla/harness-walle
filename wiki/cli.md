@@ -82,7 +82,8 @@ cli.sh update \
   [-p | --project-path <path>] \
   [--walle-version vX.Y.Z | --source <path>] \
   [--dry-run] \
-  [--yes]
+  [--yes] \
+  [--no-deps-check]
 ```
 
 **Default project path:** current directory.
@@ -100,6 +101,8 @@ cli.sh update \
    `.vscode/` marker blocks.
 7. Rewrites `.walle/manifest.json` with the new `walleVersion` and `updatedAt`, refreshes
    `.walle/lock` and `.walle/docs/` (unless disabled).
+8. Reports any **Walle-owned dependency drift** in `package.json` (which is seed-owned and never
+   rewritten) so you can align it — see [`deps`](#deps). Disable with `--no-deps-check`.
 
 ### Migration from `.walle.config.json`
 
@@ -217,3 +220,48 @@ With `--source`:
 ```
 
 **Does not write anything.**
+
+## `deps`
+
+Report — and optionally align — **Walle-owned dependency drift** in a consumer's `package.json`.
+
+```bash
+cli.sh deps \
+  [-p | --project-path <path>] \
+  [--walle-version vX.Y.Z | --source <path>] \
+  [--apply]
+```
+
+**Why it exists:** `package.json` is a SEED file (see [managed vs seed](managed-vs-seed.md)) — the
+consumer owns it and adds their own dependencies, so `update` never rewrites it. `deps` bridges that
+gap: it treats the resolved release's seed `package.json` as the reference for **Walle-owned**
+dependencies and compares the consumer's versions against it. Dependencies the consumer added (absent
+from the seed) are never reported or changed.
+
+**What it does:**
+
+- Without `--apply` (default) — read-only report. Prints each Walle-owned dependency whose declared
+  floor is **below** the seed's, flags **major** gaps (which may carry breaking changes), and lists any
+  Walle deps absent from your `package.json`. Runs automatically at the end of `update` (unless
+  `--no-deps-check`).
+- With `--apply` — rewrites only the behind Walle-owned entries in `package.json` to the seed's ranges,
+  preserving key order and leaving your own dependencies untouched. Then run `yarn install` to update
+  the lockfile.
+
+```
+$ cli.sh deps --source /path/to/harness-walle
+
+ ⚠ 2 Walle dependency(ies) in your package.json are behind the tested set
+   (Walle never rewrites package.json — it's yours):
+
+     package   yours     walle
+     astro     ^7.0.6    ^7.1.3
+     vitest    ^3.2.7    ^4.1.10   ⚠ major — check breaking changes
+
+   Align them:  yarn up astro@^7.1.3 vitest@^4.1.10
+   Or run:      walle deps --apply
+```
+
+The comparison uses the version **floor** of each range (`^7.1.3` → `7.1.3`), so it flags only genuine
+downgrades, never cosmetic range differences. Each release also records its validated dependency set in
+the [CHANGELOG](../CHANGELOG.md) `Dependencies` section.

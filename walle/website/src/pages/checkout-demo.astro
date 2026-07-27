@@ -1,0 +1,45 @@
+---
+import { BaseLayout } from "@walle/layouts";
+import { Button, SectionHeaderStandard } from "@walle/components";
+import { resolveInternalUrl } from "@walle/utils";
+---
+
+<BaseLayout
+  headerTitle="Demo checkout"
+  headerDescription="This demo runs the cart in mock mode. Connect a Shopify store to enable real checkout."
+  headerRobots="noindex, follow"
+>
+  <SectionHeaderStandard
+    title="Demo checkout"
+    subtitle="You reached the mock checkout."
+    variant="secondary"
+  />
+
+  <div class="checkout-demo">
+    <p>
+      This site runs the commerce module in <strong>mock mode</strong>: the catalog and cart are
+      fully functional for demonstration, but no real store is connected, so there is nothing to
+      charge.
+    </p>
+    <p>
+      In a real project you set <code>PUBLIC_SHOPIFY_STORE</code> and
+      <code>PUBLIC_SHOPIFY_STOREFRONT_TOKEN</code>, and this button hands off to Shopify's own
+      hosted checkout via <code>cart.checkoutUrl</code>. No payment data ever touches the site.
+    </p>
+    <div class="checkout-demo__actions">
+      <Button text="Back to products" href={resolveInternalUrl("/products")} variant="primary" />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .checkout-demo {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: var(--space-3xl) var(--space-xl) var(--space-4xl);
+  }
+
+  .checkout-demo__actions {
+    margin-top: var(--space-xl);
+  }
+</style>

@@ -1,0 +1,6 @@
+---
+// Legacy demo URL. Products are now sourced from the Shopify collection and served
+// at /products/[handle]; this static redirect keeps the old link working.
+import { resolveInternalUrl } from "@walle/utils";
+return Astro.redirect(resolveInternalUrl("/products/cirrus-packable-jacket"));
+---

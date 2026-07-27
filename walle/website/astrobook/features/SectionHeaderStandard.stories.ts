@@ -25,3 +25,20 @@ export const Secondary = {
     variant: "secondary",
   } satisfies SectionHeaderStandardProps,
 };
+
+export const White = {
+  args: {
+    title: "Minimal header",
+    subtitle: "Transparent background for content-first pages.",
+    variant: "white",
+  } satisfies SectionHeaderStandardProps,
+};
+
+export const Centered = {
+  args: {
+    title: "Centered header",
+    subtitle: "The default: title and subtitle centered in the band.",
+    variant: "primary",
+    centered: true,
+  } satisfies SectionHeaderStandardProps,
+};

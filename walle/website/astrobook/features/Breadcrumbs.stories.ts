@@ -14,8 +14,18 @@ export default {
 export const Default = {
   args: {
     items: [
-      { label: "Home", url: "/" },
-      { label: "Blog", url: "/blog" },
+      { label: "Home", href: "/" },
+      { label: "Blog", href: "/blog" },
+      { label: "Current post" },
+    ],
+  } satisfies BreadcrumbsProps,
+};
+
+export const WithIcons = {
+  args: {
+    items: [
+      { label: "Home", href: "/", icon: "mdi:home" },
+      { label: "Blog", href: "/blog", icon: "mdi:post" },
       { label: "Current post" },
     ],
   } satisfies BreadcrumbsProps,

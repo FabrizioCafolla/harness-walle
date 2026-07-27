@@ -14,3 +14,15 @@ export default {
 export const Default = {
   args: { title: "Section title" } satisfies SectionProps,
 };
+
+export const Primary = {
+  args: { title: "Primary section", variant: "primary" } satisfies SectionProps,
+};
+
+export const Gray = {
+  args: { title: "Gray section", variant: "gray" } satisfies SectionProps,
+};
+
+export const Centered = {
+  args: { title: "Centered section", centered: true } satisfies SectionProps,
+};

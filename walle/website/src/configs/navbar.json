@@ -10,12 +10,23 @@
       "url": "/"
     },
     {
+      "name": "Showcase",
+      "url": "/showcase"
+    },
+    {
       "name": "Blog",
-      "url": "/blog",
+      "url": "/blog"
+    },
+    {
+      "name": "Products",
+      "url": "/products"
+    },
+    {
+      "name": "Company",
+      "url": "/privacy-policy",
       "dropdown": [
-        { "name": "Posts", "url": "/blog" },
-        { "name": "Example 1", "url": "/blog/example" },
-        { "name": "Example 2", "url": "/blog/example-2" }
+        { "name": "Privacy Policy", "url": "/privacy-policy" },
+        { "name": "Terms & Conditions", "url": "/terms-and-conditions" }
       ]
     },
     {

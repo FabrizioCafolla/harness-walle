@@ -87,5 +87,24 @@ consumer then updates by re-running the CLI. This repo is both the product and i
   seeds and injects walle on top. Override the harness-coding source offline with
   `WALLE_HARNESS_CODING_CLI=<path-to-cli.sh>`.
 
+**Website design system conventions** (`walle/website/src/@walle/`):
+
+- **Tokens are the only styling interface.** Colors, spacing and radii are CSS variables in
+  `styles/global.css` (`--primary`, `--space-*`, `--radius-*`), each bridged to a `--walle-*`
+  override that a consumer `theme.json` can set. Never hardcode a hex or px radius in a component;
+  reference a token. Default look: flat fills (no gradients), restrained radii, an editorial
+  navy/teal/gold palette. Contrast pairings are enforced by `tests/unit/contrast.test.ts` — if you
+  change a brand color, that test keeps white-on-brand at AA.
+- **Accessibility is a gate, not a guideline.** `tests/playwright/a11y.spec.ts` runs axe over every
+  page and story at desktop and 320px; serious/critical failures fail the build. Markdown images are
+  base-path-prefixed by a rehype plugin in `define-config.ts` (root-absolute `/img/...` would 404
+  under the base path otherwise).
+- **Commerce (Shopify headless).** Products are a build-time content collection sourced from the
+  Storefront API, with a bundled fixture fallback so the demo builds with no credentials. Static
+  catalog, client-side cart, hosted Shopify checkout, no SSR. `commerce.showBuyButton` in `app.json`
+  toggles vetrina (catalog only) vs shop (cart). Full model and the do/don't list:
+  [wiki/commerce.md](wiki/commerce.md) and
+  `openspec/changes/walle-design-system-maturity/shopify-astro-headless-report.md`.
+
 Full detail: [CONTRIBUTING.md](CONTRIBUTING.md), [wiki/repo-guide.md](wiki/repo-guide.md), and the
 per-topic refs in [wiki/README.md](wiki/README.md).
