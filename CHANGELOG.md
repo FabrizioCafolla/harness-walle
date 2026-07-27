@@ -119,6 +119,13 @@ All notable changes to Walle are documented here. Format follows
   optimizes them and emits correct base-path URLs. Root-absolute `/img/...` paths 404 under a base
   path; the relative form is the Astro-native fix (and removes the deprecated `markdown.rehypePlugins`
   config, silencing the Astro 7 deprecation warning).
+- **Navbar fixes**: the brand ("WALLE") is visible again — `NavbarResolver` no longer forwards an
+  always-present `brand` slot token (Astro registers slot names statically, which was suppressing the
+  variant's default brand); it now branches on `Astro.slots.has("brand")`, keeping the brand
+  overridable. The image logo gained a default `.brand-logo` class that sizes reliably for raster
+  **and SVG** (height-constrained, `--navbar-logo-height` token) and stays consumer-extensible. The
+  demo navbar regained a real, article-free **"Company" dropdown** (Privacy Policy, Terms) so the
+  dropdown feature stays demonstrated.
 
 - **BREAKING — unified component prop vocabulary.** Every `@walle` component now uses the shared
   API convention documented in [wiki/components.md](wiki/components.md#api-conventions). Consumer

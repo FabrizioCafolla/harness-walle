@@ -22,6 +22,14 @@
       "url": "/products"
     },
     {
+      "name": "Company",
+      "url": "/privacy-policy",
+      "dropdown": [
+        { "name": "Privacy Policy", "url": "/privacy-policy" },
+        { "name": "Terms & Conditions", "url": "/terms-and-conditions" }
+      ]
+    },
+    {
       "icon": "fa:linkedin",
       "url": "https://www.linkedin.com/in/fabrizio-cafolla/",
       "target": "_blank"
