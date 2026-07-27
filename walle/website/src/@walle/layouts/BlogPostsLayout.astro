@@ -80,7 +80,7 @@ const allCategories: string[] = Array.from(
                     content={post.data.description}
                     href={resolveInternalUrl(`/blog/${post.id}`)}
                     image={{
-                      src: resolveInternalUrl(post.data.image || "/img/posts/default.jpg"),
+                      src: resolveInternalUrl(post.data.image || "/img/posts/default.svg"),
                       alt: post.data.title,
                     }}
                     badge={badge}

@@ -10,7 +10,7 @@ export default {
   decorators: [{ component: StoryWrapper }],
 };
 
-const image = { src: "/harness-walle/img/posts/default.jpg", alt: "Product photo" };
+const image = { src: "/harness-walle/img/posts/default.svg", alt: "Product photo" };
 
 export const Default = {
   args: {

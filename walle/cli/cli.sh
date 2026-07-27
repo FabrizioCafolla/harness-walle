@@ -29,6 +29,7 @@ INTENTIONAL_EXIT=0
 DRY_RUN=0
 ASSUME_YES=0
 SEED_ENABLED=0
+DEPS_CHECK=1
 HARNESS_CODING_ENABLED=1
 AGENTS_MODULES=""
 TEMP_DIR=""
@@ -79,12 +80,15 @@ Commands:
   update    Re-sync the declared modules of an existing consumer
   add       Add a module to an existing consumer and sync it
   check     Validate a consumer (manifest, version pin, configs)
+  deps      Report Walle-owned dependency drift; --apply aligns package.json
 
 Common options:
   -s, --source <path>         Use a local walle clone instead of a release
   -w, --walle-version <tag>   Release tag (e.g. v0.1.0-beta). Default: latest
       --dry-run               Show the sync plan without writing anything
       --yes                   Skip confirmation prompts
+      --no-deps-check         (update) Skip the post-update dependency drift report
+      --apply                 (deps) Bump the behind Walle-owned deps in package.json
       --no-harness-coding     Skip .devcontainer/ scaffold at init
       --no-ai                 Skip AGENTS.md + skills at init (default: on)
       --no-ci                 Skip GitHub Actions workflows at init (default: on)
@@ -831,6 +835,7 @@ cmd_update() {
       -w|--walle-version) VER="$2"; shift 2 ;;
       --dry-run)          DRY_RUN=1; shift ;;
       --yes)              ASSUME_YES=1; shift ;;
+      --no-deps-check)    DEPS_CHECK=0; shift ;;
       -h|--help)          usage; exit 0 ;;
       *)                  usage; print_error "unknown option: $1" ;;
     esac
@@ -867,6 +872,12 @@ cmd_update() {
   sync_walle_docs "$SOURCE_DIR" "$PROJ_PATH"
   write_lock "$PROJ_PATH"
   print_info "Project updated."
+
+  # package.json is seed-owned, so it wasn't synced above. Surface any dependency drift so
+  # the consumer can align it (disable with --no-deps-check).
+  if [ "$DEPS_CHECK" = "1" ]; then
+    run_deps "${SOURCE_DIR}/walle/website/package.json" "${PROJ_PATH}/package.json" check || true
+  fi
 }
 
 cmd_add() {
@@ -994,22 +1005,135 @@ cmd_check() {
 }
 
 # =============================================================================
+# 8b. DEPENDENCY DRIFT
+# =============================================================================
+# package.json is a SEED file (consumer-owned), so `update` never rewrites it — that would
+# clobber the deps a consumer added. Instead we treat the source seed
+# (walle/website/package.json) as the reference for Walle-OWNED deps and compare the
+# consumer's versions against it. Consumer-added deps (not in the seed) are never touched.
+# `check` reports drift; `apply` bumps only the behind Walle-owned deps in place. Always
+# exits 0 (informational) so it never fails an update.
+run_deps() {
+  local seed="$1" consumer="$2" mode="$3" # mode: check | apply
+  if [ ! -f "$seed" ] || [ ! -f "$consumer" ]; then
+    print_warn "deps: package.json not found, skipping dependency check."
+    return 0
+  fi
+  WALLE_SEED="$seed" WALLE_CONS="$consumer" WALLE_MODE="$mode" node <<'NODE'
+const fs = require("fs");
+const seed = JSON.parse(fs.readFileSync(process.env.WALLE_SEED, "utf8"));
+const consPath = process.env.WALLE_CONS;
+const cons = JSON.parse(fs.readFileSync(consPath, "utf8"));
+const mode = process.env.WALLE_MODE;
+const SECTIONS = ["dependencies", "devDependencies"];
+const floor = (r) => {
+  const m = String(r || "").match(/(\d+)\.(\d+)\.(\d+)/);
+  return m ? [+m[1], +m[2], +m[3]] : null;
+};
+const cmp = (a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
+const consRange = (name) => (cons.dependencies || {})[name] ?? (cons.devDependencies || {})[name];
+const consSection = (name) =>
+  (cons.dependencies || {})[name] != null ? "dependencies" : "devDependencies";
+
+const behind = [];
+const missing = [];
+for (const sec of SECTIONS)
+  for (const [name, wr] of Object.entries(seed[sec] || {})) {
+    const cr = consRange(name);
+    if (cr == null) {
+      missing.push({ name, walle: wr });
+      continue;
+    }
+    const wf = floor(wr);
+    const cf = floor(cr);
+    if (wf && cf && cmp(cf, wf) < 0)
+      behind.push({ name, yours: cr, walle: wr, major: wf[0] > cf[0] });
+  }
+
+if (mode === "apply") {
+  for (const d of behind) cons[consSection(d.name)][d.name] = d.walle;
+  if (behind.length) {
+    fs.writeFileSync(consPath, JSON.stringify(cons, null, 2) + "\n");
+    console.log(` [INFO] Aligned ${behind.length} dependency(ies) in package.json:`);
+    for (const d of behind) console.log(`          ${d.name}  ${d.yours} -> ${d.walle}`);
+    console.log(" [INFO] Run `yarn install` (or your package manager) to update the lockfile.");
+  } else {
+    console.log(" [INFO] Walle dependencies already aligned — nothing to do.");
+  }
+  if (missing.length)
+    console.log(
+      ` [WARN] ${missing.length} Walle dependency(ies) absent from your package.json (add if needed): ` +
+        missing.map((d) => `${d.name}@${d.walle}`).join(", ")
+    );
+  process.exit(0);
+}
+
+// check mode
+if (!behind.length) {
+  console.log(" [INFO] ✓ Walle dependencies are up to date.");
+  process.exit(0);
+}
+const pad = (s, n) => String(s).padEnd(n);
+const w1 = Math.max(10, ...behind.map((d) => d.name.length));
+const w2 = Math.max(7, ...behind.map((d) => d.yours.length));
+console.log("");
+console.log(
+  ` ⚠ ${behind.length} Walle dependency(ies) in your package.json are behind the tested set`
+);
+console.log("   (Walle never rewrites package.json — it's yours):");
+console.log("");
+console.log(`     ${pad("package", w1)}  ${pad("yours", w2)}  walle`);
+for (const d of behind)
+  console.log(
+    `     ${pad(d.name, w1)}  ${pad(d.yours, w2)}  ${d.walle}${d.major ? "   ⚠ major — check breaking changes" : ""}`
+  );
+console.log("");
+console.log("   Align them:  yarn up " + behind.map((d) => `${d.name}@${d.walle}`).join(" "));
+console.log("   Or run:      walle deps --apply");
+if (missing.length)
+  console.log(
+    `\n ℹ ${missing.length} Walle dependency(ies) not in your package.json: ` +
+      missing.map((d) => d.name).join(", ")
+  );
+console.log("");
+process.exit(0);
+NODE
+}
+
+cmd_deps() {
+  local PROJ_PATH SRC_PATH="" VER="" MODE="check"
+  PROJ_PATH="$(pwd)"
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -p|--project-path)  PROJ_PATH="$2"; shift 2 ;;
+      -s|--source)        SRC_PATH="$2"; shift 2 ;;
+      -w|--walle-version) VER="$2"; shift 2 ;;
+      --apply)            MODE="apply"; shift ;;
+      -h|--help)          usage; exit 0 ;;
+      *)                  usage; print_error "unknown option: $1" ;;
+    esac
+  done
+
+  resolve_source "$SRC_PATH" "$VER"
+  run_deps "${SOURCE_DIR}/walle/website/package.json" "${PROJ_PATH}/package.json" "$MODE"
+}
+
+# =============================================================================
 # 9. ENTRY POINT
 # =============================================================================
 
 main() {
-  local cmd="" args=()
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-      init|update|add|check) cmd="$1"; shift ;;
-      -h|--help) usage; exit 0 ;;
-      *) args+=("$1"); shift ;;
-    esac
-  done
-
-  [ -n "$cmd" ] || { usage; print_error "no command given"; }
-
-  "cmd_${cmd}" "${args[@]}"
+  # The command is the FIRST argument; everything after is passed to the subcommand
+  # verbatim. (Scanning all args for a command keyword would mistake a flag value that
+  # happens to equal a command name — e.g. `init -n deps` — for the command itself.)
+  [ $# -gt 0 ] || { usage; print_error "no command given"; }
+  local cmd="$1"; shift
+  case "$cmd" in
+    init|update|add|check|deps) "cmd_${cmd}" "$@" ;;
+    -h|--help)                  usage; exit 0 ;;
+    *)                          usage; print_error "unknown command: $cmd" ;;
+  esac
 }
 
 if [ "${BASH_SOURCE[0]}" = "${0}" ]; then

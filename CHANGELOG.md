@@ -6,6 +6,38 @@ All notable changes to Walle are documented here. Format follows
 
 ## [0.3.0] — 2026-07-23
 
+### Dependencies
+
+Walle's `package.json` is a **seed** file — created once at `init` and owned by the consumer
+afterwards — so `walle update` deliberately never rewrites it (it would clobber the deps a
+consumer added). That means dependency bumps do **not** propagate automatically; each release lists
+its dependency changes here so a consumer can apply them with `yarn up <pkg>@<range>`. See
+[wiki/versioning.md](wiki/versioning.md#keeping-dependencies-current).
+
+Walle-owned dependencies validated for this release (bump these; leave your own deps alone):
+
+| Dependency                      | Range      | Notes                                    |
+| ------------------------------- | ---------- | ---------------------------------------- |
+| `astro`                         | `^7.1.3`   | Content Layer, `astro:assets`            |
+| `astrobook`                     | `^0.13.2`  | dev-only component catalog               |
+| `nanostores` / `@nanostores/persistent` | `^1.4.1` / `^1.3.5` | commerce cart (shop mode only) |
+| `vitest`                        | `^4.1.10`  | unit runner (major bump from 3.x)        |
+| `eslint`                        | `^10.7.0`  | with `@typescript-eslint/* ^8.65.0`      |
+| `@playwright/test` / `@axe-core/playwright` | `^1.61.1` / `^4.12.1` | a11y + visual suites |
+
+CI actions (managed, so these **do** update on `walle update`): `actions/setup-node` `v6` → `v7`.
+
+New **`walle deps`** command closes the loop: it compares your `package.json` against the release's
+seed and reports Walle-owned drift (run automatically after `update`, disable with
+`--no-deps-check`); `walle deps --apply` bumps just those entries, leaving your own dependencies
+untouched. See [wiki/cli.md](wiki/cli.md#deps) and
+[wiki/versioning.md](wiki/versioning.md#keeping-dependencies-current).
+
+**Fixed — CLI command dispatch:** the launcher scanned every argument for a command keyword, so a
+flag value equal to a command name (e.g. `init -n deps`, or a project literally named `check`) was
+mistaken for the command. It now takes the command from the first argument only and passes the rest
+through verbatim.
+
 ### Added
 
 - **New base components**, all following the shared prop vocabulary, each with full Astrobook
@@ -126,6 +158,11 @@ All notable changes to Walle are documented here. Format follows
   **and SVG** (height-constrained, `--navbar-logo-height` token) and stays consumer-extensible. The
   demo navbar regained a real, article-free **"Company" dropdown** (Privacy Policy, Terms) so the
   dropdown feature stays demonstrated.
+- **A11y — keyboard-scrollable regions**: a small `AbstractLayout` script makes an element focusable
+  (`tabindex="0"` + `role="region"`) **only when its content actually overflows** and it has no
+  focusable content of its own — satisfying WCAG 2.1.1 / axe `scrollable-region-focusable` for
+  overflowing code blocks and wide tables (including consumer markdown) without adding spurious tab
+  stops. Fixes a CI axe failure that only reproduced where fonts made a code block overflow.
 
 - **BREAKING — unified component prop vocabulary.** Every `@walle` component now uses the shared
   API convention documented in [wiki/components.md](wiki/components.md#api-conventions). Consumer
