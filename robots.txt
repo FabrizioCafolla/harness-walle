@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://fabriziocafolla.github.io/harness-walle/sitemap-index.xml

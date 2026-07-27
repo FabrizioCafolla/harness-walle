@@ -1,0 +1,20 @@
+# Walle
+
+> Design System
+
+## Pages
+
+- [Home](https://fabriziocafolla.github.io/harness-walle/)
+- [Showcase](https://fabriziocafolla.github.io/harness-walle/showcase)
+- [Blog](https://fabriziocafolla.github.io/harness-walle/blog)
+- [Products](https://fabriziocafolla.github.io/harness-walle/products)
+
+## Blog posts
+
+- [A Pragmatic CI/CD Pipeline with GitHub Actions](https://fabriziocafolla.github.io/harness-walle/blog/example-2): A lean GitHub Actions setup that lints, builds, tests accessibility, and deploys to GitHub Pages without turning your workflow into a maze.
+- [Designing an Accessible Component Library with Astro](https://fabriziocafolla.github.io/harness-walle/blog/example): How to structure reusable, WCAG 2.2 AA components in Astro with semantic tokens, slots, and stories that stay maintainable as the system grows.
+
+## Products
+
+- [Aurora Merino Overshirt](https://fabriziocafolla.github.io/harness-walle/products/aurora-merino-overshirt): A midweight merino overshirt built for everyday layering.
+- [Cirrus Packable Jacket](https://fabriziocafolla.github.io/harness-walle/products/cirrus-packable-jacket): A featherweight shell that folds into its own pocket.
