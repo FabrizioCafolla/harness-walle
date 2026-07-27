@@ -1,0 +1,286 @@
+<!DOCTYPE html><html lang="en-US"><head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/harness-walle/images/profile.jpeg"><link rel="sitemap" href="/harness-walle/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="CLI Reference | Walle" href="https://fabriziocafolla.github.io/rss.xml"><meta name="generator" content="Astro v7.1.3"><!-- Canonical URL --><link rel="canonical" href="https://fabriziocafolla.github.io/harness-walle/wiki/cli"><!-- Primary Meta Tags --><title>CLI Reference | Walle</title><meta name="title" content="CLI Reference | Walle"><meta name="description" content="Walle design-system documentation"><meta name="robots" content="index, follow"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://fabriziocafolla.github.io/harness-walle/wiki/cli"><meta property="og:title" content="CLI Reference | Walle"><meta property="og:description" content="Walle design-system documentation"><meta property="og:image" content="https://fabriziocafolla.github.io/images/banner.png"><meta property="og:locale" content="en_US"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://fabriziocafolla.github.io/harness-walle/wiki/cli"><meta property="twitter:title" content="CLI Reference | Walle"><meta property="twitter:description" content="Walle design-system documentation"><meta property="twitter:image" content="https://fabriziocafolla.github.io/images/banner.png"><script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebSite","name":"Walle","description":"Design System","url":"https://fabriziocafolla.github.io/harness-walle"},{"@context":"https://schema.org","@type":"Organization","name":"Walle","url":"https://fabriziocafolla.github.io/harness-walle","logo":"https://fabriziocafolla.github.io/images/banner.png"}]</script><style>.wiki-page[data-astro-cid-6sfpakxj]{grid-template-columns:1fr;gap:2rem;max-width:64rem;margin:0 auto;padding:0 1rem;display:grid}@media (width>=60rem){.wiki-page[data-astro-cid-6sfpakxj]{grid-template-columns:14rem 1fr}.wiki-nav[data-astro-cid-6sfpakxj]{align-self:start;position:sticky;top:1rem}}.wiki-nav[data-astro-cid-6sfpakxj] ul[data-astro-cid-6sfpakxj]{gap:.35rem;margin:.5rem 0 0;padding:0;list-style:none;display:grid}.wiki-nav[data-astro-cid-6sfpakxj] [data-astro-cid-6sfpakxj][aria-current=page]{font-weight:700}.wiki-content[data-astro-cid-6sfpakxj]{min-width:0;max-width:72ch;line-height:1.7}.wiki-content[data-astro-cid-6sfpakxj] pre{overflow-x:auto}.wiki-content[data-astro-cid-6sfpakxj] table{border-collapse:collapse;max-width:100%;display:block;overflow-x:auto}.wiki-content[data-astro-cid-6sfpakxj] img{max-width:100%;height:auto}.wiki-content[data-astro-cid-6sfpakxj] a{text-decoration:underline}
+</style><link rel="stylesheet" href="/harness-walle/_astro/layouts.UbeFnpW9.css"></head><body><a href="#main-content" class="skip-link">Skip to content</a><header class="site-header"><div class="container"><nav class="main-nav" aria-label="Main navigation" data-component="Navbar" data-nav-root="true"><div class="brand-container"><a href="/harness-walle" title="Walle" class="brand-link"><span class="brand-title">Walle</span></a></div><div class="nav-container" id="nav-at5j0hw"><ul class="nav-links" data-nav-level="1" data-component="NavbarLinks"><li class="nav-item" data-component="NavbarItem"><a href="/harness-walle" class="nav-link" target="_self" aria-label="Go to /harness-walle"><span>Home</span></a></li><li class="nav-item" data-component="NavbarItem"><a href="/harness-walle/showcase" class="nav-link" target="_self" aria-label="Go to /harness-walle/showcase"><span>Showcase</span></a></li><li class="nav-item" data-component="NavbarItem"><a href="/harness-walle/blog" class="nav-link" target="_self" aria-label="Go to /harness-walle/blog"><span>Blog</span></a></li><li class="nav-item" data-component="NavbarItem"><a href="/harness-walle/products" class="nav-link" target="_self" aria-label="Go to /harness-walle/products"><span>Products</span></a></li><li class="nav-item has-dropdown" data-component="NavbarItem"><div class="dropdown-container"><button class="nav-link dropdown-trigger" aria-expanded="false" aria-haspopup="true"><span>Company</span><svg width="12" height="12" aria-hidden="true" class="dropdown-arrow" data-icon="fa:chevron-down"><symbol id="ai:fa:chevron-down" viewBox="0 0 1664 1312"><path fill="currentColor" d="m1619 552l-742 741q-19 19-45 19t-45-19L45 552q-19-19-19-45.5T45 461l166-165q19-19 45-19t45 19l531 531l531-531q19-19 45-19t45 19l166 165q19 19 19 45.5t-19 45.5"/></symbol><use href="#ai:fa:chevron-down"></use></svg></button><ul class="dropdown-menu" data-component="NavbarDropdown"><li class="dropdown-item"><a href="/harness-walle/privacy-policy" class="dropdown-link" target="_self" aria-label="Go to /harness-walle/privacy-policy"><span>Privacy Policy</span></a></li><li class="dropdown-item"><a href="/harness-walle/terms-and-conditions" class="dropdown-link" target="_self" aria-label="Go to /harness-walle/terms-and-conditions"><span>Terms &amp; Conditions</span></a></li></ul></div></li><li class="nav-item" data-component="NavbarItem"><a href="https://www.linkedin.com/in/fabrizio-cafolla/" class="nav-link" target="_blank" aria-label="Go to https://www.linkedin.com/in/fabrizio-cafolla/"><svg width="20" height="20" aria-hidden="true" data-icon="fa:linkedin"><symbol id="ai:fa:linkedin" viewBox="0 0 1536 1504"><path fill="currentColor" d="M349 497v991H19V497zm21-306q1 73-50.5 122T184 362h-2q-82 0-132-49T0 191q0-74 51.5-122.5T186 20t133 48.5T370 191m1166 729v568h-329V958q0-105-40.5-164.5T1040 734q-63 0-105.5 34.5T871 854q-11 30-11 81v553H531q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52t87-43.5T1157 474q171 0 275 113.5T1536 920"/></symbol><use href="#ai:fa:linkedin"></use></svg></a></li><li class="nav-item" data-component="NavbarItem"><a href="https://github.com/FabrizioCafolla" class="nav-link" target="_blank" aria-label="Go to https://github.com/FabrizioCafolla"><svg width="20" height="20" aria-hidden="true" data-icon="fa:github"><symbol id="ai:fa:github" viewBox="0 0 1536 1504"><path fill="currentColor" d="M768 0q209 0 385.5 103T1433 382.5T1536 768q0 251-146.5 451.5T1011 1497q-27 5-40-7t-13-30q0-3 .5-76.5t.5-134.5q0-97-52-142q57-6 102.5-18t94-39t81-66.5t53-105T1258 728q0-119-79-206q37-91-8-204q-28-9-81 11t-92 44l-38 24q-93-26-192-26t-192 26q-16-11-42.5-27T450 331.5T365 318q-45 113-8 204q-79 87-79 206q0 85 20.5 150T351 983t80.5 67t94 39t102.5 18q-39 36-49 103q-21 10-45 15t-57 5t-65.5-21.5T356 1146q-19-32-48.5-52t-49.5-24l-20-3q-21 0-29 4.5t-5 11.5t9 14t13 12l7 5q22 10 43.5 38t31.5 51l10 23q13 38 44 61.5t67 30t69.5 7t55.5-3.5l23-4q0 38 .5 88.5t.5 54.5q0 18-13 30t-40 7q-232-77-378.5-277.5T0 768q0-209 103-385.5T382.5 103T768 0M291 1103q3-7-7-12q-10-3-13 2q-3 7 7 12q9 6 13-2m31 34q7-5-2-16q-10-9-16-3q-7 5 2 16q10 10 16 3m30 45q9-7 0-19q-8-13-17-6q-9 5 0 18t17 7m42 42q8-8-4-19q-12-12-20-3q-9 8 4 19q12 12 20 3m57 25q3-11-13-16q-15-4-19 7t13 15q15 6 19-6m63 5q0-13-17-11q-16 0-16 11q0 13 17 11q16 0 16-11m58-10q-2-11-18-9q-16 3-14 15t18 8t14-14"/></symbol><use href="#ai:fa:github"></use></svg></a></li><li class="nav-item" data-component="NavbarItem"><a href="/harness-walle/wiki" class="nav-link active" target="_self" aria-label="Go to /harness-walle/wiki"><span>Docs</span></a></li></ul></div><button class="cart-badge cart-badge--inline" data-cart-badge data-cart-keep="true" aria-label="Open cart" data-astro-cid-ca2bctbz><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" data-astro-cid-ca2bctbz><circle cx="9" cy="21" r="1" data-astro-cid-ca2bctbz></circle><circle cx="20" cy="21" r="1" data-astro-cid-ca2bctbz></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" data-astro-cid-ca2bctbz></path></svg><span class="cart-badge__count" data-cart-count aria-live="polite" data-astro-cid-ca2bctbz>0</span></button><button id="mobile-menu-toggle" class="hamburger" aria-controls="nav-at5j0hw" aria-expanded="false" aria-label="Toggle navigation menu"><span class="hamburger-line"></span><span class="hamburger-line"></span><span class="hamburger-line"></span></button></nav></div></header><script type="module">function e(){let e=document.getElementById(`mobile-menu-toggle`),t=e?.getAttribute(`aria-controls`),n=document.getElementById(t||``);if(!e||!n)return;let r=e=>{e.classList.remove(`active`),e.querySelector(`.dropdown-trigger`)?.setAttribute(`aria-expanded`,`false`)},i=()=>{e.classList.remove(`active`),e.setAttribute(`aria-expanded`,`false`),n.classList.remove(`show`),document.body.classList.remove(`menu-open`),document.querySelectorAll(`.nav-item.active`).forEach(r)},a=()=>{e.classList.add(`active`),e.setAttribute(`aria-expanded`,`true`),n.classList.add(`show`),document.body.classList.add(`menu-open`)};e.addEventListener(`click`,()=>{e.getAttribute(`aria-expanded`)===`true`?i():a()}),document.querySelectorAll(`.dropdown-trigger`).forEach(e=>{e.addEventListener(`click`,t=>{t.preventDefault(),t.stopPropagation();let n=e.closest(`.nav-item`),i=n?.classList.contains(`active`);n?.parentElement?.querySelectorAll(`.nav-item.active`).forEach(e=>{e!==n&&r(e)}),n?.classList.toggle(`active`,!i),e.setAttribute(`aria-expanded`,String(!i))})}),n.querySelectorAll(`a:not(.dropdown-trigger)`).forEach(e=>{e.addEventListener(`click`,()=>{window.innerWidth<=768&&i()})}),document.addEventListener(`click`,t=>{let r=e.classList.contains(`active`),a=t.target;r&&!n.contains(a)&&!e.contains(a)&&i()}),document.addEventListener(`keydown`,t=>{if(t.key!==`Escape`)return;let n=document.querySelector(`.nav-item.active`);if(n){let e=n.querySelector(`.dropdown-trigger`);r(n),e?.focus();return}e.classList.contains(`active`)&&(i(),e.focus())}),window.addEventListener(`resize`,()=>{window.innerWidth>768&&e.classList.contains(`active`)&&i()});let o=document.querySelector(`.site-header`),s=()=>{o?.classList.toggle(`scrolled`,window.scrollY>20)};s(),window.addEventListener(`scroll`,s,{passive:!0})}document.addEventListener(`DOMContentLoaded`,e),document.addEventListener(`astro:page-load`,e);</script><main id="main-content" tabindex="-1"><div class="wiki-page" data-astro-cid-6sfpakxj><nav class="wiki-nav" aria-label="Wiki pages" data-astro-cid-6sfpakxj><a href="/harness-walle/wiki" data-astro-cid-6sfpakxj>All pages</a><ul data-astro-cid-6sfpakxj><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/astrobook" data-astro-cid-6sfpakxj>Astrobook</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/cli" aria-current="page" data-astro-cid-6sfpakxj>CLI Reference</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/commerce" data-astro-cid-6sfpakxj>Commerce (Shopify headless)</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/components" data-astro-cid-6sfpakxj>Components</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/readme" data-astro-cid-6sfpakxj>Documentation</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/repo-guide" data-astro-cid-6sfpakxj>How this repo works</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/managed-vs-seed" data-astro-cid-6sfpakxj>Managed vs Seed</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/modules" data-astro-cid-6sfpakxj>Modules</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/styling" data-astro-cid-6sfpakxj>Styling your site</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/versioning" data-astro-cid-6sfpakxj>Versioning</a></li></ul></nav><article class="wiki-content" data-astro-cid-6sfpakxj><h1 id="cli-reference">CLI Reference</h1>
+<p>The CLI source lives at <code>walle/cli/cli.sh</code> in this repo and is synced into every consumer project (at <code>scripts/@walle/cli.sh</code>) by the <code>website</code> module. Inside a consumer, the canonical invocation is <code>just walle-update</code>; direct <code>cli.sh</code> calls are for more control.</p>
+<h2 id="global-flags">Global flags</h2>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-s, --source &lt;path&gt;</code></td>
+<td>Use a local walle clone instead of a release tag (dev / test)</td>
+</tr>
+<tr>
+<td><code>-w, --walle-version &lt;tag&gt;</code></td>
+<td>Pin a specific release tag (e.g. <code>v0.1.0-beta</code>). Default: latest published tag</td>
+</tr>
+<tr>
+<td><code>--dry-run</code></td>
+<td>Show the sync plan without writing anything. Supported by <code>init</code>, <code>update</code>, <code>add</code></td>
+</tr>
+<tr>
+<td><code>--yes</code></td>
+<td>Skip confirmation prompts: a MAJOR version boundary (<code>update</code>) or adopting an existing non-walle directory (<code>init</code>)</td>
+</tr>
+<tr>
+<td><code>--no-devcontainer</code></td>
+<td>Skip <code>.devcontainer/</code> scaffold at init. <code>init</code> only</td>
+</tr>
+<tr>
+<td><code>-h, --help</code></td>
+<td>Show usage</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="init"><code>init</code></h2>
+<p>Scaffold a new consumer project, or adopt an existing directory that isn’t one yet.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">cli.sh</span><span style="color:#9ECBFF"> init</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">  [--project-name </span><span style="color:#F97583">&lt;</span><span style="color:#9ECBFF">nam</span><span style="color:#E1E4E8">e</span><span style="color:#F97583">&gt;</span><span style="color:#9ECBFF">]</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">  [--dir-path </span><span style="color:#F97583">&lt;</span><span style="color:#9ECBFF">pat</span><span style="color:#E1E4E8">h</span><span style="color:#F97583">&gt;</span><span style="color:#9ECBFF">]</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">  [--modules </span><span style="color:#9ECBFF">website,ci,ai]</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">  [--walle-version </span><span style="color:#9ECBFF">vX.Y.Z</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> --source</span><span style="color:#F97583"> &lt;</span><span style="color:#9ECBFF">pat</span><span style="color:#E1E4E8">h</span><span style="color:#F97583">&gt;</span><span style="color:#9ECBFF">]</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">  [--dry-run] </span><span style="color:#79B8FF">\</span></span>
+<span class="line"><span style="color:#E1E4E8">  [--yes] </span><span style="color:#79B8FF">\</span></span>
+<span class="line"><span style="color:#E1E4E8">  [--no-devcontainer]</span></span></code></pre>
+<p><strong><code>--project-name</code> is optional.</strong> Given, it creates <code>&lt;dir-path&gt;/&lt;project-name&gt;</code> (the classic
+greenfield flow). Omitted, the target is <code>--dir-path</code> itself (default: current directory) — run
+<code>cd my-existing-project &amp;&amp; cli.sh init</code> to add walle to a project you already have.</p>
+<p><strong>Three outcomes depending on the target directory:</strong></p>
+<ol>
+<li><strong>Doesn’t exist</strong> → created and scaffolded, no prompt (same as today).</li>
+<li><strong>Exists with a <code>.harness-walle/manifest.json</code></strong> → refuses to run: “already a walle project — use
+<code>cli.sh update</code> or <code>cli.sh add &lt;module&gt;</code> instead.” Nothing is written.</li>
+<li><strong>Exists without a <code>.harness-walle/manifest.json</code></strong> (“adoption”) → prints a warning and the sync plan
+(same shape as <code>--dry-run</code>), then asks <code>Proceed? [y/N]</code>. Pass <code>--yes</code> to skip the prompt
+(for scripts/CI). Declining aborts with nothing written. Seed (starter) files are written
+<strong>only if absent</strong> — an adoption never overwrites a file already in the directory; MANAGED
+module paths (<code>src/@walle/</code>, etc.) are always synced as usual.</li>
+</ol>
+<p><strong>What it does (cases 1 and 3):</strong></p>
+<ol>
+<li>Establishes the harness-coding base (unless <code>--no-harness-coding</code>).</li>
+<li>Resolves the source (latest published tag by default, or <code>--source</code> / <code>--walle-version</code>).</li>
+<li>Seeds the starter site from <code>walle/website/</code> — every file not already present in the target.</li>
+<li>Syncs each declared module’s MANAGED paths.</li>
+<li>Seeds each module’s SEED paths (written once if absent).</li>
+<li>Injects walle’s marker-bounded blocks into consumer-owned files.</li>
+</ol>
+<p>What is managed, seed, or inject is declared in <code>walle/walle.yml</code>.
+6. Writes <code>.harness-walle/manifest.json</code>, <code>.harness-walle/config.yml</code> (if absent), <code>.harness-walle/lock</code>, and (unless
+<code>config.yml</code>’s <code>docs: false</code>) <code>.harness-walle/docs/</code>.</p>
+<p><strong><code>website</code> is always required.</strong> Omit <code>--modules</code> to get just <code>website</code>.</p>
+<p><strong>Output:</strong> <code>Project &lt;name&gt; initialized in &lt;dir&gt;.</code></p>
+<p><strong>Common errors:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Error</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>already a walle project</code></td>
+<td>Target has a <code>.harness-walle/manifest.json</code> already — use <code>update</code>/<code>add</code> instead</td>
+</tr>
+<tr>
+<td><code>aborted — no files were written</code></td>
+<td>Adoption prompt declined</td>
+</tr>
+<tr>
+<td><code>'website' is a mandatory module</code></td>
+<td><code>--modules</code> specified without <code>website</code></td>
+</tr>
+<tr>
+<td><code>unknown module '&lt;m&gt;'</code></td>
+<td>Module name not in <code>website</code>, <code>ci</code>, <code>ai</code>, <code>backend</code>, <code>devcontainer</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="update"><code>update</code></h2>
+<p>Re-sync MANAGED paths in an existing consumer from a new walle release.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">cli.sh</span><span style="color:#9ECBFF"> update</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">  [-p </span><span style="color:#F97583">|</span><span style="color:#B392F0"> --project-path</span><span style="color:#F97583"> &lt;</span><span style="color:#9ECBFF">pat</span><span style="color:#E1E4E8">h</span><span style="color:#F97583">&gt;</span><span style="color:#9ECBFF">]</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">  [--walle-version </span><span style="color:#9ECBFF">vX.Y.Z</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> --source</span><span style="color:#F97583"> &lt;</span><span style="color:#9ECBFF">pat</span><span style="color:#E1E4E8">h</span><span style="color:#F97583">&gt;</span><span style="color:#9ECBFF">]</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">  [--dry-run] </span><span style="color:#79B8FF">\</span></span>
+<span class="line"><span style="color:#E1E4E8">  [--yes] </span><span style="color:#79B8FF">\</span></span>
+<span class="line"><span style="color:#E1E4E8">  [--no-deps-check]</span></span></code></pre>
+<p><strong>Default project path:</strong> current directory.</p>
+<p><strong>What it does:</strong></p>
+<ol>
+<li>Migrates any older layout first (see <a href="#migration-from-older-layouts">Migration</a> below): a root
+<code>.walle.config.json</code> or an old <code>.walle/</code> folder becomes <code>.harness-walle/</code>, and a <code>schemaVersion: 2</code>
+<code>files</code> map is reshaped to v3.</li>
+<li>Reads <code>.harness-walle/manifest.json</code> (stops if missing or unversioned).</li>
+<li>Resolves the source.</li>
+<li>Checks for a MAJOR version boundary — stops unless <code>--yes</code>.</li>
+<li>Re-syncs MANAGED paths for all declared modules, including the <code>.vscode/settings.json</code> and
+<code>.vscode/extensions.json</code> marker blocks.</li>
+<li><strong>Does not touch</strong> SEED files, consumer configs, styles, pages, or content outside the
+<code>.vscode/</code> marker blocks.</li>
+<li>Rewrites <code>.harness-walle/manifest.json</code> with the new <code>walleVersion</code> and <code>updatedAt</code>, refreshes
+<code>.harness-walle/lock</code> and <code>.harness-walle/docs/</code> (unless disabled).</li>
+<li>Reports any <strong>Walle-owned dependency drift</strong> in <code>package.json</code> (which is seed-owned and never
+rewritten) so you can align it — see <a href="#deps"><code>deps</code></a>. Disable with <code>--no-deps-check</code>.</li>
+</ol>
+<h3 id="migration-from-older-layouts">Migration from older layouts</h3>
+<p>A consumer on any older layout is migrated automatically, before anything else — idempotent, no
+data lost, no manual action:</p>
+<ul>
+<li>a root <code>.walle.config.json</code> file → <code>.harness-walle/manifest.json</code>;</li>
+<li>an old <code>.walle/</code> state folder → <code>.harness-walle/</code> (dir renamed);</li>
+<li>a <code>schemaVersion: 2</code> <code>files</code> map (keyed by dest path → module) → v3 (keyed by module → array of
+dest paths), and <code>schemaVersion</code> bumped to 3.</li>
+</ul>
+<p><strong>In a consumer, prefer:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">just</span><span style="color:#9ECBFF"> walle-update</span></span></code></pre>
+<p><strong>Common errors:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Error</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>no .harness-walle/manifest.json found</code></td>
+<td>Not a walle consumer or wrong <code>--project-path</code></td>
+</tr>
+<tr>
+<td><code>unsupported manifest schemaVersion</code></td>
+<td>Manifest has no <code>schemaVersion</code> (v2/v3 are supported; v2 auto-migrates) — re-scaffold with <code>init</code></td>
+</tr>
+<tr>
+<td><code>crosses a MAJOR boundary</code></td>
+<td>MAJOR version bump; re-run with <code>--yes</code> after reviewing <code>CHANGELOG.md</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="add"><code>add</code></h2>
+<p>Add a new module to an existing consumer project.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">cli.sh</span><span style="color:#9ECBFF"> add</span><span style="color:#F97583"> &lt;</span><span style="color:#9ECBFF">modul</span><span style="color:#E1E4E8">e</span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">  [-p </span><span style="color:#F97583">|</span><span style="color:#B392F0"> --project-path</span><span style="color:#F97583"> &lt;</span><span style="color:#9ECBFF">pat</span><span style="color:#E1E4E8">h</span><span style="color:#F97583">&gt;</span><span style="color:#9ECBFF">]</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">  [--walle-version </span><span style="color:#9ECBFF">vX.Y.Z</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> --source</span><span style="color:#F97583"> &lt;</span><span style="color:#9ECBFF">pat</span><span style="color:#E1E4E8">h</span><span style="color:#F97583">&gt;</span><span style="color:#9ECBFF">]</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">  [--dry-run]</span></span></code></pre>
+<p><strong>What it does:</strong></p>
+<ol>
+<li>Reads <code>.harness-walle/manifest.json</code>.</li>
+<li>Syncs the new module’s MANAGED paths.</li>
+<li>Writes the module’s SEED paths if they don’t exist yet (re-add leaves them intact).</li>
+<li>Appends the module to <code>modules</code> in <code>.harness-walle/manifest.json</code>.</li>
+</ol>
+<p>If the module is already declared, <code>add</code> re-syncs its MANAGED paths without changing the module list.</p>
+<p><strong>Note for <code>backend</code>:</strong> API routes require SSR. If <code>astro.ssr.enabled</code> is not <code>true</code> in <code>src/configs/app.json</code>, the CLI emits a warning after adding the module.</p>
+<p><strong>Common errors:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Error</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>module name is required</code></td>
+<td>No module name passed</td>
+</tr>
+<tr>
+<td><code>unknown module '&lt;m&gt;'</code></td>
+<td>Module not in the valid set</td>
+</tr>
+<tr>
+<td><code>manifest v1 detected</code></td>
+<td>Consumer needs migration first</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="check"><code>check</code></h2>
+<p>Read-only validation of a consumer project.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">cli.sh</span><span style="color:#9ECBFF"> check</span><span style="color:#E1E4E8"> [-p </span><span style="color:#F97583">|</span><span style="color:#B392F0"> --project-path</span><span style="color:#F97583"> &lt;</span><span style="color:#9ECBFF">pat</span><span style="color:#E1E4E8">h</span><span style="color:#F97583">&gt;</span><span style="color:#9ECBFF">]</span><span style="color:#E1E4E8"> [-s </span><span style="color:#F97583">|</span><span style="color:#B392F0"> --source</span><span style="color:#F97583"> &lt;</span><span style="color:#9ECBFF">pat</span><span style="color:#E1E4E8">h</span><span style="color:#F97583">&gt;</span><span style="color:#9ECBFF">]</span><span style="color:#E1E4E8"> [-v </span><span style="color:#F97583">|</span><span style="color:#B392F0"> --verbose]</span></span></code></pre>
+<p><strong>What it checks:</strong></p>
+<ol>
+<li><code>.harness-walle/manifest.json</code> exists and is <code>schemaVersion: 2</code>.</li>
+<li><code>walleVersion</code> is a semver tag (<code>vX.Y.Z</code> or <code>vX.Y.Z-prerelease</code>) or <code>"local"</code>.</li>
+<li>When <code>walleVersion</code> is a semver tag (not <code>"local"</code>), compares it against the latest published tag on GitHub and emits a warning if the consumer is behind. Silently skipped when the remote is unreachable (no network).</li>
+<li>Manifest validates against <code>schemas/walle.config.schema.json</code>.</li>
+<li>Consumer configs pass <code>validate-configs.mjs</code> (if present).</li>
+<li>Reports presence/absence of each module’s SEED files (informational, never fails).</li>
+<li>Warns if <code>backend</code> is active but SSR is off.</li>
+</ol>
+<p>Pass <code>--source &lt;path&gt;</code> to also diff the consumer’s MANAGED paths against a local walle clone. Files marked <code>!</code> are out of sync; a count and a suggested <code>update</code> command are shown at the end.</p>
+<p>Pass <code>--verbose</code> to also print the full module catalog (all available modules, their MANAGED/SEED paths, and available component variants). Useful for onboarding and discovery.</p>
+<p><strong>Output on success:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>✓ manifest v2 present (&lt;name&gt;)</span></span>
+<span class="line"><span>✓ walleVersion pinned: v0.1.0-beta</span></span>
+<span class="line"><span>✓ manifest valid against schema</span></span>
+<span class="line"><span>✓ consumer configs valid</span></span>
+<span class="line"><span>· seed present (website): README.md</span></span>
+<span class="line"><span>check passed.</span></span></code></pre>
+<p>With <code>--verbose</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Available modules:</span></span>
+<span class="line"><span>  website (required) — Astro site — @walle components, layouts, styles, config and CLI scripts</span></span>
+<span class="line"><span>    MANAGED : src/@walle, schemas, scripts/@walle</span></span>
+<span class="line"><span>    SEED    : README.md, justfile.project, .husky/pre-commit, .husky/pre-push</span></span>
+<span class="line"><span>  ci — GitHub Actions workflows (test + deploy) under @walle</span></span>
+<span class="line"><span>    MANAGED : .github/workflows/actions/@walle</span></span>
+<span class="line"><span>    SEED    : .github/workflows/test.yml, .github/workflows/deploy.yml</span></span>
+<span class="line"><span>  devcontainer (opt-out, default on) — DevContainer scaffold — opt-out at init, not tracked in modules[]</span></span>
+<span class="line"><span>    SEED    : .devcontainer/devcontainer.json</span></span>
+<span class="line"><span>  ...</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Available component variants:</span></span>
+<span class="line"><span>  navbar  : standard, minimal</span></span>
+<span class="line"><span>  footer  : standard, minimal</span></span></code></pre>
+<p>With <code>--source</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>--- managed path diff (source: /path/to/harness-walle) ---</span></span>
+<span class="line"><span>  ✓ in-sync: src/@walle/</span></span>
+<span class="line"><span>  ! out-of-sync (3 file(s)): schemas/</span></span>
+<span class="line"><span>3 managed path(s) out of sync — run: cli.sh update --source /path/to/harness-walle</span></span></code></pre>
+<p><strong>Does not write anything.</strong></p>
+<h2 id="deps"><code>deps</code></h2>
+<p>Report — and optionally align — <strong>Walle-owned dependency drift</strong> in a consumer’s <code>package.json</code>.
+Inside a consumer the canonical form is <code>just walle-deps</code> (<code>just walle-deps --apply</code> to align); the
+direct <code>cli.sh</code> invocation below is for more control.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">cli.sh</span><span style="color:#9ECBFF"> deps</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">  [-p </span><span style="color:#F97583">|</span><span style="color:#B392F0"> --project-path</span><span style="color:#F97583"> &lt;</span><span style="color:#9ECBFF">pat</span><span style="color:#E1E4E8">h</span><span style="color:#F97583">&gt;</span><span style="color:#9ECBFF">]</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">  [--walle-version </span><span style="color:#9ECBFF">vX.Y.Z</span><span style="color:#F97583"> |</span><span style="color:#B392F0"> --source</span><span style="color:#F97583"> &lt;</span><span style="color:#9ECBFF">pat</span><span style="color:#E1E4E8">h</span><span style="color:#F97583">&gt;</span><span style="color:#9ECBFF">]</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#E1E4E8">  [--apply]</span></span></code></pre>
+<p><strong>Why it exists:</strong> <code>package.json</code> is a SEED file (see <a href="/harness-walle/wiki/managed-vs-seed">managed vs seed</a>) — the
+consumer owns it and adds their own dependencies, so <code>update</code> never rewrites it. <code>deps</code> bridges that
+gap: it treats the resolved release’s seed <code>package.json</code> as the reference for <strong>Walle-owned</strong>
+dependencies and compares the consumer’s versions against it. Dependencies the consumer added (absent
+from the seed) are never reported or changed.</p>
+<p><strong>What it does:</strong></p>
+<ul>
+<li>Without <code>--apply</code> (default) — read-only report. Prints each Walle-owned dependency whose declared
+floor is <strong>below</strong> the seed’s, flags <strong>major</strong> gaps (which may carry breaking changes), and lists any
+Walle deps absent from your <code>package.json</code>. Runs automatically at the end of <code>update</code> (unless
+<code>--no-deps-check</code>).</li>
+<li>With <code>--apply</code> — rewrites only the behind Walle-owned entries in <code>package.json</code> to the seed’s ranges,
+preserving key order and leaving your own dependencies untouched. Then run <code>yarn install</code> to update
+the lockfile.</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>$ cli.sh deps --source /path/to/harness-walle</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span> ⚠ 2 Walle dependency(ies) in your package.json are behind the tested set</span></span>
+<span class="line"><span>   (Walle never rewrites package.json — it's yours):</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>     package   yours     walle</span></span>
+<span class="line"><span>     astro     ^7.0.6    ^7.1.3</span></span>
+<span class="line"><span>     vitest    ^3.2.7    ^4.1.10   ⚠ major — check breaking changes</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>   Align them:  yarn up astro@^7.1.3 vitest@^4.1.10</span></span>
+<span class="line"><span>   Or run:      walle deps --apply</span></span></code></pre>
+<p>The comparison uses the version <strong>floor</strong> of each range (<code>^7.1.3</code> → <code>7.1.3</code>), so it flags only genuine
+downgrades, never cosmetic range differences. Each release also records its validated dependency set in
+the <a href="https://github.com/FabrizioCafolla/harness-walle/blob/main/CHANGELOG.md">CHANGELOG</a> <code>Dependencies</code> section.</p>
+</article></div></main><footer data-astro-cid-wk7hliiz><div class="footer-container" data-astro-cid-wk7hliiz><div class="footer-section footer-left" data-astro-cid-wk7hliiz><div class="copyright" data-astro-cid-wk7hliiz><a href="/harness-walle" class="brand-link " data-astro-cid-wk7hliiz><span class data-astro-cid-wk7hliiz>Walle</span></a><span class="license" data-astro-cid-wk7hliiz>2026 &copy; </span></div></div><div class="footer-section footer-center" data-astro-cid-wk7hliiz><nav class="footer-nav" aria-label="Footer navigation" data-astro-cid-wk7hliiz><ul class="footer-nav__list" data-astro-cid-wk7hliiz><li data-astro-cid-wk7hliiz><a href="/harness-walle/privacy-policy" data-astro-cid-wk7hliiz>Privacy Policy</a></li><li data-astro-cid-wk7hliiz><a href="/harness-walle/terms-and-conditions" data-astro-cid-wk7hliiz>Terms &amp; Conditions</a></li></ul></nav></div><div class="footer-section footer-right" data-astro-cid-wk7hliiz><ul class="social-links" aria-label="Social links" data-astro-cid-wk7hliiz><li data-astro-cid-wk7hliiz><a href="https://www.linkedin.com/in/fabrizio-cafolla/" target="_blank" rel="noopener" aria-label="linkedin" data-astro-cid-wk7hliiz><svg width="20" height="20" viewBox="0 0 1536 1504" aria-hidden="true" data-astro-cid-wk7hliiz="true" data-icon="fa:linkedin"><use href="#ai:fa:linkedin"></use></svg></a></li><li data-astro-cid-wk7hliiz><a href="https://github.com/FabrizioCafolla" target="_blank" rel="noopener" aria-label="github" data-astro-cid-wk7hliiz><svg width="20" height="20" viewBox="0 0 1536 1504" aria-hidden="true" data-astro-cid-wk7hliiz="true" data-icon="fa:github"><use href="#ai:fa:github"></use></svg></a></li></ul></div></div></footer><dialog class="cart-drawer" data-cart-drawer aria-label="Shopping cart" data-astro-cid-srceaava><div class="cart-drawer__head" data-astro-cid-srceaava><h2 data-astro-cid-srceaava>Your cart</h2><button class="cart-drawer__close" data-cart-close aria-label="Close cart" data-astro-cid-srceaava><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" data-astro-cid-srceaava><path d="M18 6 6 18M6 6l12 12" data-astro-cid-srceaava></path></svg></button></div><p class="cart-drawer__empty" data-cart-empty data-astro-cid-srceaava>Your cart is empty.</p><ul class="cart-drawer__lines" data-cart-lines data-astro-cid-srceaava></ul><div class="cart-drawer__foot" data-cart-foot hidden data-astro-cid-srceaava><div class="cart-drawer__subtotal" data-astro-cid-srceaava><span data-astro-cid-srceaava>Subtotal</span><span data-cart-subtotal data-astro-cid-srceaava></span></div><button class="cart-checkout" data-cart-checkout data-astro-cid-srceaava>Checkout</button></div></dialog><script type="module" src="/harness-walle/_astro/CartMount.astro_astro_type_script_index_0_lang.CU4XG_nv.js"></script><script type="module">function e(){document.querySelectorAll(`pre,table,[data-scrollable]`).forEach(e=>{e.hasAttribute(`tabindex`)||(e.scrollWidth>e.clientWidth||e.scrollHeight>e.clientHeight)&&!e.querySelector(`a[href],button,input,select,textarea,[tabindex]`)&&(e.setAttribute(`tabindex`,`0`),e.setAttribute(`role`,`region`),e.hasAttribute(`aria-label`)||e.setAttribute(`aria-label`,`Scrollable content`))})}document.addEventListener(`DOMContentLoaded`,e),document.addEventListener(`astro:page-load`,e);</script></body></html>

@@ -1,0 +1,860 @@
+<!DOCTYPE html><html lang="en-US"><head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/harness-walle/images/profile.jpeg"><link rel="sitemap" href="/harness-walle/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Components | Walle" href="https://fabriziocafolla.github.io/rss.xml"><meta name="generator" content="Astro v7.1.3"><!-- Canonical URL --><link rel="canonical" href="https://fabriziocafolla.github.io/harness-walle/wiki/components"><!-- Primary Meta Tags --><title>Components | Walle</title><meta name="title" content="Components | Walle"><meta name="description" content="Walle design-system documentation"><meta name="robots" content="index, follow"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://fabriziocafolla.github.io/harness-walle/wiki/components"><meta property="og:title" content="Components | Walle"><meta property="og:description" content="Walle design-system documentation"><meta property="og:image" content="https://fabriziocafolla.github.io/images/banner.png"><meta property="og:locale" content="en_US"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://fabriziocafolla.github.io/harness-walle/wiki/components"><meta property="twitter:title" content="Components | Walle"><meta property="twitter:description" content="Walle design-system documentation"><meta property="twitter:image" content="https://fabriziocafolla.github.io/images/banner.png"><script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebSite","name":"Walle","description":"Design System","url":"https://fabriziocafolla.github.io/harness-walle"},{"@context":"https://schema.org","@type":"Organization","name":"Walle","url":"https://fabriziocafolla.github.io/harness-walle","logo":"https://fabriziocafolla.github.io/images/banner.png"}]</script><style>.wiki-page[data-astro-cid-6sfpakxj]{grid-template-columns:1fr;gap:2rem;max-width:64rem;margin:0 auto;padding:0 1rem;display:grid}@media (width>=60rem){.wiki-page[data-astro-cid-6sfpakxj]{grid-template-columns:14rem 1fr}.wiki-nav[data-astro-cid-6sfpakxj]{align-self:start;position:sticky;top:1rem}}.wiki-nav[data-astro-cid-6sfpakxj] ul[data-astro-cid-6sfpakxj]{gap:.35rem;margin:.5rem 0 0;padding:0;list-style:none;display:grid}.wiki-nav[data-astro-cid-6sfpakxj] [data-astro-cid-6sfpakxj][aria-current=page]{font-weight:700}.wiki-content[data-astro-cid-6sfpakxj]{min-width:0;max-width:72ch;line-height:1.7}.wiki-content[data-astro-cid-6sfpakxj] pre{overflow-x:auto}.wiki-content[data-astro-cid-6sfpakxj] table{border-collapse:collapse;max-width:100%;display:block;overflow-x:auto}.wiki-content[data-astro-cid-6sfpakxj] img{max-width:100%;height:auto}.wiki-content[data-astro-cid-6sfpakxj] a{text-decoration:underline}
+</style><link rel="stylesheet" href="/harness-walle/_astro/layouts.UbeFnpW9.css"></head><body><a href="#main-content" class="skip-link">Skip to content</a><header class="site-header"><div class="container"><nav class="main-nav" aria-label="Main navigation" data-component="Navbar" data-nav-root="true"><div class="brand-container"><a href="/harness-walle" title="Walle" class="brand-link"><span class="brand-title">Walle</span></a></div><div class="nav-container" id="nav-sk0mre0"><ul class="nav-links" data-nav-level="1" data-component="NavbarLinks"><li class="nav-item" data-component="NavbarItem"><a href="/harness-walle" class="nav-link" target="_self" aria-label="Go to /harness-walle"><span>Home</span></a></li><li class="nav-item" data-component="NavbarItem"><a href="/harness-walle/showcase" class="nav-link" target="_self" aria-label="Go to /harness-walle/showcase"><span>Showcase</span></a></li><li class="nav-item" data-component="NavbarItem"><a href="/harness-walle/blog" class="nav-link" target="_self" aria-label="Go to /harness-walle/blog"><span>Blog</span></a></li><li class="nav-item" data-component="NavbarItem"><a href="/harness-walle/products" class="nav-link" target="_self" aria-label="Go to /harness-walle/products"><span>Products</span></a></li><li class="nav-item has-dropdown" data-component="NavbarItem"><div class="dropdown-container"><button class="nav-link dropdown-trigger" aria-expanded="false" aria-haspopup="true"><span>Company</span><svg width="12" height="12" aria-hidden="true" class="dropdown-arrow" data-icon="fa:chevron-down"><symbol id="ai:fa:chevron-down" viewBox="0 0 1664 1312"><path fill="currentColor" d="m1619 552l-742 741q-19 19-45 19t-45-19L45 552q-19-19-19-45.5T45 461l166-165q19-19 45-19t45 19l531 531l531-531q19-19 45-19t45 19l166 165q19 19 19 45.5t-19 45.5"/></symbol><use href="#ai:fa:chevron-down"></use></svg></button><ul class="dropdown-menu" data-component="NavbarDropdown"><li class="dropdown-item"><a href="/harness-walle/privacy-policy" class="dropdown-link" target="_self" aria-label="Go to /harness-walle/privacy-policy"><span>Privacy Policy</span></a></li><li class="dropdown-item"><a href="/harness-walle/terms-and-conditions" class="dropdown-link" target="_self" aria-label="Go to /harness-walle/terms-and-conditions"><span>Terms &amp; Conditions</span></a></li></ul></div></li><li class="nav-item" data-component="NavbarItem"><a href="https://www.linkedin.com/in/fabrizio-cafolla/" class="nav-link" target="_blank" aria-label="Go to https://www.linkedin.com/in/fabrizio-cafolla/"><svg width="20" height="20" aria-hidden="true" data-icon="fa:linkedin"><symbol id="ai:fa:linkedin" viewBox="0 0 1536 1504"><path fill="currentColor" d="M349 497v991H19V497zm21-306q1 73-50.5 122T184 362h-2q-82 0-132-49T0 191q0-74 51.5-122.5T186 20t133 48.5T370 191m1166 729v568h-329V958q0-105-40.5-164.5T1040 734q-63 0-105.5 34.5T871 854q-11 30-11 81v553H531q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52t87-43.5T1157 474q171 0 275 113.5T1536 920"/></symbol><use href="#ai:fa:linkedin"></use></svg></a></li><li class="nav-item" data-component="NavbarItem"><a href="https://github.com/FabrizioCafolla" class="nav-link" target="_blank" aria-label="Go to https://github.com/FabrizioCafolla"><svg width="20" height="20" aria-hidden="true" data-icon="fa:github"><symbol id="ai:fa:github" viewBox="0 0 1536 1504"><path fill="currentColor" d="M768 0q209 0 385.5 103T1433 382.5T1536 768q0 251-146.5 451.5T1011 1497q-27 5-40-7t-13-30q0-3 .5-76.5t.5-134.5q0-97-52-142q57-6 102.5-18t94-39t81-66.5t53-105T1258 728q0-119-79-206q37-91-8-204q-28-9-81 11t-92 44l-38 24q-93-26-192-26t-192 26q-16-11-42.5-27T450 331.5T365 318q-45 113-8 204q-79 87-79 206q0 85 20.5 150T351 983t80.5 67t94 39t102.5 18q-39 36-49 103q-21 10-45 15t-57 5t-65.5-21.5T356 1146q-19-32-48.5-52t-49.5-24l-20-3q-21 0-29 4.5t-5 11.5t9 14t13 12l7 5q22 10 43.5 38t31.5 51l10 23q13 38 44 61.5t67 30t69.5 7t55.5-3.5l23-4q0 38 .5 88.5t.5 54.5q0 18-13 30t-40 7q-232-77-378.5-277.5T0 768q0-209 103-385.5T382.5 103T768 0M291 1103q3-7-7-12q-10-3-13 2q-3 7 7 12q9 6 13-2m31 34q7-5-2-16q-10-9-16-3q-7 5 2 16q10 10 16 3m30 45q9-7 0-19q-8-13-17-6q-9 5 0 18t17 7m42 42q8-8-4-19q-12-12-20-3q-9 8 4 19q12 12 20 3m57 25q3-11-13-16q-15-4-19 7t13 15q15 6 19-6m63 5q0-13-17-11q-16 0-16 11q0 13 17 11q16 0 16-11m58-10q-2-11-18-9q-16 3-14 15t18 8t14-14"/></symbol><use href="#ai:fa:github"></use></svg></a></li><li class="nav-item" data-component="NavbarItem"><a href="/harness-walle/wiki" class="nav-link active" target="_self" aria-label="Go to /harness-walle/wiki"><span>Docs</span></a></li></ul></div><button class="cart-badge cart-badge--inline" data-cart-badge data-cart-keep="true" aria-label="Open cart" data-astro-cid-ca2bctbz><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" data-astro-cid-ca2bctbz><circle cx="9" cy="21" r="1" data-astro-cid-ca2bctbz></circle><circle cx="20" cy="21" r="1" data-astro-cid-ca2bctbz></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" data-astro-cid-ca2bctbz></path></svg><span class="cart-badge__count" data-cart-count aria-live="polite" data-astro-cid-ca2bctbz>0</span></button><button id="mobile-menu-toggle" class="hamburger" aria-controls="nav-sk0mre0" aria-expanded="false" aria-label="Toggle navigation menu"><span class="hamburger-line"></span><span class="hamburger-line"></span><span class="hamburger-line"></span></button></nav></div></header><script type="module">function e(){let e=document.getElementById(`mobile-menu-toggle`),t=e?.getAttribute(`aria-controls`),n=document.getElementById(t||``);if(!e||!n)return;let r=e=>{e.classList.remove(`active`),e.querySelector(`.dropdown-trigger`)?.setAttribute(`aria-expanded`,`false`)},i=()=>{e.classList.remove(`active`),e.setAttribute(`aria-expanded`,`false`),n.classList.remove(`show`),document.body.classList.remove(`menu-open`),document.querySelectorAll(`.nav-item.active`).forEach(r)},a=()=>{e.classList.add(`active`),e.setAttribute(`aria-expanded`,`true`),n.classList.add(`show`),document.body.classList.add(`menu-open`)};e.addEventListener(`click`,()=>{e.getAttribute(`aria-expanded`)===`true`?i():a()}),document.querySelectorAll(`.dropdown-trigger`).forEach(e=>{e.addEventListener(`click`,t=>{t.preventDefault(),t.stopPropagation();let n=e.closest(`.nav-item`),i=n?.classList.contains(`active`);n?.parentElement?.querySelectorAll(`.nav-item.active`).forEach(e=>{e!==n&&r(e)}),n?.classList.toggle(`active`,!i),e.setAttribute(`aria-expanded`,String(!i))})}),n.querySelectorAll(`a:not(.dropdown-trigger)`).forEach(e=>{e.addEventListener(`click`,()=>{window.innerWidth<=768&&i()})}),document.addEventListener(`click`,t=>{let r=e.classList.contains(`active`),a=t.target;r&&!n.contains(a)&&!e.contains(a)&&i()}),document.addEventListener(`keydown`,t=>{if(t.key!==`Escape`)return;let n=document.querySelector(`.nav-item.active`);if(n){let e=n.querySelector(`.dropdown-trigger`);r(n),e?.focus();return}e.classList.contains(`active`)&&(i(),e.focus())}),window.addEventListener(`resize`,()=>{window.innerWidth>768&&e.classList.contains(`active`)&&i()});let o=document.querySelector(`.site-header`),s=()=>{o?.classList.toggle(`scrolled`,window.scrollY>20)};s(),window.addEventListener(`scroll`,s,{passive:!0})}document.addEventListener(`DOMContentLoaded`,e),document.addEventListener(`astro:page-load`,e);</script><main id="main-content" tabindex="-1"><div class="wiki-page" data-astro-cid-6sfpakxj><nav class="wiki-nav" aria-label="Wiki pages" data-astro-cid-6sfpakxj><a href="/harness-walle/wiki" data-astro-cid-6sfpakxj>All pages</a><ul data-astro-cid-6sfpakxj><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/astrobook" data-astro-cid-6sfpakxj>Astrobook</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/cli" data-astro-cid-6sfpakxj>CLI Reference</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/commerce" data-astro-cid-6sfpakxj>Commerce (Shopify headless)</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/components" aria-current="page" data-astro-cid-6sfpakxj>Components</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/readme" data-astro-cid-6sfpakxj>Documentation</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/repo-guide" data-astro-cid-6sfpakxj>How this repo works</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/managed-vs-seed" data-astro-cid-6sfpakxj>Managed vs Seed</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/modules" data-astro-cid-6sfpakxj>Modules</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/styling" data-astro-cid-6sfpakxj>Styling your site</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/versioning" data-astro-cid-6sfpakxj>Versioning</a></li></ul></nav><article class="wiki-content" data-astro-cid-6sfpakxj><h1 id="components">Components</h1>
+<p>All <code>@walle</code> components are MANAGED — they live in <code>src/@walle/components/</code> and are re-synced on every <code>walle update</code>. Customize through configs, CSS variables, slots, and the consumer’s own component layer.</p>
+<hr>
+<h2 id="api-conventions">API conventions</h2>
+<p>Every <code>@walle</code> component uses one shared prop vocabulary. If a component accepts one of these concepts, it uses exactly this name and type:</p>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Prop</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Destination URL</td>
+<td><code>href</code></td>
+<td><code>string</code></td>
+<td>Matches HTML. A component with <code>href</code> renders a link.</td>
+</tr>
+<tr>
+<td>Link target</td>
+<td><code>target</code></td>
+<td><code>"_blank"</code> | <code>"_self"</code></td>
+<td><code>rel="noopener"</code> is added automatically when <code>_blank</code>.</td>
+</tr>
+<tr>
+<td>Visual variant</td>
+<td><code>variant</code></td>
+<td>union per component</td>
+<td>Never <code>color</code> or <code>type</code> for visual style.</td>
+</tr>
+<tr>
+<td>Size</td>
+<td><code>size</code></td>
+<td><code>"small"</code> | <code>"medium"</code> | <code>"large"</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Image</td>
+<td><code>image</code></td>
+<td><code>{ src: ImageMetadata | string; alt: string }</code></td>
+<td><code>alt</code> is required; empty string only for decorative images.</td>
+</tr>
+<tr>
+<td>Label text</td>
+<td><code>text</code></td>
+<td><code>string</code></td>
+<td>Label-only components (Button, Badge). Rich content uses slots.</td>
+</tr>
+<tr>
+<td>Icon</td>
+<td><code>icon</code> / <code>iconPosition</code></td>
+<td><code>string</code> / <code>"start"</code> | <code>"end"</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Extra classes</td>
+<td><code>class</code></td>
+<td><code>string</code></td>
+<td>Appended to the component root element.</td>
+</tr>
+<tr>
+<td>Native button type</td>
+<td><code>type</code></td>
+<td><code>"button"</code> | <code>"submit"</code> | <code>"reset"</code></td>
+<td>Only on Button; freed by the <code>variant</code> rename.</td>
+</tr>
+<tr>
+<td>Element id</td>
+<td><code>id</code></td>
+<td><code>string</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Rules:</p>
+<ul>
+<li><strong>English only</strong>: source, comments, docs, and every user-facing or screen-reader-announced string ships an English default, overridable via props or <code>config.app</code> for localization.</li>
+<li>Boolean modifiers are positive and unprefixed: <code>outline</code>, <code>centered</code>, <code>reversed</code>, <code>fullWidth</code>, <code>disabled</code>.</li>
+<li>Polymorphic components (Button as <code>&lt;a&gt;</code> or <code>&lt;button&gt;</code>) decide from <code>href</code> presence — there is no <code>as</code> prop.</li>
+<li>Slots over content props whenever content is rich (cards, sections).</li>
+<li>The vocabulary applies to <strong>component props</strong>. Consumer config files (<code>navbar.json</code>, <code>footer.json</code>) keep their own schema (<code>url</code>, <code>name</code>, …) — they are a stable consumer-facing contract, not component APIs.</li>
+</ul>
+<hr>
+<h2 id="config-files">Config files</h2>
+<p>Four JSON files in <code>src/configs/</code>, all schema-validated (<code>just validate-configs</code>):</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Controls</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>app.json</code></td>
+<td>Site metadata, SSR, component variant selection</td>
+</tr>
+<tr>
+<td><code>navbar.json</code></td>
+<td>Logo and navigation links (max 2 levels)</td>
+</tr>
+<tr>
+<td><code>footer.json</code></td>
+<td>Footer links and content</td>
+</tr>
+<tr>
+<td><code>theme.json</code></td>
+<td>Design tokens → CSS vars (optional)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="component-variants">Component variants</h2>
+<p>Some components ship multiple visual variants. The active variant is selected per-component in <code>src/configs/app.json</code> under the <code>components</code> key:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "components"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "navbar"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"standard"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "footer"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"minimal"</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>An absent key defaults to <code>standard</code>. An unknown variant name fails the build with an explicit error listing the available values.</p>
+<h3 id="available-variants">Available variants</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Variants</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>navbar</code></td>
+<td><code>standard</code>, <code>minimal</code></td>
+</tr>
+<tr>
+<td><code>footer</code></td>
+<td><code>standard</code>, <code>minimal</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>standard</code></strong> — the full-featured default (logo, navigation items, dropdowns for navbar; full link columns for footer).</p>
+<p><strong><code>minimal</code></strong> — stripped-down layout suitable for landing pages or apps where nav chrome would be distracting.</p>
+<hr>
+<h2 id="how-variant-selection-works">How variant selection works</h2>
+<p>Each component with variants has a <strong>resolver</strong> (<code>*Resolver.astro</code>) that reads <code>config.app.components</code> at build time and renders the correct variant file:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>src/@walle/components/features/</span></span>
+<span class="line"><span>  Navbar/</span></span>
+<span class="line"><span>    Navbar.astro             ← standard variant</span></span>
+<span class="line"><span>    Navbar.minimal.astro     ← minimal variant</span></span>
+<span class="line"><span>    NavbarResolver.astro     ← reads config, renders the selected variant</span></span>
+<span class="line"><span>  Footer.astro               ← standard variant</span></span>
+<span class="line"><span>  Footer.minimal.astro       ← minimal variant</span></span>
+<span class="line"><span>  FooterResolver.astro       ← reads config, renders the selected variant</span></span></code></pre>
+<p><code>BaseLayout</code> imports the resolver, not the concrete component. The consumer never needs to change the layout import.</p>
+<hr>
+<h2 id="adding-a-new-variant">Adding a new variant</h2>
+<p>Variants are added in the walle source, not in consumers. If you are working on the walle design system itself:</p>
+<ol>
+<li>Create <code>Component.&lt;variant&gt;.astro</code> next to the standard implementation.</li>
+<li>Register the variant in <code>AVAILABLE_VARIANTS</code> in <code>src/@walle/define-config.ts</code>.</li>
+<li>Add the variant to the component’s resolver (<code>*Resolver.astro</code>).</li>
+</ol>
+<p>The resolver picks up the selection from <code>config.app.components</code>. The e2e scenario <code>11_component_variants.sh</code> covers both the valid and invalid variant cases.</p>
+<hr>
+<h2 id="overriding-a-component-without-forking">Overriding a component without forking</h2>
+<p>When the built-in variants don’t fit, replace the component entirely from a consumer-owned file rather than editing <code>src/@walle/</code>.</p>
+<p><strong>Example: replace the Navbar</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="astro"><code><span class="line"><span style="color:#6A737D">---</span></span>
+<span class="line"><span style="color:#6A737D">// src/pages/index.astro</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BaseLayout </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@walle/layouts/BaseLayout.astro"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> MyNavbar </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@components/MyNavbar.astro"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#6A737D">---</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">&lt;</span><span style="color:#79B8FF">BaseLayout</span><span style="color:#E1E4E8">&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">  &lt;</span><span style="color:#79B8FF">MyNavbar</span><span style="color:#B392F0"> slot</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"navbar"</span><span style="color:#E1E4E8"> /&gt;</span></span>
+<span class="line"><span style="color:#6A737D">  &lt;!-- page content --&gt;</span></span>
+<span class="line"><span style="color:#E1E4E8">&lt;/</span><span style="color:#79B8FF">BaseLayout</span><span style="color:#E1E4E8">&gt;</span></span></code></pre>
+<p><code>BaseLayout</code> exposes <code>navbar</code> and <code>footer</code> slots for this purpose. Anything in those slots replaces the default <code>@walle</code> component entirely.</p>
+<hr>
+<h2 id="elements">Elements</h2>
+<p>Primitive UI components. Import from <code>@walle/components/elements/&lt;Name&gt;.astro</code>.</p>
+<h3 id="badge"><code>Badge</code></h3>
+<p>Inline label with optional icon and link.</p>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>text</code></td>
+<td><code>string</code></td>
+<td>required</td>
+</tr>
+<tr>
+<td><code>variant</code></td>
+<td><code>"primary"</code> | <code>"secondary"</code> | <code>"alternative"</code> | <code>"gray"</code> | <code>"success"</code> | <code>"warning"</code> | <code>"danger"</code></td>
+<td><code>"gray"</code></td>
+</tr>
+<tr>
+<td><code>icon</code></td>
+<td><code>string</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>iconPosition</code></td>
+<td><code>"start"</code> | <code>"end"</code></td>
+<td><code>"end"</code></td>
+</tr>
+<tr>
+<td><code>href</code></td>
+<td><code>string</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>target</code></td>
+<td><code>"_blank"</code> | <code>"_self"</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>size</code></td>
+<td><code>"small"</code> | <code>"medium"</code> | <code>"large"</code></td>
+<td><code>"medium"</code></td>
+</tr>
+<tr>
+<td><code>class</code></td>
+<td><code>string</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="link"><code>Link</code></h3>
+<p>Styled <code>&lt;a&gt;</code> with external-link detection: absolute URLs pointing at another host get <code>rel="noopener noreferrer"</code>, <code>target="_blank"</code> and an external icon (disable with <code>externalIcon={false}</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>href</code></td>
+<td><code>string</code></td>
+<td>required</td>
+</tr>
+<tr>
+<td><code>text</code></td>
+<td><code>string</code> (slot fallback)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>variant</code></td>
+<td><code>"default"</code> | <code>"muted"</code> | <code>"unstyled"</code></td>
+<td><code>"default"</code></td>
+</tr>
+<tr>
+<td><code>target</code></td>
+<td><code>"_blank"</code> | <code>"_self"</code></td>
+<td><code>_blank</code> if external, <code>_self</code> otherwise</td>
+</tr>
+<tr>
+<td><code>externalIcon</code></td>
+<td><code>boolean</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>class</code>, <code>id</code></td>
+<td><code>string</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="image"><code>Image</code></h3>
+<p>Wrapper over <code>astro:assets</code>. An <code>ImageMetadata</code> import renders optimized with responsive <code>srcset</code>; a remote URL string renders a plain <code>&lt;img&gt;</code> and <strong>requires <code>width</code>/<code>height</code></strong> (CLS prevention). <code>alt</code> is required (empty string only for decorative images).</p>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>image</code></td>
+<td><code>{ src: ImageMetadata | string; alt: string }</code></td>
+<td>required</td>
+</tr>
+<tr>
+<td><code>width</code>/<code>height</code></td>
+<td><code>number</code></td>
+<td>required for remote src</td>
+</tr>
+<tr>
+<td><code>loading</code></td>
+<td><code>"lazy"</code> | <code>"eager"</code></td>
+<td><code>"lazy"</code></td>
+</tr>
+<tr>
+<td><code>ratio</code></td>
+<td><code>string</code> (CSS aspect-ratio)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>sizes</code>/<code>widths</code></td>
+<td>passthrough to astro:assets</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>class</code>, <code>id</code></td>
+<td><code>string</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="price"><code>Price</code></h3>
+<p>Locale-aware price via <code>Intl.NumberFormat</code> (locale defaults to the site language from config). <code>compareAt</code> renders struck-through with accessible original/discounted labels (English defaults, overridable).</p>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>price</code></td>
+<td><code>{ amount: number; currency: string; compareAt?: number }</code></td>
+<td>required</td>
+</tr>
+<tr>
+<td><code>locale</code></td>
+<td><code>string</code> (BCP 47)</td>
+<td>site language</td>
+</tr>
+<tr>
+<td><code>size</code></td>
+<td><code>"small"</code> | <code>"medium"</code> | <code>"large"</code></td>
+<td><code>"medium"</code></td>
+</tr>
+<tr>
+<td><code>class</code></td>
+<td><code>string</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="button"><code>Button</code></h3>
+<p>Renders an <code>&lt;a&gt;</code> styled as a button when <code>href</code> is set, a <code>&lt;button&gt;</code> otherwise.</p>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>text</code></td>
+<td><code>string</code></td>
+<td>required</td>
+</tr>
+<tr>
+<td><code>href</code></td>
+<td><code>string</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>variant</code></td>
+<td><code>"primary"</code> | <code>"secondary"</code> | <code>"white"</code></td>
+<td><code>"primary"</code></td>
+</tr>
+<tr>
+<td><code>outline</code></td>
+<td><code>boolean</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>size</code></td>
+<td><code>"small"</code> | <code>"medium"</code> | <code>"large"</code></td>
+<td><code>"medium"</code></td>
+</tr>
+<tr>
+<td><code>fullWidth</code></td>
+<td><code>boolean</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>icon</code></td>
+<td><code>string</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>target</code></td>
+<td><code>"_blank"</code> | <code>"_self"</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>disabled</code></td>
+<td><code>boolean</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>effects</code></td>
+<td><code>boolean</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td><code>"button"</code> | <code>"submit"</code> | <code>"reset"</code></td>
+<td><code>"button"</code></td>
+</tr>
+<tr>
+<td><code>id</code></td>
+<td><code>string</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>class</code></td>
+<td><code>string</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="features">Features</h2>
+<p>Higher-level components. Import from <code>@walle/components/features/&lt;Name&gt;.astro</code> or from the barrel <code>@walle/components</code> via <code>index.js</code>.</p>
+<p><code>Navbar</code> and <code>Footer</code> are exposed as their resolvers — import <code>Navbar</code> from <code>@walle/components</code> and you get variant selection automatically.</p>
+<h3 id="navbar--footer"><code>Navbar</code> / <code>Footer</code></h3>
+<p>See <a href="#component-variants">Variant selection</a> above. Both read their config from the consumer’s <code>src/configs/navbar.json</code> and <code>src/configs/footer.json</code>; accept an explicit <code>config</code> prop to override.</p>
+<p><code>Navbar</code> slots: <code>brand</code> (replaces the logo area), <code>actions</code> (appended at the end of the nav, for CTA buttons).</p>
+<h3 id="head"><code>Head</code></h3>
+<p>Renders all <code>&lt;head&gt;</code> meta tags. Used inside layouts — not imported directly in pages.</p>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code></td>
+<td><code>string</code></td>
+<td>required</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td><code>string</code></td>
+<td>from config</td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td><code>string</code></td>
+<td>from config</td>
+</tr>
+<tr>
+<td><code>ogImage</code></td>
+<td><code>string</code></td>
+<td>falls back to <code>image</code></td>
+</tr>
+<tr>
+<td><code>robots</code></td>
+<td><code>string</code></td>
+<td>from config</td>
+</tr>
+<tr>
+<td><code>favicon</code></td>
+<td><code>string</code></td>
+<td>from config</td>
+</tr>
+</tbody>
+</table>
+<h3 id="section"><code>Section</code></h3>
+<p>Content section wrapper.</p>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code></td>
+<td><code>string</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td><code>{ src: ImageMetadata | string; alt: string }</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>reversed</code></td>
+<td><code>boolean</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>centered</code></td>
+<td><code>boolean</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>variant</code></td>
+<td><code>"primary"</code> | <code>"gray"</code> | <code>null</code></td>
+<td><code>null</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="sectionflow"><code>SectionFlow</code></h3>
+<p>Animated step list with scroll-triggered reveal.</p>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code></td>
+<td><code>string</code></td>
+<td>required</td>
+</tr>
+<tr>
+<td><code>steps</code></td>
+<td><code>FlowStep[]</code></td>
+<td>required</td>
+</tr>
+<tr>
+<td><code>centered</code></td>
+<td><code>boolean</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>variant</code></td>
+<td><code>"primary"</code> | <code>"gray"</code> | <code>null</code></td>
+<td><code>null</code></td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td><code>string</code> (a11y label of the list)</td>
+<td><code>"Process steps"</code></td>
+</tr>
+</tbody>
+</table>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">interface</span><span style="color:#B392F0"> FlowStep</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#FFAB70">  number</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> number</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  title</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  description</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#FFAB70">  icon</span><span style="color:#F97583">?:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="sectionheaderstandard"><code>SectionHeaderStandard</code></h3>
+<p>Full-width page header with optional image and 3D tilt on hover.</p>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code></td>
+<td><code>string</code></td>
+<td>required</td>
+</tr>
+<tr>
+<td><code>subtitle</code></td>
+<td><code>string</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td><code>{ src: ImageMetadata; alt: string }</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>imageRight</code></td>
+<td><code>boolean</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>variant</code></td>
+<td><code>"primary"</code> | <code>"secondary"</code> | <code>"white"</code></td>
+<td><code>"primary"</code></td>
+</tr>
+<tr>
+<td><code>centered</code></td>
+<td><code>boolean</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>effect</code></td>
+<td><code>boolean</code></td>
+<td><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="collectionfilters"><code>CollectionFilters</code></h3>
+<p>Config-driven client-side filtering (text search + multi-select facets) over any rendered collection. Items carry <code>data-filter-item</code> plus one <code>data-&lt;key&gt;</code> attribute per facet (comma-separated values) and optional <code>data-search</code>; the component hides non-matching items and announces the visible count in a live region. With JavaScript disabled the filter UI stays hidden and every item remains visible. Replaces the former <code>BlogFilters</code> (used internally by <code>BlogPostsLayout</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>facets</code></td>
+<td><code>{ key: string; label: string; options: string[] }[]</code></td>
+<td><code>[]</code></td>
+</tr>
+<tr>
+<td><code>itemSelector</code></td>
+<td><code>string</code></td>
+<td><code>"[data-filter-item]"</code></td>
+</tr>
+<tr>
+<td><code>search</code></td>
+<td><code>boolean</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>labels</code></td>
+<td>object — English defaults, override for localization</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>class</code></td>
+<td><code>string</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="blog-components">Blog components</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BlogArticleNavigation</code></td>
+<td>Previous/next article links</td>
+</tr>
+<tr>
+<td><code>BlogReadingProgress</code></td>
+<td>Scroll progress bar</td>
+</tr>
+<tr>
+<td><code>BlogTableOfContents</code></td>
+<td>Sticky TOC from headings</td>
+</tr>
+</tbody>
+</table>
+<h3 id="carousel"><code>Carousel</code></h3>
+<p>Native CSS scroll-snap carousel — no library, no autoplay, no infinite loop. Swipe is native scrolling; overlay prev/next buttons and slide position labels are the only JavaScript. Slides go in the default slot; each gets <code>role="group"</code> and an “i of N” label (template overridable via <code>slideLabel</code>). Reduced motion disables smooth scrolling. With <code>zoom</code>, image slides gain an expand affordance and open full screen in a native <code>&lt;dialog&gt;</code> lightbox (Esc/backdrop/close button to dismiss).</p>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>label</code></td>
+<td><code>string</code> (a11y, required)</td>
+<td>required</td>
+</tr>
+<tr>
+<td><code>perView</code></td>
+<td><code>1</code> | <code>2</code> | <code>3</code> | <code>4</code></td>
+<td><code>1</code> (always 1 on mobile)</td>
+</tr>
+<tr>
+<td><code>controls</code></td>
+<td><code>boolean</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>zoom</code></td>
+<td><code>boolean</code></td>
+<td><code>false</code> (click image slides to open a full-screen lightbox)</td>
+</tr>
+<tr>
+<td><code>previousLabel</code> / <code>nextLabel</code></td>
+<td><code>string</code></td>
+<td>English defaults</td>
+</tr>
+<tr>
+<td><code>zoomLabel</code> / <code>closeLabel</code></td>
+<td><code>string</code></td>
+<td>English defaults</td>
+</tr>
+<tr>
+<td><code>slideLabel</code></td>
+<td><code>string</code> template</td>
+<td><code>"{i} of {n}"</code></td>
+</tr>
+<tr>
+<td><code>class</code>, <code>id</code></td>
+<td><code>string</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="productcard"><code>ProductCard</code></h3>
+<p>Renders a <code>ProductData</code> object (name, description, <code>image</code>, <code>price</code> with optional <code>compareAt</code>, <code>availability</code>, <code>badge</code>, <code>href</code>) — the same shape feeds Product JSON-LD. Availability is communicated as text, never color alone. <strong>Card boundary: has a price → <code>ProductCard</code>; no price → <code>BasicCard</code>.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>product</code></td>
+<td><code>ProductData</code></td>
+<td>required</td>
+</tr>
+<tr>
+<td><code>availabilityLabels</code></td>
+<td><code>{ out_of_stock?, preorder? }</code></td>
+<td>English defaults</td>
+</tr>
+<tr>
+<td><code>class</code></td>
+<td><code>string</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sectioncolumns"><code>SectionColumns</code></h3>
+<p>CSS-grid column section: <code>columns</code> caps the count on wide screens, <code>auto-fit</code>/<code>minmax</code> collapses to one column on narrow viewports — no JavaScript, no breakpoint props. Content goes in the default slot.</p>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code></td>
+<td><code>string</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>columns</code></td>
+<td><code>2</code> | <code>3</code> | <code>4</code></td>
+<td><code>3</code></td>
+</tr>
+<tr>
+<td><code>minColumnWidth</code></td>
+<td><code>string</code> (CSS length)</td>
+<td><code>"16rem"</code></td>
+</tr>
+<tr>
+<td><code>centered</code></td>
+<td><code>boolean</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>variant</code></td>
+<td><code>"primary"</code> | <code>"gray"</code> | <code>null</code></td>
+<td><code>null</code></td>
+</tr>
+<tr>
+<td><code>class</code></td>
+<td><code>string</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="structureddata"><code>StructuredData</code></h3>
+<p>Renders schema.org JSON-LD from a plain object (or array); <code>@context</code> is added automatically. Builders for the common shapes live in <code>@walle/utils/structured-data</code>: <code>websiteJsonLd</code>, <code>organizationJsonLd</code>, <code>articleJsonLd</code>, <code>productJsonLd</code>. Layouts wire it automatically — <code>AbstractLayout</code> emits <code>WebSite</code> + <code>Organization</code> from config, <code>BlogPostLayout</code> emits <code>Article</code>, <code>DetailLayout</code> emits <code>Product</code>/<code>Offer</code> when given a <code>product</code> — so pages only add their own extra shapes.</p>
+<table>
+<thead>
+<tr>
+<th>Prop</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data</code></td>
+<td><code>JsonLd | JsonLd[]</code></td>
+<td>required</td>
+</tr>
+</tbody>
+</table>
+<h3 id="other-features">Other features</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Analytics</code></td>
+<td>Injects analytics script in production only</td>
+</tr>
+<tr>
+<td><code>Breadcrumbs</code></td>
+<td>Structured breadcrumb trail</td>
+</tr>
+<tr>
+<td><code>BasicCard</code></td>
+<td>General-purpose content card (no price)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="layouts">Layouts</h2>
+<p>Import from <code>@walle/layouts/&lt;Name&gt;.astro</code>.</p>
+<h3 id="abstractlayout"><code>AbstractLayout</code></h3>
+<p>Base HTML wrapper. Loads <code>Head</code>, <code>global.css</code>, and <code>Analytics</code>. Renders a skip link as the first focusable element, targeting <code>#main-content</code> (provided by <code>BaseLayout</code>).</p>
+<p><strong>Props:</strong> <code>headerTitle</code>, <code>headerDescription</code>, <code>headerImage</code>, <code>headerOgImage</code>, <code>headerRobots</code>, <code>headerLanguage</code>, <code>skipLinkLabel</code> (default <code>"Skip to content"</code>)</p>
+<p><strong>Slots:</strong> <code>head</code> (injected inside <code>&lt;head&gt;</code> after <code>&lt;Head /&gt;</code>), default (body content)</p>
+<h3 id="baselayout"><code>BaseLayout</code></h3>
+<p>Extends <code>AbstractLayout</code>. Adds <code>&lt;Navbar&gt;</code> and <code>&lt;Footer&gt;</code>. Inherits all <code>AbstractLayout</code> props.</p>
+<p><strong>Slots:</strong> <code>head</code> (forwarded to <code>AbstractLayout</code>), <code>navbar</code> (replaces default <code>&lt;Navbar&gt;</code>), <code>footer</code> (replaces default <code>&lt;Footer&gt;</code>), default (page content inside <code>&lt;main&gt;</code>)</p>
+<h3 id="detaillayout"><code>DetailLayout</code></h3>
+<p>Generic detail page: <code>SectionHeaderStandard</code> (title + <code>badges</code> slot) over a responsive two-column grid — default slot as main column, <code>aside</code> slot as sidebar — with optional <code>backLink</code> and <code>breadcrumbs</code>. Composes with <code>ProductData</code> content for product detail pages.</p>
+<p><strong>Props:</strong> <code>title</code> (required), <code>description</code>, <code>ogImage</code>, <code>breadcrumbs</code> (<code>BreadcrumbItem[]</code>), <code>backLink</code> (<code>{ href, label? }</code>, label defaults to <code>"Back"</code>), <code>headerEffect</code></p>
+<p><strong>Slots:</strong> <code>badges</code>, default (main), <code>aside</code></p>
+<h3 id="blogpostlayout"><code>BlogPostLayout</code></h3>
+<p>Single blog post. Accepts post frontmatter via props and renders title, date, reading time.</p>
+<h3 id="blogpostslayout"><code>BlogPostsLayout</code></h3>
+<p>Blog listing page. Accepts <code>title</code>, <code>description</code>, <code>posts[]</code>.</p>
+</article></div></main><footer data-astro-cid-wk7hliiz><div class="footer-container" data-astro-cid-wk7hliiz><div class="footer-section footer-left" data-astro-cid-wk7hliiz><div class="copyright" data-astro-cid-wk7hliiz><a href="/harness-walle" class="brand-link " data-astro-cid-wk7hliiz><span class data-astro-cid-wk7hliiz>Walle</span></a><span class="license" data-astro-cid-wk7hliiz>2026 &copy; </span></div></div><div class="footer-section footer-center" data-astro-cid-wk7hliiz><nav class="footer-nav" aria-label="Footer navigation" data-astro-cid-wk7hliiz><ul class="footer-nav__list" data-astro-cid-wk7hliiz><li data-astro-cid-wk7hliiz><a href="/harness-walle/privacy-policy" data-astro-cid-wk7hliiz>Privacy Policy</a></li><li data-astro-cid-wk7hliiz><a href="/harness-walle/terms-and-conditions" data-astro-cid-wk7hliiz>Terms &amp; Conditions</a></li></ul></nav></div><div class="footer-section footer-right" data-astro-cid-wk7hliiz><ul class="social-links" aria-label="Social links" data-astro-cid-wk7hliiz><li data-astro-cid-wk7hliiz><a href="https://www.linkedin.com/in/fabrizio-cafolla/" target="_blank" rel="noopener" aria-label="linkedin" data-astro-cid-wk7hliiz><svg width="20" height="20" viewBox="0 0 1536 1504" aria-hidden="true" data-astro-cid-wk7hliiz="true" data-icon="fa:linkedin"><use href="#ai:fa:linkedin"></use></svg></a></li><li data-astro-cid-wk7hliiz><a href="https://github.com/FabrizioCafolla" target="_blank" rel="noopener" aria-label="github" data-astro-cid-wk7hliiz><svg width="20" height="20" viewBox="0 0 1536 1504" aria-hidden="true" data-astro-cid-wk7hliiz="true" data-icon="fa:github"><use href="#ai:fa:github"></use></svg></a></li></ul></div></div></footer><dialog class="cart-drawer" data-cart-drawer aria-label="Shopping cart" data-astro-cid-srceaava><div class="cart-drawer__head" data-astro-cid-srceaava><h2 data-astro-cid-srceaava>Your cart</h2><button class="cart-drawer__close" data-cart-close aria-label="Close cart" data-astro-cid-srceaava><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" data-astro-cid-srceaava><path d="M18 6 6 18M6 6l12 12" data-astro-cid-srceaava></path></svg></button></div><p class="cart-drawer__empty" data-cart-empty data-astro-cid-srceaava>Your cart is empty.</p><ul class="cart-drawer__lines" data-cart-lines data-astro-cid-srceaava></ul><div class="cart-drawer__foot" data-cart-foot hidden data-astro-cid-srceaava><div class="cart-drawer__subtotal" data-astro-cid-srceaava><span data-astro-cid-srceaava>Subtotal</span><span data-cart-subtotal data-astro-cid-srceaava></span></div><button class="cart-checkout" data-cart-checkout data-astro-cid-srceaava>Checkout</button></div></dialog><script type="module" src="/harness-walle/_astro/CartMount.astro_astro_type_script_index_0_lang.CU4XG_nv.js"></script><script type="module">function e(){document.querySelectorAll(`pre,table,[data-scrollable]`).forEach(e=>{e.hasAttribute(`tabindex`)||(e.scrollWidth>e.clientWidth||e.scrollHeight>e.clientHeight)&&!e.querySelector(`a[href],button,input,select,textarea,[tabindex]`)&&(e.setAttribute(`tabindex`,`0`),e.setAttribute(`role`,`region`),e.hasAttribute(`aria-label`)||e.setAttribute(`aria-label`,`Scrollable content`))})}document.addEventListener(`DOMContentLoaded`,e),document.addEventListener(`astro:page-load`,e);</script></body></html>
