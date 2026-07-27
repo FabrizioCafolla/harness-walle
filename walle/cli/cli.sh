@@ -80,7 +80,7 @@ Commands:
   update    Re-sync the declared modules of an existing consumer
   add       Add a module to an existing consumer and sync it
   check     Validate a consumer (manifest, version pin, configs)
-  deps      Report Walle-owned dependency drift; --apply aligns package.json
+  deps      Report Walle-owned dependency drift; --apply aligns and adds missing runtime deps
 
 Common options:
   -s, --source <path>         Use a local walle clone instead of a release
@@ -88,7 +88,7 @@ Common options:
       --dry-run               Show the sync plan without writing anything
       --yes                   Skip confirmation prompts
       --no-deps-check         (update) Skip the post-update dependency drift report
-      --apply                 (deps) Bump the behind Walle-owned deps in package.json
+      --apply                 (deps) Bump behind deps and add missing Walle runtime deps
       --no-harness-coding     Skip .devcontainer/ scaffold at init
       --no-ai                 Skip AGENTS.md + skills at init (default: on)
       --no-ci                 Skip GitHub Actions workflows at init (default: on)
@@ -102,8 +102,8 @@ EOF
 
 validate_module() {
   case "$1" in
-    website|ci|ai|backend|infrastructure|harness-coding|devcontainer) : ;;
-    *) print_error "unknown module '$1'. Valid: website, ci, ai, backend, infrastructure, harness-coding" ;;
+    website|ci|ai|backend|harness-coding|devcontainer) : ;;
+    *) print_error "unknown module '$1'. Valid: website, ci, ai, backend, harness-coding" ;;
   esac
 }
 
@@ -161,7 +161,6 @@ module_purpose() {
     ci) echo "GitHub Actions workflows (test + deploy) under @walle" ;;
     ai) echo "AI harness — generated AGENTS.md block and @walle skills" ;;
     backend) echo "API routes (requires SSR enabled in src/configs/app.json)" ;;
-    infrastructure) echo "Terraform infrastructure under infrastructure/" ;;
     harness-coding|devcontainer) echo "Harness coding scaffold" ;;
     *) echo "walle module" ;;
   esac
@@ -622,42 +621,51 @@ run_init_sync() {
 # 7. MANIFEST & CONFIGURATIONS
 # =============================================================================
 
-# Writes .walle/manifest.json. The `files` map records every path walle wrote, grouped by
+# Writes .harness-walle/manifest.json. The `files` map records every path walle wrote, grouped by
 # class (managed | seed | inject) → module — same idea as harness-coding's manifest. Node
 # assembles the JSON from the FILES_LOG the sync functions accumulate (single parser: awk
 # reads the config, node only groups what was recorded).
 write_manifest() {
   local tgt_dir="$1" name="$2"; shift 2
   local mods=("$@")
-  mkdir -p "${tgt_dir}/.walle"
+  mkdir -p "${tgt_dir}/.harness-walle"
   WM_NAME="$name" \
   WM_VERSION="$WALLE_VERSION" \
   WM_REF="${SOURCE_REF:-}" \
   WM_MODULES="${mods[*]}" \
   WM_DC="$([ "$HARNESS_CODING_ENABLED" = "1" ] && echo true || echo false)" \
   WM_FILES="${FILES_LOG:-}" \
-  WM_OUT="${tgt_dir}/.walle/manifest.json" \
+  WM_OUT="${tgt_dir}/.harness-walle/manifest.json" \
   WM_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
   node -e '
     const fs = require("fs");
+    const CATS = ["managed", "seed", "inject"];
+    // files shape: { <category>: { <module>: [<dest>, ...] } } (schemaVersion 3).
     const files = { managed: {}, seed: {}, inject: {} };
     // Preload from an existing manifest so `add` (which only re-syncs one module) keeps the
     // other modules files entries; update re-syncs everything, so it self-heals.
     try {
       const prev = JSON.parse(fs.readFileSync(process.env.WM_OUT, "utf8")).files || {};
-      for (const c of ["managed", "seed", "inject"]) Object.assign(files[c], prev[c] || {});
+      for (const c of CATS)
+        for (const [mod, dests] of Object.entries(prev[c] || {}))
+          files[c][mod] = Array.isArray(dests) ? [...dests] : [];
     } catch (_) {}
+    // A module re-synced now fully replaces its own dest list; other modules stay preloaded.
+    const logged = { managed: {}, seed: {}, inject: {} };
     const log = process.env.WM_FILES;
     if (log && fs.existsSync(log)) {
       for (const line of fs.readFileSync(log, "utf8").split("\n")) {
         if (!line.trim()) continue;
         const [cat, dest, mod] = line.split("\t");
-        if (files[cat]) files[cat][dest] = mod;
+        if (logged[cat]) (logged[cat][mod] ||= []).push(dest);
       }
     }
+    for (const c of CATS)
+      for (const [mod, dests] of Object.entries(logged[c]))
+        files[c][mod] = [...new Set(dests)].sort();
     const m = {
       "$schema": "../schemas/walle.config.schema.json",
-      schemaVersion: 2,
+      schemaVersion: 3,
       name: process.env.WM_NAME,
       walleVersion: process.env.WM_VERSION,
       ...(process.env.WM_REF ? { sourceRef: process.env.WM_REF } : {}),
@@ -668,12 +676,12 @@ write_manifest() {
     };
     fs.writeFileSync(process.env.WM_OUT, JSON.stringify(m, null, 2) + "\n");
   '
-  print_info "Manifest written: ${tgt_dir}/.walle/manifest.json"
+  print_info "Manifest written: ${tgt_dir}/.harness-walle/manifest.json"
 }
 
 write_lock() {
-  mkdir -p "${1}/.walle"
-  printf '%s\n' "${SOURCE_REF:-$WALLE_VERSION}" >"${1}/.walle/lock"
+  mkdir -p "${1}/.harness-walle"
+  printf '%s\n' "${SOURCE_REF:-$WALLE_VERSION}" >"${1}/.harness-walle/lock"
 }
 
 # Human-readable consumer config. Lists the enabled modules explicitly (mirrors the manifest,
@@ -681,22 +689,22 @@ write_lock() {
 # init/update; a `docs:` value the user changed is preserved.
 write_walle_config_yml() {
   local tgt_dir="$1"; shift
-  local mods=("$@") tgt="${tgt_dir}/.walle/config.yml"
-  mkdir -p "${tgt_dir}/.walle"
+  local mods=("$@") tgt="${tgt_dir}/.harness-walle/config.yml"
+  mkdir -p "${tgt_dir}/.harness-walle"
   local docs="true"
   [ -f "$tgt" ] && grep -Eq '^docs:[[:space:]]*false' "$tgt" && docs="false"
   {
-    echo "# Walle consumer config. Modules mirror .walle/manifest.json (authoritative)."
+    echo "# Walle consumer config. Modules mirror .harness-walle/manifest.json (authoritative)."
     echo "# Add/remove modules with 'walle add <module>' or the init flags, not by hand."
     echo "modules:"
     local m; for m in "${mods[@]}"; do echo "  - ${m}"; done
-    echo "# Copy the walle wiki into .walle/docs/ on update. Set false to skip."
+    echo "# Copy the walle wiki into .harness-walle/docs/ on update. Set false to skip."
     echo "docs: ${docs}"
   } >"$tgt"
 }
 
 walle_docs_enabled() {
-  local cfg="${1}/.walle/config.yml"
+  local cfg="${1}/.harness-walle/config.yml"
   [ -f "$cfg" ] || return 0
   grep -Eq '^docs:[[:space:]]*false[[:space:]]*$' "$cfg" && return 1
   return 0
@@ -706,23 +714,62 @@ sync_walle_docs() {
   local src_dir="$1" tgt_dir="$2"
   walle_docs_enabled "$tgt_dir" || return 0
   for f in cli.md modules.md managed-vs-seed.md versioning.md; do
-    if [ "$DRY_RUN" = "1" ]; then plan_path "${src_dir}/wiki/${f}" "${tgt_dir}/.walle/docs/${f}"
-    else sync_path "${src_dir}/wiki/${f}" "${tgt_dir}/.walle/docs/${f}"; fi
+    if [ "$DRY_RUN" = "1" ]; then plan_path "${src_dir}/wiki/${f}" "${tgt_dir}/.harness-walle/docs/${f}"
+    else sync_path "${src_dir}/wiki/${f}" "${tgt_dir}/.harness-walle/docs/${f}"; fi
   done
 }
 
-migrate_walle_config() {
-  local old="${1}/.walle.config.json"
-  [ -f "$old" ] || return 0
-  mkdir -p "${1}/.walle"
-  if [ "$DRY_RUN" = "1" ]; then
-    print_plan "~ ${1}/.walle/manifest.json (migrated)"
-    print_plan "- ${old}"
-  else
-    cp "$old" "${1}/.walle/manifest.json"
-    rm -f "$old"
-    print_info "migrated ${old} -> .walle/manifest.json"
+# Migrate a consumer's Walle state to the current layout, idempotently. Three legacy shapes
+# self-heal here so every command sees the current one: (1) the root `.walle.config.json`
+# file, (2) the old `.walle/` state dir → `.harness-walle/`, (3) a schemaVersion-2 files map
+# (path→module) → v3 (module→[paths]). Runs before every read_manifest; a no-op on a
+# already-current consumer.
+migrate_state() {
+  local dir="$1"
+  local newd="${dir}/.harness-walle" legacy="${dir}/.walle.config.json" oldd="${dir}/.walle"
+
+  # 1. legacy root file → new dir manifest
+  if [ -f "$legacy" ]; then
+    if [ "$DRY_RUN" = "1" ]; then
+      print_plan "~ ${newd}/manifest.json (migrated from .walle.config.json)"
+      print_plan "- ${legacy}"
+    else
+      mkdir -p "$newd"; cp "$legacy" "${newd}/manifest.json"; rm -f "$legacy"
+      print_info "migrated .walle.config.json -> .harness-walle/manifest.json"
+    fi
   fi
+
+  # 2. old `.walle/` state dir → `.harness-walle/`
+  if [ -d "$oldd" ]; then
+    if [ "$DRY_RUN" = "1" ]; then
+      print_plan "~ rename ${oldd}/ -> ${newd}/"
+    elif [ ! -e "$newd" ]; then
+      mv "$oldd" "$newd"; print_info "renamed .walle/ -> .harness-walle/"
+    else
+      rm -rf "$oldd"  # both present (partial migration): keep new, drop stale old
+    fi
+  fi
+
+  # 3. reshape a schemaVersion-2 files map (path→module) to v3 (module→[paths])
+  local manifest="${newd}/manifest.json"
+  { [ "$DRY_RUN" = "1" ] || [ ! -f "$manifest" ]; } && return 0
+  MS_FILE="$manifest" node -e '
+    const fs = require("fs"), p = process.env.MS_FILE;
+    const m = JSON.parse(fs.readFileSync(p, "utf8"));
+    // Only the known previous format (v2) is auto-reshaped. Anything else (no version, a
+    // future version, a corrupt one) is left for read_manifest to accept or reject.
+    if (m.schemaVersion !== 2) process.exit(0);
+    const CATS = ["managed", "seed", "inject"], out = { managed: {}, seed: {}, inject: {} }, old = m.files || {};
+    for (const c of CATS)
+      for (const [dest, mod] of Object.entries(old[c] || {})) {
+        if (Array.isArray(mod)) { out[c][dest] = mod; continue; } // defensive: already reshaped
+        (out[c][mod] ||= []).push(dest);
+      }
+    for (const c of CATS) for (const k of Object.keys(out[c])) out[c][k] = [...new Set(out[c][k])].sort();
+    m.files = out;
+    m.schemaVersion = 3;
+    fs.writeFileSync(p, JSON.stringify(m, null, 2) + "\n");
+  ' && print_info "migrated manifest to schemaVersion 3 (files grouped by module)"
 }
 
 manifest_field() {
@@ -731,10 +778,10 @@ manifest_field() {
 
 read_manifest() {
   local manifest="$1"
-  [ -f "$manifest" ] || print_error "no .walle/manifest.json found at ${manifest}"
+  [ -f "$manifest" ] || print_error "no .harness-walle/manifest.json found at ${manifest}"
 
   local sv; sv="$(manifest_field "$manifest" schemaVersion)"
-  [ "$sv" = "2" ] || print_error "manifest predates schemaVersion 2. No files changed."
+  { [ "$sv" = "2" ] || [ "$sv" = "3" ]; } || print_error "unsupported manifest schemaVersion '${sv}' (expected 2 or 3). No files changed."
 
   MF_NAME="$(manifest_field "$manifest" name)"
   MF_VERSION="$(manifest_field "$manifest" walleVersion)"
@@ -794,7 +841,8 @@ cmd_init() {
 
   local adopt=0
   if [ -e "$proj_dir" ]; then
-    { [ -f "${proj_dir}/.walle/manifest.json" ] || [ -f "${proj_dir}/.walle.config.json" ]; } &&
+    { [ -f "${proj_dir}/.harness-walle/manifest.json" ] || [ -f "${proj_dir}/.walle/manifest.json" ] ||
+      [ -f "${proj_dir}/.walle.config.json" ]; } &&
       print_error "already a walle project. Use update or add."
     adopt=1
   fi
@@ -841,9 +889,8 @@ cmd_update() {
     esac
   done
 
-  migrate_walle_config "$PROJ_PATH"
-  local manifest="${PROJ_PATH}/.walle/manifest.json"
-  [ -f "$manifest" ] || manifest="${PROJ_PATH}/.walle.config.json"
+  migrate_state "$PROJ_PATH"
+  local manifest="${PROJ_PATH}/.harness-walle/manifest.json"
 
   read_manifest "$manifest"
   local mods; read -ra mods <<<"$MF_MODULES"
@@ -900,7 +947,8 @@ cmd_add() {
   validate_module "$NEW_MOD"
 
   SEED_ENABLED=1
-  read_manifest "${PROJ_PATH}/.walle/manifest.json"
+  migrate_state "$PROJ_PATH"
+  read_manifest "${PROJ_PATH}/.harness-walle/manifest.json"
 
   local mods; read -ra mods <<<"$MF_MODULES"
   HARNESS_CODING_ENABLED="$MF_HARNESS_CODING_ENABLED"
@@ -955,7 +1003,8 @@ cmd_check() {
     esac
   done
 
-  local manifest="${PROJ_PATH}/.walle/manifest.json"
+  migrate_state "$PROJ_PATH"
+  local manifest="${PROJ_PATH}/.harness-walle/manifest.json"
   read_manifest "$manifest"
   print_info "✓ manifest present (${MF_NAME})"
 
@@ -1011,8 +1060,11 @@ cmd_check() {
 # clobber the deps a consumer added. Instead we treat the source seed
 # (walle/website/package.json) as the reference for Walle-OWNED deps and compare the
 # consumer's versions against it. Consumer-added deps (not in the seed) are never touched.
-# `check` reports drift; `apply` bumps only the behind Walle-owned deps in place. Always
-# exits 0 (informational) so it never fails an update.
+# `check` reports drift; `apply` bumps behind deps in place AND adds missing runtime
+# `dependencies` (Walle code the consumer synced hard-imports them — e.g. commerce/cart.ts
+# needs nanostores — so an absent one is a build breaker, not an opt-out). Missing
+# `devDependencies` (optional tooling) are only reported, never forced. Always exits 0
+# (informational) so it never fails an update.
 run_deps() {
   local seed="$1" consumer="$2" mode="$3" # mode: check | apply
   if [ ! -f "$seed" ] || [ ! -f "$consumer" ]; then
@@ -1041,7 +1093,11 @@ for (const sec of SECTIONS)
   for (const [name, wr] of Object.entries(seed[sec] || {})) {
     const cr = consRange(name);
     if (cr == null) {
-      missing.push({ name, walle: wr });
+      // A missing runtime `dependency` is a build breaker: Walle code the consumer
+      // synced (e.g. commerce/cart.ts) hard-imports it, so it must be present. A
+      // missing `devDependency` is optional tooling (vitest, playwright, astrobook)
+      // the consumer may deliberately skip — warn only, never force.
+      missing.push({ name, walle: wr, runtime: sec === "dependencies" });
       continue;
     }
     const wf = floor(wr);
@@ -1050,50 +1106,72 @@ for (const sec of SECTIONS)
       behind.push({ name, yours: cr, walle: wr, major: wf[0] > cf[0] });
   }
 
+const missingRuntime = missing.filter((d) => d.runtime);
+const missingDev = missing.filter((d) => !d.runtime);
+
 if (mode === "apply") {
   for (const d of behind) cons[consSection(d.name)][d.name] = d.walle;
-  if (behind.length) {
+  for (const d of missingRuntime) (cons.dependencies ||= {})[d.name] = d.walle;
+  const changed = behind.length + missingRuntime.length;
+  if (changed) {
     fs.writeFileSync(consPath, JSON.stringify(cons, null, 2) + "\n");
-    console.log(` [INFO] Aligned ${behind.length} dependency(ies) in package.json:`);
+    console.log(` [INFO] Updated ${changed} dependency(ies) in package.json:`);
     for (const d of behind) console.log(`          ${d.name}  ${d.yours} -> ${d.walle}`);
+    for (const d of missingRuntime) console.log(`          ${d.name}  (added) ${d.walle}`);
     console.log(" [INFO] Run `yarn install` (or your package manager) to update the lockfile.");
   } else {
     console.log(" [INFO] Walle dependencies already aligned — nothing to do.");
   }
-  if (missing.length)
+  if (missingDev.length)
     console.log(
-      ` [WARN] ${missing.length} Walle dependency(ies) absent from your package.json (add if needed): ` +
-        missing.map((d) => `${d.name}@${d.walle}`).join(", ")
+      ` [WARN] ${missingDev.length} optional Walle dev dependency(ies) absent (add if needed): ` +
+        missingDev.map((d) => `${d.name}@${d.walle}`).join(", ")
     );
   process.exit(0);
 }
 
 // check mode
-if (!behind.length) {
+if (!behind.length && !missingRuntime.length) {
   console.log(" [INFO] ✓ Walle dependencies are up to date.");
+  if (missingDev.length)
+    console.log(
+      `\n ℹ ${missingDev.length} optional Walle dev dependency(ies) not installed: ` +
+        missingDev.map((d) => d.name).join(", ")
+    );
   process.exit(0);
 }
 const pad = (s, n) => String(s).padEnd(n);
-const w1 = Math.max(10, ...behind.map((d) => d.name.length));
-const w2 = Math.max(7, ...behind.map((d) => d.yours.length));
-console.log("");
-console.log(
-  ` ⚠ ${behind.length} Walle dependency(ies) in your package.json are behind the tested set`
-);
-console.log("   (Walle never rewrites package.json — it's yours):");
-console.log("");
-console.log(`     ${pad("package", w1)}  ${pad("yours", w2)}  walle`);
-for (const d of behind)
+if (behind.length) {
+  const w1 = Math.max(10, ...behind.map((d) => d.name.length));
+  const w2 = Math.max(7, ...behind.map((d) => d.yours.length));
+  console.log("");
   console.log(
-    `     ${pad(d.name, w1)}  ${pad(d.yours, w2)}  ${d.walle}${d.major ? "   ⚠ major — check breaking changes" : ""}`
+    ` ⚠ ${behind.length} Walle dependency(ies) in your package.json are behind the tested set`
   );
-console.log("");
-console.log("   Align them:  yarn up " + behind.map((d) => `${d.name}@${d.walle}`).join(" "));
-console.log("   Or run:      walle deps --apply");
-if (missing.length)
+  console.log("   (Walle never rewrites package.json — it's yours):");
+  console.log("");
+  console.log(`     ${pad("package", w1)}  ${pad("yours", w2)}  walle`);
+  for (const d of behind)
+    console.log(
+      `     ${pad(d.name, w1)}  ${pad(d.yours, w2)}  ${d.walle}${d.major ? "   ⚠ major — check breaking changes" : ""}`
+    );
+  console.log("");
+  console.log("   Align them:  yarn up " + behind.map((d) => `${d.name}@${d.walle}`).join(" "));
+  console.log("   Or run:      walle deps --apply");
+}
+if (missingRuntime.length) {
   console.log(
-    `\n ℹ ${missing.length} Walle dependency(ies) not in your package.json: ` +
-      missing.map((d) => d.name).join(", ")
+    `\n ⚠ ${missingRuntime.length} required Walle runtime dependency(ies) missing from package.json` +
+      " — builds that reach the code importing them (e.g. commerce) will fail:"
+  );
+  console.log("     " + missingRuntime.map((d) => `${d.name}@${d.walle}`).join("  "));
+  console.log("   Add them:    walle deps --apply   (or: yarn add " +
+    missingRuntime.map((d) => `${d.name}@${d.walle}`).join(" ") + ")");
+}
+if (missingDev.length)
+  console.log(
+    `\n ℹ ${missingDev.length} optional Walle dev dependency(ies) not installed: ` +
+      missingDev.map((d) => d.name).join(", ")
   );
 console.log("");
 process.exit(0);

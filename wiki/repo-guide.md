@@ -16,7 +16,6 @@ harness-walle/
 │   ├── ci/                       managed/ (composite actions), seed/ (starter workflows)
 │   ├── ai/                       managed/skills/ (managed Claude Code skills)
 │   ├── backend/                  seed/ (starter API routes, middleware)
-│   ├── infrastructure/           seed/ (starter Terraform/OpenTofu)
 │   ├── harness-coding/           inject/ (setup-devcontainer.project.block.sh, docker-compose.project.block.yml),
 │   │                                seed/ (.husky/, justfile.project) — no managed/: nothing vendored
 │   │                                from harness-coding itself, see below

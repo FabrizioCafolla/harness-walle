@@ -71,8 +71,8 @@ consumer then updates by re-running the CLI. This repo is both the product and i
 **Two zones, and which one you're in decides everything:**
 
 - `walle/` — **the product**, everything shipped to consumers: `website/` (managed `src/@walle/`
-  source + the demo site), per-module dirs (`ci/`, `ai/`, `backend/`, `infrastructure/`,
-  `harness-coding/`), `template/` (seed-once starter), `cli/cli.sh` (the sync engine).
+  source + the demo site), per-module dirs (`ci/`, `ai/`, `backend/`,
+  `harness-coding/`), `cli/cli.sh` (the sync engine), and `walle.yml` (the managed/seed/inject map).
 - everything else — dev tooling and repo meta, never shipped: `tests/e2e/`, `wiki/`, `.github/`.
 
 **The rules that matter:**
@@ -96,15 +96,15 @@ consumer then updates by re-running the CLI. This repo is both the product and i
   navy/teal/gold palette. Contrast pairings are enforced by `tests/unit/contrast.test.ts` — if you
   change a brand color, that test keeps white-on-brand at AA.
 - **Accessibility is a gate, not a guideline.** `tests/playwright/a11y.spec.ts` runs axe over every
-  page and story at desktop and 320px; serious/critical failures fail the build. Markdown images are
-  base-path-prefixed by a rehype plugin in `define-config.ts` (root-absolute `/img/...` would 404
-  under the base path otherwise).
+  page and story at desktop and 320px; serious/critical failures fail the build (and scrollable
+  regions are made keyboard-focusable by a small script in `AbstractLayout`). Blog markdown images
+  use relative, co-located paths (`![](./img.jpg)`) so `astro:assets` optimizes them and emits
+  correct base-path URLs — root-absolute `/img/...` would 404 under the base path.
 - **Commerce (Shopify headless).** Products are a build-time content collection sourced from the
   Storefront API, with a bundled fixture fallback so the demo builds with no credentials. Static
   catalog, client-side cart, hosted Shopify checkout, no SSR. `commerce.showBuyButton` in `app.json`
   toggles vetrina (catalog only) vs shop (cart). Full model and the do/don't list:
-  [wiki/commerce.md](wiki/commerce.md) and
-  `openspec/changes/walle-design-system-maturity/shopify-astro-headless-report.md`.
+  [wiki/commerce.md](wiki/commerce.md).
 
 Full detail: [CONTRIBUTING.md](CONTRIBUTING.md), [wiki/repo-guide.md](wiki/repo-guide.md), and the
 per-topic refs in [wiki/README.md](wiki/README.md).

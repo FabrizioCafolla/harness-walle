@@ -3,15 +3,15 @@
 Walle is distributed **copy-based**: consumers receive a verbatim copy of the `@walle/`
 namespaces into their own repo. There is no npm package to bump, so versioning is expressed
 as **git tags** on this repo and a pinned `walleVersion` in each consumer's
-`.walle/manifest.json`.
+`.harness-walle/manifest.json`.
 
-## `walleVersion` in `.walle/manifest.json`
+## `walleVersion` in `.harness-walle/manifest.json`
 
 Every consumer manifest pins an explicit walle release via `walleVersion`:
 
 ```json
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "walleVersion": "v0.2.0",
   ...
 }
@@ -89,9 +89,12 @@ Review the migration notes in CHANGELOG.md, then re-run with --yes to proceed.
 
 ## `schemaVersion`
 
-`schemaVersion: 2` is the current and only supported manifest format. It is a fixed constant, not
-a user-managed value. Consumers on an older, unversioned manifest are blocked by all CLI
-commands — re-scaffold with `cli.sh init` against the current release.
+`schemaVersion: 3` is the current manifest format (it groups the `files` map by module rather
+than by dest path, and lives in `.harness-walle/` — see [modules](modules.md)). It is a fixed
+constant, not a user-managed value. A `schemaVersion: 2` manifest — including one still in the old
+`.walle/` folder or the pre-folder root `.walle.config.json` — is migrated automatically by any CLI
+command (dir renamed, `files` reshaped, version bumped); no manual action needed. An older,
+unversioned manifest is blocked by all CLI commands — re-scaffold with `cli.sh init`.
 
 ## Local-source mode (dev / test exemption)
 
@@ -156,16 +159,17 @@ How to stay current:
 2. **Align them** — either apply Walle's tested ranges automatically (only the Walle-owned deps; your
    own dependencies are never touched)…
    ```bash
-   walle deps --apply   # then: yarn install
+   just walle-deps --apply   # then:
+   just yarn install
    ```
    …or bump the ones you want by hand (majors flagged above deserve a changelog read first):
    ```bash
-   yarn up astro@^7.1.3 vitest@^4.1.10
+   just yarn up astro@^7.1.3 vitest@^4.1.10
    ```
 3. **CI actions are different** — the GitHub Actions used by the `ci` module (e.g.
-   `actions/setup-node`) live under MANAGED paths, so those **do** update on `walle update`.
+   `actions/setup-node`) live under MANAGED paths, so those **do** update on `just walle-update`.
 
-`walle deps` (without `--apply`) is a read-only report you can run any time; the reference is always
+`just walle-deps` (without `--apply`) is a read-only report you can run any time; the reference is always
 the seed `package.json` of the resolved release. Dependabot/Renovate on the consumer repo remains a
 good complement between Walle releases, and each release's [CHANGELOG](../CHANGELOG.md) `Dependencies`
 section records the exact set Walle validated.

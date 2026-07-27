@@ -36,4 +36,29 @@ scenario_deps() {
   # (c) re-check is clean.
   cli deps --source "$REPO_ROOT" -p "$dir" 2>/dev/null | grep -q "up to date" ||
     { fail "deps still reports drift after apply"; return 1; }
+
+  # (d) A missing runtime dep is a build breaker (synced commerce code hard-imports it):
+  #     check flags it, --apply adds it. A missing devDependency stays opt-out.
+  DIR="$dir" node -e '
+    const fs = require("fs"), p = process.env.DIR + "/package.json";
+    const j = JSON.parse(fs.readFileSync(p, "utf8"));
+    delete j.dependencies["@nanostores/persistent"];   // required runtime dep
+    delete j.devDependencies.vitest;                   // optional tooling
+    fs.writeFileSync(p, JSON.stringify(j, null, 2) + "\n");
+  ' || { fail "could not remove deps"; return 1; }
+
+  cli deps --source "$REPO_ROOT" -p "$dir" 2>/dev/null | grep -q "required Walle runtime dependency" ||
+    { fail "deps did not flag missing runtime dep"; return 1; }
+
+  cli deps --apply --source "$REPO_ROOT" -p "$dir" >/dev/null 2>&1 ||
+    { fail "deps --apply (missing) failed"; return 1; }
+  DIR="$dir" REPO="$REPO_ROOT" node -e '
+    const fs = require("fs");
+    const seed = JSON.parse(fs.readFileSync(process.env.REPO + "/walle/website/package.json", "utf8"));
+    const c = JSON.parse(fs.readFileSync(process.env.DIR + "/package.json", "utf8"));
+    if (c.dependencies["@nanostores/persistent"] !== seed.dependencies["@nanostores/persistent"])
+      { console.error("runtime dep not added"); process.exit(1); }
+    if ((c.devDependencies || {}).vitest != null)
+      { console.error("optional devDependency was force-added"); process.exit(1); }
+  ' || { fail "deps --apply did not add missing runtime dep correctly"; return 1; }
 }

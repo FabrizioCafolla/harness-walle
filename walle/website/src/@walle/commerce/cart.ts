@@ -5,8 +5,6 @@
  *
  * This module is the ecommerce layer: it is only loaded when `commerce.showBuyButton`
  * is true (see CartMount.astro / BaseLayout). A vetrina build never imports it.
- *
- * Reference: openspec .../shopify-astro-headless-report.md §5.5.
  */
 import { persistentAtom } from "@nanostores/persistent";
 import { atom } from "nanostores";

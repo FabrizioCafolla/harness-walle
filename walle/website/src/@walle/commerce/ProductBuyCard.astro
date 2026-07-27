@@ -20,8 +20,6 @@ interface Props {
   showSizes?: boolean;
   /** Show a quantity stepper. @default false */
   showQuantity?: boolean;
-  /** Show a "View details" link. @default true */
-  showDetailsLink?: boolean;
   /** Add-to-cart button label. @default "Add to cart" */
   addLabel?: string;
   class?: string;
@@ -33,7 +31,6 @@ const {
   showAddToCart = true,
   showSizes = true,
   showQuantity = false,
-  showDetailsLink = true,
   addLabel = "Add to cart",
   class: className = "",
 } = Astro.props;
@@ -81,8 +78,6 @@ const inStock = product.variants.nodes.some((v) => v.availableForSale);
         addLabel={addLabel}
       />
     </div>
-
-    {showDetailsLink && <span class="buy-card__details">View details</span>}
   </div>
 </article>
 
@@ -109,10 +104,12 @@ const inStock = product.variants.nodes.some((v) => v.availableForSale);
     z-index: 0;
   }
 
-  /* Buy controls sit above the stretched link so they stay clickable. */
+  /* Buy controls sit above the stretched link so they stay clickable, and anchor to the
+     bottom of the card so price + add-to-cart line up across a grid of cards. */
   .buy-card__buy {
     position: relative;
     z-index: 1;
+    margin-top: auto;
   }
 
   .buy-card:hover {
@@ -168,17 +165,5 @@ const inStock = product.variants.nodes.some((v) => v.availableForSale);
 
   .buy-card__title a:hover {
     color: var(--primary);
-  }
-
-  /* Visual "view details" cue; the whole card is the link, so this is a plain span. */
-  .buy-card__details {
-    margin-top: auto;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--link);
-  }
-
-  .buy-card:hover .buy-card__details {
-    text-decoration: underline;
   }
 </style>

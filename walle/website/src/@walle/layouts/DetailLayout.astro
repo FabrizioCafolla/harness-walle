@@ -12,7 +12,9 @@ import { Icon } from "astro-icon/components";
  * the project-detail pattern; also serves as a product detail page when
  * composed with ProductData content.
  *
- * Slots: `badges` (inside the header), default (main column), `aside`.
+ * Slots: `badges` (inside the header), default (main column), `aside`, and `below`
+ * (full-width, under the main/aside grid — e.g. a product description + recommendations
+ * that should read full-width and, on mobile, sit after the aside rather than before it).
  */
 export interface Props {
   /**
@@ -86,6 +88,10 @@ const { title, description, ogImage, breadcrumbs = [], backLink, product } = Ast
           <slot name="aside" />
         </aside>
       </div>
+
+      <div class="detail-below">
+        <slot name="below" />
+      </div>
     </div>
   </section>
 </BaseLayout>
@@ -153,6 +159,15 @@ const { title, description, ogImage, breadcrumbs = [], backLink, product } = Ast
   }
 
   .detail-aside:empty {
+    display: none;
+  }
+
+  /* Full-width row under the main/aside grid (e.g. product description + upsell). */
+  .detail-below {
+    margin-top: var(--space-2xl);
+  }
+
+  .detail-below:empty {
     display: none;
   }
 

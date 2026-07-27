@@ -13,8 +13,13 @@ import {
   SectionColumns,
 } from "@walle/components";
 import { resolveInternalUrl } from "@walle/utils";
+import { getCollection } from "astro:content";
 
 const img = (p: string) => resolveInternalUrl(p);
+
+// The wiki route only exists on the design-system showcase (repo `wiki/` present), never in a
+// seeded consumer — link to it only when there are pages to link.
+const hasWiki = (await getCollection("wiki")).length > 0;
 
 const groups = [
   { id: "elements", label: "Elements" },
@@ -44,6 +49,13 @@ const groups = [
       <nav class="showcase-nav" aria-label="Showcase sections">
         {groups.map((g) => <a href={`#${g.id}`}>{g.label}</a>)}
       </nav>
+      {
+        hasWiki && (
+          <p>
+            <Link href={resolveInternalUrl("/wiki")}>Read the design-system wiki →</Link>
+          </p>
+        )
+      }
     </div>
   </section>
 

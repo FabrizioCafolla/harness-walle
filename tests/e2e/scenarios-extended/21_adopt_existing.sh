@@ -14,20 +14,20 @@ scenario_adopt_existing() {
     fail "init should abort when the adoption prompt is declined"
     return 1
   fi
-  assert_path_absent "$dir/.walle/manifest.json" || return 1
+  assert_path_absent "$dir/.harness-walle/manifest.json" || return 1
   assert_file_contains "$dir/PRESERVE.md" "keep me" || return 1
 
   # (b) --yes adopts non-destructively: walle paths written, pre-existing file untouched.
   cli init --source "$REPO_ROOT" -d "$dir" -m website --yes >/dev/null \
     || { fail "adopt with --yes failed"; return 1; }
-  assert_path_present "$dir/.walle/manifest.json" || return 1
+  assert_path_present "$dir/.harness-walle/manifest.json" || return 1
   assert_path_present "$dir/src/@walle" || return 1
   assert_file_contains "$dir/PRESERVE.md" "keep me" || return 1
 
   # (c) re-running init on an already-adopted directory is a hard error, not a silent re-adopt.
   local out
   out="$(cli init --source "$REPO_ROOT" -d "$dir" -m website --yes 2>&1)" && {
-    fail "init should refuse a directory that already has .walle/manifest.json"
+    fail "init should refuse a directory that already has .harness-walle/manifest.json"
     return 1
   }
   echo "$out" | grep -qi "already a walle project" \

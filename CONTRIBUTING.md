@@ -43,7 +43,7 @@ harness-walle/
 │   ├── walle.yml            the config: declares every managed/seed/inject path per module
 │   ├── website/             MANAGED source (src/@walle/, schemas/) AND the write-once starter
 │   │                          seeded into a fresh consumer — this repo's own demo site, dogfooded
-│   ├── ci/, ai/, backend/, infrastructure/, harness-coding/   one dir per optional module
+│   ├── ci/, ai/, backend/, harness-coding/   one dir per optional module
 │   └── cli/                 cli.sh — the sync/scaffold engine, vendored into every consumer
 ├── tests/e2e/             ← dev tooling, never shipped: shell-script CLI harness (`just e2e`)
 ├── wiki/                  ← maintainer + consumer docs (this file, module/CLI/versioning refs)

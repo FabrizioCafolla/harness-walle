@@ -68,7 +68,7 @@ scenario_devcontainer_managed_sync() {
   assert_path_present "$dir_readd/.husky/pre-commit" || return 1
 
   node -e "
-    const m = require('$dir_readd/.walle/manifest.json');
+    const m = require('$dir_readd/.harness-walle/manifest.json');
     if ((m.modules || []).includes('devcontainer')) {
       console.error('modules[] must not contain \'devcontainer\' — it is a manifest flag, got:', JSON.stringify(m.modules));
       process.exit(1);

@@ -17,7 +17,7 @@ scenario_cli_commands() {
   # (b) add ci syncs the module's paths and records it in the manifest.
   cli add ci --source "$REPO_ROOT" -p "$dir" >/dev/null || { fail "add ci failed"; return 1; }
   assert_path_present "$dir/.github/workflows/actions/@walle" || return 1
-  node -e "process.exit(require('$dir/.walle/manifest.json').modules.includes('ci')?0:1)" ||
+  node -e "process.exit(require('$dir/.harness-walle/manifest.json').modules.includes('ci')?0:1)" ||
     { fail "ci not recorded in manifest"; return 1; }
 
   # (c) check passes on a conformant consumer.
@@ -25,8 +25,8 @@ scenario_cli_commands() {
 
   # (d) check fails on a v1 manifest.
   local v1="${SANDBOX_DIR}/cli-v1"
-  mkdir -p "$v1/.walle"
-  printf '{"name":"old","walleVersion":"abc123","updatedAt":"2026-01-01T00:00:00Z"}\n' >"$v1/.walle/manifest.json"
+  mkdir -p "$v1/.harness-walle"
+  printf '{"name":"old","walleVersion":"abc123","updatedAt":"2026-01-01T00:00:00Z"}\n' >"$v1/.harness-walle/manifest.json"
   if cli check -p "$v1" >/dev/null 2>&1; then
     fail "check should fail on a v1 manifest"
     return 1

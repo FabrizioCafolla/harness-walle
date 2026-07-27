@@ -5,8 +5,9 @@ Walle ships an optional commerce layer: a **Shopify headless** catalog read at b
 adapter, no own backend, no payment data). It is transparent to use: a consumer sets two environment
 variables to go live, or ships the bundled demo catalog with none.
 
-Design rationale and the full do/don't list live in the investigation report:
-`openspec/changes/walle-design-system-maturity/shopify-astro-headless-report.md`.
+The design rationale — static catalog, client-only cart, hosted checkout, and the reasons SSR is
+avoided — is captured inline in this document and in the module's source comments
+(`src/@walle/commerce/shopify.ts`, `cart.ts`).
 
 ## Architecture
 

@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { glob } from "astro/loaders";
 import { defineCollection, z } from "astro:content";
 import { shopifyLoader } from "@walle/commerce/shopify";
@@ -62,4 +63,19 @@ const products = defineCollection({
   }),
 });
 
-export const collections = { posts, products };
+/**
+ * The design-system wiki (repo-root `wiki/*.md`) rendered into the showcase site at /wiki, so the
+ * docs are consultable from the running site. This starter is also seeded to consumer projects,
+ * which have no such folder — so the base is guarded: when `../../wiki` is absent the loader points
+ * at a pattern that matches nothing, yielding an empty collection instead of a build error. The
+ * /wiki pages are in `website-seed-exclude`, so a consumer never ships this UI.
+ */
+const hasWiki = existsSync("../../wiki");
+const wiki = defineCollection({
+  loader: glob({
+    base: hasWiki ? "../../wiki" : "./src",
+    pattern: hasWiki ? "*.md" : "__no_wiki__/*.md",
+  }),
+});
+
+export const collections = { posts, products, wiki };
