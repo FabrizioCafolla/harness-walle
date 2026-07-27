@@ -7,15 +7,15 @@ scenario_init_minimal() {
 
   cli init --source "$REPO_ROOT" -n min -m website -d "$SANDBOX_DIR" >/dev/null || fail "cli init failed"
 
-  # Manifest present and valid (walleVersion: local + sourceRef), under .walle/, alongside
+  # Manifest present and valid (walleVersion: local + sourceRef), under .harness-walle/, alongside
   # config.yml, lock, and the curated docs subset. No root .walle.config.json.
   assert_path_absent "$dir/.walle.config.json" || return 1
-  assert_path_present "$dir/.walle/manifest.json" || return 1
-  assert_manifest_valid "$dir/.walle/manifest.json" || return 1
-  assert_file_contains "$dir/.walle/manifest.json" '"walleVersion": "local"' || return 1
-  assert_path_present "$dir/.walle/config.yml" || return 1
-  assert_path_present "$dir/.walle/lock" || return 1
-  assert_path_present "$dir/.walle/docs/cli.md" || return 1
+  assert_path_present "$dir/.harness-walle/manifest.json" || return 1
+  assert_manifest_valid "$dir/.harness-walle/manifest.json" || return 1
+  assert_file_contains "$dir/.harness-walle/manifest.json" '"walleVersion": "local"' || return 1
+  assert_path_present "$dir/.harness-walle/config.yml" || return 1
+  assert_path_present "$dir/.harness-walle/lock" || return 1
+  assert_path_present "$dir/.harness-walle/docs/cli.md" || return 1
 
   # Whitelist: ci and ai paths must NOT exist.
   assert_path_absent "$dir/.github/workflows/actions/@walle" || return 1

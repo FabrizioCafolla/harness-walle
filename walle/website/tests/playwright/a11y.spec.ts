@@ -24,6 +24,8 @@ const demoPages = [
   "/products/aurora-merino-overshirt",
   "/products/cirrus-packable-jacket",
   "/checkout-demo",
+  "/wiki",
+  "/wiki/cli",
   "/privacy-policy",
   "/terms-and-conditions",
 ].map((p) => `${siteBase}${p}` || "/");

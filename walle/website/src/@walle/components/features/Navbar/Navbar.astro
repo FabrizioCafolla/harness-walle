@@ -49,6 +49,12 @@ const shouldShowBrand = hasLogo || hasTitle;
         }
       </slot>
 
+      <NavbarMenu items={config.items || []} navId={navId} />
+
+      <slot name="actions" />
+
+      {/* Last in the DOM so on mobile the reading/focus order matches the visual order
+          (brand · cart · hamburger) without CSS `order` reshuffling the tab sequence. */}
       <button
         id="mobile-menu-toggle"
         class="hamburger"
@@ -60,10 +66,6 @@ const shouldShowBrand = hasLogo || hasTitle;
         <span class="hamburger-line"></span>
         <span class="hamburger-line"></span>
       </button>
-
-      <NavbarMenu items={config.items || []} navId={navId} />
-
-      <slot name="actions" />
     </nav>
   </div>
 </header>
@@ -362,8 +364,17 @@ const shouldShowBrand = hasLogo || hasTitle;
       height: 64px;
     }
 
+    /* Right cluster on mobile: brand stays left; the cart + hamburger sit together on the
+       right (cart immediately left of the hamburger). The nav overlay (.nav-container) is
+       fixed/out-of-flow, and DOM order is already brand · cart · hamburger, so `margin-left:
+       auto` pushes the pair right without CSS `order` — keeping tab order == visual order. */
     .hamburger {
       display: flex;
+      margin-left: 0.5rem;
+    }
+
+    .cart-badge--inline {
+      margin-left: auto;
     }
 
     .nav-container {

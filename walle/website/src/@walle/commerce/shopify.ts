@@ -1,7 +1,7 @@
 /**
  * Shopify headless integration (build-time catalog).
  *
- * Architecture (see openspec .../shopify-astro-headless-report.md):
+ * Architecture:
  *   - Products are read at BUILD TIME via the Storefront API and become a
  *     type-safe content collection (see src/content.config.ts).
  *   - The site stays fully static (no SSR, no adapter).

@@ -16,7 +16,7 @@ firstPRWelcomeComment: >
   Thanks for opening this pull request! Please check out our contributing guidelines.
 
 verifyTitles:
-  titleRegexp: ^(feat|feat!|fix|fix!|docs|refactor|refactor!|test|chore|build)\((ci|main|docs|deps|deps-dev|website|infrastructure)\):.*
+  titleRegexp: ^(feat|feat!|fix|fix!|docs|refactor|refactor!|test|chore|build)\((ci|main|docs|deps|deps-dev|website|walle)\):.*
   alwaysUsePrTitle: true
   validateEitherPrOrSingleCommitTitle: true
   statusTitle: "Title Validator"

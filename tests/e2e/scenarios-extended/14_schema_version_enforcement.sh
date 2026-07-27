@@ -2,7 +2,7 @@
 # Scenario: schemaVersion enforcement. Validates that:
 #   (a) a manifest without schemaVersion: 2 is rejected by `check`, with no reference to any
 #       removed documentation (the CLI's own message is the full story)
-#   (b) a freshly `init`-ed consumer always produces a valid, flat-layout schemaVersion 2 manifest
+#   (b) a freshly `init`-ed consumer always produces a valid, flat-layout schemaVersion 3 manifest
 
 scenario_schema_version_enforcement() {
   local olddir="${SANDBOX_DIR}/old-manifest"
@@ -10,8 +10,8 @@ scenario_schema_version_enforcement() {
 
   # --- (a) manifest without schemaVersion is rejected ---
 
-  mkdir -p "$olddir/src/configs" "$olddir/.walle"
-  cat >"$olddir/.walle/manifest.json" <<'JSON'
+  mkdir -p "$olddir/src/configs" "$olddir/.harness-walle"
+  cat >"$olddir/.harness-walle/manifest.json" <<'JSON'
 {
   "name": "legacy-site",
   "walleVersion": "a217a49",
@@ -29,7 +29,7 @@ JSON
   echo "$out" | grep -qi "schemaVersion" || { fail "check error should mention schemaVersion; got: $out"; return 1; }
   echo "$out" | grep -qi "migration" && { fail "check error should not reference a removed migration guide; got: $out"; return 1; }
 
-  # --- (b) a fresh init always produces a valid schemaVersion 2 manifest ---
+  # --- (b) a fresh init always produces a valid schemaVersion 3 manifest ---
 
   cli init --source "$REPO_ROOT" -n fresh-init -m website -d "$SANDBOX_DIR" >/dev/null || \
     { fail "init failed"; return 1; }
@@ -39,8 +39,8 @@ JSON
   check_out="$(cli check -p "$freshdir" 2>&1)" || { fail "check failed on fresh consumer: ${check_out}"; return 1; }
 
   node -e "
-    const m = require('$freshdir/.walle/manifest.json');
-    if (m.schemaVersion !== 2) { console.error('schemaVersion missing'); process.exit(1); }
+    const m = require('$freshdir/.harness-walle/manifest.json');
+    if (m.schemaVersion !== 3) { console.error('schemaVersion missing'); process.exit(1); }
     if (!m.walleVersion)       { console.error('walleVersion missing');   process.exit(1); }
     if (!Array.isArray(m.modules)) { console.error('modules missing');    process.exit(1); }
   " || { fail "fresh manifest is missing required fields"; return 1; }

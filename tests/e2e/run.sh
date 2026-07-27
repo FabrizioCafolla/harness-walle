@@ -24,7 +24,7 @@ SCENARIOS=(
   "CLI commands (dry-run, add, check)|scenario_cli_commands"
   "Dependency drift report + --apply aligns package.json|scenario_deps"
   "Component variants (valid variant renders, invalid fails build)|scenario_component_variants"
-  "Old .walle.config.json migrates to .walle/manifest.json on update|scenario_walle_config_migration"
+  "Old .walle.config.json migrates to .harness-walle/manifest.json on update|scenario_walle_config_migration"
   ".vscode/ marker injection (fresh init + consumer edits survive update)|scenario_vscode_inject"
   ".husky/ seeded at init, consumer edits survive update|scenario_husky_seed"
 )

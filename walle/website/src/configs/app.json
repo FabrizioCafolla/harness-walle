@@ -18,6 +18,7 @@
     "showBuyButton": true,
     "cartInNavbar": true,
     "locale": "en-US",
-    "addToCartLabel": "Add to cart"
+    "addToCartLabel": "Add to cart",
+    "showAddToCartOnCards": true
   }
 }

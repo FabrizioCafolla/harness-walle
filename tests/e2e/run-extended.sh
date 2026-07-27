@@ -26,7 +26,6 @@ SCENARIOS=(
   "Seed persistence (consumer-owned seed survives update/re-add)|scenario_seed_persistence"
   "CI starter (ci module seeds usable workflows wired to @walle actions)|scenario_ci_starter"
   "Backend API route (SSR on → /api/health 200, seed survives update)|scenario_backend_api"
-  "Infrastructure (infra module seeds IaC scaffold, survives update)|scenario_infrastructure"
   "Component variants (valid variant renders, invalid fails build)|scenario_component_variants"
   "Update propagation with fixture (consumer zones intact)|scenario_update_propagation"
   "CLI commands (dry-run, add, check)|scenario_cli_commands"

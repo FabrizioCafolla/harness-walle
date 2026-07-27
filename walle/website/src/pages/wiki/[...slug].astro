@@ -1,0 +1,121 @@
+---
+import { getCollection, render } from "astro:content";
+import { BaseLayout } from "@walle/layouts";
+import { resolveInternalUrl } from "@walle/utils";
+
+const titleOf = (entry: { body?: string; id: string }) =>
+  (entry.body?.match(/^#\s+(.+)$/m)?.[1] ?? entry.id).trim();
+
+export async function getStaticPaths() {
+  const entries = await getCollection("wiki");
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+// The wiki files cross-reference each other with plain markdown links (`modules.md`,
+// `../CHANGELOG.md`), which are correct in the repo but dead as web routes. Rewrite them so
+// the docs are navigable on the site: sibling `*.md` → the matching /wiki page, and
+// parent-dir repo files (CHANGELOG, AGENTS, CONTRIBUTING) → the file on GitHub. Uses the
+// pre-rendered HTML (falls back to <Content /> if unavailable, e.g. a future Astro change).
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const REPO_BLOB = "https://github.com/FabrizioCafolla/harness-walle/blob/main";
+const wikiEntries = await getCollection("wiki");
+const wikiSlugs = new Set(wikiEntries.map((e) => e.id));
+const rewriteLinks = (html: string) =>
+  html
+    .replace(
+      /href="(?:\.\/)?([\w-]+)\.md(#[^"]*)?"/gi,
+      (m, name, hash = "") => (wikiSlugs.has(name) ? `href="${base}/wiki/${name}${hash}"` : m)
+    )
+    .replace(
+      /href="\.\.\/([\w.-]+\.md)(#[^"]*)?"/gi,
+      (_m, file, hash = "") => `href="${REPO_BLOB}/${file}${hash}"`
+    );
+// `rendered` is populated at build but isn't on the public CollectionEntry type — access it safely.
+const html = (entry as { rendered?: { html?: string } }).rendered?.html;
+
+const nav = wikiEntries
+  .map((e) => ({ slug: e.id, title: titleOf(e) }))
+  .sort((a, b) => a.title.localeCompare(b.title));
+const title = titleOf(entry);
+---
+
+<BaseLayout headerTitle={title} headerDescription="Walle design-system documentation">
+  <div class="wiki-page">
+    <nav class="wiki-nav" aria-label="Wiki pages">
+      <a href={resolveInternalUrl("/wiki")}>All pages</a>
+      <ul>
+        {
+          nav.map((p) => (
+            <li>
+              <a
+                href={resolveInternalUrl(`/wiki/${p.slug}`)}
+                aria-current={p.slug === entry.id ? "page" : undefined}
+              >
+                {p.title}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <article class="wiki-content">
+      {html ? <Fragment set:html={rewriteLinks(html)} /> : <Content />}
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .wiki-page {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    max-width: 64rem;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  @media (min-width: 60rem) {
+    .wiki-page {
+      grid-template-columns: 14rem 1fr;
+    }
+    .wiki-nav {
+      position: sticky;
+      top: 1rem;
+      align-self: start;
+    }
+  }
+  .wiki-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    display: grid;
+    gap: 0.35rem;
+  }
+  .wiki-nav [aria-current="page"] {
+    font-weight: 700;
+  }
+  /* Readable measure for prose; wide blocks (code, tables) scroll instead of overflowing. */
+  .wiki-content {
+    max-width: 72ch;
+    min-width: 0;
+    line-height: 1.7;
+  }
+  .wiki-content :global(pre) {
+    overflow-x: auto;
+  }
+  .wiki-content :global(table) {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+  }
+  .wiki-content :global(img) {
+    max-width: 100%;
+    height: auto;
+  }
+  .wiki-content :global(a) {
+    text-decoration: underline;
+  }
+</style>

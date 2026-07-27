@@ -58,7 +58,7 @@ make_source_subset() {
   rm -rf "$dest"
   mkdir -p "$dest/walle" "$dest/src"
 
-  for mod in ai backend ci cli harness-coding infrastructure website; do
+  for mod in ai backend ci cli harness-coding website; do
     [ -d "${REPO_ROOT}/walle/$mod" ] && cp -a "${REPO_ROOT}/walle/$mod" "$dest/walle/$mod"
   done
 
@@ -141,7 +141,7 @@ tree_checksum() {
       -not -path './.yarn/*' -not -name 'yarn.lock' \
       -not -name '.e2e-*.log' \
       | LC_ALL=C sort | while read -r f; do
-        if [ "$f" = './.walle/manifest.json' ] || [ "$f" = './.walle/lock' ]; then
+        if [ "$f" = './.harness-walle/manifest.json' ] || [ "$f" = './.harness-walle/lock' ]; then
           printf '%s  %s\n' "$(grep -v '"updatedAt"' "$f" | sha256sum | cut -d' ' -f1)" "$f"
         else
           printf '%s  %s\n' "$(sha256sum "$f" | cut -d' ' -f1)" "$f"

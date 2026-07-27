@@ -21,7 +21,7 @@ scenario_devcontainer_seed() {
 
   # Manifest records enabled: true.
   node -e "
-    const m = require('$dir_default/.walle/manifest.json');
+    const m = require('$dir_default/.harness-walle/manifest.json');
     if (!m.devcontainer || m.devcontainer.enabled !== true) {
       console.error('devcontainer.enabled should be true, got:', JSON.stringify(m.devcontainer));
       process.exit(1);
@@ -36,7 +36,7 @@ scenario_devcontainer_seed() {
 
   # Manifest records enabled: false.
   node -e "
-    const m = require('$dir_disabled/.walle/manifest.json');
+    const m = require('$dir_disabled/.harness-walle/manifest.json');
     if (!m.devcontainer || m.devcontainer.enabled !== false) {
       console.error('devcontainer.enabled should be false, got:', JSON.stringify(m.devcontainer));
       process.exit(1);

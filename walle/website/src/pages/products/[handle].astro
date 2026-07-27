@@ -15,10 +15,14 @@ export async function getStaticPaths() {
 
 const { product } = Astro.props as { product: ShopifyProduct };
 
-const commerce = (config.app as { commerce?: { showBuyButton?: boolean; locale?: string } })
-  .commerce;
+const commerce = (
+  config.app as {
+    commerce?: { showBuyButton?: boolean; locale?: string; addToCartLabel?: string };
+  }
+).commerce;
 const showBuyButton = commerce?.showBuyButton ?? false;
 const locale = commerce?.locale ?? "en-US";
+const addToCartLabel = commerce?.addToCartLabel ?? "Add to cart";
 
 const productImage = (url: string) => (url.startsWith("http") ? url : resolveInternalUrl(url));
 
@@ -63,7 +67,6 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
     { label: "Products", href: resolveInternalUrl("/products") },
     { label: product.title },
   ]}
-  backLink={{ href: resolveInternalUrl("/products"), label: "Back to products" }}
   product={productData}
 >
   <h2 class="sr-only">Product gallery and details</h2>
@@ -90,13 +93,14 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
     }
   </Carousel>
 
-  <div class="product-body" set:html={product.descriptionHtml} />
+  <div slot="below" class="product-below">
+    <div class="product-body" set:html={product.descriptionHtml} />
 
-  {
-    recommended.length > 0 && (
-      <section class="upsell" aria-labelledby="upsell-heading">
-        <h2 id="upsell-heading">You might also like</h2>
-        <ul class="upsell__grid">
+    {
+      recommended.length > 0 && (
+        <section class="upsell" aria-labelledby="upsell-heading">
+          <h2 id="upsell-heading">You might also like</h2>
+          <ul class="upsell__grid">
           {recommended.map((r) => {
             const rv = defaultVariant(r);
             return (
@@ -121,8 +125,9 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
       </section>
     )
   }
+  </div>
 
-  <div slot="aside" class="purchase-card">
+  <div slot="aside" id="buy-box" class="purchase-card" tabindex="-1">
     <p class="purchase-card__title">{product.title}</p>
     <VariantPicker
       product={product}
@@ -139,6 +144,16 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
       )
     }
   </div>
+
+  {
+    showBuyButton && (
+      <div slot="below" class="pdp-sticky" data-pdp-sticky hidden>
+        <a href="#buy-box" class="pdp-sticky__cta" data-pdp-sticky-cta>
+          {addToCartLabel}
+        </a>
+      </div>
+    )
+  }
 </DetailLayout>
 
 <style>
@@ -146,6 +161,17 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
   .product-gallery :global(.pg-slide) {
     background: var(--surface-alt);
     border-radius: var(--radius-lg);
+  }
+
+  .product-below {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xl);
+  }
+
+  /* Keep the prose to a comfortable measure; the upsell grid below stays full-width. */
+  .product-body {
+    max-width: 70ch;
   }
 
   .product-body :global(h3) {
@@ -159,7 +185,6 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
   }
 
   .upsell {
-    margin-top: var(--space-2xl);
     border-top: 1px solid var(--border);
     padding-top: var(--space-xl);
   }
@@ -226,6 +251,8 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
     background: var(--surface);
     position: sticky;
     top: 90px;
+    /* Anchor jumps from the sticky CTA clear the fixed site header. */
+    scroll-margin-top: 84px;
   }
 
   .purchase-card__title {
@@ -239,9 +266,64 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
     margin: 0;
   }
 
+  /* Nike-style sticky add-to-cart bar — mobile only, a single full-width button revealed by
+     JS when the buy box is off-screen. Tapping it scrolls to the buy box so the shopper picks
+     size/colour there. Works without JS too (it just stays hidden). */
+  .pdp-sticky {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 950;
+    display: none;
+    padding: 0.6rem 1rem;
+    padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .pdp-sticky__cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 48px;
+    padding: 0 1.5rem;
+    border-radius: var(--radius-md);
+    background: var(--primary);
+    color: var(--white);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .pdp-sticky__cta:hover {
+    background: var(--primary-dark);
+  }
+
   @media (max-width: 900px) {
     .purchase-card {
       position: static;
     }
+
+    /* Revealed by JS (removes [hidden]); on desktop it always stays display:none. */
+    .pdp-sticky:not([hidden]) {
+      display: flex;
+    }
   }
 </style>
+
+<script>
+  function initPdpStickyCta() {
+    const bar = document.querySelector<HTMLElement>("[data-pdp-sticky]");
+    const buyBox = document.getElementById("buy-box");
+    if (!bar || !buyBox) return;
+    // Show the bar only while the buy box is off-screen; hide it once it's in view.
+    const io = new IntersectionObserver(([entry]) => (bar.hidden = entry.isIntersecting), {
+      rootMargin: "0px 0px -20% 0px",
+    });
+    io.observe(buyBox);
+  }
+  document.addEventListener("DOMContentLoaded", initPdpStickyCta);
+  document.addEventListener("astro:page-load", initPdpStickyCta);
+</script>

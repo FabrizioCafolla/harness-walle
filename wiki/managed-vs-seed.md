@@ -54,10 +54,6 @@ SEED files are consumer-owned scaffolding. Walle writes them **once** at `init`/
 | `ci`             | `.github/workflows/test.yml`           | Test workflow wired to managed composite action                                            |
 | `ci`             | `.github/workflows/deploy.yml`         | Deploy workflow shell                                                                      |
 | `backend`        | `src/pages/api/health.ts`              | Example API route                                                                          |
-| `infrastructure` | `infrastructure/main.tf`               | Terraform/OpenTofu entry point                                                             |
-| `infrastructure` | `infrastructure/variables.tf`          | Input variables                                                                            |
-| `infrastructure` | `infrastructure/README.md`             | Infrastructure starter docs                                                                |
-| `infrastructure` | `infrastructure/.gitignore`            | IaC gitignore                                                                              |
 | `devcontainer`   | `.devcontainer/devcontainer.json`      | Consumer devcontainer entrypoint (seeded by default at init; see [modules.md](modules.md)) |
 | `website`        | `.husky/pre-commit`, `.husky/pre-push` | Git hooks (`yarn lint`, `yarn format`, `yarn test:unit`), matching this repo's own hooks   |
 

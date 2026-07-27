@@ -9,12 +9,18 @@ import { getCollection } from "astro:content";
 
 const commerce = (
   config.app as {
-    commerce?: { showBuyButton?: boolean; locale?: string; addToCartLabel?: string };
+    commerce?: {
+      showBuyButton?: boolean;
+      locale?: string;
+      addToCartLabel?: string;
+      showAddToCartOnCards?: boolean;
+    };
   }
 ).commerce;
 const showBuyButton = commerce?.showBuyButton ?? false;
 const locale = commerce?.locale ?? "en-US";
 const addToCartLabel = commerce?.addToCartLabel ?? "Add to cart";
+const showAddToCartOnCards = commerce?.showAddToCartOnCards ?? true;
 
 const entries = await getCollection("products");
 const products = entries.map((e) => e.data as ShopifyProduct);
@@ -88,6 +94,7 @@ function toCard(p: ShopifyProduct) {
                 <ProductBuyCard
                   product={p}
                   locale={locale}
+                  showAddToCart={showAddToCartOnCards}
                   showQuantity={false}
                   addLabel={addToCartLabel}
                 />

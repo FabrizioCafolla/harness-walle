@@ -1,0 +1,46 @@
+---
+import { getCollection } from "astro:content";
+import { BaseLayout } from "@walle/layouts";
+import { resolveInternalUrl } from "@walle/utils";
+
+// Title from the doc's first H1, falling back to the slug.
+const titleOf = (entry: { body?: string; id: string }) =>
+  (entry.body?.match(/^#\s+(.+)$/m)?.[1] ?? entry.id).trim();
+
+const pages = (await getCollection("wiki"))
+  .map((e) => ({ slug: e.id, title: titleOf(e) }))
+  .sort((a, b) => a.title.localeCompare(b.title));
+---
+
+<BaseLayout
+  headerTitle="Wiki"
+  headerDescription="The Walle design-system documentation, rendered from the repo wiki at build time."
+>
+  {
+    pages.length === 0 ? (
+      <p>No wiki pages found.</p>
+    ) : (
+      <ul class="wiki-index">
+        {pages.map((p) => (
+          <li>
+            <a href={resolveInternalUrl(`/wiki/${p.slug}`)}>{p.title}</a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .wiki-index {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 0 1rem;
+    list-style: none;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .wiki-index a {
+    font-size: 1.125rem;
+  }
+</style>

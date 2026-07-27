@@ -4,6 +4,106 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/versioning.md).
 
+## [0.3.1] — 2026-07-27
+
+### Changed
+
+- **Product detail page follows the standard e-commerce PDP layout.** `DetailLayout` gained a
+  full-width `below` slot; the product page now puts the **gallery** in the main column, the **buy
+  box** (title, price, variants, add-to-cart) in the aside, and the **description + recommendations**
+  full-width below. Fixes the mobile bug where the add-to-cart stacked at the very bottom (after the
+  description and upsell) — on mobile it now sits **right after the images**: gallery → buy box →
+  description → recommendations. Description prose is capped to a readable measure (~70ch).
+- **`ProductBuyCard`: removed the redundant "View details" cue and its `showDetailsLink` prop** — the
+  whole card is already a stretched link to the detail page. Buy controls now anchor to the card
+  bottom so price/add-to-cart line up across a grid.
+- **Mobile commerce UX** (studied against Nike/Apple/Shopify PDPs):
+  - Navbar on mobile now places the **cart trigger immediately left of the hamburger** (both on the
+    right). The hamburger was moved to the end of the DOM so the reading/focus order matches the
+    visual order (`brand · cart · hamburger`) — no CSS `order`, so keyboard tab order stays correct.
+  - Product detail page gained a **Nike-style sticky add-to-cart bar** on mobile: a single full-width
+    **Add to cart** button that appears while the buy box is off-screen and, when tapped, scrolls to
+    the buy box (which takes focus, `tabindex="-1"`) so the shopper picks size/colour. Progressive
+    enhancement (an anchor to `#buy-box`); no JS ⇒ it stays hidden.
+  - Removed the redundant **"Back to products"** back-link from the product detail page — the
+    breadcrumbs already provide that navigation.
+  - New **`commerce.showAddToCartOnCards`** config (default `true`) to toggle the add-to-cart button on
+    listing cards independently of the detail page.
+- **`Carousel` no longer inherits the global `section { padding: 4rem 1.5rem }`** (it resets its own
+  padding). That stray top padding was pushing the product gallery ~64px below the buy box on desktop —
+  the slides and the buy box now top-align.
+- **Consumer state folder renamed `.walle/` → `.harness-walle/`**, and the manifest `files` map is
+  now grouped **by module** (`schemaVersion: 3`): `{ managed: { website: [paths…], … }, seed: {…},
+  inject: {…} }` instead of the v2 `{ managed: { path: module, … } }`. Both changes are cosmetic to
+  the sync engine (the `files` map is informational — nothing reads it to prune), so **migration is
+  automatic and idempotent**: any CLI command (`update`/`add`/`check`) renames the folder (or a legacy
+  root `.walle.config.json`), reshapes a v2 `files` map to v3, and bumps `schemaVersion`. No consumer
+  action needed. Schema (`walle.config.schema.json`), the CLI, wiki, and e2e (`04`, `07`, `14`, `16`)
+  updated together; base + extended suites green.
+- **`walle deps --apply` no longer silently leaves a build broken.** A missing runtime `dependency`
+  from the seed is now added by `--apply` (and flagged by `check`), because synced `@walle` code
+  hard-imports it; missing `devDependencies` (optional tooling) stay opt-out. Fixes 0.3.0 consumer
+  builds failing on `@nanostores/persistent` (see below).
+
+### Removed
+
+- **`infrastructure` module** — the Terraform/OpenTofu starter scaffold is out of scope and has been
+  removed: its seed files (`walle/infrastructure/`), the `walle.yml` seed entries, the CLI
+  `validate_module` entry and enum in `walle.config.schema.json`, the extended e2e scenario, and all
+  wiki/README/AGENTS references. `cli.sh add infrastructure` (and `infrastructure` in a manifest) now
+  errors as an unknown module. No consumer used it, so `update` is unaffected. The devcontainer's
+  optional Terraform tool check (harness-coding) is separate and untouched.
+
+### Added
+
+- **Wiki rendered into the showcase site** at `/wiki` (index + `/wiki/<page>`), built from the repo
+  `wiki/*.md` at build time and **shipped by the Pages deploy** (the deploy checks out the whole repo
+  and builds `walle/website`, where `../../wiki` resolves). Readable layout: a sidebar index, prose
+  capped to a comfortable measure, wide tables/code that scroll, and — so the docs are actually
+  navigable — the inter-doc markdown links are rewritten to real routes (`modules.md` → `/wiki/modules`,
+  `../CHANGELOG.md` → the file on GitHub). The route is `website-seed-exclude`d and its content
+  collection is existence-gated, so a consumer (which has no `wiki/` folder) never ships the UI and its
+  build is unaffected. `BaseLayout` adds a **"Docs" navbar link only when the `wiki` collection has
+  pages** (so the showcase gets it site-wide; a seeded consumer, whose collection is empty, does not —
+  and a consumer that removed the collection is handled defensively). axe-checked (`/wiki`, `/wiki/cli`
+  added to the a11y suite).
+- **`just walle-deps` recipe** (injected into the consumer `justfile.project`), so dependency drift is
+  reviewed and applied the same `just`-first way as everything else: `just walle-deps` /
+  `just walle-deps --apply`.
+- **README "For AI agents" section** — the missing entry point for an agent scaffolding a *new*
+  project: the `init` bootstrap, the modules, and the `walle-customize` / `walle-update` skills it
+  then drives, all through `just`.
+
+### Fixed
+
+- **Commerce runtime deps no longer break a consumer build.** `BaseLayout` statically imports
+  `CartMount` (the `showCart` guard is render-time only), so every consumer build — vetrina
+  included — pulls `commerce/cart.ts` into the module graph and hard-requires `nanostores` /
+  `@nanostores/persistent`. A consumer whose seed `package.json` predates commerce (e.g. one created
+  before 0.3.0) was missing them and 0.3.0 failed at build with `Rolldown failed to resolve import
+  "@nanostores/persistent"`. `walle deps` now treats a **missing runtime `dependency`** as a build
+  breaker: `check` flags it and `--apply` adds it (previously `--apply` only bumped deps already
+  present, and `check` could even print "up to date" while a required dep was absent). Missing
+  `devDependencies` (vitest, playwright, astrobook, husky) stay opt-out — reported, never forced.
+  The 0.3.0 deps table below is corrected: `nanostores` / `@nanostores/persistent` are required by
+  **every** consumer, not "shop mode only".
+
+### Fixed / Docs
+
+- **Dangling & leaky references removed.** `AGENTS.md`, `wiki/commerce.md`, and the consumer-synced
+  `cart.ts` / `shopify.ts` pointed at `openspec/…/shopify-astro-headless-report.md`, a file that lives
+  only in a separate private repo — a broken link that also leaked internal planning docs into an OSS
+  project and into every consumer. Replaced with self-contained descriptions.
+- **`AGENTS.md` corrected**: dropped the non-existent `walle/template/` reference and the stale claim
+  that markdown images are handled by a rehype plugin (they use relative co-located paths +
+  `astro:assets` now). Removed the same dead `walle/template/` ignore from `eslint.config.js`.
+- **Skills refreshed**: `walle-update` no longer lists the removed Terraform/infra seeds and now
+  documents `just walle-deps`; `walle-customize` gained the **commerce (Shopify)** customization
+  section it was missing.
+- **`just`-first commands** across the README, skills, and versioning guide (e.g. `just walle-update`,
+  `just walle-check`, `just walle-deps`, `just yarn …`), and clearer messaging that harness-coding
+  provides a ready **VS Code devcontainer** dev environment.
+
 ## [0.3.0] — 2026-07-23
 
 ### Dependencies
@@ -20,7 +120,7 @@ Walle-owned dependencies validated for this release (bump these; leave your own 
 | ------------------------------- | ---------- | ---------------------------------------- |
 | `astro`                         | `^7.1.3`   | Content Layer, `astro:assets`            |
 | `astrobook`                     | `^0.13.2`  | dev-only component catalog               |
-| `nanostores` / `@nanostores/persistent` | `^1.4.1` / `^1.3.5` | commerce cart (shop mode only) |
+| `nanostores` / `@nanostores/persistent` | `^1.4.1` / `^1.3.5` | commerce cart — required by every build (see 0.3.1 Fixed) |
 | `vitest`                        | `^4.1.10`  | unit runner (major bump from 3.x)        |
 | `eslint`                        | `^10.7.0`  | with `@typescript-eslint/* ^8.65.0`      |
 | `@playwright/test` / `@axe-core/playwright` | `^1.61.1` / `^4.12.1` | a11y + visual suites |

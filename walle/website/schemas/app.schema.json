@@ -66,6 +66,11 @@
           "type": "string",
           "default": "Add to cart",
           "description": "Text on the add-to-cart button (icon is always shown alongside it)."
+        },
+        "showAddToCartOnCards": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the add-to-cart button on product listing cards. false => cards link to the detail page only (add-to-cart still available there). No effect in vetrina mode."
         }
       }
     }

@@ -128,6 +128,10 @@ const closeIcon =
 <style>
   .carousel {
     position: relative;
+    /* The root is a <section>, which inherits the global `section { padding: 4rem 1.5rem }`.
+       A carousel is a component, not a page section — reset it so slides align with the top
+       of their column (e.g. next to a product buy box) and span the full width. */
+    padding: 0;
     --carousel-height: clamp(240px, 42vw, 460px);
   }
 
