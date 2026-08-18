@@ -4,6 +4,18 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/versioning.md).
 
+## [0.3.2] — 2026-08-18
+
+### Fixed
+
+- **`BaseLayout`'s optional "Docs" nav-link check no longer spams `console.warn` on every
+  request.** `getCollection("wiki")` doesn't throw when the collection is missing or empty (Astro
+  only registers a collection in its content store once the loader writes at least one entry), so
+  the existing `try/catch` never actually fired — Astro logged via `console.warn` and returned
+  `[]` instead. Every consumer without a wiki collection (i.e. every seeded site) hit this on
+  every single page load, in both `dev` and `build`. `console.warn` is now suppressed for the
+  duration of that one lookup only.
+
 ## [0.3.1] — 2026-07-27
 
 ### Changed
