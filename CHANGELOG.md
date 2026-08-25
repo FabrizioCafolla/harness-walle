@@ -4,6 +4,41 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/versioning.md).
 
+## [Unreleased]
+
+### Added
+
+- **Optional PWA layer.** `pwa.enabled` in `app.json` turns on a web app manifest, a Workbox
+  service worker and its registration; every other manifest field falls back to what the site
+  already declares (title, description, language, theme palette, base path). Astro-side knobs are
+  overridden natively via `defineWalleConfig({ pwa: … })`, and `runtimeCaching` merges instead of
+  replacing (consumer rules first). Off by default: no integration mounted, nothing added to any
+  page. See [wiki/pwa.md](wiki/pwa.md). This replaces the pattern of hand-patching manifest links
+  and a registration script into `Head.astro`, a MANAGED file, where the next `update` wiped them
+  without `check` noticing.
+
+### Changed
+
+- **A page now ships only the CSS of the components it can actually use.** Astro collects a page's
+  CSS from its module graph rather than from what renders, so the component barrels put every
+  component's `<style>` on every page. The barrels are now rewritten at build time down to the
+  exports a project imports, walle's own files import each other directly, the cart is imported
+  only in commerce mode, and the navbar/footer resolvers load only the selected variant. Measured
+  on a consumer site: shared stylesheet 79.4 kB → 40.5 kB, with no CSS left for components no page
+  renders.
+- **The service worker registration no longer sits on the critical path.** The generated
+  `registerSW.js` registers inside its own `load` listener, so `workbox-window` never enters the
+  page bundle.
+
+### Fixed
+
+- **Forced reflow on every page load.** The navbar read `window.scrollY` inside its
+  `DOMContentLoaded` handler, forcing a synchronous layout before the browser's own; it now runs
+  one frame later, with the same result on a restored scroll position.
+- **Layout thrashing in the scrollable-region a11y pass.** It now returns before touching geometry
+  when a page has no `pre`, `table` or `[data-scrollable]`, and separates its reads from its
+  writes instead of interleaving them per element.
+
 ## [0.3.2] — 2026-08-18
 
 ### Fixed
@@ -46,7 +81,7 @@ All notable changes to Walle are documented here. Format follows
   the slides and the buy box now top-align.
 - **Consumer state folder renamed `.walle/` → `.harness-walle/`**, and the manifest `files` map is
   now grouped **by module** (`schemaVersion: 3`): `{ managed: { website: [paths…], … }, seed: {…},
-  inject: {…} }` instead of the v2 `{ managed: { path: module, … } }`. Both changes are cosmetic to
+inject: {…} }` instead of the v2 `{ managed: { path: module, … } }`. Both changes are cosmetic to
   the sync engine (the `files` map is informational — nothing reads it to prune), so **migration is
   automatic and idempotent**: any CLI command (`update`/`add`/`check`) renames the folder (or a legacy
   root `.walle.config.json`), reshapes a v2 `files` map to v3, and bumps `schemaVersion`. No consumer
@@ -82,7 +117,7 @@ All notable changes to Walle are documented here. Format follows
 - **`just walle-deps` recipe** (injected into the consumer `justfile.project`), so dependency drift is
   reviewed and applied the same `just`-first way as everything else: `just walle-deps` /
   `just walle-deps --apply`.
-- **README "For AI agents" section** — the missing entry point for an agent scaffolding a *new*
+- **README "For AI agents" section** — the missing entry point for an agent scaffolding a _new_
   project: the `init` bootstrap, the modules, and the `walle-customize` / `walle-update` skills it
   then drives, all through `just`.
 
@@ -93,7 +128,7 @@ All notable changes to Walle are documented here. Format follows
   included — pulls `commerce/cart.ts` into the module graph and hard-requires `nanostores` /
   `@nanostores/persistent`. A consumer whose seed `package.json` predates commerce (e.g. one created
   before 0.3.0) was missing them and 0.3.0 failed at build with `Rolldown failed to resolve import
-  "@nanostores/persistent"`. `walle deps` now treats a **missing runtime `dependency`** as a build
+"@nanostores/persistent"`. `walle deps` now treats a **missing runtime `dependency`** as a build
   breaker: `check` flags it and `--apply` adds it (previously `--apply` only bumped deps already
   present, and `check` could even print "up to date" while a required dep was absent). Missing
   `devDependencies` (vitest, playwright, astrobook, husky) stay opt-out — reported, never forced.
@@ -128,14 +163,14 @@ its dependency changes here so a consumer can apply them with `yarn up <pkg>@<ra
 
 Walle-owned dependencies validated for this release (bump these; leave your own deps alone):
 
-| Dependency                      | Range      | Notes                                    |
-| ------------------------------- | ---------- | ---------------------------------------- |
-| `astro`                         | `^7.1.3`   | Content Layer, `astro:assets`            |
-| `astrobook`                     | `^0.13.2`  | dev-only component catalog               |
-| `nanostores` / `@nanostores/persistent` | `^1.4.1` / `^1.3.5` | commerce cart — required by every build (see 0.3.1 Fixed) |
-| `vitest`                        | `^4.1.10`  | unit runner (major bump from 3.x)        |
-| `eslint`                        | `^10.7.0`  | with `@typescript-eslint/* ^8.65.0`      |
-| `@playwright/test` / `@axe-core/playwright` | `^1.61.1` / `^4.12.1` | a11y + visual suites |
+| Dependency                                  | Range                 | Notes                                                     |
+| ------------------------------------------- | --------------------- | --------------------------------------------------------- |
+| `astro`                                     | `^7.1.3`              | Content Layer, `astro:assets`                             |
+| `astrobook`                                 | `^0.13.2`             | dev-only component catalog                                |
+| `nanostores` / `@nanostores/persistent`     | `^1.4.1` / `^1.3.5`   | commerce cart — required by every build (see 0.3.1 Fixed) |
+| `vitest`                                    | `^4.1.10`             | unit runner (major bump from 3.x)                         |
+| `eslint`                                    | `^10.7.0`             | with `@typescript-eslint/* ^8.65.0`                       |
+| `@playwright/test` / `@axe-core/playwright` | `^1.61.1` / `^4.12.1` | a11y + visual suites                                      |
 
 CI actions (managed, so these **do** update on `walle update`): `actions/setup-node` `v6` → `v7`.
 
@@ -280,32 +315,33 @@ through verbatim.
   API convention documented in [wiki/components.md](wiki/components.md#api-conventions). Consumer
   usages of `@walle` components need the following mechanical renames (find/replace):
 
-  | Component     | Old prop                | New prop                        |
-  | ------------- | ----------------------- | ------------------------------- |
-  | `Button`      | `link`                  | `href`                          |
-  | `Button`      | `type` (visual style)   | `variant`                       |
-  | `Button`      | `buttonType`            | `type`                          |
-  | `Button`      | `iconName`              | `icon`                          |
-  | `Button`      | `disableEffects={true}` | `effects={false}`               |
-  | `Button`      | `extraClass`            | `class`                         |
-  | `Badge`       | `color`                 | `variant`                       |
-  | `Badge`       | `link`                  | `href`                          |
-  | `Badge`       | `iconName`              | `icon`                          |
-  | `Badge`       | `extraClass`            | `class`                         |
-  | `BasicCard`   | `linkUrl`               | `href`                          |
-  | `BasicCard`   | `linkTarget`            | `target`                        |
-  | `BasicCard`   | `imageUrl` + `imageAlt` | `image={{ src, alt }}`          |
-  | `BasicCard`   | `badge.color`           | `badge.variant`                 |
-  | `BasicCard`   | `extraClass`            | `class`                         |
-  | `HeaderStandard` | `imageSrc` + `imageAlt` | `image={{ src, alt }}`       |
-  | `Section`     | `type`                  | `variant`                       |
-  | `Section`     | `imageSrc` + `imageAlt` | `image={{ src, alt }}`          |
-  | `SectionFlow` | `type`                  | `variant`                       |
-  | `Breadcrumbs` | `items[].url`           | `items[].href`                  |
-  | `Breadcrumbs` | `items[].iconName`      | `items[].icon`                  |
-  | `Breadcrumbs` | `extraClass`            | `class`                         |
+  | Component        | Old prop                | New prop               |
+  | ---------------- | ----------------------- | ---------------------- |
+  | `Button`         | `link`                  | `href`                 |
+  | `Button`         | `type` (visual style)   | `variant`              |
+  | `Button`         | `buttonType`            | `type`                 |
+  | `Button`         | `iconName`              | `icon`                 |
+  | `Button`         | `disableEffects={true}` | `effects={false}`      |
+  | `Button`         | `extraClass`            | `class`                |
+  | `Badge`          | `color`                 | `variant`              |
+  | `Badge`          | `link`                  | `href`                 |
+  | `Badge`          | `iconName`              | `icon`                 |
+  | `Badge`          | `extraClass`            | `class`                |
+  | `BasicCard`      | `linkUrl`               | `href`                 |
+  | `BasicCard`      | `linkTarget`            | `target`               |
+  | `BasicCard`      | `imageUrl` + `imageAlt` | `image={{ src, alt }}` |
+  | `BasicCard`      | `badge.color`           | `badge.variant`        |
+  | `BasicCard`      | `extraClass`            | `class`                |
+  | `HeaderStandard` | `imageSrc` + `imageAlt` | `image={{ src, alt }}` |
+  | `Section`        | `type`                  | `variant`              |
+  | `Section`        | `imageSrc` + `imageAlt` | `image={{ src, alt }}` |
+  | `SectionFlow`    | `type`                  | `variant`              |
+  | `Breadcrumbs`    | `items[].url`           | `items[].href`         |
+  | `Breadcrumbs`    | `items[].iconName`      | `items[].icon`         |
+  | `Breadcrumbs`    | `extraClass`            | `class`                |
 
   Consumer config files (`navbar.json`, `footer.json`) are **not** affected.
+
 - **`BlogFilters` removed** — superseded by `CollectionFilters` (no consumer imported it
   directly; `BlogPostsLayout` migrated internally).
 - **`Button` no longer nests `<button>` inside `<a>`** (invalid HTML, nested interactive

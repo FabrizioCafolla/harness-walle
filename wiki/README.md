@@ -22,6 +22,7 @@ Walle is a **copy-based Astro design system**. Instead of being installed as an 
 - [Components](components.md) — component variants and customization patterns
 - [Styling](styling.md) — theme config, semantic tokens, and the accessibility contract
 - [Commerce](commerce.md) — the Shopify headless catalog + cart module (vetrina vs shop)
+- [PWA](pwa.md) — the optional manifest + service worker layer (off by default)
 - [Astrobook](astrobook.md) — visual component catalog (dev-only)
 - [Versioning](versioning.md) — pinning `walleVersion`, update policy, `schemaVersion`
 
