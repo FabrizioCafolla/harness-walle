@@ -6,7 +6,8 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { defineConfig } from "astro/config";
 import icon from "astro-icon";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import appConfig from "../configs/app.json";
@@ -115,6 +116,77 @@ function walleThemePlugin() {
   };
 }
 
+/**
+ * Barrel modules (`@walle/components`, `@walle/layouts`) are a DX win and a payload bug:
+ * Astro collects a page's CSS from its module graph, not from what the page renders, so one
+ * `import { Section } from "@walle/components"` drags every component's <style> onto every
+ * page — carousel, cart, blog and product CSS included on a site that has none of them.
+ * (Measured on eventialatina.it: 79 kB shared stylesheet, 35 kB of it for components no page
+ * ever rendered.)
+ *
+ * This plugin rewrites each barrel at load time down to the exports the project actually
+ * imports from it, scanning the consumer's own sources for the named imports. Nothing about
+ * how consumers write imports changes; what changes is what ends up in the graph.
+ */
+function walleSlimBarrelsPlugin(root: string) {
+  const BARRELS: Record<string, string> = {
+    "src/@walle/components/index.js": "@walle/components",
+    "src/@walle/layouts/index.js": "@walle/layouts",
+  };
+  const targets = Object.entries(BARRELS).map(([rel, spec]) => [resolve(root, rel), spec] as const);
+  const barrelFiles = new Set(targets.map(([file]) => file));
+  const used = new Map<string, Set<string>>();
+
+  function collect(dir: string): void {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const full = join(dir, entry.name);
+      if (entry.isDirectory()) {
+        collect(full);
+        continue;
+      }
+      if (!/\.(astro|ts|js|mjs|md|mdx)$/.test(entry.name) || barrelFiles.has(full)) continue;
+      const source = readFileSync(full, "utf8");
+      for (const [, spec] of targets) {
+        const pattern = new RegExp(
+          `import\\s+(?:type\\s+)?\\{([^}]*)\\}\\s+from\\s+["']${spec}["']`,
+          "g"
+        );
+        let match: RegExpExecArray | null;
+        while ((match = pattern.exec(source)) !== null) {
+          for (const name of match[1].split(",")) {
+            const clean = name
+              .trim()
+              .replace(/^type\s+/, "")
+              .split(/\s+as\s+/)[0];
+            if (clean) used.get(spec)!.add(clean);
+          }
+        }
+      }
+    }
+  }
+
+  return {
+    name: "walle-slim-barrels",
+    enforce: "pre" as const,
+    buildStart() {
+      for (const [, spec] of targets) used.set(spec, new Set());
+      collect(resolve(root, "src"));
+    },
+    load(id: string) {
+      const hit = targets.find(([file]) => id.split("?")[0] === file);
+      if (!hit) return null;
+      const keep = used.get(hit[1])!;
+      return readFileSync(hit[0], "utf8")
+        .split("\n")
+        .filter((line) => {
+          const exported = line.match(/export\s+\{\s*default\s+as\s+(\w+)\s*\}/);
+          return !exported || keep.has(exported[1]);
+        })
+        .join("\n");
+    },
+  };
+}
+
 type AstroConfigSection = {
   baseUrl?: string;
   basePath?: string;
@@ -152,7 +224,11 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
     integrations: [...walleIntegrations, ...consumerIntegrations],
     vite: {
       ...consumerVite,
-      plugins: [walleThemePlugin(), ...(consumerVite.plugins ?? [])],
+      plugins: [
+        walleThemePlugin(),
+        walleSlimBarrelsPlugin(process.cwd()),
+        ...(consumerVite.plugins ?? []),
+      ],
       build: {
         ...consumerVite.build,
         rollupOptions: {
