@@ -6,6 +6,7 @@ import {
   getPlatformIcon,
   normalizePath,
   resolveInternalUrl,
+  truncateAtWord,
 } from "../../src/@walle/utils/helpers";
 
 describe("getPlatformIcon", () => {
@@ -101,5 +102,36 @@ describe("normalizePath", () => {
   it("strips a single trailing slash", () => {
     expect(normalizePath("/blog/")).toBe("/blog");
     expect(normalizePath("/blog")).toBe("/blog");
+  });
+});
+
+describe("truncateAtWord", () => {
+  it("leaves text that fits untouched", () => {
+    expect(truncateAtWord("Short enough", 155)).toBe("Short enough");
+  });
+
+  it("leaves text exactly at the budget untouched", () => {
+    expect(truncateAtWord("abcde", 5)).toBe("abcde");
+  });
+
+  it("cuts at the last word boundary and appends an ellipsis", () => {
+    expect(truncateAtWord("one two three four", 12)).toBe("one two…");
+  });
+
+  it("leaves no dangling space before the ellipsis", () => {
+    expect(truncateAtWord("one two    three", 12)).toBe("one two…");
+  });
+
+  // The regression this function exists for: lastIndexOf(" ", n) returns -1 when the first n
+  // characters hold no space, and slice(0, -1) would then drop a single character instead of
+  // truncating, returning a string almost as long as the original.
+  it("still truncates when no space fits in the budget", () => {
+    const out = truncateAtWord("a".repeat(200), 20);
+    expect(out).toBe("a".repeat(19) + "…");
+    expect(out.length).toBe(20);
+  });
+
+  it("truncates when the only space falls past the budget", () => {
+    expect(truncateAtWord("a".repeat(50) + " tail", 10)).toBe("a".repeat(9) + "…");
   });
 });
