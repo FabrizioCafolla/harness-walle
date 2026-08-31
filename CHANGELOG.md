@@ -4,6 +4,23 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/versioning.md).
 
+## [Unreleased]
+
+### Fixed
+
+- **Breadcrumbs could push the whole page sideways on mobile.** Each crumb is a
+  `white-space: nowrap` box, and `flex-wrap` on the list can only move a box to the next line,
+  never shrink one already wider than its container — so a long final label (a page title, an
+  event name) made the document wider than the viewport and gave the page a horizontal
+  scrollbar. Reproduced on a consumer at 320/360/375/390/412px on every page whose title ran
+  long. Two changes: the current page's crumb is now dropped below 640px, on the same reasoning
+  that already drops Home there (it is the `<h1>` directly underneath, so it is the one label
+  the visitor does not need repeated, and truncating it instead would spend a second line on an
+  ellipsised copy of that heading); and, as a safety net that changes nothing for labels that
+  already fit, a label that cannot fit is now clipped with an ellipsis rather than overflowing
+  its container. A two-item trail (`Home / Current`) keeps its last crumb, so the nav is never
+  left empty.
+
 ## [0.5.0] — 2026-08-31
 
 ### Added
