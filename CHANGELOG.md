@@ -4,6 +4,23 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/versioning.md).
 
+## [0.6.0] — 2026-08-31
+
+### Fixed
+
+- **Navbar links spoke a different label than the one voice-control users read.** `NavbarLink`
+  hardcoded `aria-label="Go to <href>"` on every link, silently replacing the visible text
+  ("Home", "Chi siamo", ...) as the accessible name. A voice-control user (e.g. Dragon
+  NaturallySpeaking) saying the visible label could not activate the link — WCAG 2.5.3 Label in
+  Name. Text links now default to their native accessible name (the visible text); icon-only
+  links (social icons with no visible name) keep the "Go to X" fallback so they still get one.
+
+### Added
+
+- `NavbarLink` accepts an optional `name` prop so callers can identify a link's visible text and
+  suppress the aria-label fallback accordingly. Internal to the navbar component tree — no
+  `navbar.json` schema change, existing consumers are unaffected.
+
 ## [0.5.1] — 2026-08-31
 
 ### Fixed
