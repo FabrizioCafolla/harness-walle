@@ -46,6 +46,19 @@ test.describe("Navbar - Desktop (1280x800)", () => {
     const itemCount = await dropdown.locator(".dropdown-link").count();
     expect(itemCount).toBeGreaterThan(0);
   });
+
+  test("text nav link's accessible name matches its visible label", async ({ page }) => {
+    await page.goto(home);
+    // Regression check: a hardcoded "Go to <href>" aria-label used to override the visible
+    // text on every link, breaking voice control (WCAG 2.5.3 Label in Name).
+    await expect(page.getByRole("link", { name: "Home", exact: true })).toBeVisible();
+  });
+
+  test("icon-only nav link keeps a fallback accessible name", async ({ page }) => {
+    await page.goto(home);
+    const iconLink = page.locator('.nav-link[href*="github.com"]').first();
+    await expect(iconLink).toHaveAttribute("aria-label", /.+/);
+  });
 });
 
 test.describe("Navbar - Mobile (375x667)", () => {
