@@ -4,6 +4,28 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/versioning.md).
 
+## [0.5.0] — 2026-08-31
+
+### Added
+
+- **Optional SEO budgets for `<title>` and the meta description.** `website.titleMaxLength` and
+  `website.descriptionMaxLength` in `app.json`, both opt-in: without them titles and descriptions
+  are emitted exactly as before on every existing consumer. They take deliberately opposite
+  treatments. Over budget, a title drops the `" | <site title>"` **suffix** and keeps the page
+  title whole, because the page title is the content and the suffix is boilerplate repeated on
+  every page — on the consumer that prompted this, 10 of 14 over-budget titles were over budget
+  only because of the suffix's 18 characters. A description has no boilerplate half to sacrifice,
+  so it is cut at the last word boundary and gets an ellipsis; Google truncates past ~155
+  characters anyway, so this only decides whether it ends on a word or mid-syllable.
+- **`astro.sitemapExclude`.** Path prefixes kept out of `sitemap.xml`, for pages that must stay
+  routable but not indexed (a status page, an offline fallback). Listing a `noindex` page in the
+  sitemap is the "Submitted URL marked noindex" conflict Search Console reports. Omit the key to
+  list every page, as before.
+- **`truncateAtWord()` in `@walle/utils`.** Extracted rather than left inline because of the edge
+  case it guards: `lastIndexOf(" ", n)` returns `-1` when the first `n` characters hold no space,
+  and `slice(0, -1)` would then drop a single character instead of truncating, returning a string
+  nearly as long as the original. Covered by 6 tests, two of them on that case.
+
 ## [0.4.0] — 2026-08-25
 
 ### Added
