@@ -4,6 +4,18 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/versioning.md).
 
+## [0.6.1] - 2026-09-10
+
+### Fixed
+
+- **No more `collection "wiki" does not exist` warning on every page.** Consumers using
+  `BaseLayout` logged it once per rendered page, in dev and at build. The layout now reads the
+  `wiki` collection only on sites that have `/wiki` pages (the showcase).
+- **No more 404s for `manifest.webmanifest` and `registerSW.js` in dev** on sites with the PWA
+  enabled. The tags are emitted in production builds only, where the files exist.
+- **No more `[astro-icon] Failed to load icons from "src/icons"` warning.** New sites get an empty
+  `src/icons/`. Existing sites: add `src/icons/.gitkeep`.
+
 ## [0.6.0] — 2026-08-31
 
 ### Fixed
