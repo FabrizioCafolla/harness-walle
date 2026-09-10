@@ -4,6 +4,22 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/versioning.md).
 
+## [Unreleased]
+
+### Fixed
+
+- **`The collection "wiki" does not exist or is empty` on every request of every consumer.**
+  `BaseLayout` probed the showcase-only `wiki` collection on each render and tried to mute the
+  warning by swapping `console.warn`, but Astro logs it through its own logger, so it was never
+  muted. The collection is now read only when `src/pages/wiki/index.astro` exists (a build-time
+  glob); those pages are seed-excluded, so a consumer never queries it. The showcase keeps its
+  Docs link.
+- **PWA tags 404 in dev.** `Head.astro` emitted the manifest link and `registerSW.js` in dev too,
+  where the integration generates neither. They are now emitted in production builds only.
+- **`[astro-icon] Failed to load icons from "src/icons"` on every consumer.** The website template
+  now ships an empty `src/icons/`. Without it astro-icon also skipped generating its icon type
+  definitions. Existing consumers: add `src/icons/.gitkeep`.
+
 ## [0.6.0] — 2026-08-31
 
 ### Fixed
