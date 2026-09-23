@@ -31,7 +31,7 @@ const OWN_KEYS = [
   "class",
 ];
 
-const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
 const {
   id,
   tagline,
@@ -43,7 +43,7 @@ const {
   filled = false,
   muted = false,
   class: className,
-} = own as Props;
+} = own as unknown as Props;
 
 const Tag = headingLevel;
 

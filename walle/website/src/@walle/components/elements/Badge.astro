@@ -74,7 +74,7 @@ const OWN_KEYS = [
   "class",
 ];
 
-const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
 const {
   text,
   variant = "primary",
@@ -87,7 +87,7 @@ const {
   target,
   size = "medium",
   class: className,
-} = own as Props;
+} = own as unknown as Props;
 
 const badgeClasses = [
   "badge",

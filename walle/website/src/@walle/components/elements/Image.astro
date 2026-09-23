@@ -49,7 +49,7 @@ export interface Props extends BaseProps {
 
 const OWN_KEYS = ["image", "width", "height", "loading", "ratio", "sizes", "widths", "class"];
 
-const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
 const {
   image,
   width,
@@ -59,7 +59,7 @@ const {
   sizes,
   widths,
   class: className,
-} = own as Props;
+} = own as unknown as Props;
 
 const isRemote = typeof image.src === "string";
 

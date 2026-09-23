@@ -10,8 +10,8 @@ export interface Props extends BaseProps<"header"> {
 }
 
 const OWN_KEYS = ["config", "class"];
-const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
-const { config, class: className } = own as Props;
+const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
+const { config, class: className } = own as unknown as Props;
 const navId = `nav-${Math.random().toString(36).substring(2, 9)}`;
 
 const hasLogo = config.logo?.src;

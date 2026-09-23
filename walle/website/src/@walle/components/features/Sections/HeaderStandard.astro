@@ -22,7 +22,7 @@ export interface Props extends BaseProps<"section">, VariantProps, Pick<Modifier
 
 const OWN_KEYS = ["title", "subtitle", "image", "imageRight", "variant", "filled", "centered"];
 
-const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
 const {
   title,
   subtitle = "",
@@ -31,7 +31,7 @@ const {
   variant,
   filled = false,
   centered = true,
-} = own as Props;
+} = own as unknown as Props;
 
 const hasSubtitle = Astro.slots.has("subtitle") || Boolean(subtitle);
 ---

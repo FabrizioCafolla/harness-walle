@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { formatMoney } from "../../src/@walle/commerce/shopify";
 
 describe("formatMoney", () => {
-  it("defaults to en-US, formatting as a $-prefixed string", () => {
-    expect(formatMoney({ amount: "10", currencyCode: "USD" })).toBe("$10.00");
+  it("formats with en-US locale as a $-prefixed string", () => {
+    expect(formatMoney({ amount: "10", currencyCode: "USD" }, "en-US")).toBe("$10.00");
   });
 
   it("formats with it-IT locale using a comma decimal separator and the euro symbol", () => {

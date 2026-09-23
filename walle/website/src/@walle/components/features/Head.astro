@@ -60,8 +60,8 @@ const descriptionSeo = descriptionMaxLength
   ? truncateAtWord(description, descriptionMaxLength)
   : description;
 
-const ogImageUrl = ogImage ?? new URL(image, Astro.url);
-const resolvedFavicon = resolveInternalUrl(favicon);
+const ogImageUrl = ogImage ?? (image ? new URL(image, Astro.url) : undefined);
+const resolvedFavicon = favicon ? resolveInternalUrl(favicon) : undefined;
 // BCP 47 ("en-US") → Open Graph locale ("en_US")
 const ogLocale = (config.app.website.language || "").replace("-", "_") || null;
 

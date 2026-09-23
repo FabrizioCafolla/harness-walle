@@ -30,7 +30,7 @@ export interface Props
 
 const OWN_KEYS = ["title", "columns", "minColumnWidth", "centered", "variant", "filled", "muted"];
 
-const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
 const {
   title,
   columns = 3,
@@ -39,7 +39,7 @@ const {
   variant,
   filled = false,
   muted = false,
-} = own as Props;
+} = own as unknown as Props;
 ---
 
 <SectionWrapper

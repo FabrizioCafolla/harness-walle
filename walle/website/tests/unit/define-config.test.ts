@@ -1,6 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { defineWalleConfig } from "../../src/@walle/define-config";
 
+// defineWalleConfig() always sets vite.plugins to a plain array of walle's own plugin objects
+// (never a Promise/false/nested array as Vite's wider PluginOption allows), so this narrows the
+// type once instead of asserting through it at every call site.
+type ThemePlugin = { name: string; load: (id: string) => string | null };
+
+function findThemePlugin(config: ReturnType<typeof defineWalleConfig>): ThemePlugin {
+  const plugins = config.vite!.plugins as unknown as ThemePlugin[];
+  return plugins.find((p) => p.name === "walle-theme")!;
+}
+
 // define-config.ts reads appConfig.* and theme.json fresh on every defineWalleConfig() call
 // (no caching at module scope), so mutating these mocks between tests is enough — no need to
 // re-import the module per test.
@@ -112,7 +122,7 @@ describe("defineWalleConfig", () => {
   it("concatenates consumer integrations onto the walle defaults instead of replacing them", () => {
     const marker = { name: "consumer-integration", hooks: {} };
     const config = defineWalleConfig({ integrations: [marker] });
-    expect(config.integrations.length).toBeGreaterThan(1);
+    expect(config.integrations!.length).toBeGreaterThan(1);
     expect(config.integrations).toContain(marker);
   });
 
@@ -125,7 +135,7 @@ describe("defineWalleConfig", () => {
     const config = defineWalleConfig({
       vite: { build: { rollupOptions: { external: ["consumer-external"] } } },
     });
-    expect(config.vite.build.rollupOptions.external).toEqual(
+    expect(config.vite!.build!.rollupOptions!.external).toEqual(
       expect.arrayContaining(["@astrojs/compiler-rs", "consumer-external"])
     );
   });
@@ -139,8 +149,8 @@ describe("defineWalleConfig", () => {
       radii: { sm: "4px" },
     });
     const config = defineWalleConfig();
-    const themePlugin = config.vite.plugins.find((p: { name: string }) => p.name === "walle-theme");
-    const css = themePlugin!.load!("\0virtual:walle-theme.css") as string;
+    const themePlugin = findThemePlugin(config);
+    const css = themePlugin.load("\0virtual:walle-theme.css") as string;
     expect(css).toContain("--walle-color-brand: #123456;");
     expect(css).toContain("--walle-font-body: Inter;");
     expect(css).toContain("--walle-font-size-md: 1rem;");
@@ -150,15 +160,15 @@ describe("defineWalleConfig", () => {
 
   it("yields empty theme CSS when theme.json is absent", () => {
     const config = defineWalleConfig();
-    const themePlugin = config.vite.plugins.find((p: { name: string }) => p.name === "walle-theme");
-    expect(themePlugin!.load!("\0virtual:walle-theme.css")).toBe("");
+    const themePlugin = findThemePlugin(config);
+    expect(themePlugin.load("\0virtual:walle-theme.css")).toBe("");
   });
 
   it("yields empty theme CSS when theme.json is present but malformed", () => {
     fsExists = true;
     fsContent = "{not json";
     const config = defineWalleConfig();
-    const themePlugin = config.vite.plugins.find((p: { name: string }) => p.name === "walle-theme");
-    expect(themePlugin!.load!("\0virtual:walle-theme.css")).toBe("");
+    const themePlugin = findThemePlugin(config);
+    expect(themePlugin.load("\0virtual:walle-theme.css")).toBe("");
   });
 });

@@ -48,7 +48,7 @@ const OWN_KEYS = [
   "badge",
 ];
 
-const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
 const {
   title,
   content,
@@ -60,7 +60,7 @@ const {
   badge,
   publishDate,
   variant = "primary",
-} = own as Props;
+} = own as unknown as Props;
 
 const cardClasses = ["card", className].filter(Boolean).join(" ");
 

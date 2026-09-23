@@ -17,7 +17,7 @@ export interface Props
 
 const OWN_KEYS = ["title", "image", "reversed", "centered", "variant", "filled", "muted"];
 
-const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
 const {
   title,
   image = null,
@@ -26,7 +26,7 @@ const {
   filled = false,
   muted = false,
   reversed = false,
-} = own as Props;
+} = own as unknown as Props;
 ---
 
 <SectionWrapper centered={centered} variant={variant} filled={filled} muted={muted} {...rest}>
@@ -39,7 +39,7 @@ const {
       image && (
         <div class="image-container">
           <Image
-            src={image.src}
+            src={image.src as string}
             alt={image.alt}
             width={500}
             height={400}

@@ -46,7 +46,7 @@ const OWN_KEYS = [
   "muted",
 ];
 
-const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
 const {
   id,
   tagline,
@@ -59,7 +59,7 @@ const {
   variant,
   filled = false,
   muted = false,
-} = own as Props;
+} = own as unknown as Props;
 
 const hasTagline = Astro.slots.has("tagline") || Boolean(tagline);
 const hasTitle = Astro.slots.has("title") || Boolean(title);
@@ -120,7 +120,7 @@ const hasSubtitle = Astro.slots.has("subtitle") || Boolean(subtitle);
           ]}
         >
           <Image
-            src={image.src}
+            src={image.src as string}
             alt={image.alt}
             width={600}
             height={480}

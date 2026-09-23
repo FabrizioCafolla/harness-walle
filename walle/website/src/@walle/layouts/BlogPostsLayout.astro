@@ -3,7 +3,7 @@ import { card as BasicCard } from "virtual:walle-components";
 import CollectionFilters from "@walle/components/features/CollectionFilters.astro";
 import BaseLayout from "./BaseLayout.astro";
 import { formatDate, label, resolveInternalUrl } from "@walle/utils";
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
 
 export type { BlogPostsLayoutProps as Props } from "./types";
 
@@ -65,7 +65,7 @@ const allCategories: string[] = Array.from(
           </div>
         ) : (
           <div class="blog-layout__grid">
-            {sortedPosts.map((post: PostsEntry) => {
+            {sortedPosts.map((post: CollectionEntry<"posts">) => {
               const badge = post.data.tags?.length
                 ? { text: post.data.tags[0], variant: "secondary" as const }
                 : undefined;

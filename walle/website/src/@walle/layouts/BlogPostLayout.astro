@@ -85,7 +85,7 @@ const {
             )}
             {tags && tags.length > 0 && (
               <ul class="tags no-markers" aria-label={label("blog.tags")}>
-                {tags.map((tag) => (
+                {tags.map((tag: string) => (
                   <li>
                     <span class="tag">{tag}</span>
                   </li>

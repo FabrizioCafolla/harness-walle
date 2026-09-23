@@ -62,6 +62,8 @@ const targets = [
  * Regenerates all four schema files in memory, keyed by file name. Exported so both the CLI
  * entrypoint below and tests/unit/schemas-sync.test.ts share one code path instead of the
  * test re-implementing the generation logic.
+ *
+ * @returns {Record<string, object>}
  */
 export function generateSchemas() {
   const result = {};

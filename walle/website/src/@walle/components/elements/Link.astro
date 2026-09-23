@@ -55,7 +55,7 @@ const OWN_KEYS = [
   "class",
 ];
 
-const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
 const {
   href,
   target,
@@ -65,7 +65,7 @@ const {
   externalIcon = true,
   text,
   class: className,
-} = own as Props;
+} = own as unknown as Props;
 
 // External = absolute URL pointing at a different host than the site.
 const site = Astro.site?.host;

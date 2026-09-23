@@ -55,7 +55,7 @@ const OWN_KEYS = [
   "style",
 ];
 
-const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
 const {
   label,
   perView = 1,
@@ -72,7 +72,7 @@ const {
   class: className = "",
   id,
   style: styleProp,
-} = own as Props & { style?: string };
+} = own as unknown as Props & { style?: string };
 
 const previousLabel = t("carousel.previous", previousLabelProp);
 const nextLabel = t("carousel.next", nextLabelProp);
@@ -440,11 +440,14 @@ const closeIcon =
       next?.addEventListener("click", () => track.scrollBy({ left: step() }));
 
       sync();
+      // `onscrollend` is now a statically-declared HTMLElement property, so TS narrows this
+      // check to always-true and treats the fallback branch as unreachable — it still runs in
+      // browsers where scrollend support lags behind the type lib, so the runtime check stays.
       if ("onscrollend" in track) {
         track.addEventListener("scrollend", sync);
       } else {
         let raf = 0;
-        track.addEventListener(
+        (track as HTMLElement).addEventListener(
           "scroll",
           () => {
             cancelAnimationFrame(raf);

@@ -24,10 +24,16 @@ vi.mock("node:fs", () => ({
   readFileSync: () => fsContent,
 }));
 
+// defineWalleConfig() always sets vite.plugins to a plain array of walle's own plugin objects
+// (never a Promise/false/nested array as Vite's wider PluginOption allows), so this narrows the
+// type once instead of asserting through it at every call site.
+type ThemePlugin = { name: string; load: (id: string) => string | null };
+
 function themeCss(): string {
   const config = defineWalleConfig();
-  const themePlugin = config.vite.plugins.find((p: { name: string }) => p.name === "walle-theme");
-  return themePlugin!.load!("\0virtual:walle-theme.css") as string;
+  const plugins = config.vite!.plugins as unknown as ThemePlugin[];
+  const themePlugin = plugins.find((p) => p.name === "walle-theme")!;
+  return themePlugin.load("\0virtual:walle-theme.css") as string;
 }
 
 describe("generateThemeCss (D3 token table)", () => {

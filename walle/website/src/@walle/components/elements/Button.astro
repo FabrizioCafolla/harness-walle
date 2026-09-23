@@ -83,7 +83,7 @@ const OWN_KEYS = [
   "class",
 ];
 
-const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
 const {
   text,
   href,
@@ -97,7 +97,7 @@ const {
   disabled = false,
   type = "button",
   class: className,
-} = own as Props;
+} = own as unknown as Props;
 
 const buttonClasses = ["button", fullWidth ? "button-full-width" : "", className ?? ""]
   .filter(Boolean)
@@ -108,7 +108,7 @@ const Tag = isLink ? "a" : "button";
 
 const tagAttrs = isLink
   ? { href, target, rel: target === "_blank" ? "noopener" : undefined }
-  : { type, disabled, "aria-disabled": disabled ? "true" : undefined };
+  : { type, disabled, "aria-disabled": disabled ? ("true" as const) : undefined };
 ---
 
 <Tag

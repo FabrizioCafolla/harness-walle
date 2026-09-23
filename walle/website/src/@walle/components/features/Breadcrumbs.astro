@@ -34,8 +34,8 @@ export interface Props extends BaseProps<"nav"> {
 }
 
 const OWN_KEYS = ["items", "separator", "class"];
-const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
-const { items = [], class: className } = own as Props;
+const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
+const { items = [], class: className } = own as unknown as Props;
 ---
 
 <nav aria-label={label("breadcrumbs.nav")} class:list={["breadcrumbs", className]} {...rest}>

@@ -58,13 +58,13 @@ export interface Props {
 
 const OWN_KEYS = ["product", "availabilityLabels", "class", "variant"];
 
-const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
 const {
   product,
   availabilityLabels = {},
   class: className = "",
   variant = "primary",
-} = own as Props;
+} = own as unknown as Props;
 
 const labels = {
   out_of_stock: availabilityLabels.out_of_stock ?? "Out of stock",
