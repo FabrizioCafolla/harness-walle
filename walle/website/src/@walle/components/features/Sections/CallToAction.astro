@@ -6,9 +6,7 @@ import SectionWrapper from "./SectionWrapper.astro";
 import type { HeroAction } from "./Hero.astro";
 
 export interface Props
-  extends BaseProps<"section">,
-    VariantProps,
-    Pick<ModifierProps, "filled" | "muted"> {
+  extends BaseProps<"section">, VariantProps, Pick<ModifierProps, "filled" | "muted"> {
   /** Boxed card or full-width band. @default "card" */
   layout?: "card" | "banner";
   /** Section title. String prop or `title` slot (slot wins). */
@@ -71,7 +69,9 @@ const actionsInverse = filled === true;
     }
     {
       hasSubtitle && (
-        <p class="cta-subtitle">{Astro.slots.has("subtitle") ? <slot name="subtitle" /> : subtitle}</p>
+        <p class="cta-subtitle">
+          {Astro.slots.has("subtitle") ? <slot name="subtitle" /> : subtitle}
+        </p>
       )
     }
     {
@@ -99,8 +99,8 @@ const actionsInverse = filled === true;
     }
 
     /* Card layout paints the card's own box, not the section band behind it: the modifier's
-       background belongs to the card, so the text sits on the same color its foreground was
-       computed for. */
+           background belongs to the card, so the text sits on the same color its foreground was
+           computed for. */
     .section-wrapper.cta-layout-card {
       background: transparent;
     }

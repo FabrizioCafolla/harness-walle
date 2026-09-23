@@ -617,7 +617,9 @@ export class TableOfContentsManager {
       // ESC key to collapse TOC on mobile
       if (event.key === "Escape" && this.isMobile && this.tocContainer) {
         this.tocContainer.classList.add("collapsed");
-        this.announceToScreenReader(this.options.labels?.collapsed || "Table of contents collapsed");
+        this.announceToScreenReader(
+          this.options.labels?.collapsed || "Table of contents collapsed"
+        );
       }
     });
 

@@ -3,9 +3,7 @@ import type { BaseProps, VariantProps, ModifierProps } from "../../shared/types"
 import { splitProps, variantAttrs } from "../../shared/attrs";
 
 export interface Props
-  extends BaseProps<"section">,
-    VariantProps,
-    Pick<ModifierProps, "filled" | "muted"> {
+  extends BaseProps<"section">, VariantProps, Pick<ModifierProps, "filled" | "muted"> {
   /** Section id, for in-page anchors. */
   id?: string;
   /** Optional tagline shown above the title. String prop or `tagline` slot (slot wins). */
@@ -158,7 +156,7 @@ const hasSubtitle = Boolean(subtitleHtml) || Boolean(subtitle);
     }
 
     /* Modifiers map --variant-* tokens (D4) to the public properties above. `muted` is
-       declared before `filled` so that, if a consumer somehow sets both, `filled` wins. */
+           declared before `filled` so that, if a consumer somehow sets both, `filled` wins. */
     .section-wrapper[data-muted] {
       --wrapper-bg: var(--surface-alt);
     }

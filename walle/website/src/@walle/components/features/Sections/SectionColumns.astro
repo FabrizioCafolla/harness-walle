@@ -4,9 +4,7 @@ import { splitProps } from "../../shared/attrs";
 import SectionWrapper from "./SectionWrapper.astro";
 
 export interface Props
-  extends BaseProps<"section">,
-    VariantProps,
-    Pick<ModifierProps, "filled" | "muted"> {
+  extends BaseProps<"section">, VariantProps, Pick<ModifierProps, "filled" | "muted"> {
   /** Section title (optional) */
   title?: string;
 
@@ -30,15 +28,7 @@ export interface Props
   centered?: boolean;
 }
 
-const OWN_KEYS = [
-  "title",
-  "columns",
-  "minColumnWidth",
-  "centered",
-  "variant",
-  "filled",
-  "muted",
-];
+const OWN_KEYS = ["title", "columns", "minColumnWidth", "centered", "variant", "filled", "muted"];
 
 const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
 const {
@@ -71,7 +61,7 @@ const {
 <style>
   @layer walle.components {
     /* auto-fit + minmax: columns collapse to 1 on narrow viewports without JS
-       or breakpoint props; --columns caps the count on wide screens. */
+           or breakpoint props; --columns caps the count on wide screens. */
     .section-columns__grid {
       /* Public properties */
       --section-columns-gap: var(--space-xl);

@@ -59,7 +59,9 @@ function resolveEmbeddedComponent(key: string, value: string, root: string): str
       );
     }
     if (!existsSync(abs) || !statSync(abs).isFile()) {
-      throw new Error(`[walle] components.${key} points to "${value}", but that file does not exist.`);
+      throw new Error(
+        `[walle] components.${key} points to "${value}", but that file does not exist.`
+      );
     }
     return abs;
   }
@@ -292,7 +294,9 @@ function walleSlimBarrelsPlugin(root: string) {
           // components). Both are filtered by the barrel's own exported name, one per line.
           const exported =
             line.match(/export\s+\{\s*default\s+as\s+(\w+)\s*\}/) ||
-            line.match(/export\s+\{\s*\w+\s+as\s+(\w+)\s*\}\s+from\s+["']virtual:walle-components["']/);
+            line.match(
+              /export\s+\{\s*\w+\s+as\s+(\w+)\s*\}\s+from\s+["']virtual:walle-components["']/
+            );
           return !exported || keep.has(exported[1]);
         })
         .join("\n");

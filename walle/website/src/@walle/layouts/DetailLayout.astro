@@ -1,5 +1,8 @@
 ---
-import { breadcrumbs as Breadcrumbs, pageHeader as SectionHeaderStandard } from "virtual:walle-components";
+import {
+  breadcrumbs as Breadcrumbs,
+  pageHeader as SectionHeaderStandard,
+} from "virtual:walle-components";
 import StructuredData from "@walle/components/features/StructuredData.astro";
 import type { ProductData } from "@walle/components/features/Card/ProductCard.astro";
 import BaseLayout from "./BaseLayout.astro";
@@ -31,11 +34,7 @@ const {
 ---
 
 <BaseLayout headerTitle={title} headerDescription={description} headerOgImage={ogImage}>
-  {
-    product && (
-      <StructuredData data={productJsonLd(product as ProductData, Astro.url.href)} />
-    )
-  }
+  {product && <StructuredData data={productJsonLd(product as ProductData, Astro.url.href)} />}
   <SectionHeaderStandard title={title} variant="primary" filled={true}>
     <div class:list={["detail-badges", `detail-badges--${badgesAlign}`]}>
       <slot name="badges" />
@@ -74,125 +73,125 @@ const {
 
 <style>
   @layer walle.components {
-  .detail-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.7rem;
-    align-items: center;
-    justify-content: flex-start;
-  }
+    .detail-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      align-items: center;
+      justify-content: flex-start;
+    }
 
-  .detail-badges--center {
-    justify-content: center;
-  }
+    .detail-badges--center {
+      justify-content: center;
+    }
 
-  .detail-badges--end {
-    justify-content: flex-end;
-  }
+    .detail-badges--end {
+      justify-content: flex-end;
+    }
 
-  .detail-badges:empty {
-    display: none;
-  }
+    .detail-badges:empty {
+      display: none;
+    }
 
-  .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    color: var(--link);
-    font-weight: 500;
-    font-size: 0.9rem;
-    text-decoration: none;
-    margin-bottom: var(--space-sm);
-    transition: color var(--transition);
-  }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--link);
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-decoration: none;
+      margin-bottom: var(--space-sm);
+      transition: color var(--transition);
+    }
 
-  .back-link:hover {
-    color: var(--link-hover);
-  }
+    .back-link:hover {
+      color: var(--link-hover);
+    }
 
-  .back-link:hover .back-link__icon {
-    transform: translateX(-2px);
-  }
+    .back-link:hover .back-link__icon {
+      transform: translateX(-2px);
+    }
 
-  .back-link__icon {
-    width: 0.85em;
-    height: 0.85em;
-    transition: transform var(--transition);
-  }
+    .back-link__icon {
+      width: 0.85em;
+      height: 0.85em;
+      transition: transform var(--transition);
+    }
 
-  .detail-section {
-    padding: var(--space-xl) 0 var(--space-4xl);
-  }
+    .detail-section {
+      padding: var(--space-xl) 0 var(--space-4xl);
+    }
 
-  .detail-container {
-    display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-    gap: var(--space-2xl);
-    align-items: start;
-    margin-top: var(--space-md);
-  }
-
-  .detail-main {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xl);
-  }
-
-  .detail-aside {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-  }
-
-  .detail-aside:empty {
-    display: none;
-  }
-
-  /* Full-width row under the main/aside grid (e.g. product description + upsell). */
-  .detail-below {
-    margin-top: var(--space-2xl);
-  }
-
-  .detail-below:empty {
-    display: none;
-  }
-
-  /* Tablet: aside moves below the main column, two cards per row */
-  @media (max-width: 900px) {
     .detail-container {
-      grid-template-columns: 1fr;
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      gap: var(--space-2xl);
+      align-items: start;
+      margin-top: var(--space-md);
+    }
+
+    .detail-main {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xl);
     }
 
     .detail-aside {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-direction: column;
       gap: var(--space-lg);
     }
 
     .detail-aside:empty {
       display: none;
     }
-  }
 
-  /* Mobile: single column */
-  @media (max-width: 580px) {
-    .detail-section {
-      padding: var(--space-lg) 0 var(--space-3xl);
+    /* Full-width row under the main/aside grid (e.g. product description + upsell). */
+    .detail-below {
+      margin-top: var(--space-2xl);
     }
 
-    .detail-container {
-      margin-top: var(--space-sm);
+    .detail-below:empty {
+      display: none;
     }
 
-    .detail-aside {
-      grid-template-columns: 1fr;
-    }
-  }
+    /* Tablet: aside moves below the main column, two cards per row */
+    @media (max-width: 900px) {
+      .detail-container {
+        grid-template-columns: 1fr;
+      }
 
-  @media (prefers-reduced-motion: reduce) {
-    .back-link:hover .back-link__icon {
-      transform: none;
+      .detail-aside {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-lg);
+      }
+
+      .detail-aside:empty {
+        display: none;
+      }
     }
-  }
+
+    /* Mobile: single column */
+    @media (max-width: 580px) {
+      .detail-section {
+        padding: var(--space-lg) 0 var(--space-3xl);
+      }
+
+      .detail-container {
+        margin-top: var(--space-sm);
+      }
+
+      .detail-aside {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .back-link:hover .back-link__icon {
+        transform: none;
+      }
+    }
   }
 </style>

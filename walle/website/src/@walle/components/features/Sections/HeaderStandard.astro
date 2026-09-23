@@ -4,10 +4,7 @@ import type { BaseProps, VariantProps, ModifierProps } from "../../shared/types"
 import { splitProps } from "../../shared/attrs";
 import SectionWrapper from "./SectionWrapper.astro";
 
-export interface Props
-  extends BaseProps<"section">,
-    VariantProps,
-    Pick<ModifierProps, "filled"> {
+export interface Props extends BaseProps<"section">, VariantProps, Pick<ModifierProps, "filled"> {
   /** Main page title (h1) */
   title: string;
   /** Subtitle or page description */
@@ -23,15 +20,7 @@ export interface Props
   centered?: boolean;
 }
 
-const OWN_KEYS = [
-  "title",
-  "subtitle",
-  "image",
-  "imageRight",
-  "variant",
-  "filled",
-  "centered",
-];
+const OWN_KEYS = ["title", "subtitle", "image", "imageRight", "variant", "filled", "centered"];
 
 const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
 const {

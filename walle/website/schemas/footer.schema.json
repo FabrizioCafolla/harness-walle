@@ -35,9 +35,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "url"
-      ],
+      "required": ["url"],
       "additionalProperties": false
     },
     "items": {
@@ -56,22 +54,14 @@
           },
           "target": {
             "type": "string",
-            "enum": [
-              "_blank",
-              "_self"
-            ]
+            "enum": ["_blank", "_self"]
           }
         },
-        "required": [
-          "url"
-        ],
+        "required": ["url"],
         "additionalProperties": false
       }
     }
   },
-  "required": [
-    "logo",
-    "items"
-  ],
+  "required": ["logo", "items"],
   "additionalProperties": false
 }

@@ -8,7 +8,8 @@ vi.mock("@walle/config", () => ({
   default: { app: { website: { language: "it-IT" } } },
 }));
 
-const { default: ProductBuyCard } = await import("../../../src/@walle/commerce/ProductBuyCard.astro");
+const { default: ProductBuyCard } =
+  await import("../../../src/@walle/commerce/ProductBuyCard.astro");
 
 const product: ShopifyProduct = {
   id: "gid://shopify/Product/1",

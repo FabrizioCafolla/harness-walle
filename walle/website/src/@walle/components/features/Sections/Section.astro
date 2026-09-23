@@ -5,9 +5,7 @@ import { splitProps } from "../../shared/attrs";
 import SectionWrapper from "./SectionWrapper.astro";
 
 export interface Props
-  extends BaseProps<"section">,
-    VariantProps,
-    Pick<ModifierProps, "filled" | "muted"> {
+  extends BaseProps<"section">, VariantProps, Pick<ModifierProps, "filled" | "muted"> {
   title: string;
   image?: {
     src: ImageMetadata | string;
@@ -37,18 +35,20 @@ const {
       <h2 class="section-title">{Astro.slots.has("title") ? <slot name="title" /> : title}</h2>
       <slot />
     </div>
-    {image && (
-      <div class="image-container">
-        <Image
-          src={image.src}
-          alt={image.alt}
-          width={500}
-          height={400}
-          loading="lazy"
-          class="section-image"
-        />
-      </div>
-    )}
+    {
+      image && (
+        <div class="image-container">
+          <Image
+            src={image.src}
+            alt={image.alt}
+            width={500}
+            height={400}
+            loading="lazy"
+            class="section-image"
+          />
+        </div>
+      )
+    }
   </div>
 </SectionWrapper>
 

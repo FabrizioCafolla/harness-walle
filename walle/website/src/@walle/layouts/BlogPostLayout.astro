@@ -1,6 +1,9 @@
 ---
 import BlogReadingProgress from "@walle/components/features/Blog/BlogReadingProgress.astro";
-import { toc as BlogTableOfContents, pageHeader as SectionHeaderStandard } from "virtual:walle-components";
+import {
+  toc as BlogTableOfContents,
+  pageHeader as SectionHeaderStandard,
+} from "virtual:walle-components";
 import StructuredData from "@walle/components/features/StructuredData.astro";
 import BaseLayout from "./BaseLayout.astro";
 import { formatDate, label } from "@walle/utils";
@@ -51,7 +54,12 @@ const {
       </div>
     ) : (
       <>
-        <SectionHeaderStandard title={title} subtitle={description} variant="secondary" filled={true}>
+        <SectionHeaderStandard
+          title={title}
+          subtitle={description}
+          variant="secondary"
+          filled={true}
+        >
           <div class="meta-wrapper">
             {(author || publishDate || readingTime) && (
               <ul class="meta-info no-markers" aria-label={label("blog.info")}>
@@ -147,7 +155,7 @@ const {
       gap: 1rem;
       font-size: 0.875rem;
       /* Inherits the header's own foreground (SectionWrapper's --wrapper-fg): a fixed
-         muted-gray here loses contrast once the header is filled with a variant color. */
+                     muted-gray here loses contrast once the header is filled with a variant color. */
       color: inherit;
       flex-wrap: wrap;
       list-style: none;

@@ -39,10 +39,7 @@
           "maximum": 9007199254740991
         }
       },
-      "required": [
-        "title",
-        "description"
-      ],
+      "required": ["title", "description"],
       "additionalProperties": false
     },
     "astro": {
@@ -56,11 +53,7 @@
         },
         "trailingSlash": {
           "type": "string",
-          "enum": [
-            "always",
-            "never",
-            "ignore"
-          ]
+          "enum": ["always", "never", "ignore"]
         },
         "analyticsScriptContent": {
           "type": "string"
@@ -73,16 +66,11 @@
         },
         "adapter": {
           "type": "string",
-          "enum": [
-            "node"
-          ]
+          "enum": ["node"]
         },
         "ssr": {}
       },
-      "required": [
-        "baseUrl",
-        "basePath"
-      ],
+      "required": ["baseUrl", "basePath"],
       "additionalProperties": false
     },
     "components": {
@@ -120,12 +108,7 @@
         },
         "display": {
           "type": "string",
-          "enum": [
-            "standalone",
-            "fullscreen",
-            "minimal-ui",
-            "browser"
-          ]
+          "enum": ["standalone", "fullscreen", "minimal-ui", "browser"]
         },
         "startUrl": {
           "type": "string"
@@ -151,10 +134,7 @@
                 "type": "string"
               }
             },
-            "required": [
-              "src",
-              "sizes"
-            ],
+            "required": ["src", "sizes"],
             "additionalProperties": false
           }
         },
@@ -170,11 +150,7 @@
         "mode": {
           "default": "off",
           "type": "string",
-          "enum": [
-            "off",
-            "catalog",
-            "shop"
-          ]
+          "enum": ["off", "catalog", "shop"]
         },
         "cartInNavbar": {
           "type": "boolean"
@@ -414,9 +390,6 @@
       "additionalProperties": false
     }
   },
-  "required": [
-    "website",
-    "astro"
-  ],
+  "required": ["website", "astro"],
   "additionalProperties": false
 }

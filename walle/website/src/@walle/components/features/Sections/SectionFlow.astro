@@ -12,9 +12,7 @@ export interface FlowStep {
 }
 
 export interface Props
-  extends BaseProps<"section">,
-    VariantProps,
-    Pick<ModifierProps, "filled" | "muted"> {
+  extends BaseProps<"section">, VariantProps, Pick<ModifierProps, "filled" | "muted"> {
   title: string;
   steps: FlowStep[];
   centered?: boolean;
@@ -49,17 +47,19 @@ const {
 >
   <slot name="title" slot="title" />
   <ol class="flow-steps" aria-label={label}>
-    {steps.map((step) => (
-      <li class="flow-step">
-        <div class="step-number" aria-hidden="true">
-          {step.icon ? <Icon name={step.icon} aria-hidden="true" size={20} /> : step.number}
-        </div>
-        <div class="step-content">
-          <h3>{step.title}</h3>
-          <p>{step.description}</p>
-        </div>
-      </li>
-    ))}
+    {
+      steps.map((step) => (
+        <li class="flow-step">
+          <div class="step-number" aria-hidden="true">
+            {step.icon ? <Icon name={step.icon} aria-hidden="true" size={20} /> : step.number}
+          </div>
+          <div class="step-content">
+            <h3>{step.title}</h3>
+            <p>{step.description}</p>
+          </div>
+        </li>
+      ))
+    }
   </ol>
   <slot />
 </SectionWrapper>
@@ -93,7 +93,7 @@ const {
       --section-flow-step-fg: var(--variant-fg);
 
       /* Circular badge shape, not a themeable radius: internal, not part of the public
-         radius scale (tokens.css keeps that scale pill-free by design). */
+                 radius scale (tokens.css keeps that scale pill-free by design). */
       --_step-number-radius: 50%;
 
       flex-shrink: 0;
@@ -114,7 +114,7 @@ const {
 
     .step-content {
       /* Always its own surface/text pair: readable regardless of the wrapping section's
-         filled/muted foreground color. */
+                 filled/muted foreground color. */
       background: var(--surface);
       color: var(--text);
       border: 1px solid var(--border);
@@ -126,7 +126,7 @@ const {
 
     .step-content h3 {
       /* Step titles are h3 for correct heading order (the section title is h2);
-         keep the compact visual size the design used. */
+                 keep the compact visual size the design used. */
       font-size: 1.25rem;
       margin-top: 0;
       margin-bottom: 0.5rem;

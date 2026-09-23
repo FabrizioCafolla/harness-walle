@@ -87,89 +87,89 @@ const inStock = product.variants.nodes.some((v) => v.availableForSale);
 
 <style>
   @layer walle.components {
-  .buy-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    background: var(--surface);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-md);
-    overflow: hidden;
-    transition:
-      transform var(--transition),
-      box-shadow var(--transition);
-  }
+    .buy-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      transition:
+        transform var(--transition),
+        box-shadow var(--transition);
+    }
 
-  /* Stretched link: the title's ::after covers the whole card. */
-  .buy-card__title a::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-  }
+    /* Stretched link: the title's ::after covers the whole card. */
+    .buy-card__title a::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
 
-  /* Buy controls sit above the stretched link so they stay clickable, and anchor to the
-     bottom of the card so price + add-to-cart line up across a grid of cards. */
-  .buy-card__buy {
-    position: relative;
-    z-index: 1;
-    margin-top: auto;
-  }
+    /* Buy controls sit above the stretched link so they stay clickable, and anchor to the
+         bottom of the card so price + add-to-cart line up across a grid of cards. */
+    .buy-card__buy {
+      position: relative;
+      z-index: 1;
+      margin-top: auto;
+    }
 
-  .buy-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-  }
+    .buy-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
 
-  .buy-card__media {
-    position: relative;
-    display: block;
-    aspect-ratio: 1;
-    background: var(--surface-alt);
-  }
+    .buy-card__media {
+      position: relative;
+      display: block;
+      aspect-ratio: 1;
+      background: var(--surface-alt);
+    }
 
-  .buy-card__media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
+    .buy-card__media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
 
-  .buy-card__badge {
-    position: absolute;
-    top: var(--space-sm);
-    left: var(--space-sm);
-  }
+    .buy-card__badge {
+      position: absolute;
+      top: var(--space-sm);
+      left: var(--space-sm);
+    }
 
-  .buy-card__body {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-    padding: var(--space-lg);
-    flex: 1;
-  }
+    .buy-card__body {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      padding: var(--space-lg);
+      flex: 1;
+    }
 
-  .buy-card__type {
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-muted);
-  }
+    .buy-card__type {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
 
-  .buy-card__title {
-    font-size: 1.1rem;
-    margin: 0;
-  }
+    .buy-card__title {
+      font-size: 1.1rem;
+      margin: 0;
+    }
 
-  .buy-card__title a {
-    color: var(--text);
-    text-decoration: none;
-  }
+    .buy-card__title a {
+      color: var(--text);
+      text-decoration: none;
+    }
 
-  .buy-card__title a:hover {
-    color: var(--primary);
-  }
+    .buy-card__title a:hover {
+      color: var(--primary);
+    }
   }
 </style>

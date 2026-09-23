@@ -151,7 +151,8 @@ const initialSelected = Object.fromEntries(
             &minus;
           </button>
           <span data-qty-value aria-live="polite">
-            1
+            {" "}
+            1{" "}
           </span>
           <button type="button" data-qty-inc aria-label={l.increaseQuantity}>
             +
@@ -180,210 +181,210 @@ const initialSelected = Object.fromEntries(
 
 <style>
   @layer walle.components {
-  .variant-picker {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-  }
+    .variant-picker {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
 
-  .vp-option {
-    border: none;
-    padding: 0;
-    margin: 0;
-  }
+    .vp-option {
+      border: none;
+      padding: 0;
+      margin: 0;
+    }
 
-  .vp-legend {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    margin-bottom: var(--space-xs);
-    padding: 0;
-  }
+    .vp-legend {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: var(--space-xs);
+      padding: 0;
+    }
 
-  .vp-values {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs);
-  }
+    .vp-values {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
 
-  .vp-chip {
-    position: relative;
-    display: inline-flex;
-  }
+    .vp-chip {
+      position: relative;
+      display: inline-flex;
+    }
 
-  .vp-chip input {
-    position: absolute;
-    opacity: 0;
-    inset: 0;
-    margin: 0;
-    cursor: pointer;
-  }
+    .vp-chip input {
+      position: absolute;
+      opacity: 0;
+      inset: 0;
+      margin: 0;
+      cursor: pointer;
+    }
 
-  .vp-chip span {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 2.75rem;
-    height: 2.5rem;
-    padding: 0 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    background: var(--surface);
-    color: var(--text);
-    font-size: 0.95rem;
-    transition:
-      border-color var(--transition),
-      background var(--transition);
-  }
+    .vp-chip span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 2.75rem;
+      height: 2.5rem;
+      padding: 0 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.95rem;
+      transition:
+        border-color var(--transition),
+        background var(--transition);
+    }
 
-  .vp-chip input:checked + span {
-    border-color: var(--primary);
-    background: var(--primary);
-    color: var(--white);
-  }
+    .vp-chip input:checked + span {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: var(--white);
+    }
 
-  .vp-chip input:focus-visible + span {
-    outline: 2px solid var(--focus-ring);
-    outline-offset: 2px;
-  }
+    .vp-chip input:focus-visible + span {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
 
-  /* Sold-out option value */
-  .vp-chip--out span {
-    color: var(--gray-dark);
-    text-decoration: line-through;
-    cursor: not-allowed;
-    background: var(--surface-alt);
-  }
+    /* Sold-out option value */
+    .vp-chip--out span {
+      color: var(--gray-dark);
+      text-decoration: line-through;
+      cursor: not-allowed;
+      background: var(--surface-alt);
+    }
 
-  .vp-price {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-sm);
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text);
-  }
+    .vp-price {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-sm);
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+    }
 
-  .vp-compare {
-    font-size: 1rem;
-    font-weight: 400;
-    color: var(--text-muted);
-  }
+    .vp-compare {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
 
-  .vp-discount {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--white);
-    background: var(--secondary);
-    border-radius: var(--radius-sm);
-    padding: 0.1rem 0.4rem;
-  }
+    .vp-discount {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--white);
+      background: var(--secondary);
+      border-radius: var(--radius-sm);
+      padding: 0.1rem 0.4rem;
+    }
 
-  .vp-discount[hidden] {
-    display: none;
-  }
+    .vp-discount[hidden] {
+      display: none;
+    }
 
-  .vp-status {
-    margin: 0;
-    font-size: 0.9rem;
-    color: var(--secondary);
-  }
+    .vp-status {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--secondary);
+    }
 
-  .vp-status[data-out] {
-    color: var(--gray-dark);
-  }
+    .vp-status[data-out] {
+      color: var(--gray-dark);
+    }
 
-  .vp-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-  }
+    .vp-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
 
-  .vp-qty {
-    display: inline-flex;
-    align-items: center;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-  }
+    .vp-qty {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
 
-  .vp-qty button {
-    width: 40px;
-    height: 44px;
-    border: none;
-    background: var(--surface);
-    color: var(--text);
-    font-size: 1.1rem;
-    cursor: pointer;
-  }
+    .vp-qty button {
+      width: 40px;
+      height: 44px;
+      border: none;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
 
-  .vp-qty button:hover {
-    background: var(--surface-alt);
-  }
+    .vp-qty button:hover {
+      background: var(--surface-alt);
+    }
 
-  .vp-qty [data-qty-value] {
-    min-width: 2rem;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-  }
+    .vp-qty [data-qty-value] {
+      min-width: 2rem;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
 
-  .vp-add {
-    /* Public properties */
-    --cart-add-bg: var(--primary);
-    --cart-add-bg-hover: var(--primary-dark);
+    .vp-add {
+      /* Public properties */
+      --cart-add-bg: var(--primary);
+      --cart-add-bg-hover: var(--primary-dark);
 
-    flex: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    appearance: none;
-    border: none;
-    border-radius: var(--radius-md);
-    background: var(--cart-add-bg);
-    color: var(--white);
-    font-size: 1rem;
-    font-weight: 600;
-    min-height: 44px;
-    padding: 0.6rem 1.25rem;
-    cursor: pointer;
-    transition: background var(--transition);
-  }
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      appearance: none;
+      border: none;
+      border-radius: var(--radius-md);
+      background: var(--cart-add-bg);
+      color: var(--white);
+      font-size: 1rem;
+      font-weight: 600;
+      min-height: 44px;
+      padding: 0.6rem 1.25rem;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
 
-  .vp-add__icon {
-    display: inline-flex;
-  }
+    .vp-add__icon {
+      display: inline-flex;
+    }
 
-  .vp-add__icon :global(svg) {
-    width: 1.2rem;
-    height: 1.2rem;
-  }
+    .vp-add__icon :global(svg) {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
 
-  .vp-add:hover:not(:disabled) {
-    background: var(--cart-add-bg-hover);
-  }
+    .vp-add:hover:not(:disabled) {
+      background: var(--cart-add-bg-hover);
+    }
 
-  .vp-add:disabled {
-    opacity: var(--disabled-opacity);
-    cursor: not-allowed;
-  }
+    .vp-add:disabled {
+      opacity: var(--disabled-opacity);
+      cursor: not-allowed;
+    }
 
-  /* Compact (inside a product card) */
-  .variant-picker--compact {
-    gap: var(--space-sm);
-  }
-  .variant-picker--compact .vp-price {
-    font-size: 1.2rem;
-  }
-  .variant-picker--compact .vp-chip span {
-    min-width: 2.25rem;
-    height: 2rem;
-    font-size: 0.85rem;
-  }
-  .variant-picker--compact .vp-status {
-    font-size: 0.8rem;
-  }
+    /* Compact (inside a product card) */
+    .variant-picker--compact {
+      gap: var(--space-sm);
+    }
+    .variant-picker--compact .vp-price {
+      font-size: 1.2rem;
+    }
+    .variant-picker--compact .vp-chip span {
+      min-width: 2.25rem;
+      height: 2rem;
+      font-size: 0.85rem;
+    }
+    .variant-picker--compact .vp-status {
+      font-size: 0.8rem;
+    }
   }
 </style>
 

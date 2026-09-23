@@ -13,9 +13,7 @@ export interface HeroAction {
 }
 
 export interface Props
-  extends BaseProps<"section">,
-    VariantProps,
-    Pick<ModifierProps, "filled" | "muted"> {
+  extends BaseProps<"section">, VariantProps, Pick<ModifierProps, "filled" | "muted"> {
   /** Optional tagline shown above the title. String prop or `tagline` slot (slot wins). */
   tagline?: string;
   /** Hero title, rendered as the page h1 when present. String prop or `title` slot (slot wins). */
@@ -77,16 +75,13 @@ const hasSubtitle = Astro.slots.has("subtitle") || Boolean(subtitle);
   {...rest}
 >
   <slot name="background" slot="background" />
-  <div
-    class:list={[
-      "hero-content",
-      { "hero-content-image": image },
-    ]}
-  >
+  <div class:list={["hero-content", { "hero-content-image": image }]}>
     <div class="hero-text">
       {
         hasTagline && (
-          <p class="hero-tagline">{Astro.slots.has("tagline") ? <slot name="tagline" /> : tagline}</p>
+          <p class="hero-tagline">
+            {Astro.slots.has("tagline") ? <slot name="tagline" /> : tagline}
+          </p>
         )
       }
       {
@@ -96,7 +91,9 @@ const hasSubtitle = Astro.slots.has("subtitle") || Boolean(subtitle);
       }
       {
         hasSubtitle && (
-          <p class="hero-subtitle">{Astro.slots.has("subtitle") ? <slot name="subtitle" /> : subtitle}</p>
+          <p class="hero-subtitle">
+            {Astro.slots.has("subtitle") ? <slot name="subtitle" /> : subtitle}
+          </p>
         )
       }
       {
@@ -114,11 +111,26 @@ const hasSubtitle = Astro.slots.has("subtitle") || Boolean(subtitle);
         )
       }
     </div>
-    {image && (
-      <div class:list={["hero-image-container", { "hero-image-container-first": imagePosition === "start" }]}>
-        <Image src={image.src} alt={image.alt} width={600} height={480} loading="eager" fetchpriority="high" class="hero-image" />
-      </div>
-    )}
+    {
+      image && (
+        <div
+          class:list={[
+            "hero-image-container",
+            { "hero-image-container-first": imagePosition === "start" },
+          ]}
+        >
+          <Image
+            src={image.src}
+            alt={image.alt}
+            width={600}
+            height={480}
+            loading="eager"
+            fetchpriority="high"
+            class="hero-image"
+          />
+        </div>
+      )
+    }
   </div>
 </SectionWrapper>
 
