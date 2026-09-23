@@ -27,6 +27,7 @@ SCENARIOS=(
   "Old .walle.config.json migrates to .harness-walle/manifest.json on update|scenario_walle_config_migration"
   ".vscode/ marker injection (fresh init + consumer edits survive update)|scenario_vscode_inject"
   ".husky/ seeded at init, consumer edits survive update|scenario_husky_seed"
+  "Commerce off: no cart script/styles, no /products route, no Storefront request|scenario_commerce_off"
 )
 
 pass=0 failed=0 skipped=0
