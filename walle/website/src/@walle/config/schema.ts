@@ -177,6 +177,15 @@ const commerceSchema = z
     mode: z.enum(["off", "catalog", "shop"]).default("off"),
     cartInNavbar: z.boolean().optional(),
     showAddToCartOnCards: z.boolean().optional(),
+    // Site overrides for the two injected commerce routes (D10) — `./`-prefixed paths under
+    // src/, same validation as `components.*`. Absent = walle's own managed pages.
+    pages: z
+      .object({
+        list: z.string().optional(),
+        detail: z.string().optional(),
+      })
+      .strict()
+      .optional(),
     // Replaced by `commerce.mode === "shop"`.
     showBuyButton: removedKey("commerce.mode"),
     // Replaced by `website.language`: one locale for the whole site, not a commerce-only one.

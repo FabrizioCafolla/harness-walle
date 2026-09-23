@@ -156,158 +156,160 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
 </DetailLayout>
 
 <style>
-  /* Image sizing is owned by the Carousel (fit="uniform" by default). */
-  .product-gallery :global(.pg-slide) {
-    background: var(--surface-alt);
-    border-radius: var(--radius-lg);
-  }
-
-  .product-below {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2xl);
-  }
-
-  /* Keep the prose to a comfortable measure; the upsell grid below stays full-width. */
-  .product-body {
-    max-width: 70ch;
-  }
-
-  .product-body :global(h3) {
-    font-size: 1.25rem;
-    margin-top: var(--space-xl);
-  }
-
-  .product-body :global(ul) {
-    padding-left: 1.2rem;
-    color: var(--text-muted);
-  }
-
-  .upsell {
-    border-top: 1px solid var(--border);
-    padding-top: var(--space-xl);
-  }
-
-  .upsell h2 {
-    font-size: 1.4rem;
-  }
-
-  .upsell__grid {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: var(--space-lg);
-  }
-
-  .upsell__card {
-    display: block;
-    text-decoration: none;
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    transition:
-      border-color var(--transition),
-      box-shadow var(--transition);
-  }
-
-  .upsell__card:hover {
-    border-color: var(--primary);
-    box-shadow: var(--shadow-md);
-  }
-
-  .upsell__card img {
-    width: 100%;
-    height: 140px;
-    object-fit: cover;
-    display: block;
-  }
-
-  .upsell__title {
-    display: block;
-    padding: var(--space-sm) var(--space-md) 0;
-    font-size: 0.95rem;
-    font-weight: 600;
-  }
-
-  .upsell__price {
-    display: block;
-    padding: 0 var(--space-md) var(--space-sm);
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--text);
-  }
-
-  .purchase-card {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-    padding: var(--space-lg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    background: var(--surface);
-    position: sticky;
-    top: 90px;
-    /* Anchor jumps from the sticky CTA clear the fixed site header. */
-    scroll-margin-top: 84px;
-  }
-
-  .purchase-card__title {
-    font-size: 1.2rem;
-    margin: 0;
-  }
-
-  .purchase-card__note {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin: 0;
-  }
-
-  /* Nike-style sticky add-to-cart bar — mobile only, a single full-width button revealed by
-     JS when the buy box is off-screen. Tapping it scrolls to the buy box so the shopper picks
-     size/colour there. Works without JS too (it just stays hidden). */
-  .pdp-sticky {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 950;
-    display: none;
-    padding: 0.6rem 1rem;
-    padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
-  }
-
-  .pdp-sticky__cta {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-height: 48px;
-    padding: 0 1.5rem;
-    border-radius: var(--radius-md);
-    background: var(--primary);
-    color: var(--white);
-    font-weight: 600;
-    text-decoration: none;
-  }
-
-  .pdp-sticky__cta:hover {
-    background: var(--primary-dark);
-  }
-
-  @media (max-width: 900px) {
-    .purchase-card {
-      position: static;
+  @layer walle.components {
+    /* Image sizing is owned by the Carousel (fit="uniform" by default). */
+    .product-gallery :global(.pg-slide) {
+      background: var(--surface-alt);
+      border-radius: var(--radius-lg);
     }
 
-    /* Revealed by JS (removes [hidden]); on desktop it always stays display:none. */
-    .pdp-sticky:not([hidden]) {
+    .product-below {
       display: flex;
+      flex-direction: column;
+      gap: var(--space-2xl);
+    }
+
+    /* Keep the prose to a comfortable measure; the upsell grid below stays full-width. */
+    .product-body {
+      max-width: 70ch;
+    }
+
+    .product-body :global(h3) {
+      font-size: 1.25rem;
+      margin-top: var(--space-xl);
+    }
+
+    .product-body :global(ul) {
+      padding-left: 1.2rem;
+      color: var(--text-muted);
+    }
+
+    .upsell {
+      border-top: 1px solid var(--border);
+      padding-top: var(--space-xl);
+    }
+
+    .upsell h2 {
+      font-size: 1.4rem;
+    }
+
+    .upsell__grid {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: var(--space-lg);
+    }
+
+    .upsell__card {
+      display: block;
+      text-decoration: none;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition:
+        border-color var(--transition),
+        box-shadow var(--transition);
+    }
+
+    .upsell__card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .upsell__card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .upsell__title {
+      display: block;
+      padding: var(--space-sm) var(--space-md) 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .upsell__price {
+      display: block;
+      padding: 0 var(--space-md) var(--space-sm);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .purchase-card {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+      padding: var(--space-lg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      position: sticky;
+      top: 90px;
+      /* Anchor jumps from the sticky CTA clear the fixed site header. */
+      scroll-margin-top: 84px;
+    }
+
+    .purchase-card__title {
+      font-size: 1.2rem;
+      margin: 0;
+    }
+
+    .purchase-card__note {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* Nike-style sticky add-to-cart bar — mobile only, a single full-width button revealed by
+       JS when the buy box is off-screen. Tapping it scrolls to the buy box so the shopper picks
+       size/colour there. Works without JS too (it just stays hidden). */
+    .pdp-sticky {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 950;
+      display: none;
+      padding: 0.6rem 1rem;
+      padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .pdp-sticky__cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 48px;
+      padding: 0 1.5rem;
+      border-radius: var(--radius-md);
+      background: var(--primary);
+      color: var(--white);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .pdp-sticky__cta:hover {
+      background: var(--primary-dark);
+    }
+
+    @media (max-width: 900px) {
+      .purchase-card {
+        position: static;
+      }
+
+      /* Revealed by JS (removes [hidden]); on desktop it always stays display:none. */
+      .pdp-sticky:not([hidden]) {
+        display: flex;
+      }
     }
   }
 </style>

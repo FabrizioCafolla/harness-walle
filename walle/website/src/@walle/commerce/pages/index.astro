@@ -106,32 +106,34 @@ function toCard(p: ShopifyProduct) {
 </BaseLayout>
 
 <style>
-  .products {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: var(--space-2xl) var(--space-xl) var(--space-4xl);
-  }
+  @layer walle.components {
+    .products {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--space-2xl) var(--space-xl) var(--space-4xl);
+    }
 
-  .products__note {
-    background: var(--surface-alt);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: var(--space-md) var(--space-lg);
-    font-size: 0.95rem;
-    color: var(--text-muted);
-    margin-bottom: var(--space-xl);
-  }
+    .products__note {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md) var(--space-lg);
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: var(--space-xl);
+    }
 
-  .products__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: var(--space-xl);
-    align-items: start;
-  }
+    .products__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: var(--space-xl);
+      align-items: start;
+    }
 
-  .products__empty {
-    text-align: center;
-    color: var(--text-muted);
-    padding: var(--space-4xl) 0;
+    .products__empty {
+      text-align: center;
+      color: var(--text-muted);
+      padding: var(--space-4xl) 0;
+    }
   }
 </style>

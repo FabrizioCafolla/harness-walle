@@ -6,7 +6,7 @@ import node from "@astrojs/node";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { defineConfig, fontProviders } from "astro/config";
-import type { AstroUserConfig } from "astro";
+import type { AstroIntegration, AstroUserConfig, HookParameters } from "astro";
 import icon from "astro-icon";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, resolve, sep } from "node:path";
@@ -41,30 +41,37 @@ const WALLE_COMPONENT_PATHS: Record<string, Record<string, string>> = {
 };
 
 /**
- * Resolves one `components.<key>` entry to an absolute file path: a recognized built-in name
- * to its walle source file, or a `./`-prefixed value to a site file that must exist, as a file
- * (not a directory), under the project's `src/`. Throws naming the key and the offending value
+ * Resolves a `./`-prefixed site override to an absolute file path that must exist, as a file
+ * (not a directory), under the project's `src/`. Throws naming `label` and the offending value
  * otherwise (never a silent fallback), so an invalid override fails the build instead of
- * surfacing as a missing component at request time. The caller has already rejected an
- * unrecognized `key`, so `WALLE_COMPONENT_PATHS[key]` is always defined here.
+ * surfacing as a missing file at request time. Shared by every "built-in name or site path"
+ * override walle exposes (`components.*`, `commerce.pages.*`).
+ */
+function resolveSitePath(value: string, root: string, label: string): string {
+  const abs = resolve(root, value);
+  const srcRoot = resolve(root, "src") + sep;
+  if (!abs.startsWith(srcRoot)) {
+    throw new Error(
+      `[walle] ${label} points to "${value}", which is outside src/. ` +
+        `Overrides must live under the project's src/ directory.`
+    );
+  }
+  if (!existsSync(abs) || !statSync(abs).isFile()) {
+    throw new Error(`[walle] ${label} points to "${value}", but that file does not exist.`);
+  }
+  return abs;
+}
+
+/**
+ * Resolves one `components.<key>` entry to an absolute file path: a recognized built-in name
+ * to its walle source file, or a `./`-prefixed value to a site file (`resolveSitePath`). The
+ * caller has already rejected an unrecognized `key`, so `WALLE_COMPONENT_PATHS[key]` is always
+ * defined here.
  */
 function resolveEmbeddedComponent(key: string, value: string, root: string): string {
   const available = WALLE_COMPONENT_PATHS[key];
   if (value.startsWith("./")) {
-    const abs = resolve(root, value);
-    const srcRoot = resolve(root, "src") + sep;
-    if (!abs.startsWith(srcRoot)) {
-      throw new Error(
-        `[walle] components.${key} points to "${value}", which is outside src/. ` +
-          `Component overrides must live under the project's src/ directory.`
-      );
-    }
-    if (!existsSync(abs) || !statSync(abs).isFile()) {
-      throw new Error(
-        `[walle] components.${key} points to "${value}", but that file does not exist.`
-      );
-    }
-    return abs;
+    return resolveSitePath(value, root, `components.${key}`);
   }
   if (!(value in available)) {
     throw new Error(
@@ -147,6 +154,37 @@ function walleFeaturesPlugin(commerceMode: string | undefined) {
         `export { default as CartMount } from ${JSON.stringify(cartMountPath)};`,
         `export { default as CartBadge } from ${JSON.stringify(cartBadgePath)};`,
       ].join("\n");
+    },
+  };
+}
+
+/**
+ * Injects `/products` and `/products/[handle]` when `commerce.mode` is "catalog" or "shop"
+ * (D10): a vetrina site (mode "off") gets neither route, and neither ships in the seed at all
+ * (the pages moved out of src/pages/products into this managed directory). `commerce.pages.*`
+ * lets a site swap either entrypoint for its own file, same `./`-prefixed site-path contract as
+ * `components.*`.
+ */
+function walleCommerceRoutesIntegration(
+  commerceMode: string | undefined,
+  pages: { list?: string; detail?: string } = {},
+  root: string
+): AstroIntegration {
+  const enabled = commerceMode === "catalog" || commerceMode === "shop";
+  return {
+    name: "walle-commerce-routes",
+    hooks: {
+      "astro:config:setup": ({ injectRoute }: HookParameters<"astro:config:setup">) => {
+        if (!enabled) return;
+        const listEntry = pages.list
+          ? resolveSitePath(pages.list, root, "commerce.pages.list")
+          : fileURLToPath(new URL("./commerce/pages/index.astro", import.meta.url));
+        const detailEntry = pages.detail
+          ? resolveSitePath(pages.detail, root, "commerce.pages.detail")
+          : fileURLToPath(new URL("./commerce/pages/[handle].astro", import.meta.url));
+        injectRoute({ pattern: "/products", entrypoint: listEntry });
+        injectRoute({ pattern: "/products/[handle]", entrypoint: detailEntry });
+      },
     },
   };
 }
@@ -615,6 +653,9 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
 
   const astro = (appConfig.astro ?? {}) as AstroConfigSection;
   const components = (appConfig as { components?: Record<string, string> }).components;
+  const commerce = (
+    appConfig as { commerce?: { mode?: string; pages?: { list?: string; detail?: string } } }
+  ).commerce;
   // Fail fast, at config-build time, the same as the parseConfig calls above: an invalid
   // override surfaces here, not as a missing component the first time a page renders.
   resolveEmbeddedComponents(components, process.cwd());
@@ -647,6 +688,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
         : undefined
     ),
     icon(),
+    walleCommerceRoutesIntegration(commerce?.mode, commerce?.pages, process.cwd()),
   ];
 
   const {
@@ -681,9 +723,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
         walleComponentsPlugin(process.cwd(), components),
         wallePwaHeadPlugin(pwaHead),
         walleFontsPlugin(walleFontEntries),
-        walleFeaturesPlugin(
-          (appConfig as { commerce?: { mode?: string } }).commerce?.mode
-        ),
+        walleFeaturesPlugin(commerce?.mode),
         walleSlimBarrelsPlugin(process.cwd()),
         ...(consumerVite.plugins ?? []),
       ],

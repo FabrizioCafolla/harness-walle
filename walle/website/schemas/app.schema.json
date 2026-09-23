@@ -222,6 +222,18 @@
         "showAddToCartOnCards": {
           "type": "boolean"
         },
+        "pages": {
+          "type": "object",
+          "properties": {
+            "list": {
+              "type": "string"
+            },
+            "detail": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
         "showBuyButton": {},
         "locale": {},
         "addToCartLabel": {}
