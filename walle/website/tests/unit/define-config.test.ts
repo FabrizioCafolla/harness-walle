@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { defineWalleConfig } from "../../src/@walle/define-config";
+import { defineWalleConfig, isSitemapExcluded } from "../../src/@walle/define-config";
 
 // defineWalleConfig() always sets vite.plugins to a plain array of walle's own plugin objects
 // (never a Promise/false/nested array as Vite's wider PluginOption allows), so this narrows the
@@ -170,5 +170,31 @@ describe("defineWalleConfig", () => {
     const config = defineWalleConfig();
     const themePlugin = findThemePlugin(config);
     expect(themePlugin.load("\0virtual:walle-theme.css")).toBe("");
+  });
+});
+
+describe("isSitemapExcluded", () => {
+  it("matches an exact path with no base configured", () => {
+    expect(isSitemapExcluded("/old-page", ["/old-page"])).toBe(true);
+    expect(isSitemapExcluded("/other-page", ["/old-page"])).toBe(false);
+  });
+
+  it("strips a configured base path before comparing", () => {
+    expect(isSitemapExcluded("/harness-walle/old-page", ["/old-page"], "/harness-walle")).toBe(
+      true
+    );
+    expect(isSitemapExcluded("/harness-walle/other-page", ["/old-page"], "/harness-walle")).toBe(
+      false
+    );
+  });
+
+  it("normalizes a trailing slash on either side", () => {
+    expect(isSitemapExcluded("/old-page/", ["/old-page"])).toBe(true);
+    expect(isSitemapExcluded("/old-page", ["/old-page/"])).toBe(true);
+  });
+
+  it("excludes a nested path under an excluded prefix", () => {
+    expect(isSitemapExcluded("/offline/details", ["/offline"])).toBe(true);
+    expect(isSitemapExcluded("/offline-plan", ["/offline"])).toBe(false);
   });
 });

@@ -27,6 +27,7 @@ SCENARIOS=(
   "CI starter (ci module seeds usable workflows wired to @walle actions)|scenario_ci_starter"
   "Backend API route (adapter on → /api/health 200, seed survives update)|scenario_backend_api"
   "Adapter: on-demand API route + static content pages (D9)|scenario_adapter"
+  "Redirects: astro.redirects pass-through + sitemap exclusion (D9)|scenario_redirects"
   "Component overrides (built-in name, site path, wrapping override, missing path and unknown name fail)|scenario_component_overrides"
   "Update propagation with fixture (consumer zones intact)|scenario_update_propagation"
   "CLI commands (dry-run, add, check)|scenario_cli_commands"

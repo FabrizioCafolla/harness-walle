@@ -454,7 +454,37 @@ type AstroConfigSection = {
    * sitemap while its own meta says `noindex` is the "Submitted URL marked noindex" conflict
    * Search Console reports. Absent key = every page is listed, as before. */
   sitemapExclude?: string[];
+  /** Passed straight through to Astro's native `redirects` config. Astro's own static-output
+   * redirect page already emits refresh/noindex/canonical; walle additionally excludes every
+   * redirect source from sitemap.xml (D9), same as `sitemapExclude`. */
+  redirects?: Record<string, string | { destination: string; status: 301 | 302 | 307 | 308 }>;
+  /** `false` opts out entirely; otherwise maps to Astro's own `prefetch` config, defaulting to
+   * `{ prefetchAll: true, defaultStrategy: "hover" }` when absent (D9 — walle's own default,
+   * Astro itself defaults to off). */
+  prefetch?: false | { strategy?: "hover" | "tap" | "viewport" | "load"; all?: boolean };
 };
+
+/**
+ * True when `pathname` (as `new URL(page).pathname` hands it — includes the site's base path)
+ * falls under one of `excludes` (bare paths, written without the base, e.g. `"/old-page"`).
+ * Strips `base` off the front and normalizes a trailing slash on both sides before comparing,
+ * so a site with `astro.basePath` set (any GitHub Pages project site) and an exclude/redirect
+ * entry written with or without a trailing slash both still match. Exported and pure so it's
+ * unit-testable without going through the sitemap integration's own hook lifecycle.
+ */
+export function isSitemapExcluded(pathname: string, excludes: string[], base?: string): boolean {
+  const normalize = (p: string) => (p.length > 1 ? p.replace(/\/$/, "") : p) || "/";
+  const strippedBase = base && base !== "/" ? base.replace(/\/$/, "") : "";
+  const withoutBase =
+    strippedBase && pathname.startsWith(strippedBase)
+      ? pathname.slice(strippedBase.length) || "/"
+      : pathname;
+  const path = normalize(withoutBase);
+  return excludes.some((exclude) => {
+    const p = normalize(exclude);
+    return path === p || path.startsWith(p === "/" ? "/" : `${p}/`);
+  });
+}
 
 /**
  * Resolve the Astro config from the consumer's app.json plus optional native overrides.
@@ -477,16 +507,17 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
   // override surfaces here, not as a missing component the first time a page renders.
   resolveEmbeddedComponents(components, process.cwd());
 
-  const sitemapExclude = astro.sitemapExclude ?? [];
+  // Redirect sources never belong in the sitemap alongside their own destination — same
+  // exclusion mechanism as sitemapExclude, just fed from a different config key (D9).
+  const redirectSources = Object.keys(astro.redirects ?? {});
+  const sitemapExclude = [...(astro.sitemapExclude ?? []), ...redirectSources];
   const walleIntegrations = [
     mdx(),
     sitemap(
       sitemapExclude.length > 0
         ? {
-            filter: (page: string) => {
-              const path = new URL(page).pathname.replace(/\/$/, "");
-              return !sitemapExclude.some((p) => path === p || path.startsWith(p + "/"));
-            },
+            filter: (page: string) =>
+              !isSitemapExcluded(new URL(page).pathname, sitemapExclude, astro.basePath),
           }
         : undefined
     ),
@@ -512,6 +543,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
     // node adapter without setting `output`, so it stays Astro's default ("static") and only
     // `prerender = false` routes render on demand through the adapter.
     ...(astro.adapter === "node" ? { adapter: node({ mode: "standalone" }) } : {}),
+    redirects: astro.redirects,
     // Consumer scalar keys override the walle-resolved values.
     ...consumerScalars,
     integrations: [...walleIntegrations, ...pwaIntegrations, ...consumerIntegrations],

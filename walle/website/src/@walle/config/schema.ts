@@ -105,11 +105,42 @@ const astroSchema = z
     trailingSlash: z.enum(["always", "never", "ignore"]).optional(),
     analyticsScriptContent: z.string().optional(),
     sitemapExclude: z.array(z.string()).optional(),
+    // Passed straight through to Astro's native `redirects` config; its own static-output
+    // redirect page already emits refresh/noindex/canonical, so walle only adds the sitemap
+    // exclusion (D9) — the redirect source is never listed alongside the destination.
+    redirects: z
+      .record(
+        z.string(),
+        z.union([
+          z.string(),
+          z
+            .object({
+              destination: z.string(),
+              status: z.union([z.literal(301), z.literal(302), z.literal(307), z.literal(308)]),
+            })
+            .strict(),
+        ])
+      )
+      .optional(),
     // Replaces the old `astro.ssr` shape: a single string toggle rather than a nested
     // { enabled, adapter } object. Adds the node adapter with `output` left at Astro's
     // default ("static"), so only routes that declare `prerender = false` render on demand.
     adapter: z.enum(["node"]).optional(),
     ssr: removedKey("astro.adapter"),
+    // Astro's own `prefetch` is opt-in and off by default; walle defaults it ON with the
+    // hover strategy (D9) — `false` opts a site out entirely. `strategy`/`all` are walle's
+    // own friendlier names for Astro's `defaultStrategy`/`prefetchAll`.
+    prefetch: z
+      .union([
+        z.literal(false),
+        z
+          .object({
+            strategy: z.enum(["hover", "tap", "viewport", "load"]).optional(),
+            all: z.boolean().optional(),
+          })
+          .strict(),
+      ])
+      .optional(),
   })
   .strict();
 
