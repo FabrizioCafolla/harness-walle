@@ -4,6 +4,7 @@ import config from "@walle/config";
 import { renderOgImage, type OgEntry, type OgTemplate } from "./render";
 import { resolveOgTheme } from "./theme";
 import defaultTemplate from "./templates/default";
+import { resolveSitePath } from "../utils/site-path";
 
 export const prerender = true;
 
@@ -23,26 +24,70 @@ function entryFromCollectionItem(id: string, data: Record<string, unknown>): OgE
 }
 
 /**
+ * Template precedence (D13), as a pure function decoupled from the filesystem/dynamic-import
+ * side of actually loading one — this is what a unit test exercises directly. `undefined`
+ * means "no override configured", leaving `resolveOgTemplate` to fall back to walle's own
+ * default template.
+ */
+export function pickOgTemplatePath(
+  collection: string | undefined,
+  templates: Record<string, string> | undefined
+): string | undefined {
+  if (!templates) return undefined;
+  return (collection ? templates[collection] : undefined) ?? templates.default;
+}
+
+// One import per resolved absolute path per build, not per collection entry.
+const templateCache = new Map<string, OgTemplate>();
+
+async function resolveOgTemplate(
+  collection: string | undefined,
+  templates: Record<string, string> | undefined,
+  root: string
+): Promise<OgTemplate> {
+  const path = pickOgTemplatePath(collection, templates);
+  if (!path) return defaultTemplate;
+
+  const abs = resolveSitePath(
+    path,
+    root,
+    collection ? `seo.ogImage.templates.${collection}` : "seo.ogImage.templates.default"
+  );
+  let template = templateCache.get(abs);
+  if (!template) {
+    const mod = (await import(/* @vite-ignore */ abs)) as { default?: OgTemplate };
+    template = mod.default ?? defaultTemplate;
+    templateCache.set(abs, template);
+  }
+  return template;
+}
+
+/**
  * `/og/[...slug].png` (D10/D13): "default" for the site-wide image, `<collection>/<id>` for one
- * per entry of every collection listed in `seo.ogImage.collections`. Every path uses walle's
- * own default template for now — per-collection `seo.ogImage.templates` overrides are 13.2's
- * own task (resolving a site-path override needs the same build-time machinery as
- * `commerce.pages.*`, wired from `defineWalleConfig`, not from inside this route module).
+ * per entry of every collection listed in `seo.ogImage.collections`. Each gets its own template:
+ * `templates[collection] ?? templates.default ?? walle's own default`.
  */
 export async function getStaticPaths(): Promise<OgImagePath[]> {
   const ogImage = config.app.seo?.ogImage;
   if (!ogImage?.enabled) return [];
 
+  const root = process.cwd();
+  const templates = ogImage.templates;
+
   const paths: OgImagePath[] = [
-    { params: { slug: "default" }, props: { entry: siteEntry(), template: defaultTemplate } },
+    {
+      params: { slug: "default" },
+      props: { entry: siteEntry(), template: await resolveOgTemplate(undefined, templates, root) },
+    },
   ];
 
   for (const collectionName of ogImage.collections ?? []) {
+    const template = await resolveOgTemplate(collectionName, templates, root);
     const entries = await getCollection(collectionName as never);
     for (const item of entries as { id: string; data: Record<string, unknown> }[]) {
       paths.push({
         params: { slug: `${collectionName}/${item.id}` },
-        props: { entry: entryFromCollectionItem(item.id, item.data), template: defaultTemplate },
+        props: { entry: entryFromCollectionItem(item.id, item.data), template },
       });
     }
   }

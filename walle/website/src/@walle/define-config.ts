@@ -8,8 +8,8 @@ import sitemap from "@astrojs/sitemap";
 import { defineConfig, fontProviders } from "astro/config";
 import type { AstroIntegration, AstroUserConfig, HookParameters } from "astro";
 import icon from "astro-icon";
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
-import { join, resolve, sep } from "node:path";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import appConfig from "../configs/app.json";
@@ -17,6 +17,7 @@ import footerConfigJson from "../configs/footer.json";
 import navbarConfigJson from "../configs/navbar.json";
 
 import { appSchema, footerSchema, navbarSchema, parseConfig, themeSchema } from "./config/schema";
+import { resolveSitePath } from "./utils/site-path";
 
 /**
  * Components a site can replace, once, from `app.json`'s `components` block (D6): each key's
@@ -39,28 +40,6 @@ const WALLE_COMPONENT_PATHS: Record<string, Record<string, string>> = {
   pageHeader: { standard: "./components/features/Sections/HeaderStandard.astro" },
   toc: { standard: "./components/features/Blog/BlogTableOfContents.astro" },
 };
-
-/**
- * Resolves a `./`-prefixed site override to an absolute file path that must exist, as a file
- * (not a directory), under the project's `src/`. Throws naming `label` and the offending value
- * otherwise (never a silent fallback), so an invalid override fails the build instead of
- * surfacing as a missing file at request time. Shared by every "built-in name or site path"
- * override walle exposes (`components.*`, `commerce.pages.*`).
- */
-function resolveSitePath(value: string, root: string, label: string): string {
-  const abs = resolve(root, value);
-  const srcRoot = resolve(root, "src") + sep;
-  if (!abs.startsWith(srcRoot)) {
-    throw new Error(
-      `[walle] ${label} points to "${value}", which is outside src/. ` +
-        `Overrides must live under the project's src/ directory.`
-    );
-  }
-  if (!existsSync(abs) || !statSync(abs).isFile()) {
-    throw new Error(`[walle] ${label} points to "${value}", but that file does not exist.`);
-  }
-  return abs;
-}
 
 /**
  * Resolves one `components.<key>` entry to an absolute file path: a recognized built-in name
@@ -601,6 +580,28 @@ function walleOfflineRouteIntegration(
 }
 
 /**
+ * Injects `/og/[...slug].png` when `seo.ogImage.enabled` is true (D13): a single fixed
+ * entrypoint (`M/og/route.ts`) whose own `getStaticPaths` enumerates "default" plus every
+ * configured collection, and resolves each one's `seo.ogImage.templates` override itself
+ * (a per-slug template needs a site-path resolved per param, which `injectRoute`'s one static
+ * `entrypoint` per pattern can't express — unlike `commerce.pages.*`, which swaps the whole
+ * page).
+ */
+function walleOgRouteIntegration(seo: { ogImage?: { enabled?: boolean } } = {}): AstroIntegration {
+  const enabled = seo.ogImage?.enabled === true;
+  return {
+    name: "walle-og-route",
+    hooks: {
+      "astro:config:setup": ({ injectRoute }: HookParameters<"astro:config:setup">) => {
+        if (!enabled) return;
+        const entrypoint = fileURLToPath(new URL("./og/route.ts", import.meta.url));
+        injectRoute({ pattern: "/og/[...slug].png", entrypoint });
+      },
+    },
+  };
+}
+
+/**
  * The three tags Head.astro emits for a PWA, resolved once here rather than re-derived at
  * render time: the manifest link, the browser-chrome color and the iOS icon. Head.astro reads
  * them from `virtual:walle-pwa`, so the theme palette stays a single source of truth (a
@@ -803,6 +804,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
     appConfig as { commerce?: { mode?: string; pages?: { list?: string; detail?: string } } }
   ).commerce;
   const pwa = (appConfig as { pwa?: PwaConfigSection }).pwa ?? {};
+  const seo = (appConfig as { seo?: { ogImage?: { enabled?: boolean } } }).seo ?? {};
   // Fail fast, at config-build time, the same as the parseConfig calls above: an invalid
   // override surfaces here, not as a missing component the first time a page renders.
   resolveEmbeddedComponents(components, process.cwd());
@@ -851,6 +853,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
     icon(),
     walleCommerceRoutesIntegration(commerce?.mode, commerce?.pages, process.cwd()),
     walleOfflineRouteIntegration(pwa, process.cwd()),
+    walleOgRouteIntegration(seo),
   ];
 
   const {

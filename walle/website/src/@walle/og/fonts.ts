@@ -1,6 +1,11 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+// `?inline` embeds the file's bytes as a base64 data URI directly in this module's own build
+// output, immune to Vite relocating the compiled chunk elsewhere (unlike a runtime
+// `readFileSync(new URL("./fonts/Inter-Bold.woff", import.meta.url))`, which resolves against
+// wherever THIS code physically ends up after bundling, not its original source location —
+// see the ambient declaration in env.d.ts for why this needs one).
+import bundledFontDataUri from "./fonts/Inter-Bold.woff?inline";
 
 export type OgFont = {
   name: string;
@@ -51,8 +56,8 @@ let bundledDefault: OgFont | null = null;
 /** The last-resort fallback (D13): bundled, open-licensed (SIL OFL 1.1), never fetched. */
 function bundledDefaultFont(): OgFont {
   if (!bundledDefault) {
-    const path = fileURLToPath(new URL("./fonts/Inter-Bold.woff", import.meta.url));
-    bundledDefault = { name: "Inter", data: readCached(path), weight: 700, style: "normal" };
+    const base64 = bundledFontDataUri.slice(bundledFontDataUri.indexOf(",") + 1);
+    bundledDefault = { name: "Inter", data: Buffer.from(base64, "base64"), weight: 700, style: "normal" };
   }
   return bundledDefault;
 }
