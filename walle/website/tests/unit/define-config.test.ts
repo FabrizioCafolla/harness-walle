@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { defineWalleConfig, isSitemapExcluded, withBase } from "../../src/@walle/define-config";
+import {
+  defineWalleConfig,
+  isSitemapExcluded,
+  resolvePwaOptions,
+  withBase,
+} from "../../src/@walle/define-config";
 
 // defineWalleConfig() always sets vite.plugins to a plain array of walle's own plugin objects
 // (never a Promise/false/nested array as Vite's wider PluginOption allows), so this narrows the
@@ -263,5 +268,98 @@ describe("withBase", () => {
       destination: "/harness-walle/new",
       status: 301,
     });
+  });
+});
+
+describe("resolvePwaOptions", () => {
+  it("returns null when pwa.enabled is not true", () => {
+    expect(resolvePwaOptions({})).toBeNull();
+    expect(resolvePwaOptions({ pwa: { enabled: false } })).toBeNull();
+  });
+
+  it("has no offline precache entry or handlerDidError when pwa.offline is unset", () => {
+    const options = resolvePwaOptions({ pwa: { enabled: true } })!;
+    expect(options.workbox.additionalManifestEntries).toEqual([]);
+    expect(options.workbox.runtimeCaching[0].options.plugins).toBeUndefined();
+  });
+
+  it("adds a base-prefixed additionalManifestEntries entry with a real revision when pwa.offline is set", () => {
+    const options = resolvePwaOptions({
+      astro: { basePath: "/harness-walle" },
+      pwa: { enabled: true, offline: true },
+    })!;
+    expect(options.workbox.additionalManifestEntries).toHaveLength(1);
+    const [entry] = options.workbox.additionalManifestEntries;
+    expect(entry.url).toBe("/harness-walle/offline");
+    // Must change across builds so a stale offline page isn't served forever (revision: null
+    // means "already versioned", which a plain unhashed URL like this never is).
+    expect(entry.revision).not.toBeNull();
+    expect(typeof entry.revision).toBe("string");
+    expect(entry.revision.length).toBeGreaterThan(0);
+  });
+
+  it("collapses a '/' basePath so the offline URL has no double slash", () => {
+    const options = resolvePwaOptions({
+      astro: { basePath: "/" },
+      pwa: { enabled: true, offline: true },
+    })!;
+    expect(options.workbox.additionalManifestEntries[0].url).toBe("/offline");
+  });
+
+  it("wires a handlerDidError on the navigate rule that resolves to caches.match(offlineUrl)", async () => {
+    const options = resolvePwaOptions({
+      astro: { basePath: "/harness-walle" },
+      pwa: { enabled: true, offline: true },
+    })!;
+    const [rule] = options.workbox.runtimeCaching;
+    const handlerDidError = rule.options.plugins[0].handlerDidError;
+    expect(typeof handlerDidError).toBe("function");
+
+    const match = vi.fn().mockResolvedValue("cached-response");
+    (globalThis as { caches?: unknown }).caches = { match };
+    await expect(handlerDidError()).resolves.toBe("cached-response");
+    expect(match).toHaveBeenCalledWith("/harness-walle/offline", { ignoreSearch: true });
+    delete (globalThis as { caches?: unknown }).caches;
+  });
+
+  it("merges a consumer additionalManifestEntries onto walle's own instead of replacing it", () => {
+    const options = resolvePwaOptions(
+      { astro: { basePath: "/" }, pwa: { enabled: true, offline: true } },
+      { workbox: { additionalManifestEntries: [{ url: "/custom", revision: "1" }] } }
+    )!;
+    expect(options.workbox.additionalManifestEntries).toHaveLength(2);
+    expect(options.workbox.additionalManifestEntries[0].url).toBe("/offline");
+    expect(options.workbox.additionalManifestEntries[1]).toEqual({ url: "/custom", revision: "1" });
+  });
+
+  it("precaches _astro/fonts/**/*.woff2 alongside the default js/css glob", () => {
+    const options = resolvePwaOptions({ pwa: { enabled: true } })!;
+    expect(options.workbox.globPatterns).toEqual(
+      expect.arrayContaining(["_astro/**/*.{js,css}", "_astro/fonts/**/*.woff2"])
+    );
+  });
+
+  it("has no globIgnores when commerce is in shop mode", () => {
+    const options = resolvePwaOptions({ pwa: { enabled: true }, commerce: { mode: "shop" } })!;
+    expect(options.workbox.globIgnores).toEqual([]);
+  });
+
+  it("ignores commerce chunk patterns as a safety net when commerce is not shop", () => {
+    const off = resolvePwaOptions({ pwa: { enabled: true }, commerce: { mode: "off" } })!;
+    expect(off.workbox.globIgnores).toEqual(
+      expect.arrayContaining(["**/_astro/Cart*", "**/_astro/VariantPicker*"])
+    );
+    const catalog = resolvePwaOptions({ pwa: { enabled: true }, commerce: { mode: "catalog" } })!;
+    expect(catalog.workbox.globIgnores.length).toBeGreaterThan(0);
+    const noCommerce = resolvePwaOptions({ pwa: { enabled: true } })!;
+    expect(noCommerce.workbox.globIgnores.length).toBeGreaterThan(0);
+  });
+
+  it("merges a consumer globIgnores onto walle's own instead of replacing it", () => {
+    const options = resolvePwaOptions(
+      { pwa: { enabled: true }, commerce: { mode: "shop" } },
+      { workbox: { globIgnores: ["**/consumer-ignored/*"] } }
+    )!;
+    expect(options.workbox.globIgnores).toEqual(["**/consumer-ignored/*"]);
   });
 });

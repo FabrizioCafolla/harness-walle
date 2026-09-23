@@ -167,6 +167,11 @@ const pwaSchema = z
     scope: z.string().optional(),
     icons: z.array(pwaIconSchema).optional(),
     appleTouchIcon: z.string().optional(),
+    // Offline fallback route (D12): `true` uses walle's managed page, a `./`-prefixed string
+    // swaps in a site file — same "built-in default or site path" contract as `commerce.pages.*`.
+    // Only takes effect when `enabled` is also true (there is no service worker to fall back
+    // through otherwise).
+    offline: z.union([z.literal(true), z.string()]).optional(),
   })
   .strict();
 

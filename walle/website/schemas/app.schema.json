@@ -204,6 +204,17 @@
         },
         "appleTouchIcon": {
           "type": "string"
+        },
+        "offline": {
+          "anyOf": [
+            {
+              "type": "boolean",
+              "const": true
+            },
+            {
+              "type": "string"
+            }
+          ]
         }
       },
       "additionalProperties": false

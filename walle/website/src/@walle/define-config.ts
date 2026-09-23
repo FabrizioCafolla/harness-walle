@@ -387,7 +387,164 @@ type PwaConfigSection = {
   scope?: string;
   icons?: Record<string, unknown>[];
   appleTouchIcon?: string;
+  offline?: true | string;
 };
+
+/**
+ * Progressive web app support, off unless `pwa.enabled` is true in app.json. Disabled means
+ * the integration is never mounted: no manifest, no service worker, no registration script,
+ * nothing added to any page.
+ *
+ * Everything the manifest needs already exists elsewhere in a walle project, so the defaults
+ * read from there (website title/description/language, theme palette, base path) and a
+ * consumer only writes what actually differs. The Astro-side knobs (`workbox`, `registerType`,
+ * …) are deliberately NOT in app.json: they are code-shaped, not content-shaped, so they are
+ * overridden natively from astro.config via `defineWalleConfig({ pwa: { workbox: … } })` and
+ * merged one level deep over the defaults below.
+ *
+ * `injectRegister: "script-defer"` on purpose: vite-plugin-pwa cannot inject anything into
+ * Astro's static HTML output (it relies on a transformIndexHtml pass Astro's build doesn't
+ * run — the generated file lands in dist/ but no page ever references it), so Head.astro
+ * emits the tag itself. The generated registerSW.js already registers inside a `load`
+ * listener, which keeps the worker off the critical path and avoids pulling workbox-window
+ * into the page bundle at all.
+ */
+/**
+ * Pure resolver, exported so a unit test can inspect the resolved `workbox` config without
+ * going through `AstroPWA` (which closes its options up inside the returned integration's
+ * hooks — not introspectable from outside). Returns `null` when the PWA is disabled, the same
+ * signal `wallePwaIntegration` uses to skip mounting the integration at all.
+ */
+export function resolvePwaOptions(
+  app: {
+    website?: Record<string, any>;
+    astro?: Record<string, any>;
+    pwa?: PwaConfigSection;
+    commerce?: { mode?: string };
+  },
+  overrides: Record<string, any> = {}
+): Record<string, any> | null {
+  const pwa = app.pwa ?? {};
+  if (pwa.enabled !== true) return null;
+
+  const palette = (readThemeJson().palette ?? {}) as Record<string, string>;
+  const base = app.astro?.basePath || "/";
+  const name = pwa.name ?? app.website?.title ?? "";
+
+  // `${base}/offline`, collapsing the double slash a trailing-slash base would otherwise leave
+  // (base "/" + "/offline" => "//offline").
+  const offlineUrl = pwa.offline ? `${base}/offline`.replace(/\/{2,}/g, "/") : null;
+  // Workbox's `revision` is the change-detection key for a precache entry whose URL isn't
+  // itself hashed (unlike the _astro/* build output below); `null` tells it the URL is already
+  // versioned and to never re-diff it — wrong here, since /offline's content, CSS chunk
+  // references and labels can all change between deploys. A build-scoped id (recomputed once
+  // per `defineWalleConfig()` call, i.e. once per build) makes every new build's manifest
+  // differ, so a returning visitor's service worker actually refetches the page.
+  const offlineRevision = offlineUrl ? Date.now().toString(36) : null;
+
+  // Cart UI ships no chunk at all when off (D10 — virtual:walle-features nulls the module
+  // before Rollup ever sees it), so these normally match nothing. Listed anyway as a safety
+  // net: if that guarantee ever regresses, a stray cart-named chunk still never gets swept into
+  // the precache instead of silently shipping working "Add to cart" UI to an offline visitor
+  // of a site that turned commerce off.
+  const commerceChunkGlobIgnores =
+    app.commerce?.mode !== "shop"
+      ? ["**/_astro/Cart*", "**/_astro/VariantPicker*", "**/_astro/ProductBuyCard*"]
+      : [];
+
+  const defaults = {
+    registerType: "autoUpdate" as const,
+    injectRegister: "script-defer" as const,
+    manifest: {
+      name,
+      short_name: pwa.shortName ?? name,
+      description: pwa.description ?? app.website?.description ?? "",
+      lang: pwa.lang ?? app.website?.language,
+      theme_color: pwa.themeColor ?? palette.primary,
+      background_color: pwa.backgroundColor ?? palette.background,
+      display: pwa.display ?? "standalone",
+      start_url: pwa.startUrl ?? base,
+      scope: pwa.scope ?? base,
+      icons: pwa.icons ?? [],
+    },
+    workbox: {
+      // Only the hashed, immutable build output is precached; HTML is handled by the
+      // network-first rule below instead, so a page is never served from a stale cache
+      // while the network is available. The offline fallback is the one static HTML page
+      // that IS precached by URL (below), since it must be servable with no network at all.
+      // Fonts are D11's own build output (self-hosted/managed, same as any other asset), so
+      // they precache alongside the JS/CSS they're never worth loading a page without.
+      globPatterns: ["_astro/**/*.{js,css}", "_astro/fonts/**/*.woff2"],
+      globIgnores: commerceChunkGlobIgnores,
+      // Explicitly off. vite-plugin-pwa defaults this to "/", which emits a NavigationRoute
+      // bound to a URL that is not in the precache above: it throws `non-precached-url` at
+      // module evaluation, before any runtimeCaching rule is registered, and the worker
+      // silently caches nothing at all (vite-pwa/vite-plugin-pwa#731, #400).
+      navigateFallback: null,
+      additionalManifestEntries: offlineUrl
+        ? [{ url: offlineUrl, revision: offlineRevision }]
+        : [],
+      runtimeCaching: [
+        {
+          urlPattern: ({ request }: { request: Request }) => request.mode === "navigate",
+          handler: "NetworkFirst",
+          options: {
+            cacheName: "html-pages",
+            networkTimeoutSeconds: 3,
+            ...(offlineUrl
+              ? {
+                  plugins: [
+                    {
+                      // Built with `new Function`, not a closure over `offlineUrl`: workbox-build
+                      // serializes every runtimeCaching function into the standalone generated
+                      // sw.js via `Function.prototype.toString()` (see serialize-javascript, which
+                      // vite-plugin-pwa's generateSW strategy uses under the hood) — it captures
+                      // no lexical scope, so a normal arrow function referencing `offlineUrl`
+                      // would throw "offlineUrl is not defined" once reinserted into that
+                      // standalone file. Inlining the URL as a string literal in the function's
+                      // own source (via `new Function`) survives that round trip intact.
+                      handlerDidError: new Function(
+                        `return caches.match(${JSON.stringify(offlineUrl)}, { ignoreSearch: true });`
+                      ) as () => Promise<Response | undefined>,
+                    },
+                  ],
+                }
+              : {}),
+          },
+        },
+      ],
+    },
+  };
+
+  return {
+    ...defaults,
+    ...overrides,
+    manifest: { ...defaults.manifest, ...(overrides.manifest ?? {}) },
+    workbox: {
+      ...defaults.workbox,
+      ...(overrides.workbox ?? {}),
+      globPatterns: [
+        ...defaults.workbox.globPatterns,
+        ...((overrides.workbox?.globPatterns ?? []) as unknown[]),
+      ],
+      globIgnores: [
+        ...defaults.workbox.globIgnores,
+        ...((overrides.workbox?.globIgnores ?? []) as unknown[]),
+      ],
+      additionalManifestEntries: [
+        ...defaults.workbox.additionalManifestEntries,
+        ...((overrides.workbox?.additionalManifestEntries ?? []) as unknown[]),
+      ],
+      // Consumer rules first, then walle's: Workbox takes the first route that matches,
+      // so a consumer can both add rules and override a default one without having to
+      // restate the defaults it still wants.
+      runtimeCaching: [
+        ...((overrides.workbox?.runtimeCaching ?? []) as unknown[]),
+        ...defaults.workbox.runtimeCaching,
+      ],
+    },
+  };
+}
 
 /**
  * Progressive web app support, off unless `pwa.enabled` is true in app.json. Disabled means
@@ -412,66 +569,35 @@ function wallePwaIntegration(
   app: { website?: Record<string, any>; astro?: Record<string, any>; pwa?: PwaConfigSection },
   overrides: Record<string, any> = {}
 ) {
-  const pwa = app.pwa ?? {};
-  if (pwa.enabled !== true) return [];
+  const options = resolvePwaOptions(app, overrides);
+  return options ? [AstroPWA(options as Parameters<typeof AstroPWA>[0])] : [];
+}
 
-  const palette = (readThemeJson().palette ?? {}) as Record<string, string>;
-  const base = app.astro?.basePath || "/";
-  const name = pwa.name ?? app.website?.title ?? "";
-
-  const defaults = {
-    registerType: "autoUpdate" as const,
-    injectRegister: "script-defer" as const,
-    manifest: {
-      name,
-      short_name: pwa.shortName ?? name,
-      description: pwa.description ?? app.website?.description ?? "",
-      lang: pwa.lang ?? app.website?.language,
-      theme_color: pwa.themeColor ?? palette.primary,
-      background_color: pwa.backgroundColor ?? palette.background,
-      display: pwa.display ?? "standalone",
-      start_url: pwa.startUrl ?? base,
-      scope: pwa.scope ?? base,
-      icons: pwa.icons ?? [],
-    },
-    workbox: {
-      // Only the hashed, immutable build output is precached; HTML is handled by the
-      // network-first rule below instead, so a page is never served from a stale cache
-      // while the network is available.
-      globPatterns: ["_astro/**/*.{js,css}"],
-      // Explicitly off. vite-plugin-pwa defaults this to "/", which emits a NavigationRoute
-      // bound to a URL that is not in the precache above: it throws `non-precached-url` at
-      // module evaluation, before any runtimeCaching rule is registered, and the worker
-      // silently caches nothing at all (vite-pwa/vite-plugin-pwa#731, #400).
-      navigateFallback: null,
-      runtimeCaching: [
-        {
-          urlPattern: ({ request }: { request: Request }) => request.mode === "navigate",
-          handler: "NetworkFirst",
-          options: { cacheName: "html-pages", networkTimeoutSeconds: 3 },
-        },
-      ],
+/**
+ * Injects `/offline` when `pwa.enabled` and `pwa.offline` are both set (D12): `true` uses the
+ * managed default (`M/pwa/Offline.astro`), a `./`-prefixed string swaps in a site file, same
+ * contract as `commerce.pages.*`. Nested under `pwa` because the route is meaningless without
+ * the service worker it falls back through — `resolvePwaOptions` wires the matching
+ * `additionalManifestEntries`/`handlerDidError` for the same flag.
+ */
+function walleOfflineRouteIntegration(
+  pwa: PwaConfigSection = {},
+  root: string
+): AstroIntegration {
+  const enabled = pwa.enabled === true && !!pwa.offline;
+  return {
+    name: "walle-offline-route",
+    hooks: {
+      "astro:config:setup": ({ injectRoute }: HookParameters<"astro:config:setup">) => {
+        if (!enabled) return;
+        const entrypoint =
+          typeof pwa.offline === "string"
+            ? resolveSitePath(pwa.offline, root, "pwa.offline")
+            : fileURLToPath(new URL("./pwa/Offline.astro", import.meta.url));
+        injectRoute({ pattern: "/offline", entrypoint });
+      },
     },
   };
-
-  return [
-    AstroPWA({
-      ...defaults,
-      ...overrides,
-      manifest: { ...defaults.manifest, ...(overrides.manifest ?? {}) },
-      workbox: {
-        ...defaults.workbox,
-        ...(overrides.workbox ?? {}),
-        // Consumer rules first, then walle's: Workbox takes the first route that matches,
-        // so a consumer can both add rules and override a default one without having to
-        // restate the defaults it still wants.
-        runtimeCaching: [
-          ...((overrides.workbox?.runtimeCaching ?? []) as unknown[]),
-          ...defaults.workbox.runtimeCaching,
-        ],
-      },
-    } as Parameters<typeof AstroPWA>[0]),
-  ];
 }
 
 /**
@@ -676,14 +802,16 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
   const commerce = (
     appConfig as { commerce?: { mode?: string; pages?: { list?: string; detail?: string } } }
   ).commerce;
+  const pwa = (appConfig as { pwa?: PwaConfigSection }).pwa ?? {};
   // Fail fast, at config-build time, the same as the parseConfig calls above: an invalid
   // override surfaces here, not as a missing component the first time a page renders.
   resolveEmbeddedComponents(components, process.cwd());
 
-  // Redirect sources never belong in the sitemap alongside their own destination — same
-  // exclusion mechanism as sitemapExclude, just fed from a different config key (D9).
+  // Redirect sources and the offline fallback never belong in the sitemap alongside their own
+  // destination (D9) / next to no real content (D12) — same exclusion mechanism, two sources.
   const redirectSources = Object.keys(astro.redirects ?? {});
-  const sitemapExclude = [...(astro.sitemapExclude ?? []), ...redirectSources];
+  const offlineExclude = pwa.enabled === true && pwa.offline ? ["/offline"] : [];
+  const sitemapExclude = [...(astro.sitemapExclude ?? []), ...redirectSources, ...offlineExclude];
 
   // Destinations are written bare, same convention as every other walle path — prefix the
   // base path here so a redirect still lands on a real route once the site has one.
@@ -722,6 +850,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
     ),
     icon(),
     walleCommerceRoutesIntegration(commerce?.mode, commerce?.pages, process.cwd()),
+    walleOfflineRouteIntegration(pwa, process.cwd()),
   ];
 
   const {
