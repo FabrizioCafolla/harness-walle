@@ -81,9 +81,9 @@ const OWN_KEYS = [
   "disabled",
   "type",
   "class",
-];
+] as const;
 
-const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const {
   text,
   href,
@@ -97,7 +97,7 @@ const {
   disabled = false,
   type = "button",
   class: className,
-} = own as unknown as Props;
+} = own;
 
 const buttonClasses = ["button", fullWidth ? "button-full-width" : "", className ?? ""]
   .filter(Boolean)

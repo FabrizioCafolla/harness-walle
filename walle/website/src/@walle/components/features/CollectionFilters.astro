@@ -78,15 +78,15 @@ export interface Props extends BaseProps<"div"> {
   };
 }
 
-const OWN_KEYS = ["facets", "itemSelector", "search", "labels", "class"];
-const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
+const OWN_KEYS = ["facets", "itemSelector", "search", "labels", "class"] as const;
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const {
   facets = [],
   itemSelector = "[data-filter-item]",
   search = true,
   labels = {},
   class: className,
-} = own as unknown as Props;
+} = own;
 
 const l = {
   searchPlaceholder: t("filters.searchPlaceholder", labels.searchPlaceholder),

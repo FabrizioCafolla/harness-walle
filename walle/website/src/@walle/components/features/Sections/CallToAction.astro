@@ -30,9 +30,9 @@ const OWN_KEYS = [
   "filled",
   "muted",
   "class",
-];
+] as const;
 
-const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const {
   id,
   layout = "card",
@@ -44,7 +44,7 @@ const {
   filled = false,
   muted = false,
   class: className,
-} = own as unknown as Props;
+} = own;
 
 const hasTitle = Astro.slots.has("title") || Boolean(title);
 const hasSubtitle = Astro.slots.has("subtitle") || Boolean(subtitle);

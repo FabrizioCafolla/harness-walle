@@ -38,16 +38,25 @@ export function variantAttrs(
   };
 }
 
-/** Separates a component's own declared props from everything meant to pass through as {...rest}. */
-export function splitProps<T extends Record<string, unknown>>(
+/**
+ * Separates a component's own declared props from everything meant to pass through as
+ * {...rest}. Generic over `T extends object` and `K extends keyof T` so callers can pass
+ * `Astro.props` and an `as const` OWN_KEYS array directly: `own` comes back as `Pick<T, K>` and
+ * `rest` as `Omit<T, K>`, so destructuring either needs no cast — and destructuring a key that
+ * isn't in `keys` is a real type error (the component forgot to declare that key as its own).
+ */
+export function splitProps<T extends object, K extends keyof T>(
   props: T,
-  keys: string[]
-): { own: Record<string, unknown>; rest: Record<string, unknown> } {
-  const own: Record<string, unknown> = {};
-  const rest: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(props)) {
-    if (keys.includes(key)) own[key] = value;
-    else rest[key] = value;
+  keys: readonly K[]
+): { own: Pick<T, K>; rest: Omit<T, K> } {
+  const own = {} as Pick<T, K>;
+  const rest = {} as Omit<T, K>;
+  for (const [key, value] of Object.entries(props) as [keyof T, T[keyof T]][]) {
+    if ((keys as readonly (keyof T)[]).includes(key)) {
+      (own as Record<keyof T, unknown>)[key] = value;
+    } else {
+      (rest as Record<keyof T, unknown>)[key] = value;
+    }
   }
   return { own, rest };
 }

@@ -28,9 +28,9 @@ export interface Props
   centered?: boolean;
 }
 
-const OWN_KEYS = ["title", "columns", "minColumnWidth", "centered", "variant", "filled", "muted"];
+const OWN_KEYS = ["title", "columns", "minColumnWidth", "centered", "variant", "filled", "muted"] as const;
 
-const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const {
   title,
   columns = 3,
@@ -39,7 +39,7 @@ const {
   variant,
   filled = false,
   muted = false,
-} = own as unknown as Props;
+} = own;
 ---
 
 <SectionWrapper

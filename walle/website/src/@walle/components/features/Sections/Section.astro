@@ -15,9 +15,9 @@ export interface Props
   centered?: boolean;
 }
 
-const OWN_KEYS = ["title", "image", "reversed", "centered", "variant", "filled", "muted"];
+const OWN_KEYS = ["title", "image", "reversed", "centered", "variant", "filled", "muted"] as const;
 
-const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const {
   title,
   image = null,
@@ -26,7 +26,7 @@ const {
   filled = false,
   muted = false,
   reversed = false,
-} = own as unknown as Props;
+} = own;
 ---
 
 <SectionWrapper centered={centered} variant={variant} filled={filled} muted={muted} {...rest}>
@@ -38,6 +38,10 @@ const {
     {
       image && (
         <div class="image-container">
+          {
+            /* image.src is `string | ImageMetadata`; Astro's <Image> only overloads on one or
+               the other, so a union value never resolves to either branch on its own. */
+          }
           <Image
             src={image.src as string}
             alt={image.alt}

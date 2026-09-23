@@ -23,9 +23,9 @@ export interface Props
   label?: string;
 }
 
-const OWN_KEYS = ["title", "steps", "centered", "variant", "filled", "muted", "label"];
+const OWN_KEYS = ["title", "steps", "centered", "variant", "filled", "muted", "label"] as const;
 
-const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const {
   title,
   steps,
@@ -34,7 +34,7 @@ const {
   filled = false,
   muted = false,
   label = "Process steps",
-} = own as unknown as Props;
+} = own;
 ---
 
 <SectionWrapper

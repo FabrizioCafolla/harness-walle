@@ -4,8 +4,9 @@ import { splitProps, variantAttrs } from "../../shared/attrs";
 
 export interface Props
   extends BaseProps<"section">, VariantProps, Pick<ModifierProps, "filled" | "muted"> {
-  /** Section id, for in-page anchors. */
-  id?: string;
+  // `id` comes from BaseProps (HTMLAttributes) as `string | null | undefined` — not redeclared
+  // narrower here, since callers like Hero/Section/SectionColumns/SectionFlow forward their own
+  // unmodified `id` through {...rest} straight from the same HTMLAttributes type.
   /** Optional tagline shown above the title. String prop or `tagline` slot (slot wins). */
   tagline?: string;
   /** Section title. String prop or `title` slot (slot wins). */
@@ -29,9 +30,9 @@ const OWN_KEYS = [
   "filled",
   "muted",
   "class",
-];
+] as const;
 
-const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const {
   id,
   tagline,
@@ -43,7 +44,7 @@ const {
   filled = false,
   muted = false,
   class: className,
-} = own as unknown as Props;
+} = own;
 
 const Tag = headingLevel;
 

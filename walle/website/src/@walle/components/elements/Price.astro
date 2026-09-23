@@ -51,9 +51,9 @@ export interface Props extends BaseProps {
   originalLabel?: string;
 }
 
-const OWN_KEYS = ["price", "locale", "size", "discountedLabel", "originalLabel", "class"];
+const OWN_KEYS = ["price", "locale", "size", "discountedLabel", "originalLabel", "class"] as const;
 
-const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const {
   price,
   locale = siteLocale(),
@@ -61,7 +61,7 @@ const {
   discountedLabel: discountedLabelProp,
   originalLabel: originalLabelProp,
   class: className,
-} = own as unknown as Props;
+} = own;
 
 const discountedLabel = t("price.discounted", discountedLabelProp);
 const originalLabel = t("price.original", originalLabelProp);

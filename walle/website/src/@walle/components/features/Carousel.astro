@@ -53,9 +53,9 @@ const OWN_KEYS = [
   "class",
   "id",
   "style",
-];
+] as const;
 
-const { own, rest } = splitProps(Astro.props as unknown as Record<string, unknown>, OWN_KEYS);
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const {
   label,
   perView = 1,
@@ -72,7 +72,7 @@ const {
   class: className = "",
   id,
   style: styleProp,
-} = own as unknown as Props & { style?: string };
+} = own;
 
 const previousLabel = t("carousel.previous", previousLabelProp);
 const nextLabel = t("carousel.next", nextLabelProp);
