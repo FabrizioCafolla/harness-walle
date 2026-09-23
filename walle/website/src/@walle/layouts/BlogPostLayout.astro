@@ -6,6 +6,8 @@ import {
 } from "virtual:walle-components";
 import StructuredData from "@walle/components/features/StructuredData.astro";
 import BaseLayout from "./BaseLayout.astro";
+import config from "@walle/config";
+import { ogImageUrl } from "@walle/og";
 import { formatDate, label } from "@walle/utils";
 import { articleJsonLd } from "@walle/utils/structured-data";
 
@@ -20,13 +22,19 @@ const {
   tags,
   image = null,
   draft = false,
+  id,
 } = Astro.props;
+
+// This post's own OG image (D13) — only when the feature is on; otherwise `ogImageUrl` would
+// point at a route that doesn't exist.
+const entryOgImage = id && config.app.seo?.ogImage?.enabled ? ogImageUrl("posts", id) : undefined;
 ---
 
 <BaseLayout
   headerTitle={title}
   headerDescription={description}
   headerImage={image}
+  headerEntryOgImage={entryOgImage}
   headerPublishedTime={publishDate}
 >
   <slot name="head" slot="head" />

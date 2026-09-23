@@ -21,6 +21,7 @@ const { Content } = await render(posts);
 const data = {
   readingTime: calculateReadingTime(posts.body || "").text,
   ...posts.data,
+  id: posts.id,
 };
 ---
 

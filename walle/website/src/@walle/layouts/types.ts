@@ -13,6 +13,9 @@ export interface AbstractLayoutProps {
   headerImage?: string | null;
   /** Open Graph image, when different from `headerImage`. */
   headerOgImage?: string | null;
+  /** A layout's own per-entry OG image (D13), e.g. `ogImageUrl("posts", id)` from
+   * BlogPostLayout. Lower priority than `headerOgImage`, higher than the site default. */
+  headerEntryOgImage?: string | null;
   /** Meta robots directive. @default config.app.website.robots */
   headerRobots?: string;
   /** Document `lang` attribute. @default config.app.website.language */
@@ -35,6 +38,8 @@ export interface BlogPostLayoutProps extends BaseLayoutProps {
   image?: string | null;
   tags?: string[];
   draft?: boolean;
+  /** The `posts` collection entry id — used to derive its own OG image (D13) when enabled. */
+  id?: string;
 }
 
 export interface BlogPostsLayoutProps extends BaseLayoutProps {

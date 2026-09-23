@@ -17,6 +17,7 @@ const {
   headerDescription = config.app.website.description || "",
   headerImage = config.app.website.image || null,
   headerOgImage = null,
+  headerEntryOgImage = null,
   headerRobots = config.app.website.robots || "index, follow",
   headerLanguage = config.app.website.language || "",
   headerPublishedTime = null,
@@ -39,6 +40,7 @@ const siteInfo = {
       description={headerDescription}
       image={headerImage}
       ogImage={headerOgImage}
+      entryOgImage={headerEntryOgImage}
       robots={headerRobots}
       publishedTime={headerPublishedTime}
     />

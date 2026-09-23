@@ -1,6 +1,7 @@
 ---
 import config from "@walle/config";
 import { resolveInternalUrl, truncateAtWord } from "@walle/utils";
+import { ogImageUrl as siteOgImageUrl } from "@walle/og";
 import pwa from "virtual:walle-pwa";
 import { WALLE_LAYER_DECLARATION } from "@walle/styles/layers";
 import "@walle/styles/global.css";
@@ -13,6 +14,9 @@ interface Props {
   description: string;
   image?: string;
   ogImage?: string;
+  /** A layout's own per-entry OG image (D13) — e.g. BlogPostLayout passes `ogImageUrl("posts", id)`.
+   * Lower priority than an explicit `ogImage` override, higher than the site default. */
+  entryOgImage?: string;
   robots?: string;
   favicon?: string;
   /**
@@ -28,6 +32,7 @@ const {
   description = config.app.website.description,
   image = config.app.website.image,
   ogImage,
+  entryOgImage,
   robots = null,
   favicon = config.app.website.favicon,
   publishedTime = null,
@@ -63,7 +68,19 @@ const descriptionSeo = descriptionMaxLength
   ? truncateAtWord(description, descriptionMaxLength)
   : description;
 
-const ogImageUrl = ogImage ?? (image ? new URL(image, Astro.url) : undefined);
+// A root-relative path (every value here can be one: `ogImageUrl()`'s own output, or a plain
+// `image`/`ogImage` config value) resolves against the origin regardless of the current page's
+// own path, same as `image` already did — an already-absolute URL passes through unchanged.
+const toAbsolute = (value: string) => (/^https?:\/\//.test(value) ? value : new URL(value, Astro.url).toString());
+
+// D13 fallback chain: an explicit override, then the layout's own per-entry image, then the
+// site-wide OG default (only when the feature is enabled — otherwise there's no /og route to
+// point at), then today's plain `website.image`.
+const resolvedOgImage =
+  (ogImage ? toAbsolute(ogImage) : undefined) ??
+  (entryOgImage ? toAbsolute(entryOgImage) : undefined) ??
+  (config.app.seo?.ogImage?.enabled ? toAbsolute(siteOgImageUrl()) : undefined) ??
+  (image ? toAbsolute(image) : undefined);
 const resolvedFavicon = favicon ? resolveInternalUrl(favicon) : undefined;
 // BCP 47 ("en-US") → Open Graph locale ("en_US")
 const ogLocale = (config.app.website.language || "").replace("-", "_") || null;
@@ -130,7 +147,7 @@ const publishedIso = publishedTime ? new Date(publishedTime).toISOString() : nul
 <meta property="og:url" content={Astro.url} />
 <meta property="og:title" content={titleSeo} />
 <meta property="og:description" content={descriptionSeo} />
-<meta property="og:image" content={ogImageUrl} />
+<meta property="og:image" content={resolvedOgImage} />
 {ogLocale && <meta property="og:locale" content={ogLocale} />}
 {publishedIso && <meta property="article:published_time" content={publishedIso} />}
 
@@ -139,4 +156,4 @@ const publishedIso = publishedTime ? new Date(publishedTime).toISOString() : nul
 <meta property="twitter:url" content={Astro.url} />
 <meta property="twitter:title" content={titleSeo} />
 <meta property="twitter:description" content={descriptionSeo} />
-<meta property="twitter:image" content={ogImageUrl} />
+<meta property="twitter:image" content={resolvedOgImage} />
