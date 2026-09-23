@@ -5,7 +5,7 @@ import AstroPWA from "@vite-pwa/astro";
 import node from "@astrojs/node";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
-import { defineConfig } from "astro/config";
+import { defineConfig, fontProviders } from "astro/config";
 import icon from "astro-icon";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, resolve, sep } from "node:path";
@@ -490,6 +490,51 @@ export function isSitemapExcluded(pathname: string, excludes: string[], base?: s
   });
 }
 
+type WalleFontEntry = {
+  role: "body" | "heading" | "mono";
+  name: string;
+  provider: "local" | "google" | "fontsource";
+  weights?: (string | number)[];
+  styles?: ("normal" | "italic" | "oblique")[];
+  src?: string[];
+  preload?: boolean;
+};
+
+/**
+ * Maps walle's simplified `typography.fonts` entries (D11) to Astro's native `fonts` config:
+ * one entry per role, `cssVariable` fixed to `--walle-font-<role>`, provider resolved from the
+ * three options walle exposes. A local font gets a single @font-face variant covering the
+ * whole `weights`/`styles` range from one file (the variable-font case) — see the schema
+ * comment on `src` for what a per-weight static local font would need instead.
+ */
+function resolveWalleFonts(entries: WalleFontEntry[] | undefined): any[] {
+  return (entries ?? []).map((entry) => ({
+    provider:
+      entry.provider === "google"
+        ? fontProviders.google()
+        : entry.provider === "fontsource"
+          ? fontProviders.fontsource()
+          : fontProviders.local(),
+    name: entry.name,
+    cssVariable: `--walle-font-${entry.role}`,
+    ...(entry.weights?.length ? { weights: entry.weights } : {}),
+    ...(entry.styles?.length ? { styles: entry.styles } : {}),
+    ...(entry.provider === "local"
+      ? {
+          options: {
+            variants: [
+              {
+                src: entry.src ?? [],
+                weight: entry.weights?.join(" "),
+                style: entry.styles?.[0],
+              },
+            ],
+          },
+        }
+      : {}),
+  }));
+}
+
 /**
  * Resolve the Astro config from the consumer's app.json plus optional native overrides.
  * Override semantics (additive merge): scalar keys from the consumer win over the
@@ -515,6 +560,10 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
   // exclusion mechanism as sitemapExclude, just fed from a different config key (D9).
   const redirectSources = Object.keys(astro.redirects ?? {});
   const sitemapExclude = [...(astro.sitemapExclude ?? []), ...redirectSources];
+
+  const fonts = resolveWalleFonts(
+    (appConfig as { typography?: { fonts?: WalleFontEntry[] } }).typography?.fonts
+  );
 
   // Astro's own `prefetch` is off by default; walle turns it on with the hover strategy
   // unless a site opts out entirely with `astro.prefetch: false` (D9).
@@ -559,6 +608,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
     ...(astro.adapter === "node" ? { adapter: node({ mode: "standalone" }) } : {}),
     redirects: astro.redirects,
     prefetch,
+    ...(fonts.length > 0 ? { fonts } : {}),
     // Consumer scalar keys override the walle-resolved values.
     ...consumerScalars,
     integrations: [...walleIntegrations, ...pwaIntegrations, ...consumerIntegrations],

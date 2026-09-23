@@ -4,6 +4,7 @@ import { resolveInternalUrl, truncateAtWord } from "@walle/utils";
 import pwa from "virtual:walle-pwa";
 import { WALLE_LAYER_DECLARATION } from "@walle/styles/layers";
 import "@walle/styles/global.css";
+import { Font } from "astro:assets";
 
 interface Props {
   title: string;
@@ -66,6 +67,8 @@ const resolvedFavicon = favicon ? resolveInternalUrl(favicon) : undefined;
 const ogLocale = (config.app.website.language || "").replace("-", "_") || null;
 
 const publishedIso = publishedTime ? new Date(publishedTime).toISOString() : null;
+
+const configuredFonts = config.app.typography?.fonts ?? [];
 ---
 
 <style is:inline set:html={WALLE_LAYER_DECLARATION}></style>
@@ -81,6 +84,16 @@ const publishedIso = publishedTime ? new Date(publishedTime).toISOString() : nul
   href={new URL("rss.xml", Astro.site)}
 />
 <meta name="generator" content={Astro.generator} />
+
+{
+  configuredFonts.map((font) => (
+    // Astro generates `CssVariable` as a literal union of only the cssVariables actually
+    // configured in astro.config.mjs at type-check time; our role type is the broader
+    // "body"|"heading"|"mono" from the zod schema, so the template literal doesn't narrow to
+    // match it even though the two are always in sync (same app.json, same font list).
+    <Font cssVariable={`--walle-font-${font.role}` as any} preload={font.preload !== false} />
+  ))
+}
 
 {
   /* vite-plugin-pwa cannot inject these into Astro's static output (no transformIndexHtml

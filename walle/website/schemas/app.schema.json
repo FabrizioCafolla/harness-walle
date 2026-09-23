@@ -452,6 +452,55 @@
         }
       },
       "additionalProperties": false
+    },
+    "typography": {
+      "type": "object",
+      "properties": {
+        "fonts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "role": {
+                "type": "string",
+                "enum": ["body", "heading", "mono"]
+              },
+              "name": {
+                "type": "string"
+              },
+              "provider": {
+                "type": "string",
+                "enum": ["local", "google", "fontsource"]
+              },
+              "weights": {
+                "type": "array",
+                "items": {
+                  "type": ["string", "number"]
+                }
+              },
+              "styles": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": ["normal", "italic", "oblique"]
+                }
+              },
+              "src": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "preload": {
+                "type": "boolean"
+              }
+            },
+            "required": ["role", "name", "provider"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
     }
   },
   "required": ["website", "astro"],

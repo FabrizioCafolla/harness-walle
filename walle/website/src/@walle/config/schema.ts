@@ -307,6 +307,32 @@ const labelsSchema = z
   })
   .strict();
 
+// One entry per self-hosted/managed font family (D11); mapped to an Astro `fonts` config entry
+// with `cssVariable: "--walle-font-<role>"` by define-config.ts. Lives in app.json (not
+// theme.json) so both the build-time resolver and the runtime `config` object Head.astro
+// already imports can read it from the one file both already parse.
+const fontEntrySchema = z
+  .object({
+    role: z.enum(["body", "heading", "mono"]),
+    name: z.string(),
+    provider: z.enum(["local", "google", "fontsource"]),
+    weights: z.array(z.union([z.string(), z.number()])).optional(),
+    styles: z.array(z.enum(["normal", "italic", "oblique"])).optional(),
+    // Local-only: relative font file path(s) for a single @font-face variant (a variable font
+    // covering the whole `weights` range in one file is the expected case; per-weight static
+    // files are a real Astro feature this schema doesn't expose — add a `variants` array here
+    // if a site needs it).
+    src: z.array(z.string()).optional(),
+    preload: z.boolean().optional(),
+  })
+  .strict();
+
+const typographySchema = z
+  .object({
+    fonts: z.array(fontEntrySchema).optional(),
+  })
+  .strict();
+
 export const appSchema = z
   .object({
     $schema: z.string().optional(),
@@ -316,6 +342,7 @@ export const appSchema = z
     pwa: pwaSchema.optional(),
     commerce: commerceSchema.optional(),
     labels: labelsSchema.optional(),
+    typography: typographySchema.optional(),
   })
   .strict();
 
