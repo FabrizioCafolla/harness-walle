@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { defineWalleConfig, isSitemapExcluded } from "../../src/@walle/define-config";
+import { defineWalleConfig, isSitemapExcluded, withBase } from "../../src/@walle/define-config";
 
 // defineWalleConfig() always sets vite.plugins to a plain array of walle's own plugin objects
 // (never a Promise/false/nested array as Vite's wider PluginOption allows), so this narrows the
@@ -223,5 +223,45 @@ describe("isSitemapExcluded", () => {
   it("strips the base only at a path-segment boundary", () => {
     expect(isSitemapExcluded("/harness-walle-docs/x", ["/x"], "/harness-walle")).toBe(false);
     expect(isSitemapExcluded("/harness-walle/x", ["/x"], "/harness-walle")).toBe(true);
+  });
+});
+
+describe("withBase", () => {
+  it("leaves the destination untouched when no base is configured", () => {
+    expect(withBase("/products/example")).toBe("/products/example");
+    expect(withBase("/products/example", "/")).toBe("/products/example");
+  });
+
+  it("prefixes the base onto an internal root-relative destination", () => {
+    expect(withBase("/products/example", "/harness-walle")).toBe(
+      "/harness-walle/products/example"
+    );
+  });
+
+  it("is idempotent when the destination already carries the base", () => {
+    expect(withBase("/harness-walle/products/example", "/harness-walle")).toBe(
+      "/harness-walle/products/example"
+    );
+    expect(withBase("/harness-walle", "/harness-walle")).toBe("/harness-walle");
+  });
+
+  it("leaves an external https destination untouched", () => {
+    expect(withBase("https://example.com/x", "/harness-walle")).toBe("https://example.com/x");
+  });
+
+  it("leaves a protocol-relative destination untouched", () => {
+    expect(withBase("//example.com/x", "/harness-walle")).toBe("//example.com/x");
+  });
+
+  it("prefixes the destination inside the object form, keeping status", () => {
+    const redirects = {
+      "/old": { destination: "/new", status: 301 as const },
+    };
+    const [source, target] = Object.entries(redirects)[0];
+    expect(source).toBe("/old");
+    expect({ ...target, destination: withBase(target.destination, "/harness-walle") }).toEqual({
+      destination: "/harness-walle/new",
+      status: 301,
+    });
   });
 });

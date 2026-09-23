@@ -12,7 +12,11 @@
     "baseUrl": "https://fabriziocafolla.github.io",
     "basePath": "/harness-walle",
     "trailingSlash": "never",
-    "analyticsScriptContent": ""
+    "analyticsScriptContent": "",
+    "redirects": {
+      "/products/example": "/products/aurora-merino-overshirt",
+      "/products/example-2": "/products/cirrus-packable-jacket"
+    }
   },
   "commerce": {
     "mode": "shop",

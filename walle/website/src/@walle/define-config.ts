@@ -584,6 +584,26 @@ export function isSitemapExcluded(pathname: string, excludes: string[], base?: s
   });
 }
 
+/**
+ * Prefixes `base` onto a root-relative redirect destination. Astro's `redirects` config applies
+ * `base` to the route's source pattern but passes the destination straight through, so an
+ * internal target written the same bare way as every other walle path (e.g. `/products/x`, same
+ * convention as `sitemapExclude`/`redirects` keys) would 404 once the site sits under a base
+ * path — the old page-based redirect avoided this by calling `resolveInternalUrl`, which this
+ * replaces now that redirects are declarative config, not a page. Leaves external
+ * (`http(s):`/`//`) destinations and one already written with the base untouched (idempotent —
+ * a site that already wrote it with the base doesn't get it doubled).
+ */
+export function withBase(destination: string, base?: string): string {
+  if (!base || base === "/") return destination;
+  if (!destination.startsWith("/") || destination.startsWith("//")) return destination;
+  const strippedBase = base.replace(/\/$/, "");
+  if (destination === strippedBase || destination.startsWith(`${strippedBase}/`)) {
+    return destination;
+  }
+  return `${strippedBase}${destination}`;
+}
+
 type WalleFontEntry = {
   role: "body" | "heading" | "mono";
   name: string;
@@ -665,6 +685,19 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
   const redirectSources = Object.keys(astro.redirects ?? {});
   const sitemapExclude = [...(astro.sitemapExclude ?? []), ...redirectSources];
 
+  // Destinations are written bare, same convention as every other walle path — prefix the
+  // base path here so a redirect still lands on a real route once the site has one.
+  const redirects = astro.redirects
+    ? Object.fromEntries(
+        Object.entries(astro.redirects).map(([source, target]) => [
+          source,
+          typeof target === "string"
+            ? withBase(target, astro.basePath)
+            : { ...target, destination: withBase(target.destination, astro.basePath) },
+        ])
+      )
+    : undefined;
+
   const walleFontEntries: WalleFontEntry[] | undefined = readThemeJson().typography?.fonts;
   const fonts = resolveWalleFonts(walleFontEntries);
 
@@ -710,7 +743,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
     // node adapter without setting `output`, so it stays Astro's default ("static") and only
     // `prerender = false` routes render on demand through the adapter.
     ...(astro.adapter === "node" ? { adapter: node({ mode: "standalone" }) } : {}),
-    redirects: astro.redirects,
+    redirects,
     prefetch,
     ...(fonts.length > 0 ? { fonts } : {}),
     // Consumer scalar keys override the walle-resolved values.

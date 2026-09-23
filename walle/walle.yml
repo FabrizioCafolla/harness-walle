@@ -46,7 +46,6 @@ website-seed-exclude:
   - src/@walle
   - schemas
   - src/pages/wiki
-  - src/pages/products
   - src/configs/theme.json
   - astrobook
   - tests
