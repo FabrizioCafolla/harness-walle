@@ -14,6 +14,15 @@ declare module "virtual:walle-pwa" {
 }
 
 /**
+ * Commerce UI gated at the module-graph level (D10): `null` when `commerce.mode !== "shop"`,
+ * so a vetrina site's build never even emits a chunk for the cart components.
+ */
+declare module "virtual:walle-features" {
+  export const CartMount: typeof import("./commerce/CartMount.astro").default | null;
+  export const CartBadge: typeof import("./commerce/CartBadge.astro").default | null;
+}
+
+/**
  * One entry per configured `typography.fonts` (D11): what Head.astro needs to render one
  * `<Font cssVariable preload />` per font — everything else (name, provider, weights...) is
  * only relevant to Astro's own build-time `fonts` config, resolved in define-config.ts.

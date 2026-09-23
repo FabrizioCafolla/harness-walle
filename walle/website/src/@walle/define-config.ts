@@ -121,6 +121,37 @@ function walleComponentsPlugin(root: string, components: Record<string, string> 
 }
 
 /**
+ * Gates commerce UI at the module-graph level (D10), replacing the old runtime-conditional
+ * `await import()` in BaseLayout: when commerce is off, the virtual module's own source is
+ * `export const CartMount = null`, so Rollup never even emits a chunk for CartMount/CartBadge
+ * (a dynamic `import()` still emitted an unused chunk, since Vite statically detects the
+ * literal specifier regardless of whether the runtime branch ever executes it).
+ */
+function walleFeaturesPlugin(commerceMode: string | undefined) {
+  const virtualId = "virtual:walle-features";
+  const resolvedId = "\0" + virtualId;
+  const commerceOn = commerceMode === "shop";
+  return {
+    name: "walle-features",
+    resolveId(id: string) {
+      return id === virtualId ? resolvedId : null;
+    },
+    load(id: string) {
+      if (id !== resolvedId) return null;
+      if (!commerceOn) {
+        return "export const CartMount = null;\nexport const CartBadge = null;";
+      }
+      const cartMountPath = fileURLToPath(new URL("./commerce/CartMount.astro", import.meta.url));
+      const cartBadgePath = fileURLToPath(new URL("./commerce/CartBadge.astro", import.meta.url));
+      return [
+        `export { default as CartMount } from ${JSON.stringify(cartMountPath)};`,
+        `export { default as CartBadge } from ${JSON.stringify(cartBadgePath)};`,
+      ].join("\n");
+    },
+  };
+}
+
+/**
  * Deterministic token → CSS var mapping.
  *   palette.<name>               → --walle-color-<name>   (includes *-contrast, heading)
  *   typography.fontFamilyBase    → --walle-font-body
@@ -650,6 +681,9 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
         walleComponentsPlugin(process.cwd(), components),
         wallePwaHeadPlugin(pwaHead),
         walleFontsPlugin(walleFontEntries),
+        walleFeaturesPlugin(
+          (appConfig as { commerce?: { mode?: string } }).commerce?.mode
+        ),
         walleSlimBarrelsPlugin(process.cwd()),
         ...(consumerVite.plugins ?? []),
       ],

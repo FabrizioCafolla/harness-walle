@@ -1,5 +1,6 @@
 ---
 import { footer as Footer, navbar as Navbar } from "virtual:walle-components";
+import { CartMount, CartBadge } from "virtual:walle-features";
 import config from "@walle/config";
 import type { NavbarConfig } from "@walle/config";
 import AbstractLayout from "./AbstractLayout.astro";
@@ -8,17 +9,12 @@ import { getCollection } from "astro:content";
 
 export type { BaseLayoutProps as Props } from "./types";
 
-// Cart UI only in commerce mode; a vetrina site ships none of it. `cartInNavbar` puts
-// the trigger in the navbar, otherwise it floats bottom-right. Reading `mode` directly is a
-// bridge until group 11's virtual:walle-features gates this at the module graph level instead
-// of at render time.
+// Cart UI only in commerce mode; a vetrina site ships none of it. `cartInNavbar` puts the
+// trigger in the navbar, otherwise it floats bottom-right. `CartMount`/`CartBadge` come from
+// `virtual:walle-features` (D10), which resolves to `null` at the module-graph level when
+// commerce is off — a vetrina site's build never emits a chunk for the cart components at all.
 const commerce = config.app.commerce;
-const showCart = commerce?.mode === "shop";
-// Imported dynamically so a vetrina site keeps the cart out of its module graph entirely.
-// Astro collects a page's CSS from that graph, not from what renders, so a static import
-// shipped the whole cart stylesheet on every page of every site that never shows a cart.
-const CartMount = showCart ? (await import("@walle/commerce/CartMount.astro")).default : null;
-const CartBadge = showCart ? (await import("@walle/commerce/CartBadge.astro")).default : null;
+const showCart = Boolean(CartMount);
 const cartInNavbar = commerce?.cartInNavbar ?? false;
 
 // "Docs" link for the showcase's /wiki pages (seed-excluded, so consumers never have them).
