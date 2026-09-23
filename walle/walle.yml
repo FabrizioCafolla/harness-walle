@@ -46,6 +46,7 @@ website-seed-exclude:
   - src/@walle
   - schemas
   - src/pages/wiki
+  - src/configs/theme.json
   - astrobook
   - tests
   - playwright.config.ts

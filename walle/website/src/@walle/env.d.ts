@@ -14,6 +14,15 @@ declare module "virtual:walle-pwa" {
 }
 
 /**
+ * One entry per configured `typography.fonts` (D11): what Head.astro needs to render one
+ * `<Font cssVariable preload />` per font — everything else (name, provider, weights...) is
+ * only relevant to Astro's own build-time `fonts` config, resolved in define-config.ts.
+ */
+declare module "virtual:walle-fonts" {
+  export const fonts: Array<{ cssVariable: string; preload: boolean }>;
+}
+
+/**
  * One export per embeddable component (D6), each typed against its own "standard" walle
  * implementation. A site override must accept the same props and slots to be a valid
  * replacement, so this is the contract a `components.<key>` path is held to.

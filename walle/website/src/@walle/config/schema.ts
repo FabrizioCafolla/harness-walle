@@ -307,10 +307,25 @@ const labelsSchema = z
   })
   .strict();
 
-// One entry per self-hosted/managed font family (D11); mapped to an Astro `fonts` config entry
-// with `cssVariable: "--walle-font-<role>"` by define-config.ts. Lives in app.json (not
-// theme.json) so both the build-time resolver and the runtime `config` object Head.astro
-// already imports can read it from the one file both already parse.
+export const appSchema = z
+  .object({
+    $schema: z.string().optional(),
+    website: websiteSchema,
+    astro: astroSchema,
+    components: z.record(z.string(), z.string()).optional(),
+    pwa: pwaSchema.optional(),
+    commerce: commerceSchema.optional(),
+    labels: labelsSchema.optional(),
+  })
+  .strict();
+
+const themePaletteSchema = z.record(z.string(), z.string()).optional();
+const themeScaleSchema = z.record(z.string(), z.string()).optional();
+
+// One entry per self-hosted/managed font family (D11, normative in walle-site-configuration):
+// mapped to an Astro `fonts` config entry with `cssVariable: "--walle-font-<role>"` by
+// define-config.ts, and exposed to components at runtime through the `virtual:walle-fonts`
+// module (Head.astro can't read theme.json itself — it's only ever parsed at build time).
 const fontEntrySchema = z
   .object({
     role: z.enum(["body", "heading", "mono"]),
@@ -327,34 +342,13 @@ const fontEntrySchema = z
   })
   .strict();
 
-const typographySchema = z
-  .object({
-    fonts: z.array(fontEntrySchema).optional(),
-  })
-  .strict();
-
-export const appSchema = z
-  .object({
-    $schema: z.string().optional(),
-    website: websiteSchema,
-    astro: astroSchema,
-    components: z.record(z.string(), z.string()).optional(),
-    pwa: pwaSchema.optional(),
-    commerce: commerceSchema.optional(),
-    labels: labelsSchema.optional(),
-    typography: typographySchema.optional(),
-  })
-  .strict();
-
-const themePaletteSchema = z.record(z.string(), z.string()).optional();
-const themeScaleSchema = z.record(z.string(), z.string()).optional();
-
 const themeTypographySchema = z
   .object({
     fontFamilyBase: z.string().optional(),
     fontFamilyHeading: z.string().optional(),
     fontFamilyMono: z.string().optional(),
     scale: themeScaleSchema,
+    fonts: z.array(fontEntrySchema).optional(),
   })
   .strict();
 

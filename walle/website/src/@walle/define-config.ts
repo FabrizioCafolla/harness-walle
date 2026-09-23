@@ -6,6 +6,7 @@ import node from "@astrojs/node";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { defineConfig, fontProviders } from "astro/config";
+import type { AstroUserConfig } from "astro";
 import icon from "astro-icon";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, resolve, sep } from "node:path";
@@ -425,6 +426,30 @@ function wallePwaHeadPlugin(head: Record<string, unknown>) {
   };
 }
 
+/**
+ * Exposes the resolved font list to components at runtime (D11): Head.astro needs to know
+ * every configured font's `cssVariable` and `preload` flag to render one `<Font>` per entry,
+ * but it can't read theme.json itself (only ever parsed at build time, here). Same
+ * resolveId/load pattern as `wallePwaHeadPlugin`.
+ */
+function walleFontsPlugin(entries: WalleFontEntry[] | undefined) {
+  const virtualId = "virtual:walle-fonts";
+  const resolvedId = "\0" + virtualId;
+  const fonts = (entries ?? []).map((entry) => ({
+    cssVariable: `--walle-font-${entry.role}`,
+    preload: entry.preload !== false,
+  }));
+  return {
+    name: "walle-fonts",
+    resolveId(id: string) {
+      return id === virtualId ? resolvedId : null;
+    },
+    load(id: string) {
+      return id === resolvedId ? `export const fonts = ${JSON.stringify(fonts)};` : null;
+    },
+  };
+}
+
 function resolvePwaHead(
   app: { astro?: Record<string, any>; pwa?: PwaConfigSection },
   overrides: Record<string, any> = {}
@@ -507,8 +532,14 @@ type WalleFontEntry = {
  * whole `weights`/`styles` range from one file (the variable-font case) — see the schema
  * comment on `src` for what a per-weight static local font would need instead.
  */
-function resolveWalleFonts(entries: WalleFontEntry[] | undefined): any[] {
-  return (entries ?? []).map((entry) => ({
+function resolveWalleFonts(
+  entries: WalleFontEntry[] | undefined
+): NonNullable<AstroUserConfig["fonts"]> {
+  // Built as a plain heterogeneous array (each entry's `options` shape depends on its own
+  // provider) and cast once here to Astro's own `fonts` type — the per-provider generic
+  // correlation `FontFamily<T>` expects isn't expressible for an array resolved dynamically
+  // from config, only for a literal astro.config.mjs.
+  const resolved = (entries ?? []).map((entry) => ({
     provider:
       entry.provider === "google"
         ? fontProviders.google()
@@ -533,6 +564,7 @@ function resolveWalleFonts(entries: WalleFontEntry[] | undefined): any[] {
         }
       : {}),
   }));
+  return resolved as unknown as NonNullable<AstroUserConfig["fonts"]>;
 }
 
 /**
@@ -561,9 +593,8 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
   const redirectSources = Object.keys(astro.redirects ?? {});
   const sitemapExclude = [...(astro.sitemapExclude ?? []), ...redirectSources];
 
-  const fonts = resolveWalleFonts(
-    (appConfig as { typography?: { fonts?: WalleFontEntry[] } }).typography?.fonts
-  );
+  const walleFontEntries: WalleFontEntry[] | undefined = readThemeJson().typography?.fonts;
+  const fonts = resolveWalleFonts(walleFontEntries);
 
   // Astro's own `prefetch` is off by default; walle turns it on with the hover strategy
   // unless a site opts out entirely with `astro.prefetch: false` (D9).
@@ -618,6 +649,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
         walleThemePlugin(),
         walleComponentsPlugin(process.cwd(), components),
         wallePwaHeadPlugin(pwaHead),
+        walleFontsPlugin(walleFontEntries),
         walleSlimBarrelsPlugin(process.cwd()),
         ...(consumerVite.plugins ?? []),
       ],
