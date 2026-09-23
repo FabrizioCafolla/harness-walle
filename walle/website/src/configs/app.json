@@ -22,5 +22,11 @@
     "mode": "shop",
     "cartInNavbar": true,
     "showAddToCartOnCards": true
+  },
+  "seo": {
+    "ogImage": {
+      "enabled": true,
+      "collections": ["posts"]
+    }
   }
 }

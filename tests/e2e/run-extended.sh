@@ -44,6 +44,7 @@ SCENARIOS=(
   "Marker injection (create/append/rewrite, idempotent, bash+YAML stay valid)|scenario_marker_injection"
   "Justfile migration (old walle.justfile+import consumer migrates cleanly on update)|scenario_justfile_migration"
   "PWA offline fallback (sw.js references /offline, sitemap excludes it, page is noindex)|scenario_pwa_offline"
+  "OG images (on by default for a fresh init, off after update opts out, custom template used)|scenario_og_images"
 )
 
 pass=0 failed=0 skipped=0
