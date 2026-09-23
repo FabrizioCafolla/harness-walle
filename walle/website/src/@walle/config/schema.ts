@@ -321,6 +321,35 @@ const labelsSchema = z
   })
   .strict();
 
+// D13: OG images. `enabled` defaults to false (existing sites unchanged on update); the seeded
+// app.json turns it on. `templates`/`fonts` are entirely optional — absent means walle's own
+// managed default template and bundled fallback font.
+const ogImageFontSchema = z
+  .object({
+    name: z.string(),
+    path: z.string(),
+    weight: z.number().optional(),
+    style: z.enum(["normal", "italic"]).optional(),
+  })
+  .strict();
+
+const ogImageSchema = z
+  .object({
+    enabled: z.boolean().optional(),
+    collections: z.array(z.string()).optional(),
+    // Site-path overrides, same `./`-prefixed contract as `components.*`/`commerce.pages.*`.
+    // Keyed by collection name, plus the reserved "default" key.
+    templates: z.record(z.string(), z.string()).optional(),
+    fonts: z.array(ogImageFontSchema).optional(),
+  })
+  .strict();
+
+const seoSchema = z
+  .object({
+    ogImage: ogImageSchema.optional(),
+  })
+  .strict();
+
 export const appSchema = z
   .object({
     $schema: z.string().optional(),
@@ -330,6 +359,7 @@ export const appSchema = z
     pwa: pwaSchema.optional(),
     commerce: commerceSchema.optional(),
     labels: labelsSchema.optional(),
+    seo: seoSchema.optional(),
   })
   .strict();
 

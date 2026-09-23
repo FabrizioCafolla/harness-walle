@@ -475,6 +475,59 @@
         }
       },
       "additionalProperties": false
+    },
+    "seo": {
+      "type": "object",
+      "properties": {
+        "ogImage": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "collections": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "templates": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "fonts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "weight": {
+                    "type": "number"
+                  },
+                  "style": {
+                    "type": "string",
+                    "enum": ["normal", "italic"]
+                  }
+                },
+                "required": ["name", "path"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     }
   },
   "required": ["website", "astro"],
