@@ -2,6 +2,7 @@
 import config from "@walle/config";
 import { resolveInternalUrl, truncateAtWord } from "@walle/utils";
 import pwa from "virtual:walle-pwa";
+import { WALLE_LAYER_DECLARATION } from "@walle/styles/layers";
 import "@walle/styles/global.css";
 
 interface Props {
@@ -67,6 +68,7 @@ const ogLocale = (config.app.website.language || "").replace("-", "_") || null;
 const publishedIso = publishedTime ? new Date(publishedTime).toISOString() : null;
 ---
 
+<style is:inline set:html={WALLE_LAYER_DECLARATION}></style>
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />

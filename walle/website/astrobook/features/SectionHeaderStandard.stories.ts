@@ -10,11 +10,19 @@ export default {
   decorators: [{ component: StoryWrapper }],
 };
 
+export const White = {
+  args: {
+    title: "Minimal header",
+    subtitle: "Transparent background for content-first pages.",
+  } satisfies SectionHeaderStandardProps,
+};
+
 export const Primary = {
   args: {
     title: "Build fast, ship clean",
     subtitle: "A copy-based Astro design system for teams who own their stack.",
     variant: "primary",
+    filled: true,
   } satisfies SectionHeaderStandardProps,
 };
 
@@ -23,14 +31,7 @@ export const Secondary = {
     title: "Open and extensible",
     subtitle: "No black-box dependencies. Clone, extend, and keep full control.",
     variant: "secondary",
-  } satisfies SectionHeaderStandardProps,
-};
-
-export const White = {
-  args: {
-    title: "Minimal header",
-    subtitle: "Transparent background for content-first pages.",
-    variant: "white",
+    filled: true,
   } satisfies SectionHeaderStandardProps,
 };
 
@@ -39,6 +40,7 @@ export const Centered = {
     title: "Centered header",
     subtitle: "The default: title and subtitle centered in the band.",
     variant: "primary",
+    filled: true,
     centered: true,
   } satisfies SectionHeaderStandardProps,
 };

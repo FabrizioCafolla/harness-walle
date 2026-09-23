@@ -15,10 +15,8 @@
     "analyticsScriptContent": ""
   },
   "commerce": {
-    "showBuyButton": true,
+    "mode": "shop",
     "cartInNavbar": true,
-    "locale": "en-US",
-    "addToCartLabel": "Add to cart",
     "showAddToCartOnCards": true
   }
 }

@@ -6,7 +6,7 @@ export default defineConfig({
   // The astrobook-served suites (visual regression + axe a11y) have their own
   // config/webServer (playwright.astrobook.config.ts) — exclude them here so
   // they don't run against a server that doesn't mount the astrobook routes.
-  testMatch: "**/navbar.test.ts",
+  testMatch: ["**/navbar.test.ts", "**/cascade.spec.ts", "**/links.spec.ts"],
   use: {
     // Root origin; tests navigate to `${siteBase}/...` (base path from app.json).
     baseURL: "http://localhost:4321",

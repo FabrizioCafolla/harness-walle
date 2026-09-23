@@ -15,14 +15,13 @@ export async function getStaticPaths() {
 
 const { product } = Astro.props as { product: ShopifyProduct };
 
-const commerce = (
-  config.app as {
-    commerce?: { showBuyButton?: boolean; locale?: string; addToCartLabel?: string };
-  }
-).commerce;
-const showBuyButton = commerce?.showBuyButton ?? false;
-const locale = commerce?.locale ?? "en-US";
-const addToCartLabel = commerce?.addToCartLabel ?? "Add to cart";
+// Reading `mode` directly is a bridge until group 11's virtual:walle-features gates this at
+// the module graph level instead of at render time. `addToCartLabel` is not config-driven yet
+// (group 9 moves it to labels.cart.add); until then this keeps today's hardcoded fallback.
+const commerce = config.app.commerce;
+const showBuyButton = commerce?.mode === "shop";
+const locale = config.app.website.language ?? "en-US";
+const addToCartLabel = "Add to cart";
 
 const productImage = (url: string) => (url.startsWith("http") ? url : resolveInternalUrl(url));
 
@@ -101,30 +100,30 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
         <section class="upsell" aria-labelledby="upsell-heading">
           <h2 id="upsell-heading">You might also like</h2>
           <ul class="upsell__grid">
-          {recommended.map((r) => {
-            const rv = defaultVariant(r);
-            return (
-              <li>
-                <a class="upsell__card" href={resolveInternalUrl(`/products/${r.handle}`)}>
-                  {r.featuredImage && (
-                    <img
-                      src={productImage(r.featuredImage.url)}
-                      alt={r.featuredImage.altText ?? r.title}
-                      width={r.featuredImage.width ?? 1200}
-                      height={r.featuredImage.height ?? 800}
-                      loading="lazy"
-                    />
-                  )}
-                  <span class="upsell__title">{r.title}</span>
-                  {rv && <span class="upsell__price">{formatMoney(rv.price, locale)}</span>}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
-    )
-  }
+            {recommended.map((r) => {
+              const rv = defaultVariant(r);
+              return (
+                <li>
+                  <a class="upsell__card" href={resolveInternalUrl(`/products/${r.handle}`)}>
+                    {r.featuredImage && (
+                      <img
+                        src={productImage(r.featuredImage.url)}
+                        alt={r.featuredImage.altText ?? r.title}
+                        width={r.featuredImage.width ?? 1200}
+                        height={r.featuredImage.height ?? 800}
+                        loading="lazy"
+                      />
+                    )}
+                    <span class="upsell__title">{r.title}</span>
+                    {rv && <span class="upsell__price">{formatMoney(rv.price, locale)}</span>}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )
+    }
   </div>
 
   <div slot="aside" id="buy-box" class="purchase-card" tabindex="-1">
@@ -139,7 +138,7 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
       !showBuyButton && (
         <p class="purchase-card__note">
           This demo is a vetrina: the catalog is live from Shopify, but the cart and checkout are
-          disabled. Enable them with <code>commerce.showBuyButton</code> in app.json.
+          disabled. Enable them with <code>commerce.mode: "shop"</code> in app.json.
         </p>
       )
     }
@@ -216,7 +215,7 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
 
   .upsell__card:hover {
     border-color: var(--primary);
-    box-shadow: var(--box-shadow);
+    box-shadow: var(--shadow-md);
   }
 
   .upsell__card img {

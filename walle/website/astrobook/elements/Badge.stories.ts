@@ -22,20 +22,24 @@ export const Alternative = {
   args: { text: "Alternative", variant: "alternative" } satisfies BadgeProps,
 };
 
-export const Gray = {
-  args: { text: "Gray", variant: "gray" } satisfies BadgeProps,
+export const Muted = {
+  args: { text: "Muted", muted: true } satisfies BadgeProps,
+};
+
+export const Outline = {
+  args: { text: "Outline", variant: "primary", outline: true } satisfies BadgeProps,
 };
 
 export const Success = {
-  args: { text: "Success", variant: "success" } satisfies BadgeProps,
+  args: { text: "Success", status: "success" } satisfies BadgeProps,
 };
 
 export const Warning = {
-  args: { text: "Warning", variant: "warning" } satisfies BadgeProps,
+  args: { text: "Warning", status: "warning" } satisfies BadgeProps,
 };
 
 export const Danger = {
-  args: { text: "Danger", variant: "danger" } satisfies BadgeProps,
+  args: { text: "Danger", status: "danger" } satisfies BadgeProps,
 };
 
 export const Small = {

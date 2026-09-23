@@ -3045,6 +3045,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/geojson@npm:*":
+  version: 7946.0.16
+  resolution: "@types/geojson@npm:7946.0.16"
+  checksum: 10c0/1ff24a288bd5860b766b073ead337d31d73bdc715e5b50a2cee5cb0af57a1ed02cc04ef295f5fa68dc40fe3e4f104dd31282b2b818a5ba3231bc1001ba084e3c
+  languageName: node
+  linkType: hard
+
 "@types/hast@npm:^3.0.0, @types/hast@npm:^3.0.4":
   version: 3.0.4
   resolution: "@types/hast@npm:3.0.4"
@@ -3058,6 +3065,15 @@ __metadata:
   version: 7.0.15
   resolution: "@types/json-schema@npm:7.0.15"
   checksum: 10c0/a996a745e6c5d60292f36731dd41341339d4eeed8180bb09226e5c8d23759067692b1d88e5d91d72ee83dfc00d3aca8e7bd43ea120516c17922cbcb7c3e252db
+  languageName: node
+  linkType: hard
+
+"@types/leaflet@npm:^1.9.22":
+  version: 1.9.22
+  resolution: "@types/leaflet@npm:1.9.22"
+  dependencies:
+    "@types/geojson": "npm:*"
+  checksum: 10c0/ce2e09d0f208244478c6103ba64726b33a474f89f303860c7b0494ca1bb44f1744285d93c90093c95669497c7dbdc7c206495af0b741fe6e251bf106b0415593
   languageName: node
   linkType: hard
 
@@ -6392,6 +6408,13 @@ __metadata:
   version: 1.8.0
   resolution: "kolorist@npm:1.8.0"
   checksum: 10c0/73075db44a692bf6c34a649f3b4b3aea4993b84f6b754cbf7a8577e7c7db44c0bad87752bd23b0ce533f49de2244ce2ce03b7b1b667a85ae170a94782cc50f9b
+  languageName: node
+  linkType: hard
+
+"leaflet@npm:^1.9.4":
+  version: 1.9.4
+  resolution: "leaflet@npm:1.9.4"
+  checksum: 10c0/f639441dbb7eb9ae3fcd29ffd7d3508f6c6106892441634b0232fafb9ffb1588b05a8244ec7085de2c98b5ed703894df246898477836cfd0ce5b96d4717b5ca1
   languageName: node
   linkType: hard
 
@@ -10158,6 +10181,7 @@ __metadata:
     "@iconify-json/mdi": "npm:^1.2.3"
     "@nanostores/persistent": "npm:^1.3.5"
     "@playwright/test": "npm:^1.61.1"
+    "@types/leaflet": "npm:^1.9.22"
     "@typescript-eslint/eslint-plugin": "npm:^8.65.0"
     "@typescript-eslint/parser": "npm:^8.65.0"
     "@vite-pwa/astro": "npm:^1.2.0"
@@ -10171,6 +10195,7 @@ __metadata:
     eslint-plugin-astro: "npm:^3.0.1"
     eslint-plugin-markdown: "npm:^5.1.0"
     husky: "npm:^9.1.7"
+    leaflet: "npm:^1.9.4"
     nanostores: "npm:^1.4.1"
     prettier: "npm:^3.9.6"
     prettier-plugin-astro: "npm:^0.14.1"

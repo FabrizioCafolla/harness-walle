@@ -6,14 +6,14 @@ interface Props {
   title?: string;
   columns?: 2 | 3 | 4;
   centered?: boolean;
-  variant?: "primary" | "gray" | null;
+  muted?: boolean;
   items?: number;
 }
 
-const { title, columns = 3, centered = false, variant = null, items = 3 } = Astro.props;
+const { title, columns = 3, centered = false, muted = false, items = 3 } = Astro.props;
 ---
 
-<SectionColumns title={title} columns={columns} centered={centered} variant={variant}>
+<SectionColumns title={title} columns={columns} centered={centered} muted={muted}>
   {
     Array.from({ length: items }, (_, i) => (
       <div class="demo-column">

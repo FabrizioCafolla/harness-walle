@@ -7,19 +7,13 @@ import { defaultVariant, shopifyEnabled, type ShopifyProduct } from "@walle/comm
 import config from "@walle/config";
 import { getCollection } from "astro:content";
 
-const commerce = (
-  config.app as {
-    commerce?: {
-      showBuyButton?: boolean;
-      locale?: string;
-      addToCartLabel?: string;
-      showAddToCartOnCards?: boolean;
-    };
-  }
-).commerce;
-const showBuyButton = commerce?.showBuyButton ?? false;
-const locale = commerce?.locale ?? "en-US";
-const addToCartLabel = commerce?.addToCartLabel ?? "Add to cart";
+// Reading `mode` directly is a bridge until group 11's virtual:walle-features gates this at
+// the module graph level instead of at render time. `addToCartLabel` is not config-driven yet
+// (group 9 moves it to labels.cart.add); until then this keeps today's hardcoded fallback.
+const commerce = config.app.commerce;
+const showBuyButton = commerce?.mode === "shop";
+const locale = config.app.website.language ?? "en-US";
+const addToCartLabel = "Add to cart";
 const showAddToCartOnCards = commerce?.showAddToCartOnCards ?? true;
 
 const entries = await getCollection("products");
@@ -57,6 +51,8 @@ function toCard(p: ShopifyProduct) {
   <SectionHeaderStandard
     title="Products"
     subtitle="A demo catalog read from Shopify at build time. Prices and availability refresh on every rebuild."
+    variant="primary"
+    filled={true}
   />
 
   <div class="products">

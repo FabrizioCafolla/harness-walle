@@ -1,5 +1,8 @@
 ---
-export interface Props {
+import type { BaseProps } from "../shared/types";
+import { splitProps } from "../shared/attrs";
+
+export interface Props extends BaseProps<"section"> {
   /** Accessible name of the carousel region (required) */
   label: string;
   /** Slides per view on wide screens; narrow screens always show 1 @default 1 */
@@ -33,6 +36,25 @@ export interface Props {
   id?: string;
 }
 
+const OWN_KEYS = [
+  "label",
+  "perView",
+  "controls",
+  "counter",
+  "fit",
+  "height",
+  "zoom",
+  "previousLabel",
+  "nextLabel",
+  "zoomLabel",
+  "closeLabel",
+  "slideLabel",
+  "class",
+  "id",
+  "style",
+];
+
+const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
 const {
   label,
   perView = 1,
@@ -48,10 +70,12 @@ const {
   slideLabel = "{i} of {n}",
   class: className = "",
   id,
-} = Astro.props;
+  style: styleProp,
+} = own as Props & { style?: string };
 
 const classes = ["carousel", className].filter(Boolean).join(" ");
-const rootStyle = height ? `--carousel-height: ${height};` : undefined;
+const heightStyle = height ? `--carousel-height: ${height};` : undefined;
+const rootStyle = [heightStyle, styleProp].filter(Boolean).join(" ") || undefined;
 
 // Consistent inline stroke icons (no icon-font dependency).
 const chevronLeft =
@@ -75,6 +99,7 @@ const closeIcon =
   data-slide-label={slideLabel}
   data-zoom={zoom ? "true" : undefined}
   data-zoom-label={zoomLabel}
+  {...rest}
 >
   <div class="carousel-viewport">
     <div class="carousel-track" tabindex="0">
@@ -126,11 +151,15 @@ const closeIcon =
 </section>
 
 <style>
+  @layer walle.components {
   .carousel {
+    /* Public properties */
+    --carousel-control-bg: var(--surface);
+    --carousel-control-fg: var(--text);
+    --carousel-radius: var(--radius-lg);
+    --carousel-gap: var(--space-lg);
+
     position: relative;
-    /* The root is a <section>, which inherits the global `section { padding: 4rem 1.5rem }`.
-       A carousel is a component, not a page section — reset it so slides align with the top
-       of their column (e.g. next to a product buy box) and span the full width. */
     padding: 0;
     --carousel-height: clamp(240px, 42vw, 460px);
   }
@@ -143,7 +172,7 @@ const closeIcon =
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: 100%;
-    gap: var(--space-lg);
+    gap: var(--carousel-gap);
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
@@ -172,30 +201,32 @@ const closeIcon =
     width: 100%;
     height: var(--carousel-height);
     object-fit: cover;
-    border-radius: var(--radius-lg);
+    border-radius: var(--carousel-radius);
   }
 
   .carousel[data-fit="auto"] .carousel-track :global(img) {
     display: block;
     width: 100%;
     height: auto;
-    border-radius: var(--radius-lg);
+    border-radius: var(--carousel-radius);
   }
 
   @media (min-width: 769px) {
     .carousel[data-per-view="2"] .carousel-track {
-      grid-auto-columns: calc((100% - var(--space-lg)) / 2);
+      grid-auto-columns: calc((100% - var(--carousel-gap)) / 2);
     }
     .carousel[data-per-view="3"] .carousel-track {
-      grid-auto-columns: calc((100% - 2 * var(--space-lg)) / 3);
+      grid-auto-columns: calc((100% - 2 * var(--carousel-gap)) / 3);
     }
     .carousel[data-per-view="4"] .carousel-track {
-      grid-auto-columns: calc((100% - 3 * var(--space-lg)) / 4);
+      grid-auto-columns: calc((100% - 3 * var(--carousel-gap)) / 4);
     }
   }
 
   /* Overlay side arrows */
   .carousel-arrow {
+    --carousel-arrow-radius: 50%;
+
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -207,11 +238,11 @@ const closeIcon =
     justify-content: center;
     padding: 0;
     border: 1px solid var(--border);
-    border-radius: 50%;
-    background: var(--surface);
-    color: var(--text);
+    border-radius: var(--carousel-arrow-radius);
+    background: var(--carousel-control-bg);
+    color: var(--carousel-control-fg);
     cursor: pointer;
-    box-shadow: var(--box-shadow);
+    box-shadow: var(--shadow-md);
     transition:
       background var(--transition),
       color var(--transition),
@@ -263,8 +294,8 @@ const closeIcon =
     justify-content: center;
     border: none;
     border-radius: var(--radius-md);
-    background: rgba(16, 23, 37, 0.62);
-    color: #fff;
+    background: color-mix(in srgb, var(--black) 62%, transparent);
+    color: var(--white);
     cursor: zoom-in;
     opacity: 0;
     transition: opacity var(--transition);
@@ -295,21 +326,27 @@ const closeIcon =
   }
 
   .carousel-lightbox::backdrop {
-    background: rgba(10, 14, 22, 0.9);
+    background: color-mix(in srgb, var(--black) 90%, transparent);
   }
 
   .carousel-lightbox__img {
+    --carousel-lightbox-img-shadow: 0 24px 60px color-mix(in srgb, var(--black) 50%, transparent);
+
     display: block;
     max-width: 94vw;
     max-height: 90vh;
     width: auto;
     height: auto;
     border-radius: var(--radius-md);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--carousel-lightbox-img-shadow);
   }
 
   /* Fixed to the viewport corner so it never overflows off-screen */
   .carousel-lightbox__close {
+    --carousel-lightbox-close-radius: 50%;
+    --carousel-lightbox-close-bg: color-mix(in srgb, var(--white) 16%, transparent);
+    --carousel-lightbox-close-bg-hover: color-mix(in srgb, var(--white) 30%, transparent);
+
     position: fixed;
     top: 1rem;
     right: 1rem;
@@ -320,15 +357,15 @@ const closeIcon =
     justify-content: center;
     padding: 0;
     border: none;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.16);
-    color: #fff;
+    border-radius: var(--carousel-lightbox-close-radius);
+    background: var(--carousel-lightbox-close-bg);
+    color: var(--white);
     cursor: pointer;
     transition: background var(--transition);
   }
 
   .carousel-lightbox__close:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: var(--carousel-lightbox-close-bg-hover);
   }
 
   .carousel-lightbox__close :global(svg) {
@@ -347,6 +384,7 @@ const closeIcon =
     .carousel-track {
       scroll-behavior: auto;
     }
+  }
   }
 </style>
 

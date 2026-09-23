@@ -7,12 +7,17 @@
  * clickable — no button nested inside a link.
  */
 import Badge from "@walle/components/elements/Badge.astro";
+import config from "@walle/config";
 import { resolveInternalUrl } from "@walle/utils";
 import VariantPicker from "./VariantPicker.astro";
 import type { ShopifyProduct } from "./shopify";
 
 interface Props {
   product: ShopifyProduct;
+  /**
+   * BCP 47 locale for price formatting
+   * @default site language from config
+   */
   locale?: string;
   /** Show the add-to-cart button. @default true */
   showAddToCart?: boolean;
@@ -27,7 +32,7 @@ interface Props {
 
 const {
   product,
-  locale = "en-US",
+  locale = config.app.website.language || "en-US",
   showAddToCart = true,
   showSizes = true,
   showQuantity = false,
@@ -54,7 +59,7 @@ const inStock = product.variants.nodes.some((v) => v.availableForSale);
         />
       )
     }
-    {!inStock && <Badge text="Sold out" variant="gray" class="buy-card__badge" />}
+    {!inStock && <Badge text="Sold out" muted class="buy-card__badge" />}
   </div>
 
   <div class="buy-card__body">
@@ -82,6 +87,7 @@ const inStock = product.variants.nodes.some((v) => v.availableForSale);
 </article>
 
 <style>
+  @layer walle.components {
   .buy-card {
     position: relative;
     display: flex;
@@ -89,7 +95,7 @@ const inStock = product.variants.nodes.some((v) => v.availableForSale);
     height: 100%;
     background: var(--surface);
     border-radius: var(--radius-md);
-    box-shadow: var(--box-shadow);
+    box-shadow: var(--shadow-md);
     overflow: hidden;
     transition:
       transform var(--transition),
@@ -114,7 +120,7 @@ const inStock = product.variants.nodes.some((v) => v.availableForSale);
 
   .buy-card:hover {
     transform: translateY(-2px);
-    box-shadow: var(--box-shadow-hover);
+    box-shadow: var(--shadow-lg);
   }
 
   .buy-card__media {
@@ -165,5 +171,6 @@ const inStock = product.variants.nodes.some((v) => v.availableForSale);
 
   .buy-card__title a:hover {
     color: var(--primary);
+  }
   }
 </style>

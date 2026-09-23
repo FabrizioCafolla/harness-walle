@@ -1,8 +1,6 @@
 ---
-import Breadcrumbs from "@walle/components/features/Breadcrumbs.astro";
-import SectionHeaderStandard from "@walle/components/features/Sections/HeaderStandard.astro";
+import { breadcrumbs as Breadcrumbs, pageHeader as SectionHeaderStandard } from "virtual:walle-components";
 import StructuredData from "@walle/components/features/StructuredData.astro";
-import type { BreadcrumbItem } from "@walle/components/features/Breadcrumbs.astro";
 import type { ProductData } from "@walle/components/features/Card/ProductCard.astro";
 import BaseLayout from "./BaseLayout.astro";
 import { productJsonLd } from "@walle/utils/structured-data";
@@ -18,52 +16,27 @@ import { Icon } from "astro-icon/components";
  * (full-width, under the main/aside grid — e.g. a product description + recommendations
  * that should read full-width and, on mobile, sit after the aside rather than before it).
  */
-export interface Props {
-  /**
-   * Page title (header + document title)
-   */
-  title: string;
+export type { DetailLayoutProps as Props } from "./types";
 
-  /**
-   * Meta description
-   */
-  description?: string;
-
-  /**
-   * Open Graph image URL
-   */
-  ogImage?: string;
-
-  /**
-   * Breadcrumb trail (last item should be the current page)
-   */
-  breadcrumbs?: BreadcrumbItem[];
-
-  /**
-   * Optional back link above the breadcrumbs
-   */
-  backLink?: {
-    href: string;
-    /**
-     * @default "Back"
-     */
-    label?: string;
-  };
-
-  /**
-   * Product rendered by this page — emits Product/Offer JSON-LD from the
-   * same object that feeds the visible content (one shape, two renderings)
-   */
-  product?: ProductData;
-}
-
-const { title, description, ogImage, breadcrumbs = [], backLink, product } = Astro.props;
+const {
+  title,
+  description,
+  ogImage,
+  breadcrumbs = [],
+  backLink,
+  product,
+  badgesAlign = "start",
+} = Astro.props;
 ---
 
 <BaseLayout headerTitle={title} headerDescription={description} headerOgImage={ogImage}>
-  {product && <StructuredData data={productJsonLd(product, Astro.url.href)} />}
-  <SectionHeaderStandard title={title}>
-    <div class="detail-badges">
+  {
+    product && (
+      <StructuredData data={productJsonLd(product as ProductData, Astro.url.href)} />
+    )
+  }
+  <SectionHeaderStandard title={title} variant="primary" filled={true}>
+    <div class:list={["detail-badges", `detail-badges--${badgesAlign}`]}>
       <slot name="badges" />
     </div>
   </SectionHeaderStandard>
@@ -99,11 +72,21 @@ const { title, description, ogImage, breadcrumbs = [], backLink, product } = Ast
 </BaseLayout>
 
 <style>
+  @layer walle.components {
   .detail-badges {
     display: flex;
     flex-wrap: wrap;
     gap: 0.7rem;
     align-items: center;
+    justify-content: flex-start;
+  }
+
+  .detail-badges--center {
+    justify-content: center;
+  }
+
+  .detail-badges--end {
+    justify-content: flex-end;
   }
 
   .detail-badges:empty {
@@ -209,5 +192,6 @@ const { title, description, ogImage, breadcrumbs = [], backLink, product } = Ast
     .back-link:hover .back-link__icon {
       transform: none;
     }
+  }
   }
 </style>

@@ -8,10 +8,15 @@
  * like. The add button carries `data-variant-id` and `data-qty`; the cart layer
  * (CartMount.astro) delegates its click to `addToCart`, so a vetrina build ships no JS.
  */
+import config from "@walle/config";
 import { defaultVariant, formatMoney, isSingleVariant, type ShopifyProduct } from "./shopify";
 
 interface Props {
   product: ShopifyProduct;
+  /**
+   * BCP 47 locale for price formatting
+   * @default site language from config
+   */
   locale?: string;
   /** Render the add-to-cart button (shop mode). @default false */
   showBuyButton?: boolean;
@@ -27,7 +32,7 @@ interface Props {
 
 const {
   product,
-  locale = "en-US",
+  locale = config.app.website.language || "en-US",
   showBuyButton = false,
   showQuantity = false,
   compact = false,
@@ -162,6 +167,7 @@ const initialSelected = Object.fromEntries(
 </div>
 
 <style>
+  @layer walle.components {
   .variant-picker {
     display: flex;
     flex-direction: column;
@@ -311,6 +317,10 @@ const initialSelected = Object.fromEntries(
   }
 
   .vp-add {
+    /* Public properties */
+    --cart-add-bg: var(--primary);
+    --cart-add-bg-hover: var(--primary-dark);
+
     flex: 1;
     display: inline-flex;
     align-items: center;
@@ -319,7 +329,7 @@ const initialSelected = Object.fromEntries(
     appearance: none;
     border: none;
     border-radius: var(--radius-md);
-    background: var(--primary);
+    background: var(--cart-add-bg);
     color: var(--white);
     font-size: 1rem;
     font-weight: 600;
@@ -339,7 +349,7 @@ const initialSelected = Object.fromEntries(
   }
 
   .vp-add:hover:not(:disabled) {
-    background: var(--primary-dark);
+    background: var(--cart-add-bg-hover);
   }
 
   .vp-add:disabled {
@@ -362,6 +372,7 @@ const initialSelected = Object.fromEntries(
   .variant-picker--compact .vp-status {
     font-size: 0.8rem;
   }
+  }
 </style>
 
 <script>
@@ -383,7 +394,9 @@ const initialSelected = Object.fromEntries(
     document.querySelectorAll<HTMLElement>("[data-variant-picker]").forEach((root) => {
       if (root.dataset.ready) return;
       root.dataset.ready = "true";
-      const locale = root.dataset.locale || "en-US";
+      // The `locale` prop always resolves to a real string server-side (component default or
+      // config), so `data-locale` is always rendered; no runtime fallback needed here.
+      const locale = root.dataset.locale as string;
       const variants: V[] = JSON.parse(root.dataset.variants || "[]");
       const amountEl = root.querySelector<HTMLElement>(".vp-amount");
       const compareEl = root.querySelector<HTMLElement>(".vp-compare");

@@ -1,5 +1,6 @@
 // Consumer-owned Astro middleware (walle SEED): created once, never overwritten by `walle update`.
-// Edit or replace it freely. Middleware runs on every request when SSR is enabled.
+// Edit or replace it freely. Middleware runs on every request when `astro.adapter: "node"` is
+// set in `src/configs/app.json`.
 // See: https://docs.astro.build/en/guides/middleware/
 import type { MiddlewareHandler } from "astro";
 

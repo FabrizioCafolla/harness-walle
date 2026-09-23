@@ -25,9 +25,8 @@ const wikiEntries = await getCollection("wiki");
 const wikiSlugs = new Set(wikiEntries.map((e) => e.id));
 const rewriteLinks = (html: string) =>
   html
-    .replace(
-      /href="(?:\.\/)?([\w-]+)\.md(#[^"]*)?"/gi,
-      (m, name, hash = "") => (wikiSlugs.has(name) ? `href="${base}/wiki/${name}${hash}"` : m)
+    .replace(/href="(?:\.\/)?([\w-]+)\.md(#[^"]*)?"/gi, (m, name, hash = "") =>
+      wikiSlugs.has(name) ? `href="${base}/wiki/${name}${hash}"` : m
     )
     .replace(
       /href="\.\.\/([\w.-]+\.md)(#[^"]*)?"/gi,

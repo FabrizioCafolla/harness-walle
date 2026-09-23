@@ -1,11 +1,11 @@
 ---
-import BasicCard from "@walle/components/features/Card/BasicCard.astro";
+import { card as BasicCard } from "virtual:walle-components";
 import CollectionFilters from "@walle/components/features/CollectionFilters.astro";
 import BaseLayout from "./BaseLayout.astro";
 import { formatDate, resolveInternalUrl } from "@walle/utils";
-import { getCollection, type CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
 
-type PostsEntry = CollectionEntry<"posts">;
+export type { BlogPostsLayoutProps as Props } from "./types";
 
 const {
   headerTitle = "Blog",
@@ -102,6 +102,7 @@ const allCategories: string[] = Array.from(
 </BaseLayout>
 
 <style>
+  @layer walle.components {
   .blog-layout {
     width: 100%;
     min-height: 80vh;
@@ -129,7 +130,7 @@ const allCategories: string[] = Array.from(
     text-align: center;
     padding: 80px 24px;
     color: var(--text-muted);
-    font-size: 18px;
+    font-size: var(--font-size-body);
   }
 
   /* Mobile First - smartphones */
@@ -195,5 +196,6 @@ const allCategories: string[] = Array.from(
       grid-template-columns: repeat(4, 1fr);
       gap: 36px;
     }
+  }
   }
 </style>

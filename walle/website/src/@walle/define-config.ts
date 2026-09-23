@@ -7,47 +7,132 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { defineConfig } from "astro/config";
 import icon from "astro-icon";
-import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import appConfig from "../configs/app.json";
+import footerConfigJson from "../configs/footer.json";
+import navbarConfigJson from "../configs/navbar.json";
+
+import { appSchema, footerSchema, navbarSchema, parseConfig, themeSchema } from "./config/schema";
 
 /**
- * Registry of component variants available in this walle version. A consumer that
- * selects a variant outside this set gets an explicit build error (no silent fallback).
- * Each component currently supports `standard` and `minimal`.
+ * Components a site can replace, once, from `app.json`'s `components` block (D6): each key's
+ * built-in name → walle source file, resolved relative to this file's own directory. A value
+ * can also be a `./`-prefixed path to a site component under `src/`. Absent keys default to
+ * `"standard"`. The keys of each inner record are also the available built-in names for that
+ * component, so this is the one place both are defined.
  */
-const AVAILABLE_VARIANTS: Record<string, string[]> = {
-  navbar: ["standard", "minimal"],
-  footer: ["standard", "minimal"],
+const WALLE_COMPONENT_PATHS: Record<string, Record<string, string>> = {
+  navbar: {
+    standard: "./components/features/Navbar/Navbar.astro",
+    minimal: "./components/features/Navbar/Navbar.minimal.astro",
+  },
+  footer: {
+    standard: "./components/features/Footer.astro",
+    minimal: "./components/features/Footer.minimal.astro",
+  },
+  card: { standard: "./components/features/Card/BasicCard.astro" },
+  breadcrumbs: { standard: "./components/features/Breadcrumbs.astro" },
+  pageHeader: { standard: "./components/features/Sections/HeaderStandard.astro" },
+  toc: { standard: "./components/features/Blog/BlogTableOfContents.astro" },
 };
 
-function assertVariants(components: Record<string, string> = {}): void {
-  for (const [component, variant] of Object.entries(components)) {
-    const available = AVAILABLE_VARIANTS[component] ?? ["standard"];
-    if (!available.includes(variant)) {
+/**
+ * Resolves one `components.<key>` entry to an absolute file path: a recognized built-in name
+ * to its walle source file, or a `./`-prefixed value to a site file that must exist, as a file
+ * (not a directory), under the project's `src/`. Throws naming the key and the offending value
+ * otherwise (never a silent fallback), so an invalid override fails the build instead of
+ * surfacing as a missing component at request time. The caller has already rejected an
+ * unrecognized `key`, so `WALLE_COMPONENT_PATHS[key]` is always defined here.
+ */
+function resolveEmbeddedComponent(key: string, value: string, root: string): string {
+  const available = WALLE_COMPONENT_PATHS[key];
+  if (value.startsWith("./")) {
+    const abs = resolve(root, value);
+    const srcRoot = resolve(root, "src") + sep;
+    if (!abs.startsWith(srcRoot)) {
       throw new Error(
-        `[walle] Unknown variant "${variant}" for component "${component}". ` +
-          `Available variants: ${available.join(", ")}.`
+        `[walle] components.${key} points to "${value}", which is outside src/. ` +
+          `Component overrides must live under the project's src/ directory.`
+      );
+    }
+    if (!existsSync(abs) || !statSync(abs).isFile()) {
+      throw new Error(`[walle] components.${key} points to "${value}", but that file does not exist.`);
+    }
+    return abs;
+  }
+  if (!(value in available)) {
+    throw new Error(
+      `[walle] Unknown value "${value}" for components.${key}. ` +
+        `Available: ${Object.keys(available).join(", ")}.`
+    );
+  }
+  return fileURLToPath(new URL(available[value], import.meta.url));
+}
+
+/** Validates every key of `components` (rejecting one that names no embeddable at all) and
+ * resolves each embeddable's entry, defaulting an absent key to `"standard"`. */
+function resolveEmbeddedComponents(
+  components: Record<string, string> = {},
+  root: string
+): Record<string, string> {
+  for (const key of Object.keys(components)) {
+    if (!(key in WALLE_COMPONENT_PATHS)) {
+      throw new Error(
+        `[walle] Unknown embeddable component "${key}" in app.json "components". ` +
+          `Available: ${Object.keys(WALLE_COMPONENT_PATHS).join(", ")}.`
       );
     }
   }
+  const resolved: Record<string, string> = {};
+  for (const key of Object.keys(WALLE_COMPONENT_PATHS)) {
+    resolved[key] = resolveEmbeddedComponent(key, components[key] ?? "standard", root);
+  }
+  return resolved;
+}
+
+/**
+ * Vite plugin exposing `virtual:walle-components`: one `export { default as <key> }` per
+ * embeddable, from whichever file `resolveEmbeddedComponents` resolved it to. Layouts import
+ * from this module instead of a per-component resolver, so only the selected implementation
+ * ever enters a page's module graph.
+ */
+function walleComponentsPlugin(root: string, components: Record<string, string> = {}) {
+  const virtualId = "virtual:walle-components";
+  const resolvedId = "\0" + virtualId;
+  return {
+    name: "walle-components",
+    resolveId(id: string) {
+      return id === virtualId ? resolvedId : null;
+    },
+    load(id: string) {
+      if (id !== resolvedId) return null;
+      const resolved = resolveEmbeddedComponents(components, root);
+      return Object.entries(resolved)
+        .map(([key, path]) => `export { default as ${key} } from ${JSON.stringify(path)};`)
+        .join("\n");
+    },
+  };
 }
 
 /**
  * Deterministic token → CSS var mapping.
- *   palette.<name>               → --walle-color-<name>
+ *   palette.<name>               → --walle-color-<name>   (includes *-contrast, heading)
  *   typography.fontFamilyBase    → --walle-font-body
  *   typography.fontFamilyHeading → --walle-font-heading
  *   typography.fontFamilyMono    → --walle-font-mono
  *   typography.scale.<name>      → --walle-font-size-<name>
  *   spacing.<name>               → --walle-space-<name>
  *   radii.<name>                 → --walle-radius-<name>
+ *   neutral.<name>                → --walle-gray-<name>
+ *   shadow.<name>                 → --walle-shadow-<name>
  *
- * global.css bridges each --walle-* var to the component-facing var (e.g. --primary,
- * --space-sm, --radius-sm) so theme.json overrides work without touching consumer files.
- * Absent or empty theme.json yields an empty string — output is identical to defaults.
+ * tokens.css bridges each --walle-* var to the component-facing var (e.g. --primary,
+ * --space-sm, --radius-sm, --gray-light, --shadow-md) so theme.json overrides work without
+ * touching consumer files. Absent or empty theme.json yields an empty string — output is
+ * identical to defaults.
  */
 function readThemeJson(): Record<string, any> {
   const themeUrl = new URL("../configs/theme.json", import.meta.url);
@@ -73,6 +158,8 @@ function generateThemeCss(): string {
     };
     spacing?: Record<string, unknown>;
     radii?: Record<string, unknown>;
+    neutral?: Record<string, unknown>;
+    shadow?: Record<string, unknown>;
   };
   try {
     theme = JSON.parse(readFileSync(themeUrl, "utf8"));
@@ -103,6 +190,16 @@ function generateThemeCss(): string {
   for (const [name, value] of Object.entries(theme?.radii ?? {})) {
     if (typeof value === "string" && value.length > 0)
       lines.push(`  --walle-radius-${name}: ${value};`);
+  }
+
+  for (const [name, value] of Object.entries(theme?.neutral ?? {})) {
+    if (typeof value === "string" && value.length > 0)
+      lines.push(`  --walle-gray-${name}: ${value};`);
+  }
+
+  for (const [name, value] of Object.entries(theme?.shadow ?? {})) {
+    if (typeof value === "string" && value.length > 0)
+      lines.push(`  --walle-shadow-${name}: ${value};`);
   }
 
   return lines.length ? `:root {\n${lines.join("\n")}\n}\n` : "";
@@ -190,7 +287,12 @@ function walleSlimBarrelsPlugin(root: string) {
       return readFileSync(hit[0], "utf8")
         .split("\n")
         .filter((line) => {
-          const exported = line.match(/export\s+\{\s*default\s+as\s+(\w+)\s*\}/);
+          // Two re-export shapes: a walle source file (`default as X`) and a virtual-module
+          // export (`navbar as Navbar` from `virtual:walle-components`, D6's embeddable
+          // components). Both are filtered by the barrel's own exported name, one per line.
+          const exported =
+            line.match(/export\s+\{\s*default\s+as\s+(\w+)\s*\}/) ||
+            line.match(/export\s+\{\s*\w+\s+as\s+(\w+)\s*\}\s+from\s+["']virtual:walle-components["']/);
           return !exported || keep.has(exported[1]);
         })
         .join("\n");
@@ -340,7 +442,9 @@ type AstroConfigSection = {
   baseUrl?: string;
   basePath?: string;
   trailingSlash?: "always" | "never" | "ignore";
-  ssr?: { enabled?: boolean; adapter?: "node" };
+  /** Adds the node adapter (`output` stays Astro's default, `"static"`): only routes that
+   * declare `prerender = false` render on demand, everything else stays a static file. */
+  adapter?: "node";
   /** Path prefixes to keep out of sitemap.xml. For pages that exist as a routable URL but must
    * not be indexed (a `noindex` status page such as an offline fallback): listing one in the
    * sitemap while its own meta says `noindex` is the "Submitted URL marked noindex" conflict
@@ -355,10 +459,20 @@ type AstroConfigSection = {
  * (mdx, sitemap, icon), never replaced.
  */
 export function defineWalleConfig(overrides: Record<string, any> = {}) {
-  const astro = (appConfig.astro ?? {}) as AstroConfigSection;
-  assertVariants((appConfig as { components?: Record<string, string> }).components);
+  // Single build-time gate for all four config files (D7): a malformed or outdated config
+  // fails here, loudly, instead of surfacing later as a runtime import error or a silently
+  // wrong page.
+  parseConfig(appSchema, appConfig, "app.json");
+  parseConfig(navbarSchema, navbarConfigJson, "navbar.json");
+  parseConfig(footerSchema, footerConfigJson, "footer.json");
+  parseConfig(themeSchema, readThemeJson(), "theme.json");
 
-  const ssrEnabled = astro.ssr?.enabled === true;
+  const astro = (appConfig.astro ?? {}) as AstroConfigSection;
+  const components = (appConfig as { components?: Record<string, string> }).components;
+  // Fail fast, at config-build time, the same as the parseConfig calls above: an invalid
+  // override surfaces here, not as a missing component the first time a page renders.
+  resolveEmbeddedComponents(components, process.cwd());
+
   const sitemapExclude = astro.sitemapExclude ?? [];
   const walleIntegrations = [
     mdx(),
@@ -390,8 +504,10 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
     site: astro.baseUrl,
     base: astro.basePath,
     trailingSlash: astro.trailingSlash,
-    // SSR off (default) => static output identical to today; on => node adapter.
-    ...(ssrEnabled ? { output: "server", adapter: node({ mode: "standalone" }) } : {}),
+    // No adapter (default) => fully static, identical to today. `adapter: "node"` adds the
+    // node adapter without setting `output`, so it stays Astro's default ("static") and only
+    // `prerender = false` routes render on demand through the adapter.
+    ...(astro.adapter === "node" ? { adapter: node({ mode: "standalone" }) } : {}),
     // Consumer scalar keys override the walle-resolved values.
     ...consumerScalars,
     integrations: [...walleIntegrations, ...pwaIntegrations, ...consumerIntegrations],
@@ -399,6 +515,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
       ...consumerVite,
       plugins: [
         walleThemePlugin(),
+        walleComponentsPlugin(process.cwd(), components),
         wallePwaHeadPlugin(pwaHead),
         walleSlimBarrelsPlugin(process.cwd()),
         ...(consumerVite.plugins ?? []),

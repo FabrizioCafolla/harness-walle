@@ -2,12 +2,16 @@
 import NavbarMenu from "./NavbarMenu.astro";
 import type { NavbarConfig } from "@walle/config";
 import { resolveInternalUrl } from "@walle/utils";
+import type { BaseProps } from "../../shared/types";
+import { splitProps } from "../../shared/attrs";
 
-export interface Props {
+export interface Props extends BaseProps<"header"> {
   config: NavbarConfig;
 }
 
-const { config } = Astro.props;
+const OWN_KEYS = ["config", "class"];
+const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
+const { config, class: className } = own as Props;
 const navId = `nav-${Math.random().toString(36).substring(2, 9)}`;
 
 const hasLogo = config.logo?.src;
@@ -15,7 +19,7 @@ const hasTitle = config.logo?.title;
 const shouldShowBrand = hasLogo || hasTitle;
 ---
 
-<header class="site-header">
+<header class:list={["site-header", className]} {...rest}>
   <div class="container">
     <nav class="main-nav" aria-label="Main navigation" data-component="Navbar" data-nav-root="true">
       <slot name="brand">
@@ -53,8 +57,10 @@ const shouldShowBrand = hasLogo || hasTitle;
 
       <slot name="actions" />
 
-      {/* Last in the DOM so on mobile the reading/focus order matches the visual order
-          (brand · cart · hamburger) without CSS `order` reshuffling the tab sequence. */}
+      {
+        /* Last in the DOM so on mobile the reading/focus order matches the visual order
+          (brand · cart · hamburger) without CSS `order` reshuffling the tab sequence. */
+      }
       <button
         id="mobile-menu-toggle"
         class="hamburger"
@@ -71,22 +77,38 @@ const shouldShowBrand = hasLogo || hasTitle;
 </header>
 
 <style is:global>
+  @layer walle.components {
   .site-header {
+    /* Public properties */
+    --navbar-bg: color-mix(in srgb, var(--surface) 95%, transparent);
+    --navbar-fg: var(--text);
+    --navbar-border: color-mix(in srgb, var(--text) 8%, transparent);
+    --navbar-shadow: var(--shadow-md);
+    --navbar-height: 70px;
+    --navbar-logo-height: 40px;
+    --navbar-logo-height-mobile: 34px;
+    --navbar-link-color: var(--navbar-fg);
+    --navbar-link-color-hover: var(--primary);
+    --navbar-dropdown-bg: var(--surface);
+    --navbar-dropdown-radius: var(--radius-lg);
+
     position: sticky;
     top: 0;
     width: 100%;
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--navbar-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid var(--navbar-border);
     z-index: 1000;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .site-header.scrolled {
-    background: rgba(255, 255, 255, 0.98);
-    border-bottom-color: rgba(0, 0, 0, 0.12);
-    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.08);
+    --navbar-bg: color-mix(in srgb, var(--surface) 98%, transparent);
+    --navbar-border: color-mix(in srgb, var(--text) 12%, transparent);
+    background: var(--navbar-bg);
+    border-bottom-color: var(--navbar-border);
+    box-shadow: var(--navbar-shadow);
   }
 
   .site-header .container {
@@ -99,7 +121,7 @@ const shouldShowBrand = hasLogo || hasTitle;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 70px;
+    height: var(--navbar-height);
     position: relative;
   }
 
@@ -140,7 +162,7 @@ const shouldShowBrand = hasLogo || hasTitle;
      is a token knob; consumers extend/override via the logo `cssClasses`. */
   .brand-link .brand-logo {
     display: block;
-    height: var(--navbar-logo-height, 40px);
+    height: var(--navbar-logo-height);
     width: auto;
     max-width: 180px;
     object-fit: contain;
@@ -151,7 +173,7 @@ const shouldShowBrand = hasLogo || hasTitle;
       font-size: 1.2rem;
     }
     .brand-link .brand-logo {
-      height: var(--navbar-logo-height-mobile, 34px);
+      height: var(--navbar-logo-height-mobile);
     }
   }
 
@@ -179,7 +201,7 @@ const shouldShowBrand = hasLogo || hasTitle;
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem 1.25rem;
-    color: var(--black, #1a1a1a);
+    color: var(--navbar-link-color);
     text-decoration: none;
     font-size: 0.95rem;
     font-weight: 500;
@@ -209,10 +231,10 @@ const shouldShowBrand = hasLogo || hasTitle;
       left: 50%;
       width: 0;
       height: 2px;
-      background: var(--primary);
+      background: var(--navbar-link-color-hover);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       transform: translateX(-50%);
-      border-radius: 1px;
+      border-radius: var(--radius-sm);
     }
 
     .nav-link:hover::after {
@@ -220,7 +242,7 @@ const shouldShowBrand = hasLogo || hasTitle;
     }
 
     .nav-link:hover {
-      color: var(--primary);
+      color: var(--navbar-link-color-hover);
       transform: translateY(-1px);
     }
   }
@@ -249,9 +271,9 @@ const shouldShowBrand = hasLogo || hasTitle;
     min-width: 160px;
     width: max-content;
     max-width: min(calc(100vw - 2rem), 520px);
-    background: white;
-    border-radius: var(--radius-lg);
-    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+    background: var(--navbar-dropdown-bg);
+    border-radius: var(--navbar-dropdown-radius);
+    box-shadow: var(--shadow-lg);
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -259,7 +281,7 @@ const shouldShowBrand = hasLogo || hasTitle;
     list-style: none;
     margin: 0;
     padding: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--border);
     box-sizing: border-box;
     overflow-wrap: anywhere;
   }
@@ -280,7 +302,7 @@ const shouldShowBrand = hasLogo || hasTitle;
     align-items: center;
     gap: 0.75rem;
     padding: 0.875rem 1.25rem;
-    color: var(--black, #1a1a1a);
+    color: var(--navbar-link-color);
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 500;
@@ -298,7 +320,7 @@ const shouldShowBrand = hasLogo || hasTitle;
 
   .dropdown-link:hover,
   .dropdown-link:focus {
-    color: var(--primary);
+    color: var(--navbar-link-color-hover);
     transform: translateX(4px);
     outline: none;
     box-shadow: none;
@@ -328,10 +350,10 @@ const shouldShowBrand = hasLogo || hasTitle;
     display: block;
     width: 24px;
     height: 2px;
-    background-color: var(--black, #1a1a1a);
+    background-color: var(--navbar-fg);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: absolute;
-    border-radius: 2px;
+    border-radius: var(--radius-sm);
   }
 
   .hamburger-line:nth-child(1) {
@@ -384,7 +406,7 @@ const shouldShowBrand = hasLogo || hasTitle;
       width: 100%;
       height: 100vh;
       height: 100dvh;
-      background: rgba(255, 255, 255, 0.98);
+      background: color-mix(in srgb, var(--surface) 98%, transparent);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       visibility: hidden;
@@ -420,7 +442,7 @@ const shouldShowBrand = hasLogo || hasTitle;
 
     .nav-item {
       width: 100%;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      border-bottom: 1px solid var(--navbar-border);
       box-sizing: border-box;
     }
 
@@ -443,9 +465,9 @@ const shouldShowBrand = hasLogo || hasTitle;
     }
 
     .nav-link:hover {
-      background: transparent !important;
-      color: var(--primary) !important;
-      transform: none !important;
+      background: transparent;
+      color: var(--navbar-link-color-hover);
+      transform: none;
     }
 
     .nav-link::after {
@@ -458,20 +480,20 @@ const shouldShowBrand = hasLogo || hasTitle;
     }
 
     .nav-item:not(.active) .dropdown-trigger {
-      color: var(--black, #1a1a1a) !important;
-      background: transparent !important;
+      color: var(--navbar-link-color);
+      background: transparent;
     }
 
     .nav-item:not(.active) .dropdown-trigger .dropdown-arrow {
-      transform: rotate(0deg) !important;
-      opacity: 0.5 !important;
+      transform: rotate(0deg);
+      opacity: 0.5;
     }
 
     .dropdown-trigger:hover,
     .dropdown-trigger:focus,
     .dropdown-trigger:active {
-      color: var(--primary) !important;
-      background: transparent !important;
+      color: var(--navbar-link-color-hover);
+      background: transparent;
     }
 
     .dropdown-menu {
@@ -502,7 +524,7 @@ const shouldShowBrand = hasLogo || hasTitle;
     }
 
     .dropdown-item {
-      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      border-bottom: 1px solid color-mix(in srgb, var(--navbar-border) 50%, transparent);
     }
 
     .dropdown-item:last-child {
@@ -513,7 +535,7 @@ const shouldShowBrand = hasLogo || hasTitle;
       padding: 1rem 1.5rem;
       font-size: 1rem;
       font-weight: 400;
-      color: rgba(0, 0, 0, 0.7);
+      color: var(--text-muted);
       background: transparent;
       border-radius: 0;
       letter-spacing: -0.02em;
@@ -521,7 +543,7 @@ const shouldShowBrand = hasLogo || hasTitle;
 
     .dropdown-link:hover {
       background: transparent;
-      color: var(--primary);
+      color: var(--navbar-link-color-hover);
       transform: none;
     }
 
@@ -565,6 +587,7 @@ const shouldShowBrand = hasLogo || hasTitle;
       transition-duration: 0.01ms !important;
       animation-duration: 0.01ms !important;
     }
+  }
   }
 </style>
 

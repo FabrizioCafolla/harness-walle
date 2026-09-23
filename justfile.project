@@ -5,10 +5,24 @@ set working-directory := 'walle/website'
 yarn *args:
     yarn {{args}}
 
-# Validate consumer configs against the published JSON Schemas
+# Validate consumer configs against the published JSON Schemas. This repo dogfoods the same
+# scripts/@walle/ path a synced consumer gets from `walle/cli` (walle.yml's managed map); since
+# this checkout never ran that sync against itself, the symlink is created on demand here rather
+# than hand-copied into git.
 [group('walle')]
 validate-configs:
-    node ./scripts/@walle/validate-configs.mjs
+    mkdir -p scripts/@walle
+    ln -sf ../../../cli/validate-configs.mjs scripts/@walle/validate-configs.mjs
+    # Node resolves a symlinked module's bare imports (here, ajv) from the link's real target
+    # directory by default, and walle/cli has no node_modules of its own. Both flags are needed:
+    # -main covers the entrypoint module itself, the other covers what it imports.
+    node --preserve-symlinks --preserve-symlinks-main ./scripts/@walle/validate-configs.mjs
+
+# Regenerate walle/website/schemas/*.schema.json from the zod schemas in
+# walle/website/src/@walle/config/schema.ts (the single source of truth, D7)
+[group('walle')]
+schemas:
+    node {{justfile_directory()}}/walle/cli/generate-schemas.mjs
 
 # Start development server
 [group('walle')]

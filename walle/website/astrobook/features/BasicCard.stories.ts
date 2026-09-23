@@ -47,3 +47,13 @@ export const ExternalLink = {
     target: "_blank",
   } satisfies BasicCardProps,
 };
+
+export const SecondaryVariant = {
+  args: {
+    title: "Secondary variant card",
+    content:
+      "The card's own variant drives its hover border and title color, independent of the badge variant.",
+    href: "/blog/example",
+    variant: "secondary",
+  } satisfies BasicCardProps,
+};

@@ -16,11 +16,11 @@ export const Default = {
 };
 
 export const Primary = {
-  args: { title: "Primary section", variant: "primary" } satisfies SectionProps,
+  args: { title: "Primary section", variant: "primary", filled: true } satisfies SectionProps,
 };
 
 export const Gray = {
-  args: { title: "Gray section", variant: "gray" } satisfies SectionProps,
+  args: { title: "Gray section", muted: true } satisfies SectionProps,
 };
 
 export const Centered = {

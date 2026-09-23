@@ -21,6 +21,7 @@ let appConfigMock: typeof baseAppConfig & { astro: { ssr?: { enabled?: boolean }
   structuredClone(baseAppConfig);
 let fsExists = false;
 let fsContent = "";
+let fsIsFile = true;
 
 vi.mock("../../src/configs/app.json", () => ({
   get default() {
@@ -31,6 +32,7 @@ vi.mock("../../src/configs/app.json", () => ({
 vi.mock("node:fs", () => ({
   existsSync: () => fsExists,
   readFileSync: () => fsContent,
+  statSync: () => ({ isFile: () => fsIsFile }),
 }));
 
 describe("defineWalleConfig", () => {
@@ -38,12 +40,32 @@ describe("defineWalleConfig", () => {
     appConfigMock = structuredClone(baseAppConfig);
     fsExists = false;
     fsContent = "";
+    fsIsFile = true;
   });
 
-  it("throws on an unknown component variant, listing the available ones", () => {
+  it("throws referencing app.json and the key path for an unknown key", () => {
+    (appConfigMock as Record<string, unknown>).notARealKey = true;
+    expect(() => defineWalleConfig()).toThrow(/app\.json/);
+    expect(() => defineWalleConfig()).toThrow(/notARealKey/);
+  });
+
+  it("throws referencing app.json and the key path for a wrong type", () => {
+    (appConfigMock.website as Record<string, unknown>).title = 123;
+    expect(() => defineWalleConfig()).toThrow(/app\.json/);
+    expect(() => defineWalleConfig()).toThrow(/title/);
+  });
+
+  it("throws on an unknown value for an embeddable component, listing the available ones", () => {
     appConfigMock.components = { navbar: "not-a-real-variant" };
     expect(() => defineWalleConfig()).toThrow(
-      /Unknown variant "not-a-real-variant".*standard, minimal/
+      /"not-a-real-variant".*components\.navbar.*standard, minimal/
+    );
+  });
+
+  it("throws on an unknown embeddable key, listing the available ones", () => {
+    appConfigMock.components = { notAnEmbeddable: "standard" };
+    expect(() => defineWalleConfig()).toThrow(
+      /notAnEmbeddable.*navbar, footer, card, breadcrumbs, pageHeader, toc/
     );
   });
 
@@ -52,17 +74,39 @@ describe("defineWalleConfig", () => {
     expect(() => defineWalleConfig()).not.toThrow();
   });
 
+  it("accepts a site path under src/ that exists", () => {
+    fsExists = true;
+    appConfigMock.components = { card: "./src/components/EventCard.astro" };
+    expect(() => defineWalleConfig()).not.toThrow();
+  });
+
+  it("throws naming the key and the missing path when a site override does not exist", () => {
+    fsExists = false;
+    appConfigMock.components = { card: "./src/components/Nope.astro" };
+    expect(() => defineWalleConfig()).toThrow(/components\.card.*Nope\.astro/);
+  });
+
+  it("throws when a site path resolves outside src/", () => {
+    appConfigMock.components = { card: "./scripts/evil.astro" };
+    expect(() => defineWalleConfig()).toThrow(/components\.card.*outside src/);
+  });
+
+  it("throws naming the path when a site override points to a directory, not a file", () => {
+    fsExists = true;
+    fsIsFile = false;
+    appConfigMock.components = { card: "./src/components" };
+    expect(() => defineWalleConfig()).toThrow(/components\.card.*src\/components/);
+  });
+
   it("defaults to static output with no adapter when SSR is not configured", () => {
     const config = defineWalleConfig();
     expect(config.output).toBeUndefined();
     expect(config.adapter).toBeUndefined();
   });
 
-  it("mounts the node adapter and server output when astro.ssr.enabled is true", () => {
+  it("rejects astro.ssr with guidance to use astro.adapter", () => {
     appConfigMock.astro.ssr = { enabled: true };
-    const config = defineWalleConfig();
-    expect(config.output).toBe("server");
-    expect(config.adapter).toBeDefined();
+    expect(() => defineWalleConfig()).toThrow(/astro\.adapter/);
   });
 
   it("concatenates consumer integrations onto the walle defaults instead of replacing them", () => {

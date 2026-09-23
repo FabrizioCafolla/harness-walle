@@ -18,12 +18,16 @@ export const Secondary = {
   args: { text: "Secondary", variant: "secondary" } satisfies ButtonProps,
 };
 
-export const White = {
-  args: { text: "White", variant: "white" } satisfies ButtonProps,
+export const Inverse = {
+  args: { text: "Inverse", inverse: true } satisfies ButtonProps,
 };
 
 export const Outline = {
   args: { text: "Outline", variant: "primary", outline: true } satisfies ButtonProps,
+};
+
+export const InverseOutline = {
+  args: { text: "Inverse outline", inverse: true, outline: true } satisfies ButtonProps,
 };
 
 export const Small = {
@@ -48,8 +52,4 @@ export const AsLink = {
 
 export const Disabled = {
   args: { text: "Disabled", disabled: true } satisfies ButtonProps,
-};
-
-export const NoEffects = {
-  args: { text: "No effects", effects: false } satisfies ButtonProps,
 };

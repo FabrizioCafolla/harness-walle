@@ -1,5 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
+import type { BaseProps } from "../shared/types";
+import { splitProps } from "../shared/attrs";
 
 /**
  * Config-driven client-side filtering for any rendered collection.
@@ -42,7 +44,7 @@ export interface FilterFacet {
   options: string[];
 }
 
-export interface Props {
+export interface Props extends BaseProps<"div"> {
   /**
    * Facets to filter by
    */
@@ -73,20 +75,17 @@ export interface Props {
     facetSelect?: string;
     facetSelected?: string;
   };
-
-  /**
-   * Additional CSS classes appended to the root element
-   */
-  class?: string;
 }
 
+const OWN_KEYS = ["facets", "itemSelector", "search", "labels", "class"];
+const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
 const {
   facets = [],
   itemSelector = "[data-filter-item]",
   search = true,
   labels = {},
-  class: className = "",
-} = Astro.props;
+  class: className,
+} = own as Props;
 
 const l = {
   searchPlaceholder: labels.searchPlaceholder ?? "Search…",
@@ -97,16 +96,16 @@ const l = {
   facetSelected: labels.facetSelected ?? "{n} selected",
 };
 
-const classes = ["filters", className].filter(Boolean).join(" ");
 ---
 
 <div
-  class={classes}
+  class:list={["filters", className]}
   data-component="CollectionFilters"
   data-item-selector={itemSelector}
   data-label-status={l.status}
   data-label-selected={l.facetSelected}
   hidden
+  {...rest}
 >
   <div class="filters__row">
     {
@@ -181,7 +180,14 @@ const classes = ["filters", className].filter(Boolean).join(" ");
 </div>
 
 <style>
+  @layer walle.components {
   .filters {
+    /* Public properties */
+    --chip-bg: transparent;
+    --chip-bg-active: var(--surface-alt);
+    --chip-fg: var(--text);
+    --chip-radius: var(--radius-sm);
+
     margin-bottom: var(--space-2xl);
   }
 
@@ -215,9 +221,10 @@ const classes = ["filters", className].filter(Boolean).join(" ");
 
   .filters__input {
     width: 100%;
+    box-sizing: border-box;
     padding: 12px 0 12px 28px;
     border: none;
-    font-size: 16px; /* prevents zoom-on-focus on iOS */
+    font-size: var(--input-font-size-min); /* prevents zoom-on-focus on iOS */
     font-family: inherit;
     background: transparent;
     color: var(--gray-darker);
@@ -286,7 +293,7 @@ const classes = ["filters", className].filter(Boolean).join(" ");
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    box-shadow: var(--box-shadow);
+    box-shadow: var(--shadow-md);
     z-index: 50;
   }
 
@@ -302,10 +309,16 @@ const classes = ["filters", className].filter(Boolean).join(" ");
     min-height: 44px; /* touch target */
     cursor: pointer;
     box-sizing: border-box;
+    background: var(--chip-bg);
+    border-radius: var(--chip-radius);
   }
 
   .filters__option:hover {
     background: var(--surface-alt);
+  }
+
+  .filters__option:has(.filters__checkbox:checked) {
+    background: var(--chip-bg-active);
   }
 
   .filters__checkbox {
@@ -316,7 +329,7 @@ const classes = ["filters", className].filter(Boolean).join(" ");
 
   .filters__option-text {
     font-size: 0.9rem;
-    color: var(--text);
+    color: var(--chip-fg);
   }
 
   .filters__clear {
@@ -353,6 +366,7 @@ const classes = ["filters", className].filter(Boolean).join(" ");
     .filters__search {
       max-width: 100%;
     }
+  }
   }
 </style>
 

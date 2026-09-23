@@ -6,7 +6,13 @@ import { defineWalleConfig } from "./src/@walle/config";
 // excluded from the normal site build and never seeded to consumers — stories live in
 // ./astrobook (outside src/@walle, which is the website module's managed zone).
 const astrobookIntegrations = process.env.WALLE_ASTROBOOK
-  ? [(await import("astrobook")).default({ directory: "astrobook", subpath: "/astrobook" })]
+  ? [
+      (await import("astrobook")).default({
+        directory: "astrobook",
+        subpath: "/astrobook",
+        head: "./astrobook/head.astro",
+      }),
+    ]
   : [];
 
 // Thin consumer-owned shell. All walle logic (SSR flag, default integrations,

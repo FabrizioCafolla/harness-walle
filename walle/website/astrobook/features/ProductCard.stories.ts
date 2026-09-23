@@ -61,3 +61,15 @@ export const Preorder = {
     },
   } satisfies ProductCardProps,
 };
+
+export const SecondaryVariant = {
+  args: {
+    product: {
+      name: "Secondary variant product",
+      image,
+      price: { amount: 59.9, currency: "EUR" },
+      href: "/products/secondary-variant",
+    },
+    variant: "secondary",
+  } satisfies ProductCardProps,
+};

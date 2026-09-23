@@ -36,11 +36,13 @@
     "@vite-pwa/astro": "^1.2.0",
     "astro": "^7.1.3",
     "astro-icon": "^1.1.5",
+    "leaflet": "^1.9.4",
     "nanostores": "^1.4.1"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.61.1",
+    "@types/leaflet": "^1.9.22",
     "@typescript-eslint/eslint-plugin": "^8.65.0",
     "@typescript-eslint/parser": "^8.65.0",
     "ajv": "^8.20.0",

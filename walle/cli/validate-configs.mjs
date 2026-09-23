@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Validates the consumer config files in src/configs/ against the JSON Schemas in schemas/.
-// Run from the project root (e.g. `just validate-configs`). Consumers keep the default
-// schemas/ location; the walle repo itself dogfoods with --schemas-dir walle/schemas.
+// Run from the project root (e.g. `just validate-configs`). Both consumers and this repo's own
+// dogfooding site keep the default schemas/ location relative to that root, so no flag is
+// needed in either case; --schemas-dir exists for a project that keeps schemas/ elsewhere.
 import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import process from "node:process";

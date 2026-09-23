@@ -3,8 +3,8 @@
  * shared across islands; the cart id is persisted in localStorage. Checkout is the hosted
  * Shopify checkout (redirect to `cart.checkoutUrl`). No server, no payment data here.
  *
- * This module is the ecommerce layer: it is only loaded when `commerce.showBuyButton`
- * is true (see CartMount.astro / BaseLayout). A vetrina build never imports it.
+ * This module is the ecommerce layer: it is only loaded when `commerce.mode === "shop"`
+ * (see CartMount.astro / BaseLayout). A vetrina build never imports it.
  */
 import { persistentAtom } from "@nanostores/persistent";
 import { atom } from "nanostores";

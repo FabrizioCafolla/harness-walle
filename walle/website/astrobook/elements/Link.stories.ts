@@ -15,11 +15,11 @@ export const Default = {
 };
 
 export const Muted = {
-  args: { href: "/blog", text: "Muted link", variant: "muted" } satisfies LinkProps,
+  args: { href: "/blog", text: "Muted link", muted: true } satisfies LinkProps,
 };
 
 export const Unstyled = {
-  args: { href: "/blog", text: "Unstyled link", variant: "unstyled" } satisfies LinkProps,
+  args: { href: "/blog", text: "Unstyled link", unstyled: true } satisfies LinkProps,
 };
 
 export const External = {

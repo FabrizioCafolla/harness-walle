@@ -22,12 +22,12 @@ export const FourColumns = {
   args: { title: "Four columns", columns: 4, items: 4 } satisfies SectionColumnsDemoProps,
 };
 
-export const GrayCentered = {
+export const MutedCentered = {
   args: {
-    title: "Gray centered",
+    title: "Muted centered",
     columns: 3,
     items: 3,
-    variant: "gray",
+    muted: true,
     centered: true,
   } satisfies SectionColumnsDemoProps,
 };

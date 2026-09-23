@@ -4,12 +4,15 @@
  * nanostores cart; the trigger is CartBadge (floating or in the navbar), found by
  * `[data-cart-badge]`. Also delegates clicks on `[data-vp-add]` to `addToCart`.
  *
- * Mounted only when `commerce.showBuyButton` is true, so a vetrina site ships none of
+ * Mounted only when `commerce.mode === "shop"`, so a vetrina site ships none of
  * this markup or JS.
  */
+import config from "@walle/config";
+
+const locale = config.app.website.language ?? "en-US";
 ---
 
-<dialog class="cart-drawer" data-cart-drawer aria-label="Shopping cart">
+<dialog class="cart-drawer" data-cart-drawer data-locale={locale} aria-label="Shopping cart">
   <div class="cart-drawer__head">
     <h2>Your cart</h2>
     <button class="cart-drawer__close" data-cart-close aria-label="Close cart">
@@ -29,19 +32,27 @@
 </dialog>
 
 <style>
+  @layer walle.components {
   .cart-drawer {
+    /* Public properties */
+    --cart-drawer-bg: var(--surface);
+    --cart-drawer-border: var(--border);
+    --cart-backdrop: color-mix(in srgb, var(--black) 50%, transparent);
+    --cart-checkout-bg: var(--primary);
+    --cart-checkout-bg-hover: var(--primary-dark);
+
     margin: 0 0 0 auto;
     height: 100%;
     max-height: 100vh;
     width: min(420px, 100vw);
     border: none;
     padding: 0;
-    background: var(--surface);
+    background: var(--cart-drawer-bg);
     color: var(--text);
   }
 
   .cart-drawer::backdrop {
-    background: rgba(10, 14, 22, 0.5);
+    background: var(--cart-backdrop);
   }
 
   .cart-drawer__head {
@@ -49,7 +60,7 @@
     align-items: center;
     justify-content: space-between;
     padding: var(--space-lg);
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--cart-drawer-border);
   }
 
   .cart-drawer__head h2 {
@@ -177,7 +188,7 @@
 
   .cart-drawer__foot {
     padding: var(--space-lg);
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--cart-drawer-border);
   }
 
   .cart-checkout {
@@ -185,7 +196,7 @@
     width: 100%;
     border: none;
     border-radius: var(--radius-md);
-    background: var(--primary);
+    background: var(--cart-checkout-bg);
     color: var(--white);
     font-size: 1rem;
     font-weight: 600;
@@ -195,7 +206,7 @@
   }
 
   .cart-checkout:hover {
-    background: var(--primary-dark);
+    background: var(--cart-checkout-bg-hover);
   }
 
   .cart-drawer__subtotal {
@@ -203,6 +214,7 @@
     justify-content: space-between;
     font-weight: 700;
     margin-bottom: var(--space-md);
+  }
   }
 </style>
 
@@ -216,8 +228,8 @@
     goToCheckout,
   } from "@walle/commerce/cart";
 
-  function money(m: { amount: string; currencyCode: string }) {
-    return new Intl.NumberFormat("en-US", {
+  function money(m: { amount: string; currencyCode: string }, locale: string) {
+    return new Intl.NumberFormat(locale, {
       style: "currency",
       currency: m.currencyCode,
     }).format(Number(m.amount));
@@ -227,6 +239,9 @@
     const badge = document.querySelector<HTMLButtonElement>("[data-cart-badge]");
     const drawer = document.querySelector<HTMLDialogElement>("[data-cart-drawer]");
     if (!badge || !drawer || badge.dataset.ready) return;
+    // `locale` always resolves to a real string server-side (config or its own fallback), so
+    // `data-locale` is always rendered; no runtime fallback needed here.
+    const locale = drawer.dataset.locale as string;
     badge.dataset.ready = "true";
 
     const countEl = badge.querySelector<HTMLElement>("[data-cart-count]");
@@ -268,7 +283,7 @@
       const lines = c?.lines.nodes ?? [];
       if (emptyEl) emptyEl.hidden = lines.length > 0;
       if (footEl) footEl.hidden = lines.length === 0;
-      if (subtotalEl && c) subtotalEl.textContent = money(c.cost.totalAmount);
+      if (subtotalEl && c) subtotalEl.textContent = money(c.cost.totalAmount, locale);
       if (!linesEl) return;
 
       linesEl.replaceChildren();
@@ -291,7 +306,7 @@
               <button type="button" class="cart-line__remove" aria-label="Remove" data-rm>Remove</button>
             </div>
           </div>
-          <span class="cart-line__price">${money(m.price)}</span>`;
+          <span class="cart-line__price">${money(m.price, locale)}</span>`;
         li.querySelector("[data-dec]")?.addEventListener("click", () =>
           line.quantity <= 1 ? removeLine(line.id) : updateLine(line.id, line.quantity - 1)
         );

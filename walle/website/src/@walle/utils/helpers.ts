@@ -19,10 +19,14 @@ export function calculateTimeAgo(dateString: string): string | null {
   return `${Math.floor(diffDays / 365)} years ago`;
 }
 
-export function formatDate(dateString: string): string | null {
+/**
+ * @param locale Defaults to "en-GB" to keep existing callers byte-identical; task 41 (D8)
+ * switches every caller to `config.app.website.language` and drops this default.
+ */
+export function formatDate(dateString: string, locale = "en-GB"): string | null {
   if (!dateString) return null;
   const date = new Date(dateString);
-  return new Intl.DateTimeFormat("en-GB", {
+  return new Intl.DateTimeFormat(locale, {
     day: "numeric",
     month: "short",
     year: "numeric",

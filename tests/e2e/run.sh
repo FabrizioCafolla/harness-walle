@@ -19,11 +19,11 @@ mkdir -p "$SANDBOX_DIR"
 
 SCENARIOS=(
   "Init minimal (website) → static build + preview 200|scenario_init_minimal"
-  "Init maximal (website,ci,ai) + SSR → node server 200|scenario_init_ssr"
+  "Init maximal (website,ci,ai) + node adapter → node server 200|scenario_init_maximal"
   "Update idempotent (same source → empty diff)|scenario_update_idempotent"
   "CLI commands (dry-run, add, check)|scenario_cli_commands"
   "Dependency drift report + --apply aligns package.json|scenario_deps"
-  "Component variants (valid variant renders, invalid fails build)|scenario_component_variants"
+  "Component overrides (built-in name, site path, wrapping override, missing path and unknown name fail)|scenario_component_overrides"
   "Old .walle.config.json migrates to .harness-walle/manifest.json on update|scenario_walle_config_migration"
   ".vscode/ marker injection (fresh init + consumer edits survive update)|scenario_vscode_inject"
   ".husky/ seeded at init, consumer edits survive update|scenario_husky_seed"

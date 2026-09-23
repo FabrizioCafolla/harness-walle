@@ -1,0 +1,26 @@
+---
+// Story-only wrapper: provides sample body content for SectionWrapper stories.
+import SectionWrapper from "@walle/components/features/Sections/SectionWrapper.astro";
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  filled?: boolean;
+  muted?: boolean;
+}
+
+const { title, subtitle, filled = false, muted = false } = Astro.props;
+---
+
+<SectionWrapper title={title} subtitle={subtitle} filled={filled} muted={muted}>
+  <p class="demo-body">Sample body content rendered through the default slot.</p>
+</SectionWrapper>
+
+<style>
+  /* Default slot content is arbitrary consumer markup: SectionWrapper only sets color on
+     its own tagline/title/subtitle. Sample text here follows the section's foreground
+     the same way a real consumer would, instead of the global prose default. */
+  .demo-body {
+    color: inherit;
+  }
+</style>

@@ -12,3 +12,17 @@ declare module "virtual:walle-pwa" {
   };
   export default pwa;
 }
+
+/**
+ * One export per embeddable component (D6), each typed against its own "standard" walle
+ * implementation. A site override must accept the same props and slots to be a valid
+ * replacement, so this is the contract a `components.<key>` path is held to.
+ */
+declare module "virtual:walle-components" {
+  export const navbar: typeof import("./components/features/Navbar/Navbar.astro").default;
+  export const footer: typeof import("./components/features/Footer.astro").default;
+  export const card: typeof import("./components/features/Card/BasicCard.astro").default;
+  export const breadcrumbs: typeof import("./components/features/Breadcrumbs.astro").default;
+  export const pageHeader: typeof import("./components/features/Sections/HeaderStandard.astro").default;
+  export const toc: typeof import("./components/features/Blog/BlogTableOfContents.astro").default;
+}

@@ -81,10 +81,10 @@ const groups = [
         <Badge text="Primary" variant="primary" />
         <Badge text="Secondary" variant="secondary" />
         <Badge text="Alternative" variant="alternative" />
-        <Badge text="Success" variant="success" />
-        <Badge text="Warning" variant="warning" />
-        <Badge text="Danger" variant="danger" />
-        <Badge text="Gray" variant="gray" />
+        <Badge text="Success" status="success" />
+        <Badge text="Warning" status="warning" />
+        <Badge text="Danger" status="danger" />
+        <Badge text="Muted" muted />
       </div>
     </div>
 
@@ -93,7 +93,7 @@ const groups = [
       <div class="demo__row demo__row--text">
         <Link href={resolveInternalUrl("/blog")} text="Internal link" />
         <Link href="https://astro.build" text="External link" target="_blank" />
-        <Link href={resolveInternalUrl("/")} text="Muted link" variant="muted" />
+        <Link href={resolveInternalUrl("/")} text="Muted link" muted />
       </div>
     </div>
 
@@ -109,7 +109,7 @@ const groups = [
 
   <!-- CARDS -->
   <span id="cards" class="anchor"></span>
-  <Section title="Cards" variant="gray">
+  <Section title="Cards" muted={true}>
     <div class="card-grid">
       <BasicCard
         title="Designing an accessible component library"
@@ -189,7 +189,7 @@ const groups = [
 
   <!-- CATALOG -->
   <span id="catalog" class="anchor"></span>
-  <Section title="Catalog & content" variant="gray" centered={true}>
+  <Section title="Catalog & content" muted={true} centered={true}>
     <p>
       Listing pages combine <code>BasicCard</code> with <code>CollectionFilters</code>: generic
       search and facets driven by your content collection. The demo blog wires it to post tags, and

@@ -26,6 +26,7 @@ const { floating = true } = Astro.props;
 </button>
 
 <style>
+  @layer walle.components {
   .cart-badge {
     display: inline-flex;
     align-items: center;
@@ -45,6 +46,10 @@ const { floating = true } = Astro.props;
 
   /* Floating variant */
   .cart-badge--floating {
+    /* Public properties */
+    --cart-badge-bg: var(--primary);
+    --cart-badge-fg: var(--white);
+
     position: fixed;
     right: 1.25rem;
     bottom: 1.25rem;
@@ -52,12 +57,13 @@ const { floating = true } = Astro.props;
     padding: 0.7rem 0.9rem;
     border: none;
     border-radius: var(--radius-lg);
-    background: var(--primary);
-    color: var(--white);
-    box-shadow: var(--box-shadow);
+    background: var(--cart-badge-bg);
+    color: var(--cart-badge-fg);
+    box-shadow: var(--shadow-md);
   }
 
-  /* Inline (navbar) variant */
+  /* Inline (navbar) variant: blends into the navbar's own chrome, deliberately no cart
+     accent color, so it stays plain even though the floating variant is public. */
   .cart-badge--inline {
     position: relative;
     height: 40px;
@@ -74,5 +80,6 @@ const { floating = true } = Astro.props;
   .cart-badge--inline:hover {
     border-color: var(--primary);
     color: var(--primary);
+  }
   }
 </style>
