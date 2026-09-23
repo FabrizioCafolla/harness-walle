@@ -111,7 +111,28 @@
           "type": "string",
           "enum": ["node"]
         },
-        "ssr": {}
+        "ssr": {},
+        "prefetch": {
+          "anyOf": [
+            {
+              "type": "boolean",
+              "const": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "strategy": {
+                  "type": "string",
+                  "enum": ["hover", "tap", "viewport", "load"]
+                },
+                "all": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
       },
       "required": ["baseUrl", "basePath"],
       "additionalProperties": false

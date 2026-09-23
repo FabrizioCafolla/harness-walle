@@ -119,6 +119,23 @@ describe("defineWalleConfig", () => {
     expect(() => defineWalleConfig()).toThrow(/astro\.adapter/);
   });
 
+  it("defaults prefetch to hover with prefetchAll on when astro.prefetch is absent", () => {
+    const config = defineWalleConfig();
+    expect(config.prefetch).toEqual({ prefetchAll: true, defaultStrategy: "hover" });
+  });
+
+  it("opts out of prefetch entirely when astro.prefetch is false", () => {
+    (appConfigMock.astro as Record<string, unknown>).prefetch = false;
+    const config = defineWalleConfig();
+    expect(config.prefetch).toBe(false);
+  });
+
+  it("maps astro.prefetch.strategy/all to Astro's defaultStrategy/prefetchAll", () => {
+    (appConfigMock.astro as Record<string, unknown>).prefetch = { strategy: "load", all: false };
+    const config = defineWalleConfig();
+    expect(config.prefetch).toEqual({ prefetchAll: false, defaultStrategy: "load" });
+  });
+
   it("concatenates consumer integrations onto the walle defaults instead of replacing them", () => {
     const marker = { name: "consumer-integration", hooks: {} };
     const config = defineWalleConfig({ integrations: [marker] });
@@ -196,5 +213,15 @@ describe("isSitemapExcluded", () => {
   it("excludes a nested path under an excluded prefix", () => {
     expect(isSitemapExcluded("/offline/details", ["/offline"])).toBe(true);
     expect(isSitemapExcluded("/offline-plan", ["/offline"])).toBe(false);
+  });
+
+  it("excluding the root only matches the root itself, never every page", () => {
+    expect(isSitemapExcluded("/", ["/"])).toBe(true);
+    expect(isSitemapExcluded("/about", ["/"])).toBe(false);
+  });
+
+  it("strips the base only at a path-segment boundary", () => {
+    expect(isSitemapExcluded("/harness-walle-docs/x", ["/x"], "/harness-walle")).toBe(false);
+    expect(isSitemapExcluded("/harness-walle/x", ["/x"], "/harness-walle")).toBe(true);
   });
 });

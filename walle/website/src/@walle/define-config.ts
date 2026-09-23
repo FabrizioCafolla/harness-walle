@@ -475,14 +475,18 @@ type AstroConfigSection = {
 export function isSitemapExcluded(pathname: string, excludes: string[], base?: string): boolean {
   const normalize = (p: string) => (p.length > 1 ? p.replace(/\/$/, "") : p) || "/";
   const strippedBase = base && base !== "/" ? base.replace(/\/$/, "") : "";
-  const withoutBase =
-    strippedBase && pathname.startsWith(strippedBase)
-      ? pathname.slice(strippedBase.length) || "/"
-      : pathname;
+  // Only strip the base at a path-segment boundary — "/harness-walle-docs/x" must not lose
+  // "/harness-walle" just because it happens to start with the same characters.
+  const hasBase =
+    strippedBase !== "" &&
+    (pathname === strippedBase || pathname.startsWith(`${strippedBase}/`));
+  const withoutBase = hasBase ? pathname.slice(strippedBase.length) || "/" : pathname;
   const path = normalize(withoutBase);
   return excludes.some((exclude) => {
     const p = normalize(exclude);
-    return path === p || path.startsWith(p === "/" ? "/" : `${p}/`);
+    // "/" as an exclude only ever matches the root itself — as a prefix it would swallow
+    // every path on the site (a redirect from "/" is a real case, e.g. to "/it/").
+    return path === p || (p !== "/" && path.startsWith(`${p}/`));
   });
 }
 
@@ -511,6 +515,16 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
   // exclusion mechanism as sitemapExclude, just fed from a different config key (D9).
   const redirectSources = Object.keys(astro.redirects ?? {});
   const sitemapExclude = [...(astro.sitemapExclude ?? []), ...redirectSources];
+
+  // Astro's own `prefetch` is off by default; walle turns it on with the hover strategy
+  // unless a site opts out entirely with `astro.prefetch: false` (D9).
+  const prefetch =
+    astro.prefetch === false
+      ? false
+      : {
+          prefetchAll: astro.prefetch?.all ?? true,
+          defaultStrategy: astro.prefetch?.strategy ?? ("hover" as const),
+        };
   const walleIntegrations = [
     mdx(),
     sitemap(
@@ -544,6 +558,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
     // `prerender = false` routes render on demand through the adapter.
     ...(astro.adapter === "node" ? { adapter: node({ mode: "standalone" }) } : {}),
     redirects: astro.redirects,
+    prefetch,
     // Consumer scalar keys override the walle-resolved values.
     ...consumerScalars,
     integrations: [...walleIntegrations, ...pwaIntegrations, ...consumerIntegrations],
