@@ -173,8 +173,18 @@ export function isSingleVariant(product: ShopifyProduct): boolean {
   );
 }
 
-/** Format Storefront money (amount is a decimal string) — never concatenate by hand. */
-export function formatMoney(money: ShopifyMoney, locale = "en-US"): string {
+/**
+ * Format Storefront money (amount is a decimal string) — never concatenate by hand.
+ *
+ * `locale` is required, not defaulted, for two reasons: this module is also loaded as an
+ * `astro:content` Loader, a separate Vite build graph from regular components, and importing
+ * `@walle/config` (or anything that re-exports `defineWalleConfig`) into that graph drags
+ * `vite-plugin-pwa` along with it and breaks the build ("generateAssets" missing export); and
+ * a silent `"en-US"` fallback would let a caller that forgot to resolve the site's locale ship
+ * English formatting with no error. Every real caller (VariantPicker, CartMount) is an
+ * ordinary component that resolves `locale()` itself before calling this.
+ */
+export function formatMoney(money: ShopifyMoney, locale: string): string {
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: money.currencyCode,

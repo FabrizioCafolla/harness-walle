@@ -3,7 +3,7 @@
 // Selected via `components.footer = "minimal"` in app.json, resolved by virtual:walle-components.
 import type { FooterConfig, NavigationLink } from "@walle/config";
 import config from "@walle/config";
-import { resolveInternalUrl } from "@walle/utils";
+import { label as t, resolveInternalUrl } from "@walle/utils";
 
 const footerConfig: FooterConfig = config.footer;
 const today = new Date();
@@ -13,7 +13,7 @@ const label = footerConfig.logo?.title || footerConfig.logo?.license || "";
 ---
 
 <footer class="footer-minimal">
-  <nav class="footer-minimal__nav" aria-label="Footer navigation">
+  <nav class="footer-minimal__nav" aria-label={t("footer.nav")}>
     <ul>
       {
         navigationLinks.map((item: NavigationLink) => (

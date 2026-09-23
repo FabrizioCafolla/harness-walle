@@ -4,6 +4,8 @@
  * chosen by `commerce.cartInNavbar` in BaseLayout. The drawer + wiring live in
  * CartMount.astro, which finds this button by `[data-cart-badge]` wherever it sits.
  */
+import { label as t } from "@walle/utils";
+
 interface Props {
   /** Floating bottom-right (default) vs inline in the navbar. @default true */
   floating?: boolean;
@@ -15,7 +17,7 @@ const { floating = true } = Astro.props;
   class:list={["cart-badge", floating ? "cart-badge--floating" : "cart-badge--inline"]}
   data-cart-badge
   data-cart-keep={floating ? undefined : "true"}
-  aria-label="Open cart"
+  aria-label={t("cart.open")}
   hidden={floating}
 >
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">

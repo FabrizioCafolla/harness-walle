@@ -1,7 +1,7 @@
 ---
-import config from "@walle/config";
 import type { BaseProps, Size } from "../shared/types";
 import { splitProps } from "../shared/attrs";
+import { label as t, locale as siteLocale } from "@walle/utils";
 
 export interface PriceData {
   /**
@@ -56,12 +56,15 @@ const OWN_KEYS = ["price", "locale", "size", "discountedLabel", "originalLabel",
 const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEYS);
 const {
   price,
-  locale = config.app.website.language || "en-US",
+  locale = siteLocale(),
   size = "medium",
-  discountedLabel = "Discounted price",
-  originalLabel = "Original price",
+  discountedLabel: discountedLabelProp,
+  originalLabel: originalLabelProp,
   class: className,
 } = own as Props;
+
+const discountedLabel = t("price.discounted", discountedLabelProp);
+const originalLabel = t("price.original", originalLabelProp);
 
 // Intl wants BCP 47 (hyphens); tolerate a POSIX-style "it_IT" so a config typo
 // can't throw a RangeError at build.

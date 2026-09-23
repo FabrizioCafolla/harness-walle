@@ -1,12 +1,29 @@
 ---
+import { label as t } from "@walle/utils";
+
 export interface Props {}
 
 const {} = Astro.props;
+
+const heading = t("toc.heading");
+const navLabel = t("toc.nav");
+const loadingText = t("toc.loading");
+const expandedText = t("toc.expanded");
+const collapsedText = t("toc.collapsed");
+// CSS `content` needs a quoted string literal; a site label could contain a quote or
+// backslash, so it's escaped before being embedded in the inline custom property.
+const cssEscapedLoadingText = loadingText.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 ---
 
-<aside class="table-of-contents" id="toc">
-  <h3>Contents</h3>
-  <nav class="toc-nav" id="toc-nav" aria-label="Table of contents navigation"></nav>
+<aside
+  class="table-of-contents"
+  id="toc"
+  style={`--_toc-loading-text: "${cssEscapedLoadingText}";`}
+  data-label-expanded={expandedText}
+  data-label-collapsed={collapsedText}
+>
+  <h3>{heading}</h3>
+  <nav class="toc-nav" id="toc-nav" aria-label={navLabel}></nav>
 </aside>
 
 <style>
@@ -157,7 +174,7 @@ const {} = Astro.props;
     }
 
     .toc-nav.loading::after {
-      content: "Loading...";
+      content: var(--_toc-loading-text);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -424,6 +441,12 @@ const {} = Astro.props;
     if (skipAttr) options.skipAttribute = skipAttr;
     const skipClass = tocEl.getAttribute("data-skip-class");
     if (skipClass) options.skipClass = skipClass;
+
+    // Always set: BlogTableOfContents.astro resolves these through label() before rendering.
+    options.labels = {
+      expanded: tocEl.getAttribute("data-label-expanded"),
+      collapsed: tocEl.getAttribute("data-label-collapsed"),
+    };
   }
 
   const init = () => new TableOfContentsManager(options).init();

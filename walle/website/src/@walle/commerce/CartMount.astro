@@ -7,27 +7,46 @@
  * Mounted only when `commerce.mode === "shop"`, so a vetrina site ships none of
  * this markup or JS.
  */
-import config from "@walle/config";
+import { label as t, locale as siteLocale } from "@walle/utils";
 
-const locale = config.app.website.language ?? "en-US";
+const locale = siteLocale();
+const l = {
+  ariaLabel: t("cart.ariaLabel"),
+  title: t("cart.title"),
+  close: t("cart.close"),
+  empty: t("cart.empty"),
+  subtotal: t("cart.subtotal"),
+  checkout: t("cart.checkout"),
+  decreaseQuantity: t("cart.decreaseQuantity"),
+  increaseQuantity: t("cart.increaseQuantity"),
+  remove: t("cart.remove"),
+};
 ---
 
-<dialog class="cart-drawer" data-cart-drawer data-locale={locale} aria-label="Shopping cart">
+<dialog
+  class="cart-drawer"
+  data-cart-drawer
+  data-locale={locale}
+  data-label-decrease={l.decreaseQuantity}
+  data-label-increase={l.increaseQuantity}
+  data-label-remove={l.remove}
+  aria-label={l.ariaLabel}
+>
   <div class="cart-drawer__head">
-    <h2>Your cart</h2>
-    <button class="cart-drawer__close" data-cart-close aria-label="Close cart">
+    <h2>{l.title}</h2>
+    <button class="cart-drawer__close" data-cart-close aria-label={l.close}>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"
         ><path d="M18 6 6 18M6 6l12 12"></path></svg
       >
     </button>
   </div>
-  <p class="cart-drawer__empty" data-cart-empty>Your cart is empty.</p>
+  <p class="cart-drawer__empty" data-cart-empty>{l.empty}</p>
   <ul class="cart-drawer__lines" data-cart-lines></ul>
   <div class="cart-drawer__foot" data-cart-foot hidden>
     <div class="cart-drawer__subtotal">
-      <span>Subtotal</span><span data-cart-subtotal></span>
+      <span>{l.subtotal}</span><span data-cart-subtotal></span>
     </div>
-    <button class="cart-checkout" data-cart-checkout>Checkout</button>
+    <button class="cart-checkout" data-cart-checkout>{l.checkout}</button>
   </div>
 </dialog>
 
@@ -239,9 +258,12 @@ const locale = config.app.website.language ?? "en-US";
     const badge = document.querySelector<HTMLButtonElement>("[data-cart-badge]");
     const drawer = document.querySelector<HTMLDialogElement>("[data-cart-drawer]");
     if (!badge || !drawer || badge.dataset.ready) return;
-    // `locale` always resolves to a real string server-side (config or its own fallback), so
-    // `data-locale` is always rendered; no runtime fallback needed here.
+    // These always resolve to a real string server-side (config/label() or their own
+    // fallback), so the data attributes are always rendered; no runtime fallback needed here.
     const locale = drawer.dataset.locale as string;
+    const labelDecrease = drawer.dataset.labelDecrease as string;
+    const labelIncrease = drawer.dataset.labelIncrease as string;
+    const labelRemove = drawer.dataset.labelRemove as string;
     badge.dataset.ready = "true";
 
     const countEl = badge.querySelector<HTMLElement>("[data-cart-count]");
@@ -299,11 +321,11 @@ const locale = config.app.website.language ?? "en-US";
             ${variant ? `<div class="cart-line__variant">${variant}</div>` : ""}
             <div class="cart-line__controls">
               <div class="cart-line__qty">
-                <button type="button" aria-label="Decrease quantity" data-dec>&minus;</button>
+                <button type="button" aria-label="${labelDecrease}" data-dec>&minus;</button>
                 <span>${line.quantity}</span>
-                <button type="button" aria-label="Increase quantity" data-inc>+</button>
+                <button type="button" aria-label="${labelIncrease}" data-inc>+</button>
               </div>
-              <button type="button" class="cart-line__remove" aria-label="Remove" data-rm>Remove</button>
+              <button type="button" class="cart-line__remove" aria-label="${labelRemove}" data-rm>${labelRemove}</button>
             </div>
           </div>
           <span class="cart-line__price">${money(m.price, locale)}</span>`;

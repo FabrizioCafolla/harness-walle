@@ -1,6 +1,7 @@
 ---
 import type { BaseProps } from "../shared/types";
 import { splitProps } from "../shared/attrs";
+import { label as t } from "@walle/utils";
 
 export interface Props extends BaseProps<"section"> {
   /** Accessible name of the carousel region (required) */
@@ -63,15 +64,21 @@ const {
   fit = "uniform",
   height,
   zoom = false,
-  previousLabel = "Previous slide",
-  nextLabel = "Next slide",
-  zoomLabel = "View image full screen",
-  closeLabel = "Close",
-  slideLabel = "{i} of {n}",
+  previousLabel: previousLabelProp,
+  nextLabel: nextLabelProp,
+  zoomLabel: zoomLabelProp,
+  closeLabel: closeLabelProp,
+  slideLabel: slideLabelProp,
   class: className = "",
   id,
   style: styleProp,
 } = own as Props & { style?: string };
+
+const previousLabel = t("carousel.previous", previousLabelProp);
+const nextLabel = t("carousel.next", nextLabelProp);
+const zoomLabel = t("carousel.zoom", zoomLabelProp);
+const closeLabel = t("carousel.close", closeLabelProp);
+const slideLabel = t("carousel.slide", slideLabelProp);
 
 const classes = ["carousel", className].filter(Boolean).join(" ");
 const heightStyle = height ? `--carousel-height: ${height};` : undefined;
@@ -396,7 +403,8 @@ const closeIcon =
       track.dataset.ready = "true";
 
       const slides = Array.from(track.children) as HTMLElement[];
-      const template = root.dataset.slideLabel || "{i} of {n}";
+      // Always set: Carousel.astro resolves this through label() before rendering the attribute.
+      const template = root.dataset.slideLabel as string;
       slides.forEach((slide, i) => {
         slide.setAttribute("role", "group");
         slide.setAttribute("aria-roledescription", "slide");
@@ -452,7 +460,8 @@ const closeIcon =
         const dialog = root.querySelector<HTMLDialogElement>(".carousel-lightbox");
         const dialogImg = root.querySelector<HTMLImageElement>(".carousel-lightbox__img");
         const closeBtn = root.querySelector<HTMLButtonElement>(".carousel-lightbox__close");
-        const zoomLabel = root.dataset.zoomLabel || "View image full screen";
+        // Always set: Carousel.astro resolves this through label() before rendering the attribute.
+        const zoomLabel = root.dataset.zoomLabel as string;
 
         if (dialog && dialogImg) {
           const open = (img: HTMLImageElement) => {

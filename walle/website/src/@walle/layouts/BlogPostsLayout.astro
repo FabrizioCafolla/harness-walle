@@ -2,7 +2,7 @@
 import { card as BasicCard } from "virtual:walle-components";
 import CollectionFilters from "@walle/components/features/CollectionFilters.astro";
 import BaseLayout from "./BaseLayout.astro";
-import { formatDate, resolveInternalUrl } from "@walle/utils";
+import { formatDate, label, resolveInternalUrl } from "@walle/utils";
 import { getCollection } from "astro:content";
 
 export type { BlogPostsLayoutProps as Props } from "./types";
@@ -61,7 +61,7 @@ const allCategories: string[] = Array.from(
       {
         sortedPosts.length === 0 ? (
           <div class="blog-layout__empty">
-            <p>No posts found.</p>
+            <p>{label("blog.empty")}</p>
           </div>
         ) : (
           <div class="blog-layout__grid">

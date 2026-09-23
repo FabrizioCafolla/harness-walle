@@ -8,8 +8,8 @@
  * like. The add button carries `data-variant-id` and `data-qty`; the cart layer
  * (CartMount.astro) delegates its click to `addToCart`, so a vetrina build ships no JS.
  */
-import config from "@walle/config";
 import { defaultVariant, formatMoney, isSingleVariant, type ShopifyProduct } from "./shopify";
+import { label as t, locale as siteLocale } from "@walle/utils";
 
 interface Props {
   product: ShopifyProduct;
@@ -32,13 +32,22 @@ interface Props {
 
 const {
   product,
-  locale = config.app.website.language || "en-US",
+  locale = siteLocale(),
   showBuyButton = false,
   showQuantity = false,
   compact = false,
   hideOptions = false,
-  addLabel = "Add to cart",
+  addLabel: addLabelProp,
 } = Astro.props;
+
+const addLabel = t("cart.add", addLabelProp);
+const l = {
+  decreaseQuantity: t("cart.decreaseQuantity"),
+  increaseQuantity: t("cart.increaseQuantity"),
+  inStock: t("cart.inStock"),
+  outOfStock: t("cart.outOfStock"),
+  unavailable: t("cart.unavailable"),
+};
 
 const single = isSingleVariant(product);
 const initial = defaultVariant(product);
@@ -82,6 +91,9 @@ const initialSelected = Object.fromEntries(
   data-variant-picker
   data-locale={locale}
   data-variants={JSON.stringify(variantData)}
+  data-label-in-stock={l.inStock}
+  data-label-out-of-stock={l.outOfStock}
+  data-label-unavailable={l.unavailable}
 >
   {
     !single &&
@@ -126,7 +138,7 @@ const initialSelected = Object.fromEntries(
   {
     !compact && (
       <p class="vp-status" data-vp-status aria-live="polite">
-        {initial?.availableForSale ? "In stock" : "Out of stock"}
+        {initial?.availableForSale ? l.inStock : l.outOfStock}
       </p>
     )
   }
@@ -135,13 +147,13 @@ const initialSelected = Object.fromEntries(
     {
       showQuantity && (
         <div class="vp-qty" data-vp-qty>
-          <button type="button" data-qty-dec aria-label="Decrease quantity">
+          <button type="button" data-qty-dec aria-label={l.decreaseQuantity}>
             &minus;
           </button>
           <span data-qty-value aria-live="polite">
             1
           </span>
-          <button type="button" data-qty-inc aria-label="Increase quantity">
+          <button type="button" data-qty-inc aria-label={l.increaseQuantity}>
             +
           </button>
         </div>
@@ -394,9 +406,12 @@ const initialSelected = Object.fromEntries(
     document.querySelectorAll<HTMLElement>("[data-variant-picker]").forEach((root) => {
       if (root.dataset.ready) return;
       root.dataset.ready = "true";
-      // The `locale` prop always resolves to a real string server-side (component default or
-      // config), so `data-locale` is always rendered; no runtime fallback needed here.
+      // These always resolve to a real string server-side (component default, config or
+      // label()), so the data attributes are always rendered; no runtime fallback needed here.
       const locale = root.dataset.locale as string;
+      const labelInStock = root.dataset.labelInStock as string;
+      const labelOutOfStock = root.dataset.labelOutOfStock as string;
+      const labelUnavailable = root.dataset.labelUnavailable as string;
       const variants: V[] = JSON.parse(root.dataset.variants || "[]");
       const amountEl = root.querySelector<HTMLElement>(".vp-amount");
       const compareEl = root.querySelector<HTMLElement>(".vp-compare");
@@ -431,7 +446,7 @@ const initialSelected = Object.fromEntries(
       const update = () => {
         const v = variants.length === 1 ? variants[0] : match(selected());
         if (!v) {
-          if (statusEl) statusEl.textContent = "Combination not available";
+          if (statusEl) statusEl.textContent = labelUnavailable;
           statusEl?.setAttribute("data-out", "");
           if (addBtn) addBtn.disabled = true;
           return;
@@ -446,7 +461,7 @@ const initialSelected = Object.fromEntries(
           discountEl.hidden = !pct;
         }
         if (statusEl) {
-          statusEl.textContent = v.available ? "In stock" : "Out of stock";
+          statusEl.textContent = v.available ? labelInStock : labelOutOfStock;
           v.available
             ? statusEl.removeAttribute("data-out")
             : statusEl.setAttribute("data-out", "");

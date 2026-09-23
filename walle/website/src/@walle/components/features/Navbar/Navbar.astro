@@ -1,7 +1,7 @@
 ---
 import NavbarMenu from "./NavbarMenu.astro";
 import type { NavbarConfig } from "@walle/config";
-import { resolveInternalUrl } from "@walle/utils";
+import { label as t, resolveInternalUrl } from "@walle/utils";
 import type { BaseProps } from "../../shared/types";
 import { splitProps } from "../../shared/attrs";
 
@@ -21,7 +21,7 @@ const shouldShowBrand = hasLogo || hasTitle;
 
 <header class:list={["site-header", className]} {...rest}>
   <div class="container">
-    <nav class="main-nav" aria-label="Main navigation" data-component="Navbar" data-nav-root="true">
+    <nav class="main-nav" aria-label={t("nav.main")} data-component="Navbar" data-nav-root="true">
       <slot name="brand">
         {
           shouldShowBrand && (
@@ -66,7 +66,7 @@ const shouldShowBrand = hasLogo || hasTitle;
         class="hamburger"
         aria-controls={navId}
         aria-expanded="false"
-        aria-label="Toggle navigation menu"
+        aria-label={t("nav.toggle")}
       >
         <span class="hamburger-line"></span>
         <span class="hamburger-line"></span>

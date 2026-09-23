@@ -1,5 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
+import { label as t } from "@walle/utils";
 
 export interface BlogArticleNavigation {
   nextArticle?: {
@@ -20,12 +21,12 @@ export interface Props {
 const { navigation } = Astro.props;
 ---
 
-<section class="article-navigation" aria-label="Article navigation">
+<section class="article-navigation" aria-label={t("blog.articleNavigation")}>
   <div class="navigation-grid">
     {
       navigation.previousArticle && (
         <div class="nav-card nav-card--previous">
-          <span class="nav-card__label">Previous Article</span>
+          <span class="nav-card__label">{t("blog.previousArticle")}</span>
           <a href={navigation.previousArticle.slug} class="nav-card__link">
             <Icon name="fa:chevron-left" class="nav-card__icon" />
             <span class="nav-card__title">{navigation.previousArticle.title}</span>
@@ -37,7 +38,7 @@ const { navigation } = Astro.props;
     {
       navigation.nextArticle && (
         <div class="nav-card nav-card--next">
-          <span class="nav-card__label">Next Article</span>
+          <span class="nav-card__label">{t("blog.nextArticle")}</span>
           <a href={navigation.nextArticle.slug} class="nav-card__link">
             <span class="nav-card__title">{navigation.nextArticle.title}</span>
             <Icon name="fa:chevron-right" class="nav-card__icon" />

@@ -7,8 +7,7 @@
  * clickable — no button nested inside a link.
  */
 import Badge from "@walle/components/elements/Badge.astro";
-import config from "@walle/config";
-import { resolveInternalUrl } from "@walle/utils";
+import { locale as siteLocale, resolveInternalUrl } from "@walle/utils";
 import VariantPicker from "./VariantPicker.astro";
 import type { ShopifyProduct } from "./shopify";
 
@@ -32,11 +31,11 @@ interface Props {
 
 const {
   product,
-  locale = config.app.website.language || "en-US",
+  locale = siteLocale(),
   showAddToCart = true,
   showSizes = true,
   showQuantity = false,
-  addLabel = "Add to cart",
+  addLabel,
   class: className = "",
 } = Astro.props;
 

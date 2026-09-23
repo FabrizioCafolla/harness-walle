@@ -2,6 +2,7 @@
 import { Icon } from "astro-icon/components";
 import type { BaseProps } from "../shared/types";
 import { splitProps } from "../shared/attrs";
+import { label as t } from "@walle/utils";
 
 /**
  * Config-driven client-side filtering for any rendered collection.
@@ -88,12 +89,12 @@ const {
 } = own as Props;
 
 const l = {
-  searchPlaceholder: labels.searchPlaceholder ?? "Search…",
-  searchLabel: labels.searchLabel ?? "Search items",
-  clear: labels.clear ?? "Clear filters",
-  status: labels.status ?? "{n} items shown",
-  facetSelect: labels.facetSelect ?? "Select {label}",
-  facetSelected: labels.facetSelected ?? "{n} selected",
+  searchPlaceholder: t("filters.searchPlaceholder", labels.searchPlaceholder),
+  searchLabel: t("filters.searchLabel", labels.searchLabel),
+  clear: t("filters.clear", labels.clear),
+  status: t("filters.status", labels.status),
+  facetSelect: t("filters.facetSelect", labels.facetSelect),
+  facetSelected: t("filters.facetSelected", labels.facetSelected),
 };
 
 ---

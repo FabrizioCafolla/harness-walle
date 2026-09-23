@@ -39,7 +39,10 @@
           "maximum": 9007199254740991
         }
       },
-      "required": ["title", "description"],
+      "required": [
+        "title",
+        "description"
+      ],
       "additionalProperties": false
     },
     "astro": {
@@ -53,7 +56,11 @@
         },
         "trailingSlash": {
           "type": "string",
-          "enum": ["always", "never", "ignore"]
+          "enum": [
+            "always",
+            "never",
+            "ignore"
+          ]
         },
         "analyticsScriptContent": {
           "type": "string"
@@ -66,11 +73,16 @@
         },
         "adapter": {
           "type": "string",
-          "enum": ["node"]
+          "enum": [
+            "node"
+          ]
         },
         "ssr": {}
       },
-      "required": ["baseUrl", "basePath"],
+      "required": [
+        "baseUrl",
+        "basePath"
+      ],
       "additionalProperties": false
     },
     "components": {
@@ -108,7 +120,12 @@
         },
         "display": {
           "type": "string",
-          "enum": ["standalone", "fullscreen", "minimal-ui", "browser"]
+          "enum": [
+            "standalone",
+            "fullscreen",
+            "minimal-ui",
+            "browser"
+          ]
         },
         "startUrl": {
           "type": "string"
@@ -134,7 +151,10 @@
                 "type": "string"
               }
             },
-            "required": ["src", "sizes"],
+            "required": [
+              "src",
+              "sizes"
+            ],
             "additionalProperties": false
           }
         },
@@ -150,7 +170,11 @@
         "mode": {
           "default": "off",
           "type": "string",
-          "enum": ["off", "catalog", "shop"]
+          "enum": [
+            "off",
+            "catalog",
+            "shop"
+          ]
         },
         "cartInNavbar": {
           "type": "boolean"
@@ -163,8 +187,236 @@
         "addToCartLabel": {}
       },
       "additionalProperties": false
+    },
+    "labels": {
+      "type": "object",
+      "properties": {
+        "skipLink": {
+          "type": "string"
+        },
+        "breadcrumbs": {
+          "type": "object",
+          "properties": {
+            "nav": {
+              "type": "string"
+            },
+            "back": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "carousel": {
+          "type": "object",
+          "properties": {
+            "previous": {
+              "type": "string"
+            },
+            "next": {
+              "type": "string"
+            },
+            "zoom": {
+              "type": "string"
+            },
+            "close": {
+              "type": "string"
+            },
+            "slide": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "filters": {
+          "type": "object",
+          "properties": {
+            "searchPlaceholder": {
+              "type": "string"
+            },
+            "searchLabel": {
+              "type": "string"
+            },
+            "clear": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "facetSelect": {
+              "type": "string"
+            },
+            "facetSelected": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "cart": {
+          "type": "object",
+          "properties": {
+            "ariaLabel": {
+              "type": "string"
+            },
+            "open": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "close": {
+              "type": "string"
+            },
+            "empty": {
+              "type": "string"
+            },
+            "subtotal": {
+              "type": "string"
+            },
+            "checkout": {
+              "type": "string"
+            },
+            "add": {
+              "type": "string"
+            },
+            "decreaseQuantity": {
+              "type": "string"
+            },
+            "increaseQuantity": {
+              "type": "string"
+            },
+            "remove": {
+              "type": "string"
+            },
+            "inStock": {
+              "type": "string"
+            },
+            "outOfStock": {
+              "type": "string"
+            },
+            "unavailable": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "price": {
+          "type": "object",
+          "properties": {
+            "discounted": {
+              "type": "string"
+            },
+            "original": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "offline": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "notFound": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "toc": {
+          "type": "object",
+          "properties": {
+            "heading": {
+              "type": "string"
+            },
+            "nav": {
+              "type": "string"
+            },
+            "loading": {
+              "type": "string"
+            },
+            "expanded": {
+              "type": "string"
+            },
+            "collapsed": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "readingTime": {
+          "type": "string"
+        },
+        "nav": {
+          "type": "object",
+          "properties": {
+            "main": {
+              "type": "string"
+            },
+            "toggle": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "footer": {
+          "type": "object",
+          "properties": {
+            "nav": {
+              "type": "string"
+            },
+            "social": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "blog": {
+          "type": "object",
+          "properties": {
+            "readingProgress": {
+              "type": "string"
+            },
+            "articleNavigation": {
+              "type": "string"
+            },
+            "previousArticle": {
+              "type": "string"
+            },
+            "nextArticle": {
+              "type": "string"
+            },
+            "info": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "string"
+            },
+            "empty": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     }
   },
-  "required": ["website", "astro"],
+  "required": [
+    "website",
+    "astro"
+  ],
   "additionalProperties": false
 }

@@ -3,7 +3,7 @@ import BlogReadingProgress from "@walle/components/features/Blog/BlogReadingProg
 import { toc as BlogTableOfContents, pageHeader as SectionHeaderStandard } from "virtual:walle-components";
 import StructuredData from "@walle/components/features/StructuredData.astro";
 import BaseLayout from "./BaseLayout.astro";
-import { formatDate } from "@walle/utils";
+import { formatDate, label } from "@walle/utils";
 import { articleJsonLd } from "@walle/utils/structured-data";
 
 export type { BlogPostLayoutProps as Props } from "./types";
@@ -46,15 +46,15 @@ const {
   {
     draft ? (
       <div class="draft-message" role="status" aria-live="polite">
-        <h1>Not Found.</h1>
-        <p>The content you're looking for is not available.</p>
+        <h1>{label("notFound.title")}</h1>
+        <p>{label("notFound.message")}</p>
       </div>
     ) : (
       <>
         <SectionHeaderStandard title={title} subtitle={description} variant="secondary" filled={true}>
           <div class="meta-wrapper">
             {(author || publishDate || readingTime) && (
-              <ul class="meta-info no-markers" aria-label="Article information">
+              <ul class="meta-info no-markers" aria-label={label("blog.info")}>
                 {author && (
                   <li class="meta-author">
                     <span class="sr-only">Author: </span>
@@ -72,15 +72,11 @@ const {
                     </time>
                   </li>
                 )}
-                {readingTime && (
-                  <li class="meta-reading" aria-label={`Estimated reading time ${readingTime}`}>
-                    {readingTime}
-                  </li>
-                )}
+                {readingTime && <li class="meta-reading">{readingTime}</li>}
               </ul>
             )}
             {tags && tags.length > 0 && (
-              <ul class="tags no-markers" aria-label="Article tags">
+              <ul class="tags no-markers" aria-label={label("blog.tags")}>
                 {tags.map((tag) => (
                   <li>
                     <span class="tag">{tag}</span>

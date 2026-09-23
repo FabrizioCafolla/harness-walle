@@ -1,9 +1,16 @@
 import configs from "../../configs";
 
 import { appSchema, footerSchema, navbarSchema, parseConfig } from "./schema";
-import type { AppConfig, FooterConfig, NavbarConfig, NavbarLogo, NavigationLink } from "./schema";
+import type {
+  AppConfig,
+  FooterConfig,
+  LabelsConfig,
+  NavbarConfig,
+  NavbarLogo,
+  NavigationLink,
+} from "./schema";
 
-export type { AppConfig, FooterConfig, NavbarConfig, NavbarLogo, NavigationLink };
+export type { AppConfig, FooterConfig, LabelsConfig, NavbarConfig, NavbarLogo, NavigationLink };
 
 export interface DefaultConfig {
   app: AppConfig;

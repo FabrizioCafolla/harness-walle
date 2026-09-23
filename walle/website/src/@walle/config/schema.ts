@@ -155,6 +155,127 @@ const commerceSchema = z
   })
   .strict();
 
+const breadcrumbsLabelsSchema = z
+  .object({ nav: z.string().optional(), back: z.string().optional() })
+  .strict();
+
+const carouselLabelsSchema = z
+  .object({
+    previous: z.string().optional(),
+    next: z.string().optional(),
+    zoom: z.string().optional(),
+    close: z.string().optional(),
+    slide: z.string().optional(),
+  })
+  .strict();
+
+const filtersLabelsSchema = z
+  .object({
+    searchPlaceholder: z.string().optional(),
+    searchLabel: z.string().optional(),
+    clear: z.string().optional(),
+    status: z.string().optional(),
+    facetSelect: z.string().optional(),
+    facetSelected: z.string().optional(),
+  })
+  .strict();
+
+const cartLabelsSchema = z
+  .object({
+    ariaLabel: z.string().optional(),
+    open: z.string().optional(),
+    title: z.string().optional(),
+    close: z.string().optional(),
+    empty: z.string().optional(),
+    subtotal: z.string().optional(),
+    checkout: z.string().optional(),
+    add: z.string().optional(),
+    decreaseQuantity: z.string().optional(),
+    increaseQuantity: z.string().optional(),
+    remove: z.string().optional(),
+    inStock: z.string().optional(),
+    outOfStock: z.string().optional(),
+    unavailable: z.string().optional(),
+  })
+  .strict();
+
+const priceLabelsSchema = z
+  .object({
+    discounted: z.string().optional(),
+    original: z.string().optional(),
+  })
+  .strict();
+
+const offlineLabelsSchema = z
+  .object({
+    title: z.string().optional(),
+    message: z.string().optional(),
+  })
+  .strict();
+
+const notFoundLabelsSchema = z
+  .object({
+    title: z.string().optional(),
+    message: z.string().optional(),
+  })
+  .strict();
+
+const tocLabelsSchema = z
+  .object({
+    heading: z.string().optional(),
+    nav: z.string().optional(),
+    loading: z.string().optional(),
+    expanded: z.string().optional(),
+    collapsed: z.string().optional(),
+  })
+  .strict();
+
+const navLabelsSchema = z
+  .object({
+    main: z.string().optional(),
+    toggle: z.string().optional(),
+  })
+  .strict();
+
+const footerLabelsSchema = z
+  .object({
+    nav: z.string().optional(),
+    social: z.string().optional(),
+  })
+  .strict();
+
+const blogLabelsSchema = z
+  .object({
+    readingProgress: z.string().optional(),
+    articleNavigation: z.string().optional(),
+    previousArticle: z.string().optional(),
+    nextArticle: z.string().optional(),
+    info: z.string().optional(),
+    tags: z.string().optional(),
+    empty: z.string().optional(),
+  })
+  .strict();
+
+// Every user-facing/screen-reader string walle emits, grouped by area (D8). Each leaf has an
+// English default in i18n.ts; a component prop for the same label overrides the site value.
+const labelsSchema = z
+  .object({
+    skipLink: z.string().optional(),
+    breadcrumbs: breadcrumbsLabelsSchema.optional(),
+    carousel: carouselLabelsSchema.optional(),
+    filters: filtersLabelsSchema.optional(),
+    cart: cartLabelsSchema.optional(),
+    price: priceLabelsSchema.optional(),
+    offline: offlineLabelsSchema.optional(),
+    notFound: notFoundLabelsSchema.optional(),
+    toc: tocLabelsSchema.optional(),
+    readingTime: z.string().optional(),
+    nav: navLabelsSchema.optional(),
+    footer: footerLabelsSchema.optional(),
+    blog: blogLabelsSchema.optional(),
+  })
+  .strict();
+
 export const appSchema = z
   .object({
     $schema: z.string().optional(),
@@ -163,6 +284,7 @@ export const appSchema = z
     components: z.record(z.string(), z.string()).optional(),
     pwa: pwaSchema.optional(),
     commerce: commerceSchema.optional(),
+    labels: labelsSchema.optional(),
   })
   .strict();
 
@@ -196,6 +318,7 @@ export type FooterConfig = z.infer<typeof footerSchema>;
 export type ThemeConfig = z.infer<typeof themeSchema>;
 export type NavigationLink = z.infer<typeof navigationLinkSchema>;
 export type NavbarLogo = z.infer<typeof logoSchema>;
+export type LabelsConfig = z.infer<typeof labelsSchema>;
 
 /** Parses `data` against `schema`, throwing a `z.prettifyError` message prefixed with `fileName`. */
 export function parseConfig<T>(schema: z.ZodType<T>, data: unknown, fileName: string): T {

@@ -2,7 +2,7 @@
 const today = new Date();
 import type { FooterConfig, NavigationLink } from "@walle/config";
 import config from "@walle/config";
-import { resolveInternalUrl } from "@walle/utils";
+import { label as t, resolveInternalUrl } from "@walle/utils";
 import { Icon } from "astro-icon/components";
 import { linkAttrs } from "../shared/attrs";
 
@@ -47,7 +47,7 @@ const shouldShowBrand = hasLogo || hasTitle;
     </div>
 
     <div class="footer-section footer-center">
-      <nav class="footer-nav" aria-label="Footer navigation">
+      <nav class="footer-nav" aria-label={t("footer.nav")}>
         <ul class="footer-nav__list">
           {
             navigationLinks.map((item: NavigationLink) => (
@@ -61,7 +61,7 @@ const shouldShowBrand = hasLogo || hasTitle;
     </div>
 
     <div class="footer-section footer-right">
-      <ul class="social-links" aria-label="Social links">
+      <ul class="social-links" aria-label={t("footer.social")}>
         {
           socialLinks.map((item: NavigationLink) => (
             <li>

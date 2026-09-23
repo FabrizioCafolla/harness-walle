@@ -1,3 +1,5 @@
+import { label, locale as siteLocale } from "./i18n";
+
 export function getPlatformIcon(platform: string): string {
   const platform_lc = platform.toLowerCase();
   if (platform_lc.includes("github")) return "fa:github";
@@ -19,11 +21,7 @@ export function calculateTimeAgo(dateString: string): string | null {
   return `${Math.floor(diffDays / 365)} years ago`;
 }
 
-/**
- * @param locale Defaults to "en-GB" to keep existing callers byte-identical; task 41 (D8)
- * switches every caller to `config.app.website.language` and drops this default.
- */
-export function formatDate(dateString: string, locale = "en-GB"): string | null {
+export function formatDate(dateString: string, locale: string = siteLocale()): string | null {
   if (!dateString) return null;
   const date = new Date(dateString);
   return new Intl.DateTimeFormat(locale, {
@@ -62,8 +60,13 @@ export function calculateReadingTime(content: string): {
     words / wordsPerMinute + (images * imageReadingTime) / 60 + (codeBlocks * codeReadingTime) / 60
   );
 
+  const duration = new Intl.NumberFormat(siteLocale(), {
+    style: "unit",
+    unit: "minute",
+    unitDisplay: "long",
+  }).format(totalMinutes);
   return {
-    text: `${totalMinutes} minute${totalMinutes !== 1 ? "s" : ""} read`,
+    text: label("readingTime").replace("{duration}", duration),
     minutes: totalMinutes,
     words: words,
   };

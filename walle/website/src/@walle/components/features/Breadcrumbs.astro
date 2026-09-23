@@ -2,6 +2,7 @@
 import { Icon } from "astro-icon/components";
 import type { BaseProps } from "../shared/types";
 import { splitProps } from "../shared/attrs";
+import { label } from "@walle/utils";
 
 export interface BreadcrumbItem {
   /**
@@ -37,7 +38,7 @@ const { own, rest } = splitProps(Astro.props as Record<string, unknown>, OWN_KEY
 const { items = [], class: className } = own as Props;
 ---
 
-<nav aria-label="Breadcrumb" class:list={["breadcrumbs", className]} {...rest}>
+<nav aria-label={label("breadcrumbs.nav")} class:list={["breadcrumbs", className]} {...rest}>
   <ol>
     {
       items.map((item, index) => (

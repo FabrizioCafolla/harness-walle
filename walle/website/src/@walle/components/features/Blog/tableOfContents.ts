@@ -27,6 +27,12 @@ export interface TableOfContentsOptions {
   skipContainerAttribute?: string;
   /** Optional text patterns; if heading text matches any pattern it will be excluded */
   excludeTextPatterns?: RegExp[];
+  /** Screen-reader announcements on mobile expand/collapse. Callers always resolve these
+   * through label() before constructing the manager (D8), so no default lives here. */
+  labels?: {
+    expanded?: string | null;
+    collapsed?: string | null;
+  };
 }
 
 export class TableOfContentsManager {
@@ -228,8 +234,8 @@ export class TableOfContentsManager {
 
       // Announce to screen readers
       const announcement = isCollapsed
-        ? "Table of contents expanded"
-        : "Table of contents collapsed";
+        ? this.options.labels?.expanded || "Table of contents expanded"
+        : this.options.labels?.collapsed || "Table of contents collapsed";
       this.announceToScreenReader(announcement);
     };
 
@@ -611,7 +617,7 @@ export class TableOfContentsManager {
       // ESC key to collapse TOC on mobile
       if (event.key === "Escape" && this.isMobile && this.tocContainer) {
         this.tocContainer.classList.add("collapsed");
-        this.announceToScreenReader("Table of contents collapsed");
+        this.announceToScreenReader(this.options.labels?.collapsed || "Table of contents collapsed");
       }
     });
 

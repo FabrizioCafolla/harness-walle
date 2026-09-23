@@ -2,7 +2,7 @@
 // Minimal navbar variant: brand + flat horizontal links, no dropdowns or mobile menu.
 // Selected via `components.navbar = "minimal"` in app.json, resolved by virtual:walle-components.
 import type { NavbarConfig, NavigationLink } from "@walle/config";
-import { resolveInternalUrl } from "@walle/utils";
+import { label as t, resolveInternalUrl } from "@walle/utils";
 import type { BaseProps } from "../../shared/types";
 import { splitProps } from "../../shared/attrs";
 
@@ -26,7 +26,7 @@ const title = config.logo?.title || "Home";
     >
       {title}
     </a>
-    <nav class="navbar-minimal__nav" aria-label="Main navigation">
+    <nav class="navbar-minimal__nav" aria-label={t("nav.main")}>
       <ul>
         {
           items.map((item: NavigationLink) => (

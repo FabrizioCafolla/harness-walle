@@ -1,4 +1,6 @@
 ---
+import { label as t } from "@walle/utils";
+
 export interface Props {
   targetSelector?: string;
   viewportOffsetFactor?: number;
@@ -15,7 +17,7 @@ const { targetSelector = "#article-content", viewportOffsetFactor = 0.25 } = Ast
   aria-valuemin="0"
   aria-valuemax="100"
   aria-valuenow="0"
-  aria-label="Article reading progress"
+  aria-label={t("blog.readingProgress")}
   data-target={targetSelector}
   data-offset={viewportOffsetFactor}
 >
