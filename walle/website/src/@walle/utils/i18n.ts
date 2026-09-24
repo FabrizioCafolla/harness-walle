@@ -57,6 +57,8 @@ const DEFAULTS = {
   "blog.info": "Article information",
   "blog.tags": "Article tags",
   "blog.empty": "No posts found.",
+  "map.region": "Map",
+  "map.directions": "Get directions",
 } as const;
 
 export type LabelPath = keyof typeof DEFAULTS;

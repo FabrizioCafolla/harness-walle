@@ -265,6 +265,13 @@ const notFoundLabelsSchema = z
   })
   .strict();
 
+const mapLabelsSchema = z
+  .object({
+    directions: z.string().optional(),
+    region: z.string().optional(),
+  })
+  .strict();
+
 const tocLabelsSchema = z
   .object({
     heading: z.string().optional(),
@@ -318,6 +325,7 @@ const labelsSchema = z
     nav: navLabelsSchema.optional(),
     footer: footerLabelsSchema.optional(),
     blog: blogLabelsSchema.optional(),
+    map: mapLabelsSchema.optional(),
   })
   .strict();
 
@@ -350,6 +358,24 @@ const seoSchema = z
   })
   .strict();
 
+// D17: Map. Absent means walle's own defaults — standard OpenStreetMap tiles, "google"
+// directions (what the three reference sites use).
+const mapTilesSchema = z
+  .object({
+    url: z.string(),
+    attribution: z.string(),
+    subdomains: z.string().optional(),
+    maxZoom: z.number().optional(),
+  })
+  .strict();
+
+const mapSchema = z
+  .object({
+    tiles: mapTilesSchema.optional(),
+    directions: z.enum(["google", "osm", "apple", "none"]).optional(),
+  })
+  .strict();
+
 export const appSchema = z
   .object({
     $schema: z.string().optional(),
@@ -360,6 +386,7 @@ export const appSchema = z
     commerce: commerceSchema.optional(),
     labels: labelsSchema.optional(),
     seo: seoSchema.optional(),
+    map: mapSchema.optional(),
   })
   .strict();
 

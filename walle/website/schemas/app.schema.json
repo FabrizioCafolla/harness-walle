@@ -472,6 +472,18 @@
             }
           },
           "additionalProperties": false
+        },
+        "map": {
+          "type": "object",
+          "properties": {
+            "directions": {
+              "type": "string"
+            },
+            "region": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
@@ -525,6 +537,35 @@
             }
           },
           "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "map": {
+      "type": "object",
+      "properties": {
+        "tiles": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "attribution": {
+              "type": "string"
+            },
+            "subdomains": {
+              "type": "string"
+            },
+            "maxZoom": {
+              "type": "number"
+            }
+          },
+          "required": ["url", "attribution"],
+          "additionalProperties": false
+        },
+        "directions": {
+          "type": "string",
+          "enum": ["google", "osm", "apple", "none"]
         }
       },
       "additionalProperties": false
