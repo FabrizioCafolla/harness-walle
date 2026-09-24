@@ -1,6 +1,7 @@
 import type { ComponentProps } from "astro/types";
 
 import Hero from "@walle/components/features/Sections/Hero.astro";
+import { resolveInternalUrl } from "@walle/utils";
 import StoryWrapper from "../StoryWrapper.astro";
 
 type HeroProps = ComponentProps<typeof Hero>;
@@ -10,7 +11,7 @@ export default {
   decorators: [{ component: StoryWrapper }],
 };
 
-const image = { src: "/img/posts/default.svg", alt: "Sample hero image" };
+const image = { src: resolveInternalUrl("/img/posts/default.svg"), alt: "Sample hero image" };
 
 export const Default = {
   args: {

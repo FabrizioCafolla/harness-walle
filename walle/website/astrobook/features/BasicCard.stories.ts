@@ -1,6 +1,7 @@
 import type { ComponentProps } from "astro/types";
 
 import BasicCard from "@walle/components/features/Card/BasicCard.astro";
+import { resolveInternalUrl } from "@walle/utils";
 
 type BasicCardProps = ComponentProps<typeof BasicCard>;
 
@@ -35,7 +36,7 @@ export const WithImage = {
     content:
       "A card with a cover image, truncated description text that runs a bit longer to exercise the 120 character clamp behaviour of the component.",
     href: "/blog/example",
-    image: { src: "/img/posts/default.svg", alt: "Post cover" },
+    image: { src: resolveInternalUrl("/img/posts/default.svg"), alt: "Post cover" },
   } satisfies BasicCardProps,
 };
 

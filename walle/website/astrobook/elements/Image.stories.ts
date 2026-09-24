@@ -1,9 +1,12 @@
 import type { ComponentProps } from "astro/types";
 
 import Image from "@walle/components/elements/Image.astro";
+import { resolveInternalUrl } from "@walle/utils";
 import StoryWrapper from "../StoryWrapper.astro";
 
 type ImageProps = ComponentProps<typeof Image>;
+
+const src = resolveInternalUrl("/img/posts/default.svg");
 
 export default {
   component: Image,
@@ -12,7 +15,7 @@ export default {
 
 export const Remote = {
   args: {
-    image: { src: "/harness-walle/img/posts/default.svg", alt: "Sample cover image" },
+    image: { src, alt: "Sample cover image" },
     width: 480,
     height: 320,
   } satisfies ImageProps,
@@ -20,7 +23,7 @@ export const Remote = {
 
 export const RemoteWithRatio = {
   args: {
-    image: { src: "/harness-walle/img/posts/default.svg", alt: "Square-cropped image" },
+    image: { src, alt: "Square-cropped image" },
     width: 320,
     height: 320,
     ratio: "1",
@@ -29,7 +32,7 @@ export const RemoteWithRatio = {
 
 export const Eager = {
   args: {
-    image: { src: "/harness-walle/img/posts/default.svg", alt: "Above-the-fold image" },
+    image: { src, alt: "Above-the-fold image" },
     width: 480,
     height: 320,
     loading: "eager",

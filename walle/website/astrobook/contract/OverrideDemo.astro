@@ -15,13 +15,13 @@ import Button from "@walle/components/elements/Button.astro";
      `.button` rule still wins, because `site` is ordered last regardless of specificity. */
   @layer site {
     .override-site-target {
-      --button-bg: #ff00ff;
+      --button-bg: #660066;
     }
   }
 
   /* Deliberately outside any @layer: the CSS cascade always ranks an unlayered rule above
      every layered one, so even a site author who forgets to wrap their override still wins. */
   .override-unlayered-target {
-    --button-bg: #00ffff;
+    --button-bg: #006666;
   }
 </style>

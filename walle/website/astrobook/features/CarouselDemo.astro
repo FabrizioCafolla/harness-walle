@@ -2,6 +2,7 @@
 // Story-only wrapper: Astrobook passes props, not slots, so this component
 // provides sample slides for the Carousel stories.
 import Carousel from "@walle/components/features/Carousel.astro";
+import { resolveInternalUrl } from "@walle/utils";
 
 interface Props {
   label?: string;
@@ -25,8 +26,10 @@ const {
   fit = "uniform",
 } = Astro.props;
 
-const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-const sampleImages = [`${base}/img/blog-demo-1.jpg`, `${base}/img/blog-demo-2.jpg`];
+const sampleImages = [
+  resolveInternalUrl("/img/blog-demo-1.jpg"),
+  resolveInternalUrl("/img/blog-demo-2.jpg"),
+];
 ---
 
 {

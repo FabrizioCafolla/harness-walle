@@ -25,4 +25,7 @@ const astrobookIntegrations = process.env.WALLE_ASTROBOOK
 export default defineWalleConfig({
   integrations: astrobookIntegrations,
   vite: { server: { watch: { ignored: ["**/tests/e2e/.sandbox/**"] } } },
+  // The dev toolbar's own look changes across Astro versions and isn't walle's UI, so it
+  // would churn every astrobook visual baseline on every Astro bump for no reason.
+  ...(process.env.WALLE_ASTROBOOK ? { devToolbar: { enabled: false } } : {}),
 });

@@ -1,6 +1,7 @@
 import type { ComponentProps } from "astro/types";
 
 import ProductCard from "@walle/components/features/Card/ProductCard.astro";
+import { resolveInternalUrl } from "@walle/utils";
 import StoryWrapper from "../StoryWrapper.astro";
 
 type ProductCardProps = ComponentProps<typeof ProductCard>;
@@ -10,7 +11,7 @@ export default {
   decorators: [{ component: StoryWrapper }],
 };
 
-const image = { src: "/harness-walle/img/posts/default.svg", alt: "Product photo" };
+const image = { src: resolveInternalUrl("/img/posts/default.svg"), alt: "Product photo" };
 
 export const Default = {
   args: {

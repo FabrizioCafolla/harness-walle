@@ -1,6 +1,7 @@
 import type { ComponentProps } from "astro/types";
 
 import Section from "@walle/components/features/Sections/Section.astro";
+import { resolveInternalUrl } from "@walle/utils";
 
 type SectionProps = ComponentProps<typeof Section>;
 
@@ -46,14 +47,14 @@ export const Centered = {
 export const WithImage = {
   args: {
     title: "Section with an image",
-    image: { src: "/img/posts/default.svg", alt: "Sample cover image" },
+    image: { src: resolveInternalUrl("/img/posts/default.svg"), alt: "Sample cover image" },
   } satisfies SectionProps,
 };
 
 export const WithImageReversed = {
   args: {
     title: "Section with a reversed image",
-    image: { src: "/img/posts/default.svg", alt: "Sample cover image" },
+    image: { src: resolveInternalUrl("/img/posts/default.svg"), alt: "Sample cover image" },
     reversed: true,
   } satisfies SectionProps,
 };

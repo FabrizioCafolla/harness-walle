@@ -32,7 +32,7 @@ test.describe("cascade layers", () => {
     const bg = await page
       .locator(".override-site-target")
       .evaluate((el) => getComputedStyle(el).backgroundColor);
-    expect(bg).toBe("rgb(255, 0, 255)");
+    expect(bg).toBe("rgb(102, 0, 102)");
   });
 
   test("an unlayered rule overrides walle's own layered rule on a real component", async ({
@@ -42,6 +42,6 @@ test.describe("cascade layers", () => {
     const bg = await page
       .locator(".override-unlayered-target")
       .evaluate((el) => getComputedStyle(el).backgroundColor);
-    expect(bg).toBe("rgb(0, 255, 255)");
+    expect(bg).toBe("rgb(0, 102, 102)");
   });
 });
