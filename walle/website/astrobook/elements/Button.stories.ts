@@ -18,6 +18,14 @@ export const Secondary = {
   args: { text: "Secondary", variant: "secondary" } satisfies ButtonProps,
 };
 
+export const Alternative = {
+  args: { text: "Alternative", variant: "alternative" } satisfies ButtonProps,
+};
+
+export const Site = {
+  args: { text: "Site", variant: "site" } satisfies ButtonProps,
+};
+
 export const Inverse = {
   args: { text: "Inverse", inverse: true } satisfies ButtonProps,
 };

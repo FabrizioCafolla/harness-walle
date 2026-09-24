@@ -22,6 +22,10 @@ export const Alternative = {
   args: { text: "Alternative", variant: "alternative" } satisfies BadgeProps,
 };
 
+export const Site = {
+  args: { text: "Site", variant: "site" } satisfies BadgeProps,
+};
+
 export const Muted = {
   args: { text: "Muted", muted: true } satisfies BadgeProps,
 };

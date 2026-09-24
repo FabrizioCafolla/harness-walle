@@ -62,6 +62,23 @@ test.describe("Map (D17)", () => {
     await expect(page.locator(".leaflet-control-attribution")).toBeVisible();
   });
 
+  test("markers get an accessible name and their own data-variant", async ({ page }) => {
+    await page.route((url) => route(url.toString()), (r) =>
+      r.fulfill({ status: 200, contentType: "image/png", body: ONE_PX_PNG })
+    );
+
+    await page.goto(storyPath("features/map/all-variants"));
+    await page.locator("[data-map-container]").scrollIntoViewIfNeeded();
+    await expect(page.locator(".leaflet-marker-icon")).toHaveCount(4);
+
+    const icons = page.locator(".leaflet-marker-icon");
+    await expect(icons.nth(0)).toHaveAttribute("aria-label", "Rome office");
+    await expect(icons.nth(0)).toHaveAttribute("data-variant", "primary");
+    await expect(icons.nth(1)).toHaveAttribute("data-variant", "secondary");
+    await expect(icons.nth(2)).toHaveAttribute("data-variant", "alternative");
+    await expect(icons.nth(3)).toHaveAttribute("data-variant", "site");
+  });
+
   test("fallback list is the visible content without JavaScript", async ({ browser }) => {
     const context = await browser.newContext({ javaScriptEnabled: false });
     const page = await context.newPage();

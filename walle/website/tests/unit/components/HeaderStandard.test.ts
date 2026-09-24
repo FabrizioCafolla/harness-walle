@@ -1,8 +1,25 @@
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import HeaderStandard from "../../../src/@walle/components/features/Sections/HeaderStandard.astro";
 
+const source = readFileSync(
+  join(__dirname, "../../../src/@walle/components/features/Sections/HeaderStandard.astro"),
+  "utf-8"
+);
+
 describe("HeaderStandard", () => {
+  // imageRight defaults to false, meaning the image sits before the text: without this pair
+  // of rules the image and text share the same source order in every case (AstroContainer
+  // does not bundle scoped <style> output, so this is a source-text guard, not a render one).
+  it("imageRight actually reorders the image relative to the text", () => {
+    expect(source).toMatch(/\.header-grid\.has-image \.header-media\s*\{\s*order:\s*-1;\s*\}/);
+    expect(source).toMatch(
+      /\.header-grid\.has-image\.image-right \.header-media\s*\{\s*order:\s*1;\s*\}/
+    );
+  });
+
   it("renders without crashing and produces an h1, not an h2", async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(HeaderStandard, {

@@ -57,3 +57,21 @@ export const SecondaryVariant = {
     variant: "secondary",
   } satisfies BasicCardProps,
 };
+
+export const AlternativeVariant = {
+  args: {
+    title: "Alternative variant card",
+    content: "Same hover border and title color mapping, using the alternative variant.",
+    href: "/blog/example",
+    variant: "alternative",
+  } satisfies BasicCardProps,
+};
+
+export const SiteVariant = {
+  args: {
+    title: "Site variant card",
+    content: "Same hover border and title color mapping, using the site variant.",
+    href: "/blog/example",
+    variant: "site",
+  } satisfies BasicCardProps,
+};

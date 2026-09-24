@@ -44,12 +44,42 @@ export const WithImageEnd = {
   } satisfies HeroProps,
 };
 
-export const Filled = {
+export const FilledPrimary = {
+  args: {
+    title: "Filled primary hero",
+    subtitle: "Uses the primary variant with a filled background.",
+    actions: [{ text: "Get started", href: "/start", variant: "site" }],
+    variant: "primary",
+    filled: true,
+  } satisfies HeroProps,
+};
+
+export const FilledSecondary = {
   args: {
     title: "Filled secondary hero",
     subtitle: "Uses the secondary variant with a filled background.",
     actions: [{ text: "Get started", href: "/start", variant: "site" }],
     variant: "secondary",
+    filled: true,
+  } satisfies HeroProps,
+};
+
+export const FilledAlternative = {
+  args: {
+    title: "Filled alternative hero",
+    subtitle: "Uses the alternative variant with a filled background.",
+    actions: [{ text: "Get started", href: "/start", variant: "site" }],
+    variant: "alternative",
+    filled: true,
+  } satisfies HeroProps,
+};
+
+export const FilledSite = {
+  args: {
+    title: "Filled site hero",
+    subtitle: "Uses the site variant with a filled background.",
+    actions: [{ text: "Get started", href: "/start" }],
+    variant: "site",
     filled: true,
   } satisfies HeroProps,
 };

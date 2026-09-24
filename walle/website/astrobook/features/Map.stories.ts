@@ -35,3 +35,14 @@ export const SiteVariant = {
     ],
   } satisfies MapProps,
 };
+
+export const AllVariants = {
+  args: {
+    markers: [
+      { lat: 41.9028, lng: 12.4964, title: "Rome office", variant: "primary" },
+      { lat: 45.4642, lng: 9.19, title: "Milan office", variant: "secondary" },
+      { lat: 40.8518, lng: 14.2681, title: "Naples office", variant: "alternative" },
+      { lat: 44.4949, lng: 11.3426, title: "Bologna office", variant: "site" },
+    ],
+  } satisfies MapProps,
+};

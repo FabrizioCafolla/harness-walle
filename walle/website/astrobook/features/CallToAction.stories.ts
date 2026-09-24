@@ -40,7 +40,7 @@ export const BannerFilled = {
   } satisfies CallToActionProps,
 };
 
-export const CardFilled = {
+export const CardFilledPrimary = {
   args: {
     title: "Ready to get started?",
     subtitle: "Boxed card painted in the variant color, actions default to inverse.",
@@ -49,6 +49,49 @@ export const CardFilled = {
       { text: "Learn more", href: "/docs", variant: "secondary" },
     ],
     layout: "card",
+    variant: "primary",
+    filled: true,
+  } satisfies CallToActionProps,
+};
+
+export const CardFilledSecondary = {
+  args: {
+    title: "Ready to get started?",
+    subtitle: "Boxed card painted in the secondary variant color.",
+    actions: [
+      { text: "Get started", href: "/start" },
+      { text: "Learn more", href: "/docs", variant: "primary" },
+    ],
+    layout: "card",
+    variant: "secondary",
+    filled: true,
+  } satisfies CallToActionProps,
+};
+
+export const CardFilledAlternative = {
+  args: {
+    title: "Ready to get started?",
+    subtitle: "Boxed card painted in the alternative variant color.",
+    actions: [
+      { text: "Get started", href: "/start" },
+      { text: "Learn more", href: "/docs", variant: "primary" },
+    ],
+    layout: "card",
+    variant: "alternative",
+    filled: true,
+  } satisfies CallToActionProps,
+};
+
+export const CardFilledSite = {
+  args: {
+    title: "Ready to get started?",
+    subtitle: "Boxed card painted in the site variant color.",
+    actions: [
+      { text: "Get started", href: "/start" },
+      { text: "Learn more", href: "/docs", variant: "primary" },
+    ],
+    layout: "card",
+    variant: "site",
     filled: true,
   } satisfies CallToActionProps,
 };

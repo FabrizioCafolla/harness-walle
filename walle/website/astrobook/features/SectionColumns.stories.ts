@@ -31,3 +31,43 @@ export const MutedCentered = {
     centered: true,
   } satisfies SectionColumnsDemoProps,
 };
+
+export const FilledPrimary = {
+  args: {
+    title: "Filled primary",
+    columns: 3,
+    items: 3,
+    variant: "primary",
+    filled: true,
+  } satisfies SectionColumnsDemoProps,
+};
+
+export const FilledSecondary = {
+  args: {
+    title: "Filled secondary",
+    columns: 3,
+    items: 3,
+    variant: "secondary",
+    filled: true,
+  } satisfies SectionColumnsDemoProps,
+};
+
+export const FilledAlternative = {
+  args: {
+    title: "Filled alternative",
+    columns: 3,
+    items: 3,
+    variant: "alternative",
+    filled: true,
+  } satisfies SectionColumnsDemoProps,
+};
+
+export const FilledSite = {
+  args: {
+    title: "Filled site",
+    columns: 3,
+    items: 3,
+    variant: "site",
+    filled: true,
+  } satisfies SectionColumnsDemoProps,
+};

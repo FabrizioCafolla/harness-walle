@@ -17,10 +17,38 @@ export const Default = {
   } satisfies SectionWrapperDemoProps,
 };
 
-export const Filled = {
+export const FilledPrimary = {
   args: {
-    title: "Filled section",
+    title: "Filled primary section",
     subtitle: "Uses the variant background and foreground.",
+    variant: "primary",
+    filled: true,
+  } satisfies SectionWrapperDemoProps,
+};
+
+export const FilledSecondary = {
+  args: {
+    title: "Filled secondary section",
+    subtitle: "Uses the secondary variant background and foreground.",
+    variant: "secondary",
+    filled: true,
+  } satisfies SectionWrapperDemoProps,
+};
+
+export const FilledAlternative = {
+  args: {
+    title: "Filled alternative section",
+    subtitle: "Uses the alternative variant background and foreground.",
+    variant: "alternative",
+    filled: true,
+  } satisfies SectionWrapperDemoProps,
+};
+
+export const FilledSite = {
+  args: {
+    title: "Filled site section",
+    subtitle: "Uses the site variant background and foreground.",
+    variant: "site",
     filled: true,
   } satisfies SectionWrapperDemoProps,
 };

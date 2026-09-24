@@ -1,18 +1,20 @@
 ---
 // Story-only wrapper: provides sample body content for SectionWrapper stories.
 import SectionWrapper from "@walle/components/features/Sections/SectionWrapper.astro";
+import type { Variant } from "@walle/components/shared/types";
 
 interface Props {
   title?: string;
   subtitle?: string;
+  variant?: Variant;
   filled?: boolean;
   muted?: boolean;
 }
 
-const { title, subtitle, filled = false, muted = false } = Astro.props;
+const { title, subtitle, variant, filled = false, muted = false } = Astro.props;
 ---
 
-<SectionWrapper title={title} subtitle={subtitle} filled={filled} muted={muted}>
+<SectionWrapper title={title} subtitle={subtitle} variant={variant} filled={filled} muted={muted}>
   <p class="demo-body">Sample body content rendered through the default slot.</p>
 </SectionWrapper>
 

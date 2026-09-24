@@ -73,3 +73,27 @@ export const SecondaryVariant = {
     variant: "secondary",
   } satisfies ProductCardProps,
 };
+
+export const AlternativeVariant = {
+  args: {
+    product: {
+      name: "Alternative variant product",
+      image,
+      price: { amount: 69.9, currency: "EUR" },
+      href: "/products/alternative-variant",
+    },
+    variant: "alternative",
+  } satisfies ProductCardProps,
+};
+
+export const SiteVariant = {
+  args: {
+    product: {
+      name: "Site variant product",
+      image,
+      price: { amount: 79.9, currency: "EUR" },
+      href: "/products/site-variant",
+    },
+    variant: "site",
+  } satisfies ProductCardProps,
+};

@@ -79,11 +79,15 @@ const hasSubtitle = Astro.slots.has("subtitle") || Boolean(subtitle);
       grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
     }
 
-    .header-grid.image-right .header-extra {
-      order: 1;
+    /* Default (imageRight false): the image sits before the text in visual order, though
+       the markup always renders text (.header-extra) then image (.header-media) so the
+       text reads first for assistive tech regardless of imageRight. */
+    .header-grid.has-image .header-media {
+      order: -1;
     }
-    .header-grid.image-right .header-media {
-      order: 2;
+
+    .header-grid.has-image.image-right .header-media {
+      order: 1;
     }
 
     .header-title {

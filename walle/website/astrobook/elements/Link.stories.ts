@@ -14,6 +14,18 @@ export const Default = {
   args: { href: "/blog", text: "Internal link" } satisfies LinkProps,
 };
 
+export const Secondary = {
+  args: { href: "/blog", text: "Secondary link", variant: "secondary" } satisfies LinkProps,
+};
+
+export const Alternative = {
+  args: { href: "/blog", text: "Alternative link", variant: "alternative" } satisfies LinkProps,
+};
+
+export const Site = {
+  args: { href: "/blog", text: "Site link", variant: "site" } satisfies LinkProps,
+};
+
 export const Muted = {
   args: { href: "/blog", text: "Muted link", muted: true } satisfies LinkProps,
 };

@@ -73,16 +73,10 @@ async function loadMap(container: HTMLElement, list: HTMLOListElement): Promise<
     maxZoom: container.dataset.tilesMaxZoom ? Number(container.dataset.tilesMaxZoom) : undefined,
   }).addTo(map);
 
-  for (const marker of markers) {
-    const leafletMarker = L.marker([marker.lat, marker.lng], {
-      icon: L.divIcon({ className: "map__marker" }),
-    }).addTo(map);
-    leafletMarker.getElement()?.setAttribute("data-variant", marker.variant);
-    if (marker.title || marker.description || marker.directionsHref) {
-      leafletMarker.bindPopup(buildPopup(marker));
-    }
-  }
-
+  // The view must exist before markers are added: Leaflet defers a layer's onAdd (and so
+  // its DOM element) until the map is "loaded", which only happens once it has a view. Added
+  // before that point, getElement() below would return undefined and every setAttribute a
+  // silent no-op, on every marker, on every Map story with more than a bare pin.
   if (markers.length > 1) {
     map.fitBounds(
       markers.map((marker) => [marker.lat, marker.lng]),
@@ -90,6 +84,21 @@ async function loadMap(container: HTMLElement, list: HTMLOListElement): Promise<
     );
   } else if (markers.length === 1) {
     map.setView([markers[0].lat, markers[0].lng], Number(container.dataset.zoom) || 15);
+  }
+
+  for (const marker of markers) {
+    const leafletMarker = L.marker([marker.lat, marker.lng], {
+      icon: L.divIcon({ className: "map__marker" }),
+    }).addTo(map);
+    const markerEl = leafletMarker.getElement();
+    markerEl?.setAttribute("data-variant", marker.variant);
+    // Leaflet's own interactive marker is keyboard-focusable (role="button", tabindex) but
+    // ships with no accessible name of its own: without this it fails WCAG 4.1.2 (axe:
+    // aria-command-name) on every marker, on every Map story.
+    if (marker.title) markerEl?.setAttribute("aria-label", marker.title);
+    if (marker.title || marker.description || marker.directionsHref) {
+      leafletMarker.bindPopup(buildPopup(marker));
+    }
   }
 
   list.classList.add("sr-only");

@@ -19,10 +19,41 @@ export const Primary = {
   args: { title: "Primary section", variant: "primary", filled: true } satisfies SectionProps,
 };
 
+export const Secondary = {
+  args: { title: "Secondary section", variant: "secondary", filled: true } satisfies SectionProps,
+};
+
+export const Alternative = {
+  args: {
+    title: "Alternative section",
+    variant: "alternative",
+    filled: true,
+  } satisfies SectionProps,
+};
+
+export const Site = {
+  args: { title: "Site section", variant: "site", filled: true } satisfies SectionProps,
+};
+
 export const Gray = {
   args: { title: "Gray section", muted: true } satisfies SectionProps,
 };
 
 export const Centered = {
   args: { title: "Centered section", centered: true } satisfies SectionProps,
+};
+
+export const WithImage = {
+  args: {
+    title: "Section with an image",
+    image: { src: "/img/posts/default.svg", alt: "Sample cover image" },
+  } satisfies SectionProps,
+};
+
+export const WithImageReversed = {
+  args: {
+    title: "Section with a reversed image",
+    image: { src: "/img/posts/default.svg", alt: "Sample cover image" },
+    reversed: true,
+  } satisfies SectionProps,
 };
