@@ -1,0 +1,27 @@
+---
+// Story-only wrapper: proves walle's cascade contract (D1) by overriding a real component's
+// public property (Button's --button-bg) two ways a site legitimately can, without touching
+// Button itself. `is:global` on both rules below is deliberate, not a shortcut: Button renders
+// its own scoped root, so a normal scoped selector here would carry THIS file's own
+// data-astro-cid attribute and never match Button's DOM at all.
+import Button from "@walle/components/elements/Button.astro";
+---
+
+<Button text="Site-layer override" class="override-site-target" />
+<Button text="Unlayered override" class="override-unlayered-target" />
+
+<style is:global>
+  /* Wrapped in @layer site (D1/D4): a site rule of equal specificity to Button's own
+     `.button` rule still wins, because `site` is ordered last regardless of specificity. */
+  @layer site {
+    .override-site-target {
+      --button-bg: #ff00ff;
+    }
+  }
+
+  /* Deliberately outside any @layer: the CSS cascade always ranks an unlayered rule above
+     every layered one, so even a site author who forgets to wrap their override still wins. */
+  .override-unlayered-target {
+    --button-bg: #00ffff;
+  }
+</style>

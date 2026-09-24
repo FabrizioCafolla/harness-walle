@@ -3,10 +3,11 @@ import { defineConfig } from "@playwright/test";
 export default defineConfig({
   testDir: "./tests/playwright",
   // This config is the functional suite against the plain `yarn dev` site.
-  // The astrobook-served suites (visual regression + axe a11y) have their own
-  // config/webServer (playwright.astrobook.config.ts) — exclude them here so
-  // they don't run against a server that doesn't mount the astrobook routes.
-  testMatch: ["**/navbar.test.ts", "**/cascade.spec.ts", "**/links.spec.ts", "**/fonts.spec.ts"],
+  // The astrobook-served suites (visual regression + axe a11y + cascade, which
+  // navigates to an astrobook story) have their own config/webServer
+  // (playwright.astrobook.config.ts): exclude them here so they don't run
+  // against a server that doesn't mount the astrobook routes.
+  testMatch: ["**/navbar.test.ts", "**/links.spec.ts", "**/fonts.spec.ts"],
   use: {
     // Root origin; tests navigate to `${siteBase}/...` (base path from app.json).
     baseURL: "http://localhost:4321",
