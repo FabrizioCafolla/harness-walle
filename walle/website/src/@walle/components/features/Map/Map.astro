@@ -120,11 +120,76 @@ function resolveDirectionsUrl(lat: number, lng: number, provider: NonNullable<Di
 
 <style>
   @layer walle.components {
+    /* Public properties (D17). --map-marker-bg/--map-marker-fg are deliberately left
+       undeclared here: the structural rule below falls back to the D4 variant tokens
+       (--variant-bg/--variant-fg), so a marker's own data-variant already colors it and
+       a site only needs these two to force every marker to one fixed color regardless
+       of variant. */
     .map__container {
       --map-height: 400px;
+      --map-radius: var(--radius-md);
+      --map-border: var(--border);
+      --map-marker-size: 28px;
+      --map-popup-bg: var(--surface);
+      --map-popup-fg: var(--text);
+      --map-popup-radius: var(--radius-md);
+      --map-control-bg: var(--surface);
+      --map-control-fg: var(--text);
+      --map-control-radius: var(--radius-sm);
 
       height: var(--map-height);
+      border-radius: var(--map-radius);
+      border: 1px solid var(--map-border);
+      overflow: hidden;
     }
+  }
+</style>
+
+<style is:global>
+  /* Spike 1.2 (design.md Risks): a scoped block appends this component's data-astro-cid-*
+     attribute to every selector pulled in by an @import, including leaflet's own
+     .leaflet-pane/.leaflet-marker-icon/etc — those never carry that attribute since leaflet
+     creates them at runtime, so the imported rules would never match. Layered so it still
+     composes with @layer walle.base, walle.components, walle.utilities, site (tokens.css). */
+  @import "leaflet/dist/leaflet.css" layer(walle.components);
+
+  @layer walle.components {
+    /* Structural rules for leaflet's runtime-created elements — same reason as the @import
+       above, these must stay global. Prefixed with .map__container so they only ever
+       restyle a walle Map, never some other leaflet map a site mounts itself on the same
+       page. They read the public properties .map__container declares (custom properties
+       inherit down the real DOM tree regardless of Astro's scoping attribute, so that half
+       of the split works fine). */
+    .map__container .map__marker {
+      --map-marker-radius: 50%;
+
+      width: var(--map-marker-size, 28px);
+      height: var(--map-marker-size, 28px);
+      border-radius: var(--map-marker-radius);
+      background: var(--map-marker-bg, var(--variant-bg, var(--primary)));
+      border: 2px solid var(--map-marker-fg, var(--variant-fg, var(--white)));
+      box-shadow: var(--shadow-sm);
+    }
+
+    .map__container .leaflet-popup-content-wrapper {
+      background: var(--map-popup-bg, var(--surface));
+      color: var(--map-popup-fg, var(--text));
+      border-radius: var(--map-popup-radius, var(--radius-md));
+    }
+
+    .map__container .leaflet-popup-tip {
+      background: var(--map-popup-bg, var(--surface));
+    }
+
+    .map__container .leaflet-control-zoom a {
+      background: var(--map-control-bg, var(--surface));
+      color: var(--map-control-fg, var(--text));
+      border-radius: var(--map-control-radius, var(--radius-sm));
+    }
+
+    /* The attribution control (.leaflet-control-attribution) is never touched here — it keeps
+       leaflet's own default styling, since the tile provider's attribution must stay visible
+       per its license (D17). */
   }
 </style>
 

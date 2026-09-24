@@ -9,9 +9,10 @@ import { defineConfig } from "@playwright/test";
 // Playwright 1.52+ splits the download: run `playwright install chromium chromium-headless-shell`.
 export default defineConfig({
   testDir: "./tests/playwright",
-  // a11y.spec.ts shares this config (same astrobook webServer); run one suite by
-  // passing its filename: yarn playwright test --config playwright.astrobook.config.ts a11y.spec.ts
-  testMatch: ["**/*.visual.spec.ts", "**/a11y.spec.ts"],
+  // a11y.spec.ts and map.spec.ts share this config (same astrobook webServer, the only
+  // place Map's stories are mounted before 16.3); run one suite by passing its filename:
+  // yarn playwright test --config playwright.astrobook.config.ts map.spec.ts
+  testMatch: ["**/*.visual.spec.ts", "**/a11y.spec.ts", "**/map.spec.ts"],
   // Pin to bundled Playwright Chromium for consistent cross-platform snapshots.
   projects: [{ name: "chromium" }],
   use: {
