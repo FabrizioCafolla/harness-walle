@@ -17,5 +17,5 @@ Run `just help` for the full list.
 
 `src/@walle/` and a few other paths are walle-managed (read-only, resynced on `walle-update`).
 Everything else here is yours to edit. See the
-[walle wiki](https://github.com/FabrizioCafolla/harness-walle/blob/main/wiki/managed-vs-seed.md)
+[walle wiki](https://github.com/FabrizioCafolla/harness-walle/blob/main/wiki/develop/managed-vs-seed.md)
 for what's managed, what's seeded, and how to customize the design system.

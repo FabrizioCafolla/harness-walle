@@ -20,6 +20,8 @@ export { navbar as Navbar } from "virtual:walle-components";
 export { footer as Footer } from "virtual:walle-components";
 export { default as StructuredData } from "./features/StructuredData.astro";
 export { default as SectionHeaderStandard } from "./features/Sections/HeaderStandard.astro";
+export { default as CallToAction } from "./features/Sections/CallToAction.astro";
+export { default as Hero } from "./features/Sections/Hero.astro";
 export { default as Section } from "./features/Sections/Section.astro";
 export { default as SectionColumns } from "./features/Sections/SectionColumns.astro";
 export { default as SectionFlow } from "./features/Sections/SectionFlow.astro";

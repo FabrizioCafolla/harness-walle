@@ -5,8 +5,10 @@ import {
   BasicCard,
   Breadcrumbs,
   Button,
+  CallToAction,
   Carousel,
   Link,
+  Map,
   Price,
   ProductCard,
   Section,
@@ -25,7 +27,9 @@ const groups = [
   { id: "elements", label: "Elements" },
   { id: "cards", label: "Cards" },
   { id: "layout", label: "Layout" },
+  { id: "sections", label: "Sections" },
   { id: "media", label: "Media" },
+  { id: "map", label: "Map" },
   { id: "catalog", label: "Catalog" },
 ];
 ---
@@ -73,6 +77,10 @@ const groups = [
         <Button text="Small" variant="secondary" size="small" />
         <Button text="Disabled" variant="primary" disabled={true} />
       </div>
+      <div class="demo__row demo__row--swatch">
+        <Button text="Inverse" inverse={true} />
+        <Button text="Inverse outline" inverse={true} outline={true} />
+      </div>
     </div>
 
     <div class="demo">
@@ -85,6 +93,7 @@ const groups = [
         <Badge text="Warning" status="warning" />
         <Badge text="Danger" status="danger" />
         <Badge text="Muted" muted />
+        <Badge text="Outline" variant="primary" outline={true} />
       </div>
     </div>
 
@@ -94,6 +103,7 @@ const groups = [
         <Link href={resolveInternalUrl("/blog")} text="Internal link" />
         <Link href="https://astro.build" text="External link" target="_blank" />
         <Link href={resolveInternalUrl("/")} text="Muted link" muted />
+        <Link href={resolveInternalUrl("/")} text="Unstyled link" unstyled />
       </div>
     </div>
 
@@ -151,6 +161,24 @@ const groups = [
     </div>
   </SectionColumns>
 
+  <!-- SECTIONS -->
+  <span id="sections" class="anchor"></span>
+  <Section title="Sections: filled and muted" filled={true} variant="secondary">
+    <p class="demo-copy">
+      Every section shares one wrapper: the same filled and muted modifiers restyle its
+      background, whichever component sits on top.
+    </p>
+  </Section>
+  <CallToAction
+    title="Ready to get started?"
+    subtitle="CallToAction is one of the new section components — boxed by default, filled here."
+    actions={[
+      { text: "Get started", href: resolveInternalUrl("/blog") },
+      { text: "Browse products", href: resolveInternalUrl("/products"), variant: "secondary" },
+    ]}
+    filled={true}
+  />
+
   <!-- MEDIA -->
   <span id="media" class="anchor"></span>
   <Section title="Media: image carousel">
@@ -185,6 +213,21 @@ const groups = [
         />
       </div>
     </Carousel>
+  </Section>
+
+  <!-- MAP -->
+  <span id="map" class="anchor"></span>
+  <Section title="Map">
+    <p class="media-hint">
+      Server-rendered as a labelled region and a marker list — the only content without
+      JavaScript. Leaflet loads lazily once the map scrolls into view.
+    </p>
+    <Map
+      markers={[
+        { lat: 41.9028, lng: 12.4964, title: "Rome", description: "Headquarters", variant: "site" },
+        { lat: 45.4642, lng: 9.19, title: "Milan" },
+      ]}
+    />
   </Section>
 
   <!-- CATALOG -->
@@ -287,6 +330,24 @@ const groups = [
   .demo__row--center {
     justify-content: center;
     margin-top: var(--space-lg);
+  }
+
+  /* Button's `inverse` modifier assumes a filled/colored background, unlike this page's own
+     surface — this swatch is that background, contextual demo chrome only. */
+  .demo__row--swatch {
+    margin-top: var(--space-md);
+    padding: var(--space-lg);
+    background: var(--primary);
+    border-radius: var(--radius-md);
+  }
+
+  /* SectionWrapper's `filled`/`muted` modifiers only recolor the section itself (inherited
+     `color`) — walle's global `p { color: var(--text-muted) }` reset (base.css) still wins
+     over inheritance for any bare paragraph dropped into a section's default slot, same as
+     every walle component's OWN paragraph classes (e.g. CallToAction's `.cta-subtitle`)
+     explicitly override it with `color: inherit`. This page-local class does the same. */
+  .demo-copy {
+    color: inherit;
   }
 
   .card-grid {
