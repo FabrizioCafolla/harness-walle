@@ -162,6 +162,28 @@ describe("[data-variant] fg on bg meets WCAG 2.2 AA", () => {
   }
 });
 
+// SectionWrapper's [data-filled] redefines --text/--text-muted/--heading/--link/
+// --link-hover to --variant-fg, always read against the wrapper's own --variant-bg: the
+// exact pairing the block above already covers, so no separate case is needed for those.
+// --surface-alt is the one token it redefines to something else (--variant-bg-hover, for
+// code's background), which needs its own pairing below.
+describe("[data-filled] code background (--variant-fg on --variant-bg-hover) meets WCAG 2.2 AA", () => {
+  for (const variant of VARIANTS) {
+    it(`${variant}: --variant-fg on --variant-bg-hover >= ${NORMAL}:1`, () => {
+      const fg = variantToken(variant, "--variant-fg");
+      const bg = variantToken(variant, "--variant-bg-hover");
+      const ratio = contrastRatio(fg, bg);
+      expect(ratio, `${fg} on ${bg} = ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(NORMAL);
+    });
+  }
+});
+
+// SectionWrapper's [data-muted] only redefines --surface-alt, to --surface (white):
+// code's background moves off the section's own gray, onto the same white/gray-dark pairing
+// "muted text on surface (p on body)" above already covers. --text/--text-muted/--heading/
+// link colors are untouched: --surface-alt (gray-light) is close enough to --surface that
+// "muted text on surface-alt (p in gray Section)" above already stands in for them too.
+
 // Inverse: a filled variant's own --variant-color rendered as text on a neutral surface
 // (the shape an outline/unfilled variant's text takes, e.g. Button's old `white` variant:
 // --surface background, --primary text).

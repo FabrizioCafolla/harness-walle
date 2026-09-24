@@ -1,0 +1,23 @@
+---
+// Story-only wrapper: astrobook passes props, not slots, so this component provides
+// plain, unstyled `<p>`/`<a>`/`<code>` default-slot content, the exact shape a consumer
+// might drop into a Section, to prove [data-filled]/[data-muted] keep it AA-readable.
+import Section from "@walle/components/features/Sections/Section.astro";
+import type { Variant } from "@walle/components/shared/types";
+
+interface Props {
+  title: string;
+  variant?: Variant;
+  filled?: boolean;
+  muted?: boolean;
+}
+
+const { title, variant, filled = false, muted = false } = Astro.props;
+---
+
+<Section title={title} variant={variant} filled={filled} muted={muted}>
+  <p>
+    Plain paragraph text with an <a href="https://example.com">inline link</a> and a
+    <code>code span</code>, exactly as a consumer might write it.
+  </p>
+</Section>

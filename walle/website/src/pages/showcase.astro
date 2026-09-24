@@ -164,9 +164,10 @@ const groups = [
   <!-- SECTIONS -->
   <span id="sections" class="anchor"></span>
   <Section title="Sections: filled and muted" filled={true} variant="secondary">
-    <p class="demo-copy">
-      Every section shares one wrapper: the same filled and muted modifiers restyle its
-      background, whichever component sits on top.
+    <p>
+      Every section shares one wrapper: the same <code>filled</code> and <code>muted</code>
+      modifiers restyle its background, whichever component sits on top. See the
+      <a href={resolveInternalUrl("/wiki/styling")}>styling guide</a> for the full token list.
     </p>
   </Section>
   <CallToAction
@@ -333,7 +334,7 @@ const groups = [
   }
 
   /* Button's `inverse` modifier assumes a filled/colored background, unlike this page's own
-     surface — this swatch is that background, contextual demo chrome only. */
+     surface. This swatch is that background, contextual demo chrome only. */
   .demo__row--swatch {
     margin-top: var(--space-md);
     padding: var(--space-lg);
@@ -341,14 +342,6 @@ const groups = [
     border-radius: var(--radius-md);
   }
 
-  /* SectionWrapper's `filled`/`muted` modifiers only recolor the section itself (inherited
-     `color`) — walle's global `p { color: var(--text-muted) }` reset (base.css) still wins
-     over inheritance for any bare paragraph dropped into a section's default slot, same as
-     every walle component's OWN paragraph classes (e.g. CallToAction's `.cta-subtitle`)
-     explicitly override it with `color: inherit`. This page-local class does the same. */
-  .demo-copy {
-    color: inherit;
-  }
 
   .card-grid {
     display: grid;
