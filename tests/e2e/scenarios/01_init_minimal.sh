@@ -33,6 +33,13 @@ scenario_init_minimal() {
   assert_path_present "$dir/schemas" || return 1
   assert_path_present "$dir/scripts/@walle/cli.sh" || return 1
 
+  # D10: app.json is stripped of the demo's own commerce.mode and demo-product redirects on a
+  # fresh init — a consumer starts with commerce off and no dangling redirect to demo content.
+  node -e "
+    const app = require('$dir/src/configs/app.json');
+    process.exit(!('commerce' in app) && !(app.astro && 'redirects' in app.astro) ? 0 : 1);
+  " || { fail "fresh init app.json must have neither commerce nor astro.redirects"; return 1; }
+
   # Build (exit 0, static dist) and serve the homepage.
   sandbox_install "$dir" || fail "yarn install failed" || return 1
   sandbox_build "$dir" || fail "just build did not exit 0" || return 1

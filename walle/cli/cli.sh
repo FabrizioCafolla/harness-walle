@@ -411,15 +411,24 @@ EOF
     -not -path '*/node_modules/*' -not -path '*/.astro/*' \
     -not -path '*/.yarn/*' -not -name 'yarn.lock')
 
-  # app.json in website/ carries Walle's own GH-Pages deployment identity; reset it to neutral
-  # defaults for a fresh consumer (only when we just created the file, never on a re-seed).
+  # app.json in website/ carries Walle's own GH-Pages deployment identity AND its own demo-only
+  # content (commerce.mode: "shop", redirects to demo product handles) — reset/strip it to
+  # neutral defaults for a fresh consumer (only when we just created the file, never on a
+  # re-seed). seo.ogImage/seo.feeds are left as the demo has them (both enabled), and every
+  # other key that isn't demo-specific (D10).
   local app="${tgt_dir}/src/configs/app.json"
   if [ "$had_app" = "0" ] && [ "$DRY_RUN" != "1" ] && [ -f "$app" ]; then
     APP_JSON="$app" node -e '
       const fs = require("fs"), p = process.env.APP_JSON;
       const c = JSON.parse(fs.readFileSync(p, "utf8"));
-      if (c.astro) { c.astro.baseUrl = "http://localhost:4321"; c.astro.basePath = "/"; }
+      if (c.astro) {
+        c.astro.baseUrl = "http://localhost:4321";
+        c.astro.basePath = "/";
+        delete c.astro.redirects;
+      }
       if (c.website) { c.website.title = "My Walle Site"; }
+      delete c.commerce;
+      if (!c.labels) c.labels = {};
       fs.writeFileSync(p, JSON.stringify(c, null, 2) + "\n");
     '
   fi

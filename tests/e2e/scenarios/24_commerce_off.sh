@@ -1,17 +1,8 @@
 #!/usr/bin/env bash
 # Scenario: commerce.mode "off" (D10) — no cart script/styles, no /products route, and no
-# Shopify Storefront request, in a fresh consumer sandbox.
-
-set_commerce_json() {
-  local dir="$1" json="$2"
-  node -e "
-    const fs = require('fs');
-    const p = '$dir/src/configs/app.json';
-    const j = JSON.parse(fs.readFileSync(p, 'utf8'));
-    j.commerce = $json;
-    fs.writeFileSync(p, JSON.stringify(j, null, 2) + '\n');
-  " || fail "could not set commerce in app.json"
-}
+# Shopify Storefront request, in a fresh consumer sandbox. As of 16.2 a fresh init's app.json
+# carries no `commerce` key at all (stripped from the demo's own on seed), which already
+# behaves as "off" everywhere `commerce?.mode` is read — no need to force it here.
 
 scenario_commerce_off() {
   local dir="${SANDBOX_DIR}/commerce-off"
@@ -19,15 +10,12 @@ scenario_commerce_off() {
   cli init --source "$REPO_ROOT" -n commerce-off -m website -d "$SANDBOX_DIR" >/dev/null \
     || fail "cli init failed" || return 1
   sandbox_install "$dir" || fail "yarn install failed" || return 1
-
-  set_commerce_json "$dir" '{"mode":"off"}' || return 1
   sandbox_build "$dir" || { cat "${dir}/.e2e-build.log" >&2; fail "commerce-off build failed"; return 1; }
 
-  # No products route (D10 — injected only for catalog/shop). The seed's demo `astro.redirects`
-  # still produce dist/products/example(-2)/ regardless of commerce mode (an unrelated,
-  # pre-existing redirect pair, not the injected list/detail route) — check the injected
-  # index page itself is absent, not the whole directory.
-  assert_path_absent "$dir/dist/products/index.html" || return 1
+  # No products route at all (D10 — injected only for catalog/shop). Also 16.2: the demo's own
+  # `astro.redirects` to demo product handles are stripped from the seed, so a fresh consumer
+  # has no /products path whatsoever, not even the old redirect stubs.
+  assert_path_absent "$dir/dist/products" || return 1
 
   # No cart script or markup: CartMount/CartBadge come from virtual:walle-features, which
   # resolves to null at the module-graph level when off, so neither component's file — and
