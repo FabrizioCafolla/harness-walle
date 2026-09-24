@@ -18,6 +18,9 @@ import navbarConfigJson from "../configs/navbar.json";
 
 import { appSchema, footerSchema, navbarSchema, parseConfig, themeSchema } from "./config/schema";
 import { resolveSitePath } from "./utils/site-path";
+import { stripBase, withBase } from "./utils/base-path";
+
+export { withBase };
 
 /**
  * Components a site can replace, once, from `app.json`'s `components` block (D6): each key's
@@ -719,40 +722,13 @@ type AstroConfigSection = {
  */
 export function isSitemapExcluded(pathname: string, excludes: string[], base?: string): boolean {
   const normalize = (p: string) => (p.length > 1 ? p.replace(/\/$/, "") : p) || "/";
-  const strippedBase = base && base !== "/" ? base.replace(/\/$/, "") : "";
-  // Only strip the base at a path-segment boundary — "/harness-walle-docs/x" must not lose
-  // "/harness-walle" just because it happens to start with the same characters.
-  const hasBase =
-    strippedBase !== "" &&
-    (pathname === strippedBase || pathname.startsWith(`${strippedBase}/`));
-  const withoutBase = hasBase ? pathname.slice(strippedBase.length) || "/" : pathname;
-  const path = normalize(withoutBase);
+  const path = normalize(stripBase(pathname, base));
   return excludes.some((exclude) => {
     const p = normalize(exclude);
     // "/" as an exclude only ever matches the root itself — as a prefix it would swallow
     // every path on the site (a redirect from "/" is a real case, e.g. to "/it/").
     return path === p || (p !== "/" && path.startsWith(`${p}/`));
   });
-}
-
-/**
- * Prefixes `base` onto a root-relative redirect destination. Astro's `redirects` config applies
- * `base` to the route's source pattern but passes the destination straight through, so an
- * internal target written the same bare way as every other walle path (e.g. `/products/x`, same
- * convention as `sitemapExclude`/`redirects` keys) would 404 once the site sits under a base
- * path — the old page-based redirect avoided this by calling `resolveInternalUrl`, which this
- * replaces now that redirects are declarative config, not a page. Leaves external
- * (`http(s):`/`//`) destinations and one already written with the base untouched (idempotent —
- * a site that already wrote it with the base doesn't get it doubled).
- */
-export function withBase(destination: string, base?: string): string {
-  if (!base || base === "/") return destination;
-  if (!destination.startsWith("/") || destination.startsWith("//")) return destination;
-  const strippedBase = base.replace(/\/$/, "");
-  if (destination === strippedBase || destination.startsWith(`${strippedBase}/`)) {
-    return destination;
-  }
-  return `${strippedBase}${destination}`;
 }
 
 type WalleFontEntry = {

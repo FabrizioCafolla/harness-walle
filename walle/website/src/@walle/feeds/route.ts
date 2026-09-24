@@ -4,6 +4,7 @@ import { getCollection } from "astro:content";
 import config from "@walle/config";
 import type { AppConfig } from "@walle/config";
 import { resolveInternalUrl } from "@walle/utils";
+import { stripBase } from "../utils/base-path";
 
 /**
  * D18. One entrypoint file is injected once per configured feed item (define-config.ts);
@@ -17,17 +18,6 @@ export type FeedItemConfig = NonNullable<NonNullable<FeedsConfig>["items"]>[numb
 export type FeedEntry = { id: string; data: Record<string, unknown> };
 
 export const prerender = true;
-
-// Same base-stripping as `isSitemapExcluded` (define-config.ts) — duplicated rather than
-// imported, since that module drags in the astro/config toolchain that runtime/application
-// code must never pull into a request-time render (established for og/route.ts, D13).
-function stripBase(pathname: string, base: string): string {
-  const stripped = base !== "/" ? base.replace(/\/$/, "") : "";
-  if (stripped && (pathname === stripped || pathname.startsWith(`${stripped}/`))) {
-    return pathname.slice(stripped.length) || "/";
-  }
-  return pathname;
-}
 
 function findFeedItem(pathname: string): FeedItemConfig {
   const items = config.app.seo?.feeds?.items ?? [];

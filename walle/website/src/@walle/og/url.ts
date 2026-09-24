@@ -1,4 +1,5 @@
 import config from "@walle/config";
+import { withBase } from "../utils/base-path";
 
 /**
  * The URL an injected OG image is served at (D13): `/og/default.png` for the site default,
@@ -6,7 +7,6 @@ import config from "@walle/config";
  * `/og/[...slug].png` pattern and its own `getStaticPaths`.
  */
 export function ogImageUrl(collection?: string, id?: string): string {
-  const base = (config.app.astro.basePath || "/").replace(/\/$/, "");
   const segments = collection ? [collection, id].filter((s): s is string => Boolean(s)) : ["default"];
-  return `${base}/og/${segments.join("/")}.png`;
+  return withBase(`/og/${segments.join("/")}.png`, config.app.astro.basePath);
 }

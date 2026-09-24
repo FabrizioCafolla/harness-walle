@@ -28,6 +28,7 @@ const demoPages = [
   "/wiki/cli",
   "/privacy-policy",
   "/terms-and-conditions",
+  "/404",
 ].map((p) => `${siteBase}${p}` || "/");
 
 /** Guard against silent route drift: astrobook's 404 fallback renders `<pre>Path: …`. */
