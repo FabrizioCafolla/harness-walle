@@ -46,6 +46,7 @@ SCENARIOS=(
   "PWA offline fallback (sw.js references /offline, sitemap excludes it, page is noindex)|scenario_pwa_offline"
   "OG images (on by default for a fresh init, off after update opts out, custom template used)|scenario_og_images"
   "Map (invalid coordinates filtered in a real consumer build, leaflet lands in its own lazy chunk)|scenario_map"
+  "RSS feeds (on by default for a fresh init, valid RSS with absolute links, alternate link present, sitemap-excluded, disabled means no route)|scenario_feeds"
 )
 
 pass=0 failed=0 skipped=0

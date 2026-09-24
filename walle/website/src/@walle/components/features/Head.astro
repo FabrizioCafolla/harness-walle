@@ -86,6 +86,10 @@ const resolvedFavicon = favicon ? resolveInternalUrl(favicon) : undefined;
 const ogLocale = (config.app.website.language || "").replace("-", "_") || null;
 
 const publishedIso = publishedTime ? new Date(publishedTime).toISOString() : null;
+
+// D18: one alternate link per enabled feed item, replacing the single hardcoded "rss.xml"
+// link every page used to advertise regardless of whether that route actually existed.
+const feeds = config.app.seo?.feeds?.enabled ? (config.app.seo.feeds.items ?? []) : [];
 ---
 
 <style is:inline set:html={WALLE_LAYER_DECLARATION}></style>
@@ -94,12 +98,16 @@ const publishedIso = publishedTime ? new Date(publishedTime).toISOString() : nul
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link rel="icon" type="image/svg+xml" href={resolvedFavicon} />
 <link rel="sitemap" href={resolveInternalUrl("/sitemap-index.xml")} />
-<link
-  rel="alternate"
-  type="application/rss+xml"
-  title={titleSeo}
-  href={new URL("rss.xml", Astro.site)}
-/>
+{
+  feeds.map((feed) => (
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={feed.title ?? config.app.website.title}
+      href={toAbsolute(resolveInternalUrl(feed.path))}
+    />
+  ))
+}
 <meta name="generator" content={Astro.generator} />
 
 {

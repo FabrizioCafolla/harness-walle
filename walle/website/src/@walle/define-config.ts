@@ -602,6 +602,30 @@ function walleOgRouteIntegration(seo: { ogImage?: { enabled?: boolean } } = {}):
 }
 
 /**
+ * Injects one route per configured feed item (D18) when `seo.feeds.enabled` — a fixed pattern
+ * per item (no dynamic segment, unlike `/og/[...slug].png`), all sharing the same entrypoint;
+ * `M/feeds/route.ts` finds its own item back out of config by matching the request's own path.
+ */
+function walleFeedsRouteIntegration(
+  seo: { feeds?: { enabled?: boolean; items?: Array<{ path: string }> } } = {}
+): AstroIntegration {
+  const enabled = seo.feeds?.enabled === true;
+  const items = seo.feeds?.items ?? [];
+  return {
+    name: "walle-feeds-route",
+    hooks: {
+      "astro:config:setup": ({ injectRoute }: HookParameters<"astro:config:setup">) => {
+        if (!enabled) return;
+        const entrypoint = fileURLToPath(new URL("./feeds/route.ts", import.meta.url));
+        for (const item of items) {
+          injectRoute({ pattern: item.path, entrypoint });
+        }
+      },
+    },
+  };
+}
+
+/**
  * The three tags Head.astro emits for a PWA, resolved once here rather than re-derived at
  * render time: the manifest link, the browser-chrome color and the iOS icon. Head.astro reads
  * them from `virtual:walle-pwa`, so the theme palette stays a single source of truth (a
@@ -804,7 +828,14 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
     appConfig as { commerce?: { mode?: string; pages?: { list?: string; detail?: string } } }
   ).commerce;
   const pwa = (appConfig as { pwa?: PwaConfigSection }).pwa ?? {};
-  const seo = (appConfig as { seo?: { ogImage?: { enabled?: boolean } } }).seo ?? {};
+  const seo = (
+    appConfig as {
+      seo?: {
+        ogImage?: { enabled?: boolean };
+        feeds?: { enabled?: boolean; items?: Array<{ path: string }> };
+      };
+    }
+  ).seo ?? {};
   // Fail fast, at config-build time, the same as the parseConfig calls above: an invalid
   // override surfaces here, not as a missing component the first time a page renders.
   resolveEmbeddedComponents(components, process.cwd());
@@ -813,7 +844,15 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
   // destination (D9) / next to no real content (D12) — same exclusion mechanism, two sources.
   const redirectSources = Object.keys(astro.redirects ?? {});
   const offlineExclude = pwa.enabled === true && pwa.offline ? ["/offline"] : [];
-  const sitemapExclude = [...(astro.sitemapExclude ?? []), ...redirectSources, ...offlineExclude];
+  // A feed is a machine-readable alternate of a listing page, never content of its own (D18) —
+  // same exclusion reasoning as the offline fallback.
+  const feedsExclude = seo.feeds?.enabled === true ? (seo.feeds.items ?? []).map((i) => i.path) : [];
+  const sitemapExclude = [
+    ...(astro.sitemapExclude ?? []),
+    ...redirectSources,
+    ...offlineExclude,
+    ...feedsExclude,
+  ];
 
   // Destinations are written bare, same convention as every other walle path — prefix the
   // base path here so a redirect still lands on a real route once the site has one.
@@ -854,6 +893,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
     walleCommerceRoutesIntegration(commerce?.mode, commerce?.pages, process.cwd()),
     walleOfflineRouteIntegration(pwa, process.cwd()),
     walleOgRouteIntegration(seo),
+    walleFeedsRouteIntegration(seo),
   ];
 
   const {

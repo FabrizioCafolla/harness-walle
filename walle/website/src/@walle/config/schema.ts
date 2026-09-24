@@ -352,9 +352,43 @@ const ogImageSchema = z
   })
   .strict();
 
+// D18: RSS feeds. `fields` maps a feed's own vocabulary (title/description/date/categories)
+// to the collection's actual schema keys, so a collection with e.g. `publishDate` instead of
+// `date` doesn't need to be renamed just to feed one.
+const feedFieldsSchema = z
+  .object({
+    title: z.string().optional(),
+    description: z.string().optional(),
+    date: z.string().optional(),
+    categories: z.string().optional(),
+  })
+  .strict();
+
+const feedItemSchema = z
+  .object({
+    collection: z.string(),
+    path: z.string(),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    fields: feedFieldsSchema.optional(),
+    // `{id}` substituted per entry — the collection entry's own detail page.
+    link: z.string(),
+    limit: z.number().optional(),
+    excludeDrafts: z.boolean().optional(),
+  })
+  .strict();
+
+const feedsSchema = z
+  .object({
+    enabled: z.boolean().optional(),
+    items: z.array(feedItemSchema).optional(),
+  })
+  .strict();
+
 const seoSchema = z
   .object({
     ogImage: ogImageSchema.optional(),
+    feeds: feedsSchema.optional(),
   })
   .strict();
 

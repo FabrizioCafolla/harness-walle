@@ -27,6 +27,18 @@
     "ogImage": {
       "enabled": true,
       "collections": ["posts"]
+    },
+    "feeds": {
+      "enabled": true,
+      "items": [
+        {
+          "collection": "posts",
+          "path": "/rss.xml",
+          "fields": { "date": "publishDate", "categories": "tags" },
+          "link": "/blog/{id}",
+          "excludeDrafts": true
+        }
+      ]
     }
   }
 }
