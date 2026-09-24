@@ -28,6 +28,7 @@ SCENARIOS=(
   ".vscode/ marker injection (fresh init + consumer edits survive update)|scenario_vscode_inject"
   ".husky/ seeded at init, consumer edits survive update|scenario_husky_seed"
   "Commerce off: no cart script/styles, no /products route, no Storefront request|scenario_commerce_off"
+  "Config validation: unknown key, wrong type, removed key all fail the build|scenario_config_validation"
 )
 
 pass=0 failed=0 skipped=0
