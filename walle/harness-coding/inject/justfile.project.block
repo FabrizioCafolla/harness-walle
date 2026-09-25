@@ -25,7 +25,7 @@ walle-deps *args:
 
 # Walle update design system. Resolves the latest published tag first (never main) and
 # fetches cli.sh from that exact ref, so the CLI that runs is always the one committed at
-# the content it's about to sync — no CLI-from-main / content-from-tag skew.
+# the content it's about to sync: no CLI-from-main / content-from-tag skew.
 [group('walle')]
 walle-update *args:
     #!/usr/bin/env bash

@@ -20,7 +20,7 @@ import { getCollection } from "astro:content";
 const img = (p: string) => resolveInternalUrl(p);
 
 // The wiki route only exists on the design-system showcase (repo `wiki/` present), never in a
-// seeded consumer — link to it only when there are pages to link.
+// seeded consumer: link to it only when there are pages to link.
 const hasWiki = (await getCollection("wiki")).length > 0;
 
 const groups = [

@@ -20,7 +20,7 @@ export const GET: APIRoute = async ({ site }) => {
         new Date(b.data.publishDate ?? 0).getTime() - new Date(a.data.publishDate ?? 0).getTime()
     );
 
-  // Commerce off (D10): no /products route, no products collection — same gate as the
+  // Commerce off: no /products route, no products collection: same gate as the
   // injected pages themselves.
   const commerceOn = config.app.commerce?.mode === "catalog" || config.app.commerce?.mode === "shop";
   const products = commerceOn ? await getCollection("products") : [];
