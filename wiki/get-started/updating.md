@@ -50,7 +50,7 @@ The build now validates every config file and stops on an error that names the f
 | a `commerce` block on a site that sells nothing | delete the block: commerce is off by default |
 | `commerce.locale` | `website.language` (drives every date, price and number) |
 | `commerce.addToCartLabel` | `labels.cart.add` |
-| redirect pages or a catch-all redirect route | `astro.redirects` (sources leave the sitemap automatically) |
+| redirect pages or a catch-all redirect route | `astro.redirects`; redirect sources leave the sitemap automatically, so drop their `sitemapExclude` entries |
 | unknown keys | removed: the build names them |
 
 Add `labels` for every walle interface string you want in your own language: skip link,
@@ -175,9 +175,10 @@ Replace site code that walle now provides:
 | Your site has | Use |
 |---|---|
 | an offline page plus a workbox rule for it | `pwa.offline: true` (or a `./` path to your own page); remove the page, the rule and its `sitemapExclude` entry |
+| custom workbox `globIgnores` for cart chunks, or a glob for font files | remove them: walle ignores commerce chunks when commerce is not `shop` and precaches self-hosted fonts |
 | an Open Graph image endpoint | `seo.ogImage`, with a custom template per collection if needed |
 | a local leaflet map component | `Map` |
-| a collection-based RSS endpoint | `seo.feeds` (keep your own if it filters or emits other formats) |
+| a collection-based RSS endpoint | `seo.feeds` (keep your own if it filters entries, emits other formats, or reads a nested field: `fields` maps top-level entry fields only) |
 | a Google Fonts import or `@font-face` rules | `theme.json` `typography.fonts` |
 | a local hero or call-to-action section | compare with `Hero` and `CallToAction` |
 
