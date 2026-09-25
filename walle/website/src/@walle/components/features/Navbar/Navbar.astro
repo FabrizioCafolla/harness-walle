@@ -389,7 +389,7 @@ const shouldShowBrand = hasLogo || hasTitle;
       /* Right cluster on mobile: brand stays left; the cart + hamburger sit together on the
                    right (cart immediately left of the hamburger). The nav overlay (.nav-container) is
                    fixed/out-of-flow, and DOM order is already brand · cart · hamburger, so `margin-left:
-                   auto` pushes the pair right without CSS `order` — keeping tab order == visual order. */
+                   auto` pushes the pair right without CSS `order`, keeping tab order == visual order. */
       .hamburger {
         display: flex;
         margin-left: 0.5rem;

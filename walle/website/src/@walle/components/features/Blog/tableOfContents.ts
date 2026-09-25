@@ -19,16 +19,16 @@ export interface TableOfContentsOptions {
   headingSelector?: string;
   /** List of CSS selectors; any heading matching one will be excluded */
   excludeSelectors?: string[];
-  /** Attribute name used to skip a single heading. Default: data-toc-skip */
+  /** Attribute name for skipping a single heading. Default: data-toc-skip */
   skipAttribute?: string;
-  /** Class name used to skip a single heading. Default: toc-skip */
+  /** Class name for skipping a single heading. Default: toc-skip */
   skipClass?: string;
   /** Container attribute; any heading inside an ancestor with this attribute is skipped. Default: data-toc-skip-container */
   skipContainerAttribute?: string;
   /** Optional text patterns; if heading text matches any pattern it will be excluded */
   excludeTextPatterns?: RegExp[];
   /** Screen-reader announcements on mobile expand/collapse. Callers always resolve these
-   * through label() before constructing the manager (D8), so no default lives here. */
+   * through label() before constructing the manager, so no default lives here. */
   labels?: {
     expanded?: string | null;
     collapsed?: string | null;

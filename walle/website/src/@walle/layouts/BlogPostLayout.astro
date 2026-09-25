@@ -25,7 +25,7 @@ const {
   id,
 } = Astro.props;
 
-// This post's own OG image (D13) — only when the feature is on; otherwise `ogImageUrl` would
+// This post's own OG image, only when the feature is on; otherwise `ogImageUrl` would
 // point at a route that doesn't exist.
 const entryOgImage = id && config.app.seo?.ogImage?.enabled ? ogImageUrl("posts", id) : undefined;
 ---

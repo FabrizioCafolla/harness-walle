@@ -440,8 +440,8 @@ const closeIcon =
       next?.addEventListener("click", () => track.scrollBy({ left: step() }));
 
       sync();
-      // `onscrollend` is now a statically-declared HTMLElement property, so TS narrows this
-      // check to always-true and treats the fallback branch as unreachable — it still runs in
+      // `onscrollend` is a statically-declared HTMLElement property, so TS narrows this check
+      // to always-true and treats the fallback branch as unreachable; it still runs in
       // browsers where scrollend support lags behind the type lib, so the runtime check stays.
       if ("onscrollend" in track) {
         track.addEventListener("scrollend", sync);

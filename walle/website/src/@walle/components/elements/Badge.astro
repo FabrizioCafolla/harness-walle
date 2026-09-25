@@ -28,7 +28,7 @@ export interface Props extends BaseProps {
   muted?: boolean;
 
   /**
-   * Semantic status coloring — takes precedence over `variant` when set
+   * Semantic status coloring: takes precedence over `variant` when set
    */
   status?: "success" | "warning" | "danger";
 
@@ -44,7 +44,7 @@ export interface Props extends BaseProps {
   iconPosition?: "start" | "end";
 
   /**
-   * Destination URL — when set, the badge renders as a link
+   * Destination URL: when set, the badge renders as a link
    */
   href?: string;
 
@@ -157,8 +157,8 @@ const hrefAttrs = href ? { href, target, rel: target === "_blank" ? "noopener" :
       display: inline-block;
     }
 
-    /* Modifiers — outline/muted map variant tokens to the public properties (D4); status
-           overrides both, using its own tokens rather than the palette. */
+    /* outline/muted map variant tokens to the public properties; status overrides both,
+           using its own tokens rather than the palette. */
     .badge[data-outline] {
       --badge-bg: transparent;
       --badge-fg: var(--variant-color);

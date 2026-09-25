@@ -7,7 +7,7 @@ import { label as t } from "@walle/utils";
 /**
  * Config-driven client-side filtering for any rendered collection.
  *
- * Items are matched via data attributes — no data prop, no re-rendering:
+ * Items are matched via data attributes: no data prop, no re-rendering.
  *
  * ```astro
  * <CollectionFilters facets={[{ key: "category", label: "Category", options: cats }]} />
@@ -25,12 +25,12 @@ import { label as t } from "@walle/utils";
  * matches `data-search` (falling back to the item's text content).
  *
  * Progressive enhancement: the filter UI is hidden until the script
- * initializes — with JavaScript disabled every item stays visible.
+ * initializes; with JavaScript disabled every item stays visible.
  */
 
 export interface FilterFacet {
   /**
-   * Facet key — items carry the matching `data-<key>` attribute
+   * Facet key: items carry the matching `data-<key>` attribute
    */
   key: string;
 
@@ -64,7 +64,7 @@ export interface Props extends BaseProps<"div"> {
   search?: boolean;
 
   /**
-   * UI labels — English defaults, override for localization.
+   * UI labels: English defaults, override for localization.
    * `{n}` in `status` is replaced with the visible-item count;
    * `{label}` / `{n}` in facet templates with the facet label / selection count.
    */

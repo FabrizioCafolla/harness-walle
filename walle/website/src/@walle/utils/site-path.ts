@@ -7,7 +7,7 @@ import { resolve, sep } from "node:path";
  * otherwise (never a silent fallback), so an invalid override fails the build instead of
  * surfacing as a missing file at request time. Shared by every "built-in name or site path"
  * override walle exposes (`components.*`, `commerce.pages.*`, `pwa.offline`,
- * `seo.ogImage.templates.*`) — kept dependency-free (no astro/config imports) so both
+ * `seo.ogImage.templates.*`): kept dependency-free (no astro/config imports) so both
  * `define-config.ts` (astro.config authoring) and application code like `og/route.ts` (which
  * must never drag astro/config's own toolchain into a request-time render) can import it.
  */

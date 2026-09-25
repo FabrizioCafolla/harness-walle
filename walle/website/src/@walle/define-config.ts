@@ -23,7 +23,7 @@ import { stripBase, withBase } from "./utils/base-path";
 export { withBase };
 
 /**
- * Components a site can replace, once, from `app.json`'s `components` block (D6): each key's
+ * Components a site can replace, once, from `app.json`'s `components` block: each key's
  * built-in name → walle source file, resolved relative to this file's own directory. A value
  * can also be a `./`-prefixed path to a site component under `src/`. Absent keys default to
  * `"standard"`. The keys of each inner record are also the available built-in names for that
@@ -110,11 +110,9 @@ function walleComponentsPlugin(root: string, components: Record<string, string> 
 }
 
 /**
- * Gates commerce UI at the module-graph level (D10), replacing the old runtime-conditional
- * `await import()` in BaseLayout: when commerce is off, the virtual module's own source is
- * `export const CartMount = null`, so Rollup never even emits a chunk for CartMount/CartBadge
- * (a dynamic `import()` still emitted an unused chunk, since Vite statically detects the
- * literal specifier regardless of whether the runtime branch ever executes it).
+ * Gates commerce UI at the module-graph level: when commerce is off the virtual module exports
+ * `null`, so Rollup never emits a chunk for CartMount/CartBadge (a guarded dynamic `import()`
+ * would still emit one, because Vite resolves the literal specifier statically).
  */
 function walleFeaturesPlugin(commerceMode: string | undefined) {
   const virtualId = "virtual:walle-features";
@@ -141,11 +139,9 @@ function walleFeaturesPlugin(commerceMode: string | undefined) {
 }
 
 /**
- * Injects `/products` and `/products/[handle]` when `commerce.mode` is "catalog" or "shop"
- * (D10): a vetrina site (mode "off") gets neither route, and neither ships in the seed at all
- * (the pages moved out of src/pages/products into this managed directory). `commerce.pages.*`
- * lets a site swap either entrypoint for its own file, same `./`-prefixed site-path contract as
- * `components.*`.
+ * Injects `/products` and `/products/[handle]` when `commerce.mode` is "catalog" or "shop"; a
+ * site with commerce off gets neither route. `commerce.pages.*` swaps either entrypoint for a
+ * site file, with the same `./`-prefixed site-path contract as `components.*`.
  */
 function walleCommerceRoutesIntegration(
   commerceMode: string | undefined,
@@ -185,7 +181,7 @@ function walleCommerceRoutesIntegration(
  *
  * tokens.css bridges each --walle-* var to the component-facing var (e.g. --primary,
  * --space-sm, --radius-sm, --gray-light, --shadow-md) so theme.json overrides work without
- * touching consumer files. Absent or empty theme.json yields an empty string — output is
+ * touching consumer files. Absent or empty theme.json yields an empty string: output is
  * identical to defaults.
  */
 function readThemeJson(): Record<string, any> {
@@ -279,16 +275,9 @@ function walleThemePlugin() {
 }
 
 /**
- * Barrel modules (`@walle/components`, `@walle/layouts`) are a DX win and a payload bug:
- * Astro collects a page's CSS from its module graph, not from what the page renders, so one
- * `import { Section } from "@walle/components"` drags every component's <style> onto every
- * page — carousel, cart, blog and product CSS included on a site that has none of them.
- * (Measured on eventialatina.it: 79 kB shared stylesheet, 35 kB of it for components no page
- * ever rendered.)
- *
- * This plugin rewrites each barrel at load time down to the exports the project actually
- * imports from it, scanning the consumer's own sources for the named imports. Nothing about
- * how consumers write imports changes; what changes is what ends up in the graph.
+ * Rewrites the `@walle/components` and `@walle/layouts` barrels at load time down to the
+ * exports the project imports, so a page's module graph only pulls the CSS of the components
+ * the site actually uses (Astro collects CSS from the module graph, not from what renders).
  */
 function walleSlimBarrelsPlugin(root: string) {
   const BARRELS: Record<string, string> = {
@@ -342,7 +331,7 @@ function walleSlimBarrelsPlugin(root: string) {
         .split("\n")
         .filter((line) => {
           // Two re-export shapes: a walle source file (`default as X`) and a virtual-module
-          // export (`navbar as Navbar` from `virtual:walle-components`, D6's embeddable
+          // export (`navbar as Navbar` from `virtual:walle-components`, the embeddable
           // components). Both are filtered by the barrel's own exported name, one per line.
           const exported =
             line.match(/export\s+\{\s*default\s+as\s+(\w+)\s*\}/) ||
@@ -373,28 +362,9 @@ type PwaConfigSection = {
 };
 
 /**
- * Progressive web app support, off unless `pwa.enabled` is true in app.json. Disabled means
- * the integration is never mounted: no manifest, no service worker, no registration script,
- * nothing added to any page.
- *
- * Everything the manifest needs already exists elsewhere in a walle project, so the defaults
- * read from there (website title/description/language, theme palette, base path) and a
- * consumer only writes what actually differs. The Astro-side knobs (`workbox`, `registerType`,
- * …) are deliberately NOT in app.json: they are code-shaped, not content-shaped, so they are
- * overridden natively from astro.config via `defineWalleConfig({ pwa: { workbox: … } })` and
- * merged one level deep over the defaults below.
- *
- * `injectRegister: "script-defer"` on purpose: vite-plugin-pwa cannot inject anything into
- * Astro's static HTML output (it relies on a transformIndexHtml pass Astro's build doesn't
- * run — the generated file lands in dist/ but no page ever references it), so Head.astro
- * emits the tag itself. The generated registerSW.js already registers inside a `load`
- * listener, which keeps the worker off the critical path and avoids pulling workbox-window
- * into the page bundle at all.
- */
-/**
  * Pure resolver, exported so a unit test can inspect the resolved `workbox` config without
  * going through `AstroPWA` (which closes its options up inside the returned integration's
- * hooks — not introspectable from outside). Returns `null` when the PWA is disabled, the same
+ * hooks: not introspectable from outside). Returns `null` when the PWA is disabled, the same
  * signal `wallePwaIntegration` uses to skip mounting the integration at all.
  */
 export function resolvePwaOptions(
@@ -416,15 +386,11 @@ export function resolvePwaOptions(
   // `${base}/offline`, collapsing the double slash a trailing-slash base would otherwise leave
   // (base "/" + "/offline" => "//offline").
   const offlineUrl = pwa.offline ? `${base}/offline`.replace(/\/{2,}/g, "/") : null;
-  // Workbox's `revision` is the change-detection key for a precache entry whose URL isn't
-  // itself hashed (unlike the _astro/* build output below); `null` tells it the URL is already
-  // versioned and to never re-diff it — wrong here, since /offline's content, CSS chunk
-  // references and labels can all change between deploys. A build-scoped id (recomputed once
-  // per `defineWalleConfig()` call, i.e. once per build) makes every new build's manifest
-  // differ, so a returning visitor's service worker actually refetches the page.
+  // /offline is not a hashed URL, so it needs a real revision (null means "already versioned"):
+  // a per-build id makes returning visitors refetch it after every deploy.
   const offlineRevision = offlineUrl ? Date.now().toString(36) : null;
 
-  // Cart UI ships no chunk at all when off (D10 — virtual:walle-features nulls the module
+  // Cart UI ships no chunk at all when off (virtual:walle-features nulls the module
   // before Rollup ever sees it), so these normally match nothing. Listed anyway as a safety
   // net: if that guarantee ever regresses, a stray cart-named chunk still never gets swept into
   // the precache instead of silently shipping working "Add to cart" UI to an offline visitor
@@ -454,7 +420,7 @@ export function resolvePwaOptions(
       // network-first rule below instead, so a page is never served from a stale cache
       // while the network is available. The offline fallback is the one static HTML page
       // that IS precached by URL (below), since it must be servable with no network at all.
-      // Fonts are D11's own build output (self-hosted/managed, same as any other asset), so
+      // Self-hosted fonts are build output like any other asset, so
       // they precache alongside the JS/CSS they're never worth loading a page without.
       globPatterns: ["_astro/**/*.{js,css}", "_astro/fonts/**/*.woff2"],
       globIgnores: commerceChunkGlobIgnores,
@@ -477,14 +443,8 @@ export function resolvePwaOptions(
               ? {
                   plugins: [
                     {
-                      // Built with `new Function`, not a closure over `offlineUrl`: workbox-build
-                      // serializes every runtimeCaching function into the standalone generated
-                      // sw.js via `Function.prototype.toString()` (see serialize-javascript, which
-                      // vite-plugin-pwa's generateSW strategy uses under the hood) — it captures
-                      // no lexical scope, so a normal arrow function referencing `offlineUrl`
-                      // would throw "offlineUrl is not defined" once reinserted into that
-                      // standalone file. Inlining the URL as a string literal in the function's
-                      // own source (via `new Function`) survives that round trip intact.
+                      // `new Function`, not a closure: workbox-build serializes this handler into the standalone
+                      // sw.js with toString(), which keeps no lexical scope, so the URL is inlined as a literal.
                       handlerDidError: new Function(
                         `return caches.match(${JSON.stringify(offlineUrl)}, { ignoreSearch: true });`
                       ) as () => Promise<Response | undefined>,
@@ -529,23 +489,9 @@ export function resolvePwaOptions(
 }
 
 /**
- * Progressive web app support, off unless `pwa.enabled` is true in app.json. Disabled means
- * the integration is never mounted: no manifest, no service worker, no registration script,
- * nothing added to any page.
- *
- * Everything the manifest needs already exists elsewhere in a walle project, so the defaults
- * read from there (website title/description/language, theme palette, base path) and a
- * consumer only writes what actually differs. The Astro-side knobs (`workbox`, `registerType`,
- * …) are deliberately NOT in app.json: they are code-shaped, not content-shaped, so they are
- * overridden natively from astro.config via `defineWalleConfig({ pwa: { workbox: … } })` and
- * merged one level deep over the defaults below.
- *
- * `injectRegister: "script-defer"` on purpose: vite-plugin-pwa cannot inject anything into
- * Astro's static HTML output (it relies on a transformIndexHtml pass Astro's build doesn't
- * run — the generated file lands in dist/ but no page ever references it), so Head.astro
- * emits the tag itself. The generated registerSW.js already registers inside a `load`
- * listener, which keeps the worker off the critical path and avoids pulling workbox-window
- * into the page bundle at all.
+ * Progressive web app support, off unless `pwa.enabled` is true: disabled means the integration
+ * is never mounted. Manifest defaults come from the website and theme config; the Astro-side
+ * knobs (`workbox`, `registerType`) are overridden from astro.config, merged one level deep.
  */
 function wallePwaIntegration(
   app: { website?: Record<string, any>; astro?: Record<string, any>; pwa?: PwaConfigSection },
@@ -556,10 +502,10 @@ function wallePwaIntegration(
 }
 
 /**
- * Injects `/offline` when `pwa.enabled` and `pwa.offline` are both set (D12): `true` uses the
+ * Injects `/offline` when `pwa.enabled` and `pwa.offline` are both set: `true` uses the
  * managed default (`M/pwa/Offline.astro`), a `./`-prefixed string swaps in a site file, same
  * contract as `commerce.pages.*`. Nested under `pwa` because the route is meaningless without
- * the service worker it falls back through — `resolvePwaOptions` wires the matching
+ * the service worker it falls back through: `resolvePwaOptions` wires the matching
  * `additionalManifestEntries`/`handlerDidError` for the same flag.
  */
 function walleOfflineRouteIntegration(
@@ -583,11 +529,11 @@ function walleOfflineRouteIntegration(
 }
 
 /**
- * Injects `/og/[...slug].png` when `seo.ogImage.enabled` is true (D13): a single fixed
+ * Injects `/og/[...slug].png` when `seo.ogImage.enabled` is true: a single fixed
  * entrypoint (`M/og/route.ts`) whose own `getStaticPaths` enumerates "default" plus every
  * configured collection, and resolves each one's `seo.ogImage.templates` override itself
  * (a per-slug template needs a site-path resolved per param, which `injectRoute`'s one static
- * `entrypoint` per pattern can't express — unlike `commerce.pages.*`, which swaps the whole
+ * `entrypoint` per pattern can't express: unlike `commerce.pages.*`, which swaps the whole
  * page).
  */
 function walleOgRouteIntegration(seo: { ogImage?: { enabled?: boolean } } = {}): AstroIntegration {
@@ -605,7 +551,7 @@ function walleOgRouteIntegration(seo: { ogImage?: { enabled?: boolean } } = {}):
 }
 
 /**
- * Injects one route per configured feed item (D18) when `seo.feeds.enabled` — a fixed pattern
+ * Injects one route per configured feed item when `seo.feeds.enabled`: a fixed pattern
  * per item (no dynamic segment, unlike `/og/[...slug].png`), all sharing the same entrypoint;
  * `M/feeds/route.ts` finds its own item back out of config by matching the request's own path.
  */
@@ -650,7 +596,7 @@ function wallePwaHeadPlugin(head: Record<string, unknown>) {
 }
 
 /**
- * Exposes the resolved font list to components at runtime (D11): Head.astro needs to know
+ * Exposes the resolved font list to components at runtime: Head.astro needs to know
  * every configured font's `cssVariable` and `preload` flag to render one `<Font>` per entry,
  * but it can't read theme.json itself (only ever parsed at build time, here). Same
  * resolveId/load pattern as `wallePwaHeadPlugin`.
@@ -704,16 +650,16 @@ type AstroConfigSection = {
   sitemapExclude?: string[];
   /** Passed straight through to Astro's native `redirects` config. Astro's own static-output
    * redirect page already emits refresh/noindex/canonical; walle additionally excludes every
-   * redirect source from sitemap.xml (D9), same as `sitemapExclude`. */
+   * redirect source from sitemap.xml, same as `sitemapExclude`. */
   redirects?: Record<string, string | { destination: string; status: 301 | 302 | 307 | 308 }>;
   /** `false` opts out entirely; otherwise maps to Astro's own `prefetch` config, defaulting to
-   * `{ prefetchAll: true, defaultStrategy: "hover" }` when absent (D9 — walle's own default,
-   * Astro itself defaults to off). */
+   * `{ prefetchAll: true, defaultStrategy: "hover" }` when absent (walle's default; Astro's
+   * own default is off). */
   prefetch?: false | { strategy?: "hover" | "tap" | "viewport" | "load"; all?: boolean };
 };
 
 /**
- * True when `pathname` (as `new URL(page).pathname` hands it — includes the site's base path)
+ * True when `pathname` (as `new URL(page).pathname` hands it: includes the site's base path)
  * falls under one of `excludes` (bare paths, written without the base, e.g. `"/old-page"`).
  * Strips `base` off the front and normalizes a trailing slash on both sides before comparing,
  * so a site with `astro.basePath` set (any GitHub Pages project site) and an exclude/redirect
@@ -725,7 +671,7 @@ export function isSitemapExcluded(pathname: string, excludes: string[], base?: s
   const path = normalize(stripBase(pathname, base));
   return excludes.some((exclude) => {
     const p = normalize(exclude);
-    // "/" as an exclude only ever matches the root itself — as a prefix it would swallow
+    // "/" as an exclude only ever matches the root itself: as a prefix it would swallow
     // every path on the site (a redirect from "/" is a real case, e.g. to "/it/").
     return path === p || (p !== "/" && path.startsWith(`${p}/`));
   });
@@ -742,17 +688,17 @@ type WalleFontEntry = {
 };
 
 /**
- * Maps walle's simplified `typography.fonts` entries (D11) to Astro's native `fonts` config:
+ * Maps walle's simplified `typography.fonts` entries to Astro's native `fonts` config:
  * one entry per role, `cssVariable` fixed to `--walle-font-<role>`, provider resolved from the
  * three options walle exposes. A local font gets a single @font-face variant covering the
- * whole `weights`/`styles` range from one file (the variable-font case) — see the schema
+ * whole `weights`/`styles` range from one file (the variable-font case): see the schema
  * comment on `src` for what a per-weight static local font would need instead.
  */
 function resolveWalleFonts(
   entries: WalleFontEntry[] | undefined
 ): NonNullable<AstroUserConfig["fonts"]> {
   // Built as a plain heterogeneous array (each entry's `options` shape depends on its own
-  // provider) and cast once here to Astro's own `fonts` type — the per-provider generic
+  // provider) and cast once here to Astro's own `fonts` type: the per-provider generic
   // correlation `FontFamily<T>` expects isn't expressible for an array resolved dynamically
   // from config, only for a literal astro.config.mjs.
   const resolved = (entries ?? []).map((entry) => ({
@@ -790,7 +736,7 @@ function resolveWalleFonts(
  * (mdx, sitemap, icon), never replaced.
  */
 export function defineWalleConfig(overrides: Record<string, any> = {}) {
-  // Single build-time gate for all four config files (D7): a malformed or outdated config
+  // Single build-time gate for all four config files: a malformed or outdated config
   // fails here, loudly, instead of surfacing later as a runtime import error or a silently
   // wrong page.
   parseConfig(appSchema, appConfig, "app.json");
@@ -817,10 +763,10 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
   resolveEmbeddedComponents(components, process.cwd());
 
   // Redirect sources and the offline fallback never belong in the sitemap alongside their own
-  // destination (D9) / next to no real content (D12) — same exclusion mechanism, two sources.
+  // destination / next to no real content: same exclusion mechanism, two sources.
   const redirectSources = Object.keys(astro.redirects ?? {});
   const offlineExclude = pwa.enabled === true && pwa.offline ? ["/offline"] : [];
-  // A feed is a machine-readable alternate of a listing page, never content of its own (D18) —
+  // A feed is a machine-readable alternate of a listing page, never content of its own : 
   // same exclusion reasoning as the offline fallback.
   const feedsExclude = seo.feeds?.enabled === true ? (seo.feeds.items ?? []).map((i) => i.path) : [];
   const sitemapExclude = [
@@ -830,7 +776,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
     ...feedsExclude,
   ];
 
-  // Destinations are written bare, same convention as every other walle path — prefix the
+  // Destinations are written bare, same convention as every other walle path: prefix the
   // base path here so a redirect still lands on a real route once the site has one.
   const redirects = astro.redirects
     ? Object.fromEntries(
@@ -847,7 +793,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
   const fonts = resolveWalleFonts(walleFontEntries);
 
   // Astro's own `prefetch` is off by default; walle turns it on with the hover strategy
-  // unless a site opts out entirely with `astro.prefetch: false` (D9).
+  // unless a site opts out entirely with `astro.prefetch: false`.
   const prefetch =
     astro.prefetch === false
       ? false

@@ -17,10 +17,10 @@ const payload = Array.isArray(data)
   ? data.map((d) => ({ "@context": "https://schema.org", ...d }))
   : { "@context": "https://schema.org", ...data };
 
-// The payload is JSON (not JS), so the only way an untrusted value — e.g. a
-// product name/description from a headless-commerce source — could break out of
-// the element is a literal "</script>". Escaping <, > and & to their JSON
-// unicode escapes neutralizes that while keeping the JSON valid.
+// The payload is JSON (not JS), so the only way an untrusted value (e.g. a product
+// name/description from an external source) could break out of the element is a
+// literal "</script>". Escaping <, > and & to their JSON unicode escapes neutralizes
+// that while keeping the JSON valid.
 //
 // Plain-string replaceAll, not a /</>/&/g regex: astro-language-server's frontmatter/template
 // boundary scanner mis-tokenizes literal `<`/`>` characters inside a regex literal here, which

@@ -1,6 +1,6 @@
 import config from "@walle/config";
 
-// English defaults for every user-facing/screen-reader string walle emits (D8). Keyed by the
+// English defaults for every user-facing/screen-reader string walle emits. Keyed by the
 // same dotted path a site would set under `app.json`'s `labels` block. A leaf here is the
 // fallback when neither a component prop nor a site label supplies one.
 const DEFAULTS = {
@@ -84,7 +84,7 @@ export function label(path: LabelPath, override?: string): string {
   return typeof site === "string" ? site : DEFAULTS[path];
 }
 
-/** The site's locale for every date/number/currency formatter — the one fallback lives here. */
+/** The site's locale for every date/number/currency formatter: the one fallback lives here. */
 export function locale(): string {
   return config.app.website.language || "en-US";
 }

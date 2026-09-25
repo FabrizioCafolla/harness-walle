@@ -125,14 +125,11 @@ const { items = [], class: className } = own;
       min-width: 0;
     }
 
-    /* Safety net, not a visual change: `white-space: nowrap` above makes each crumb one
-           unbreakable box, and `flex-wrap` on the <ol> can only move a box to the next line, never
-           shrink one that is already wider than the container. A long label therefore used to push
-           the whole document wider than the viewport and give the page a horizontal scrollbar.
-           A label that fits still renders identically; one that cannot is clipped here instead of
-           breaking the page around it. `min-width: 0` on both the <li> and the flex parent is what
-           lets the text actually shrink — flex items default to min-width: auto and refuse to go
-           below their content width, which is why overflow/text-overflow alone would do nothing. */
+    /* Safety net, not a visual change: an over-long label is clipped here instead of pushing
+           the page wider than the viewport. `min-width: 0` on both the <li> and the flex parent
+           is required for the text to shrink at all: flex items default to min-width: auto and
+           refuse to go below their content width, so overflow/text-overflow alone would do
+           nothing without it. */
     .breadcrumbs li {
       min-width: 0;
     }
@@ -171,18 +168,10 @@ const { items = [], class: className } = own;
         display: none;
       }
 
-      /* Drop the current page too, same reasoning that already drops Home: on a narrow screen
-                 the crumbs are worth their space as a way back, and the current page is the one label
-                 the visitor does not need to be told — it is the <h1> directly below it on every page
-                 that uses this component. Keeping it truncated instead would spend a second line on an
-                 ellipsised copy of that heading. The trail still reads Parent / Grandparent, which is
-                 the part that is actually navigable.
-
-                 `:not(:nth-child(2))` is the guard that keeps this from backfiring: with Home already
-                 hidden above, the second child is the first crumb still visible, so on a two-item trail
-                 (Home / Current — a real shape for a top-level page) hiding the current one as well
-                 would leave an empty nav. Only trails with something left to show lose their last
-                 crumb. */
+      /* Drop the current page too, same reasoning that already drops Home: it duplicates the
+                 page's own <h1>. `:not(:nth-child(2))` guards a two-item trail (Home / Current): with
+                 Home already hidden, the second child is the first crumb still visible, so hiding
+                 the current one too would leave an empty nav. */
       .breadcrumbs li.current:not(:nth-child(2)) {
         display: none;
       }

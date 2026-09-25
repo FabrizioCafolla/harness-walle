@@ -3,8 +3,8 @@
 
 @layer walle.base {
   :root {
-    /* Palette — override via theme.json palette.* → --walle-color-*. Default: an editorial,
-       restrained system — desaturated navy, muted teal, warm gold. Deep enough that white text
+    /* Palette: override via theme.json palette.* → --walle-color-*. Default: an editorial,
+       restrained system, desaturated navy, muted teal, warm gold. Deep enough that white text
        clears AA on every brand surface (enforced by contrast.test.ts). */
     --primary: var(--walle-color-primary, #243b6b);
     --primary-light: var(--walle-color-primary-light, #324a80);
@@ -21,7 +21,7 @@
     --white: var(--walle-color-background, #fefefe);
     --black: var(--walle-color-foreground, #161616);
 
-    /* Neutral scale — override via theme.json neutral.* → --walle-gray-*. `base` bridges to
+    /* Neutral scale: override via theme.json neutral.* → --walle-gray-*. `base` bridges to
        `--gray` (no suffix) to keep every consumer's existing gray-token names unchanged. */
     --gray-light: var(--walle-gray-light, #f4f5f7);
     --gray: var(--walle-gray-base, #e9ebee);
@@ -29,7 +29,7 @@
     --gray-dark: var(--walle-gray-dark, #5b6472);
     --gray-darker: var(--walle-gray-darker, #333a45);
 
-    /* Semantic tokens — components reference these for neutral surfaces, text, borders and
+    /* Semantic tokens: components reference these for neutral surfaces, text, borders and
        focus. Consumers restyle by overriding this block. */
     --surface: var(--white);
     --surface-alt: var(--gray-light);
@@ -42,7 +42,7 @@
     --focus-ring: var(--primary);
     --disabled-opacity: 0.65;
 
-    /* Status tokens — semantic, not tied to the brand palette. Each pairs with its own
+    /* Status tokens: semantic, not tied to the brand palette. Each pairs with its own
        -contrast for AA-compliant text on a filled status background. */
     --status-success: #1b7a43;
     --status-success-contrast: var(--white);
@@ -51,7 +51,7 @@
     --status-danger: #da2d1b;
     --status-danger-contrast: var(--white);
 
-    /* Shadows — override via theme.json shadow.* → --walle-shadow-*. */
+    /* Shadows: override via theme.json shadow.* → --walle-shadow-*. */
     --shadow-sm: var(--walle-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
     --shadow-md: var(
       --walle-shadow-md,
@@ -68,12 +68,12 @@
     --transition: 0.2s ease;
     --transition-normal: 0.3s ease;
 
-    /* Typography — override via theme.json typography.* → --walle-font-* */
+    /* Typography: override via theme.json typography.* → --walle-font-* */
     --font-body: var(--walle-font-body, system-ui, -apple-system, sans-serif);
     --font-heading: var(--walle-font-heading, var(--font-body));
     --font-mono: var(--walle-font-mono, ui-monospace, "Cascadia Code", monospace);
 
-    /* Type scale — override via theme.json typography.scale.* → --walle-font-size-* */
+    /* Type scale: override via theme.json typography.scale.* → --walle-font-size-* */
     --font-size-h1: var(--walle-font-size-h1, clamp(2.5rem, 5vw, 3.5rem));
     --font-size-h2: var(--walle-font-size-h2, clamp(2rem, 4vw, 2.75rem));
     --font-size-h3: var(--walle-font-size-h3, clamp(1.5rem, 3vw, 2rem));
@@ -83,7 +83,7 @@
     --font-size-sm: var(--walle-font-size-sm, 0.875rem);
     --font-size-xs: var(--walle-font-size-xs, 0.75rem);
 
-    /* Spacing — override via theme.json spacing.* → --walle-space-* */
+    /* Spacing: override via theme.json spacing.* → --walle-space-* */
     --space-xs: var(--walle-space-xs, 0.5rem);
     --space-sm: var(--walle-space-sm, 0.75rem);
     --space-md: var(--walle-space-md, 1rem);
@@ -93,7 +93,7 @@
     --space-3xl: var(--walle-space-3xl, 3rem);
     --space-4xl: var(--walle-space-4xl, 4rem);
 
-    /* Radii — override via theme.json radii.* → --walle-radius-*
+    /* Radii: override via theme.json radii.* → --walle-radius-*
        Crisp, restrained scale. Softened corners, never pill-shaped. */
     --radius-sm: var(--walle-radius-sm, 0.125rem);
     --radius-md: var(--walle-radius-md, 0.25rem);
@@ -105,7 +105,7 @@
     --input-font-size-min: 16px;
   }
 
-  /* Variant tokens — every component that reads --variant-* emits its own data-variant
+  /* Variant tokens: every component that reads --variant-* emits its own data-variant
      (default primary), so the nearest definition is always the component's own. */
   [data-variant="primary"] {
     --variant-color: var(--primary);

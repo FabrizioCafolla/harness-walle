@@ -114,7 +114,7 @@ export function normalizePath(path: string): string {
  *
  * The `cut > 0` guard is not defensive noise: `lastIndexOf(" ", n)` returns -1 for a string with
  * no space in its first n characters (a long unbroken token, a URL, an agglutinated title), and
- * `slice(0, -1)` would then drop exactly one character instead of truncating — producing an
+ * `slice(0, -1)` would then drop exactly one character instead of truncating: producing an
  * almost-full-length string that silently defeats the whole function. In that case there is no
  * word boundary to respect, so the cut falls back to a hard one at the limit.
  */

@@ -4,7 +4,7 @@ import { splitProps, variantAttrs } from "../../shared/attrs";
 
 export interface Props
   extends BaseProps<"section">, VariantProps, Pick<ModifierProps, "filled" | "muted"> {
-  // `id` comes from BaseProps (HTMLAttributes) as `string | null | undefined` — not redeclared
+  // `id` comes from BaseProps (HTMLAttributes) as `string | null | undefined`, not redeclared
   // narrower here, since callers like Hero/Section/SectionColumns/SectionFlow forward their own
   // unmodified `id` through {...rest} straight from the same HTMLAttributes type.
   /** Optional tagline shown above the title. String prop or `tagline` slot (slot wins). */
@@ -156,23 +156,14 @@ const hasSubtitle = Boolean(subtitleHtml) || Boolean(subtitle);
       color: inherit;
     }
 
-    /* Modifiers map --variant-* tokens (D4) to the public properties above. `muted` is
-           declared before `filled` so that, if a consumer somehow sets both, `filled` wins.
-
-           Redefining --wrapper-bg/fg only recolors the wrapper's OWN element, not plain
-           content a consumer drops in its default slot: base rules like
-           `p { color: var(--text-muted) }` or `code { background: var(--surface-alt) }`
-           target those elements directly, which always beats a color merely inherited from
-           this ancestor. Custom-property lookup isn't selector-scoped, though: redefining the
-           TOKENS those base rules read (--text, --text-muted, --heading, --surface-alt, the
-           link colors) here makes them resolve correctly for every descendant, with no
-           per-consumer `color: inherit` workaround needed. */
+    /* Modifiers map --variant-* tokens to the public properties above. `muted` is declared
+           before `filled` so that, if a consumer sets both, `filled` wins. Both also redefine
+           --text/--text-muted/--heading/--surface-alt/link colors, not just --wrapper-bg/fg,
+           so base rules on descendant content (p, code, links) resolve correctly too. */
     .section-wrapper[data-muted] {
       --wrapper-bg: var(--surface-alt);
-      /* --text/--text-muted/--heading/link colors are unchanged: --surface-alt (a near-white
-         gray) keeps them at essentially the same contrast ratio they already have against
-         --surface. Only `code`'s own background needs to move, since it defaults to the same
-         --surface-alt as the section itself and would otherwise blend into it. */
+      /* Only code's own background moves: it defaults to the same --surface-alt as the
+         section itself and would otherwise blend into it. */
       --surface-alt: var(--surface);
     }
 
@@ -185,9 +176,8 @@ const hasSubtitle = Boolean(subtitleHtml) || Boolean(subtitle);
       --heading: var(--variant-fg);
       --link: var(--variant-fg);
       --link-hover: var(--variant-fg);
-      /* code's own background must differ from the text color sitting on top of it: reuse
-         the variant's already-audited hover shade (darker, so contrast against --variant-fg
-         only improves) rather than inventing a new color. */
+      /* code's background reuses the variant's already-audited hover shade (darker, so
+         contrast against --variant-fg only improves) rather than a new color. */
       --surface-alt: var(--variant-bg-hover);
     }
 
@@ -207,17 +197,11 @@ const hasSubtitle = Boolean(subtitleHtml) || Boolean(subtitle);
 
 <style is:global>
   @layer walle.components {
-    /* Global, not scoped: a consumer's default-slot content (a <p><a>...) is authored in
-       its OWN file, so it never carries this component's data-astro-cid-* attribute, and a
-       normal scoped rule would silently never match it. Prefixed with .section-wrapper so
-       it only ever affects a walle Section, never an unrelated link elsewhere on the page.
-
-       --link above equals --variant-fg, the same color as the surrounding text, and base.css
-       removes the underline (`a { text-decoration: none }`). Without this rule, a plain
-       inline link in filled-section prose would be distinguishable by neither color nor
-       underline (WCAG 1.4.1). `:not([class])` targets only bare, unstyled anchors, since
-       Button/Link component output always carries its own class and its own styling
-       contract. */
+    /* Global, not scoped: a consumer's default-slot content never carries this component's
+       own data-astro-cid-* attribute, so a normal scoped rule would never match it; prefixed
+       with .section-wrapper so it only ever affects a walle Section. Underlines plain links
+       because --link above equals --variant-fg, the same color as the surrounding text
+       (WCAG 1.4.1); `:not([class])` excludes Button/Link's own styled output. */
     .section-wrapper[data-filled] a:not([class]) {
       text-decoration: underline;
     }

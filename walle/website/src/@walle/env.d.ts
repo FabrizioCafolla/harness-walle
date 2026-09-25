@@ -27,7 +27,7 @@ declare module "virtual:walle-pwa" {
 
 /**
  * Commerce UI gated at the module-graph level (D10): `null` when `commerce.mode !== "shop"`,
- * so a vetrina site's build never even emits a chunk for the cart components.
+ * so a site with commerce off never emits a chunk for the cart components.
  */
 declare module "virtual:walle-features" {
   export const CartMount: typeof import("./commerce/CartMount.astro").default | null;

@@ -9,10 +9,10 @@ import { getCollection } from "astro:content";
 
 export type { BaseLayoutProps as Props } from "./types";
 
-// Cart UI only in commerce mode; a vetrina site ships none of it. `cartInNavbar` puts the
+// Cart UI only in commerce mode; a site with commerce off ships none of it. `cartInNavbar` puts the
 // trigger in the navbar, otherwise it floats bottom-right. `CartMount`/`CartBadge` come from
-// `virtual:walle-features` (D10), which resolves to `null` at the module-graph level when
-// commerce is off — a vetrina site's build never emits a chunk for the cart components at all.
+// `virtual:walle-features`, which resolves to `null` at the module-graph level when commerce
+// is off, so that build never emits a chunk for the cart components at all.
 const commerce = config.app.commerce;
 const showCart = Boolean(CartMount);
 const cartInNavbar = commerce?.cartInNavbar ?? false;

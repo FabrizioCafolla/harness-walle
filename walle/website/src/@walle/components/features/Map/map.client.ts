@@ -1,8 +1,8 @@
 /**
- * D17 client half. Leaflet (and its own runtime DOM) is only ever pulled in once the map's
- * container scrolls near the viewport — the server-rendered `<ol data-map-list>` is the sole
- * source of marker data, read straight off its `<li data-lat data-lng data-variant data-title>`
- * children so there's no duplicate JSON payload to keep in sync.
+ * Leaflet (and its own runtime DOM) is only ever pulled in once the map's container scrolls
+ * near the viewport. The server-rendered `<ol data-map-list>` is the sole source of marker
+ * data, read straight off its `<li data-lat data-lng data-variant data-title>` children so
+ * there's no duplicate JSON payload to keep in sync.
  */
 
 interface MarkerData {

@@ -6,7 +6,7 @@ import type { HTMLAttributes, HTMLTag } from "astro/types";
  */
 export type BaseProps<Tag extends HTMLTag = "div"> = HTMLAttributes<Tag>;
 
-/** The fixed variant set (D4) — no open string variants. */
+/** The fixed variant set: no open string variants. */
 export type Variant = "primary" | "secondary" | "alternative" | "site";
 
 export interface VariantProps {
