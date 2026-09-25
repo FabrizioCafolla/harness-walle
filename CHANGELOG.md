@@ -85,6 +85,20 @@ that walle provides as routes. **Migration guide:
 - `sitemapExclude` did nothing on sites with a non-root base path.
 - The layer order is declared on Astrobook pages too, so story styles match the site.
 
+### Performance
+
+CSS per page on the demo site, linked stylesheets plus inline styles, against 0.6.1:
+
+| Build | Pages compared | Average CSS per page | Change |
+|---|---|---|---|
+| 0.6.1 | 11 | 74.2 kB | |
+| 0.7.0, commerce in shop mode (the demo default) | 11 | 76.4 kB | +2.9% |
+| 0.7.0, commerce off | 8 | 69.6 kB | -2.8% |
+
+The unused utilities are gone, cart styles ship only in shop mode, and Leaflet's stylesheet loads
+only when a map initializes. The remaining shop-mode growth is the new tokens, public custom
+properties and section components.
+
 ### Removed
 
 - `tests/e2e/scenarios-extended/20_forwarder_legacy.sh`: it tested a `scripts/@walle/cli.sh`
