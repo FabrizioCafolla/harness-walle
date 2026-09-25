@@ -1,6 +1,6 @@
 /**
  * Vite's built-in asset handling forces base64 inlining for any import with this query
- * suffix, regardless of file size — Astro's own `astro/client.d.ts` declares `*.woff` (the
+ * suffix, regardless of file size: Astro's own `astro/client.d.ts` declares `*.woff` (the
  * default URL-import form) but not this query variant. Used by `og/fonts.ts` to embed the
  * bundled fallback font's bytes directly into its own JS chunk: a plain `import.meta.url`
  * relative path breaks once that code is bundled into a different output location (D13).
@@ -36,7 +36,7 @@ declare module "virtual:walle-features" {
 
 /**
  * One entry per configured `typography.fonts` (D11): what Head.astro needs to render one
- * `<Font cssVariable preload />` per font — everything else (name, provider, weights...) is
+ * `<Font cssVariable preload />` per font: everything else (name, provider, weights...) is
  * only relevant to Astro's own build-time `fonts` config, resolved in define-config.ts.
  */
 declare module "virtual:walle-fonts" {
