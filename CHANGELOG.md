@@ -2,7 +2,140 @@
 
 All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
-[Semantic Versioning](wiki/versioning.md).
+[Semantic Versioning](wiki/develop/versioning.md).
+
+## [0.7.0] - Unreleased
+
+An extensible design system: cascade layers, one variant and modifier vocabulary, public custom
+properties, embedded component overrides, a config validated at build time, and optional features
+that walle provides as routes. **Migration guide:
+[wiki/get-started/updating.md](wiki/get-started/updating.md#migrating-to-070).**
+
+### BREAKING
+
+- **Cascade layers.** All walle CSS lives in `@layer walle.base`, `walle.components` and
+  `walle.utilities`, declared first in `<head>` in that order followed by `site`. Site CSS goes in
+  `@layer site`, which beats walle without specificity tricks; repeated selectors and `!important`
+  workarounds are no longer needed and may now lose.
+- **One variant vocabulary.** Every component takes `variant: "primary" | "secondary" |
+  "alternative" | "site"` and boolean modifiers (`outline`, `inverse`, `filled`, `muted`).
+  Old values are renamed (tables below).
+- **Variants are data attributes and custom properties.** Styling hooks are the public
+  `--<component>-*` properties on the component root; internal class names are not an interface.
+- **Removed** spacing utilities, `visible-xs`/`visible-sm`, `container-centered`,
+  `text-centered`, global `ul.meta-info`/`ul.tags` and `section` styling, the Button entrance
+  animation and `effects`, and the tokens `--box-shadow`, `--box-shadow-hover`, `--gray-gradient`,
+  `--transition-smooth`, `palette.accent`, `palette.muted`.
+- **One locale source.** `website.language` drives every date, price and number; walle's interface
+  strings come from `app.json` `labels`. `commerce.locale` and `commerce.addToCartLabel` are removed.
+- **`astro.ssr.enabled` is replaced by `astro.adapter: "node"`.** The site stays static; only routes
+  with `prerender = false` render on demand.
+- **Commerce is off by default**, selected with `commerce.mode: "off" | "catalog" | "shop"`
+  (replaces `commerce.showBuyButton`). Walle injects `/products` and `/products/[handle]`; the
+  seeded product pages from 0.6.x collide with them and must be deleted or moved to
+  `commerce.pages.*`.
+- **Config is validated at build time.** An unknown key, a wrong type or a removed key stops the
+  build with the file name and key path.
+
+### Added
+
+- `SectionWrapper`, shared by every section, with `filled`/`muted`, a `background` slot and
+  title, subtitle and tagline as props or slots; new `Hero` and `CallToAction` sections.
+- `Map` component on Leaflet: server-rendered marker list, lazy map, `map` defaults in `app.json`.
+- Embedded component overrides: `app.json` `components` (`navbar`, `footer`, `card`,
+  `breadcrumbs`, `pageHeader`, `toc`) takes a built-in name or a `./src/...` file.
+- Typed layout `Props` along the layout chain; `badgesAlign` on `DetailLayout`.
+- `theme.json`: `*-contrast`, `heading`, `neutral`, `shadow`, wired `typography.scale`, and
+  `typography.fonts` self-hosted through the Astro Fonts API with preload.
+- `labels` for every walle interface string, including navigation, footer and blog landmarks.
+- `astro.redirects` (sources excluded from the sitemap), `astro.prefetch` (hover by default).
+- `pwa.offline`: an offline page precached with a navigation fallback.
+- `seo.ogImage`: Open Graph images rendered at build time, per-collection templates.
+- `seo.feeds`: RSS feeds from content collections, with alternate links in `<head>`.
+- `walleCollections()` from `@walle/content`; `@walle/og` exports `renderOgImage` and `ogImageUrl`.
+- A seeded 404 page; a seeded `global.css` with an empty `@layer site` block.
+- Tests: Astro Container unit tests per component, CSS layer and token checks, config schema and
+  schema sync tests, a Playwright cascade contract, a visual baseline per Astrobook story, and e2e
+  scenarios for component overrides, commerce off, config validation, adapter, PWA offline,
+  redirects, OG images, site variant, feeds and map. `yarn check` runs `astro check`.
+
+### Changed
+
+- Default palette: `--alternative` `#c99a3f` -> `#8a6423`, `--alternative-dark` `#a97f2c` ->
+  `#73531d`, `--alternative-contrast` `--black` -> `--white`, `--status-success` `#1f874b` ->
+  `#1b7a43`, so these clear WCAG AA as text and as fill. Visible on sites without their own
+  `theme.json` palette.
+- Blog post tags use the theme radius instead of a pill (`--blog-tag-radius: 2rem` restores it).
+- `Head` emits an RSS alternate link only for enabled `seo.feeds` items, not an unconditional
+  `rss.xml` link.
+- New sites start without commerce or demo redirects, with OG images and a `posts` feed enabled.
+- The `ai` module's `AGENTS.md` block and skills describe the customization ladder; `walle-update`
+  adds a workaround cleanup pass.
+- The wiki is reorganized into Get Started, Develop, Architecture and AI.
+
+### Fixed
+
+- `HeaderStandard` `imageRight` had no effect and the image always rendered after the text. It now
+  follows the documented default (image first); a site that relied on the old behavior adds
+  `imageRight`.
+- `Map` markers after the first missed their variant and popup, and markers had no accessible name.
+- Content in filled sections (`p`, `a`, `code`) kept the base text color and could fail contrast;
+  inline links in filled sections are underlined.
+- `CollectionFilters` search input overflowed its container at 320px.
+- `sitemapExclude` did nothing on sites with a non-root base path.
+- The layer order is declared on Astrobook pages too, so story styles match the site.
+
+### Removed
+
+- `tests/e2e/scenarios-extended/20_forwarder_legacy.sh`: it tested a `scripts/@walle/cli.sh`
+  forwarder that was never shipped and was permanently skipped.
+- `11_component_variants.sh`, replaced by `11_component_overrides.sh`.
+
+### Dependencies
+
+- `astro` 7.3, `@astrojs/mdx` 8 (major), `@astrojs/node`, `@astrojs/sitemap`, `astro-icon`,
+  `astrobook`, `nanostores` 1.5, `vitest` 5 (major), `@playwright/test`, `@axe-core/playwright`,
+  `eslint` 10.11, `@typescript-eslint/*` 8.70, `prettier` 3.9.9, `yarn` 4.18.0.
+- New: `leaflet`, `satori`, `@resvg/resvg-js`, `@astrojs/check` (plus `@emnapi/core` and
+  `@emnapi/runtime`, required peers of its WebAssembly runtime).
+- GitHub Actions: `softprops/action-gh-release` v3; `actions/checkout` v7 in the CI seed.
+- Kept: `typescript` on 6.0.x (`@typescript-eslint` and `@astrojs/check` do not accept 7 yet),
+  `prettier-plugin-astro` on 0.14.x (1.0.1 is not idempotent on walle sources), Node 24 (active
+  LTS). `@vite-pwa/astro` 1.2.0, the latest release, does not declare Astro 7 in its peer range.
+
+### Migration summary
+
+Components:
+
+| Component | Before | After |
+|---|---|---|
+| Button | `variant="white"` | `inverse` |
+| Button | `variant="white"` with `outline` | `inverse outline` |
+| Button | `effects` | removed |
+| Badge | `variant="gray"` | `muted` |
+| Badge | `variant="success" / "warning" / "danger"` | `status="success" / "warning" / "danger"` |
+| Link | `variant="default"` | no prop |
+| Link | `variant="muted" / "unstyled"` | `muted` / `unstyled` |
+| Section, SectionFlow, SectionColumns | `variant="gray"` | `muted` |
+| Section, SectionFlow, SectionColumns | `variant="primary"` | `filled` |
+| HeaderStandard | `variant="white"` | no prop |
+| HeaderStandard | `variant="primary" / "secondary"` | `filled` plus `variant` |
+
+Tokens and config:
+
+| Before | After |
+|---|---|
+| `--box-shadow` | `--shadow-md` |
+| `--box-shadow-hover` | `--shadow-lg` |
+| `--transition-smooth` | `--transition` / `--transition-normal` |
+| `--gray-gradient`, `palette.accent`, `palette.muted` | removed |
+| `astro.ssr.enabled` | `astro.adapter: "node"` |
+| `commerce.showBuyButton` | `commerce.mode` |
+| `commerce.locale` | `website.language` |
+| `commerce.addToCartLabel` | `labels.cart.add` |
+
+The full guide, with the CSS pattern replacements and the feature migrations, is in
+[wiki/get-started/updating.md](wiki/get-started/updating.md#migrating-to-070).
 
 ## [0.6.1] - 2026-09-10
 
