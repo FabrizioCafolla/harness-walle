@@ -1,12 +1,12 @@
 import { expect, test } from "@playwright/test";
 import { siteBase } from "./storyRoutes";
 
-// D11: typography.fonts (Google provider, configured on the demo's own app.json) must resolve
-// through Astro's Fonts API to files served from the site's own origin — never a live request
+// typography.fonts (Google provider, configured on the demo's own app.json) must resolve
+// through Astro's Fonts API to files served from the site's own origin: never a live request
 // to the font provider's CDN at runtime.
 const home = siteBase || "/";
 
-test.describe("typography.fonts (D11)", () => {
+test.describe("typography.fonts", () => {
   test("Google font is self-hosted: preload links same-origin, zero requests to a font host", async ({
     page,
   }) => {

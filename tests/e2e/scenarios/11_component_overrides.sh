@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Scenario: app.json "components" (D6) selects a walle built-in name, a site path, or fails
+# Scenario: app.json "components" selects a walle built-in name, a site path, or fails
 # the build.
 
 # Sets app.json's "components" field to the given JSON object, in the given sandbox.

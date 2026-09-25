@@ -8,7 +8,7 @@ const baseItem: FeedItemConfig = {
 };
 
 describe("buildFeedItems", () => {
-  it("maps fields with a custom mapping (D18 example: date -> publishDate, categories -> tags)", () => {
+  it("maps fields with a custom mapping (example: date -> publishDate, categories -> tags)", () => {
     const item: FeedItemConfig = {
       ...baseItem,
       fields: { date: "publishDate", categories: "tags" },

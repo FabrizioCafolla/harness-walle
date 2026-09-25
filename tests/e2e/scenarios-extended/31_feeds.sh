@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Scenario: D18. seo.feeds — on by default for a fresh init (seeded from the demo's own
+# Scenario: seo.feeds: on by default for a fresh init (seeded from the demo's own
 # app.json, same seed-once mechanism as OG), a real RSS file with absolute item links, the
 # alternate link present and absolute in the built HTML head, excluded from the sitemap, and
 # disabled means no route at all.
@@ -34,7 +34,7 @@ scenario_feeds() {
   fi
 
   # Disabled: update never touches app.json (seed-once), so an existing consumer who drops the
-  # whole seo block keeps feeds off after an update — no route, no error.
+  # whole seo block keeps feeds off after an update: no route, no error.
   node -e "
     const fs = require('fs');
     const p = '$dir/src/configs/app.json';

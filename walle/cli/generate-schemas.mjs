@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Regenerates walle/website/schemas/*.schema.json from the zod schemas in
-// walle/website/src/@walle/config/schema.ts, the single source of truth for config shape
-// (D7). Those zod schemas are the real, build-time gate (define-config.ts); the JSON Schema
+// walle/website/src/@walle/config/schema.ts, the single source of truth for config shape.
+// Those zod schemas are the real, build-time gate (define-config.ts); the JSON Schema
 // files here exist only so walle/cli/validate-configs.mjs (ajv, shipped to consumers) keeps
 // working without needing a Node runtime that can import zod/TypeScript.
 //

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Scenario: walle.justfile is retired (D3) — its recipes are injected as a marker block
+# Scenario: walle.justfile is retired: its recipes are injected as a marker block
 # directly into the consumer's own justfile.project, no separate file, no `import` line.
 # Smoke-test the chain (justfile -> justfile.project -> injected recipes) inside a real
 # sandbox consumer, and assert the old layout is nowhere to be found.

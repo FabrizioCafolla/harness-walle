@@ -44,7 +44,7 @@ scenario_devcontainer_seed() {
     }
   " || fail "manifest should record devcontainer.enabled=false" || return 1
 
-  # update must not touch an existing seed (.husky/pre-commit) — it's write-once.
+  # update must not touch an existing seed (.husky/pre-commit): it's write-once.
   local orig
   orig=$(cat "$dir_default/.husky/pre-commit")
   cli update --source "$REPO_ROOT" -p "$dir_default" >/dev/null \

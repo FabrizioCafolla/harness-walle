@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { siteBase, storyRoutes } from "./storyRoutes";
 import { WALLE_LAYER_DECLARATION } from "../../src/@walle/styles/layers";
 
-// D1: the cascade layer order must be declared before any other stylesheet reaches <head>,
+// The cascade layer order must be declared before any other stylesheet reaches <head>,
 // so walle's own layers always lose to a `@layer site` rule (and any unlayered rule) that
 // arrives later in the document, regardless of actual load order.
 const home = siteBase || "/";

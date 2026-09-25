@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Scenario: `astro.adapter: "node"` gives "static by default, on-demand where declared" (D9):
+# Scenario: `astro.adapter: "node"` gives "static by default, on-demand where declared":
 # the backend module's `prerender = false` API route is served on demand by the node server,
 # while regular content pages are already static files in dist/ before that server ever starts.
 

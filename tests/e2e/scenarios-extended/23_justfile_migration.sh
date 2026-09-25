@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Scenario: a consumer still on the walle-v0-2-0-consolidation layout (walle.justfile file +
 # `import 'walle.justfile'` in justfile.project) migrates cleanly on the first `walle update`
-# against this change's source — old file gone, import line gone, marker block injected in
+# against the current source: old file gone, import line gone, marker block injected in
 # its place, and the consumer's own customizations in justfile.project survive untouched.
 
 scenario_justfile_migration() {
@@ -21,7 +21,7 @@ EOF
   cat >"${dir}/justfile.project" <<'EOF'
 import 'walle.justfile'
 
-# consumer-owned customization — must survive migration untouched
+# consumer-owned customization: must survive migration untouched
 my-custom-recipe:
     echo "hello from the consumer"
 EOF

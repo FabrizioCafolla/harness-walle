@@ -4,14 +4,13 @@ import { join, relative } from "node:path";
 
 // Tokens are the only styling interface (repo-guide.md): a literal color, radius, shadow or
 // px font-size outside tokens.css is a value a theme.json override can never reach. tokens.css
-// itself is exempt — it is where every default literal lives, wrapped in `var(--walle-*, ...)`.
+// itself is exempt: it is where every default literal lives, wrapped in `var(--walle-*, ...)`.
 
 const walleRoot = join(__dirname, "../../src/@walle");
 const tokensFile = join(walleRoot, "styles/tokens.css");
 
-// Components not yet migrated to D5's structure (groups 4-7 replace each one's literal
-// colors/radii/shadows/px font-sizes with tokens as part of its own task). This list may
-// only shrink: each component task removes its own entry as part of its verification.
+// Components not yet migrated to token-only styling. This list may
+// only shrink: each component migration removes its own entry as part of its verification.
 // Never add a file created after this list existed, those are born token-only.
 const PENDING_MIGRATION: string[] = [];
 

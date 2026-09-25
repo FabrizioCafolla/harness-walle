@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Scenario: D17. A real consumer build with a Map page — invalid coordinates are still
+# Scenario: A real consumer build with a Map page: invalid coordinates are still
 # filtered server-side outside this repo, and leaflet lands in its own lazy chunk rather than
 # the eager page bundle.
 

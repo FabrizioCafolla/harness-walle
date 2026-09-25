@@ -7,7 +7,7 @@ SANDBOX_DIR="${REPO_ROOT}/tests/e2e/.sandbox"
 CLI="${REPO_ROOT}/walle/cli/cli.sh"
 
 # init runs harness-coding's CLI to establish the base. Point it at an offline stub so the
-# suite never reaches the network — it creates the minimal base files walle injects into.
+# suite never reaches the network: it creates the minimal base files walle injects into.
 _HC_STUB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.hc-stub.sh"
 cat >"$_HC_STUB" <<'STUB'
 #!/usr/bin/env bash
@@ -85,7 +85,7 @@ assert_manifest_valid() {
   local manifest="$1"
 
   # ajv/ajv-formats are declared devDependencies of walle/website, so a repo with
-  # the site deps installed already has them — no network needed. Only fall back
+  # the site deps installed already has them: no network needed. Only fall back
   # to a repo-root install if neither location resolves (e.g. a bare checkout).
   if [ ! -d "${REPO_ROOT}/node_modules/ajv" ] &&
     [ ! -d "${REPO_ROOT}/walle/website/node_modules/ajv" ]; then

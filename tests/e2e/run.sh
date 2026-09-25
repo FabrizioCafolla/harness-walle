@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Walle e2e harness — fast core. Simulates a consumer project from the current local
+# Walle e2e harness: fast core. Simulates a consumer project from the current local
 # working tree (--source mode) and validates the things that actually gate a change.
 
 set -uo pipefail

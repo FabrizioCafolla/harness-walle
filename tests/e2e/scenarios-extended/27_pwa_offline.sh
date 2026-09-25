@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Scenario: pwa.offline (D12) — the built sw.js references the offline URL, the sitemap
+# Scenario: pwa.offline: the built sw.js references the offline URL, the sitemap
 # excludes it, and the offline page renders noindex, in a fresh consumer sandbox.
 
 set_pwa_json() {

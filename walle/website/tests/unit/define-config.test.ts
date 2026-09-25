@@ -17,7 +17,7 @@ function findThemePlugin(config: ReturnType<typeof defineWalleConfig>): ThemePlu
 }
 
 // define-config.ts reads appConfig.* and theme.json fresh on every defineWalleConfig() call
-// (no caching at module scope), so mutating these mocks between tests is enough — no need to
+// (no caching at module scope), so mutating these mocks between tests is enough: no need to
 // re-import the module per test.
 const baseAppConfig = {
   astro: { baseUrl: "https://example.com", basePath: "/", trailingSlash: "never" as const },

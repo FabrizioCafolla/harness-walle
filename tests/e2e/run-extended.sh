@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Walle e2e harness — full suite (core + extended). Runs every scenario, including the
+# Walle e2e harness: full suite (core + extended). Runs every scenario, including the
 # deeper per-module behavioral checks (marker injection edge cases, migration paths,
 # schema enforcement, devcontainer sync details, seed persistence, etc.) that `just e2e`
 # skips for speed. Opt-in: run before merging a change that touches the CLI's sync/inject
@@ -26,8 +26,8 @@ SCENARIOS=(
   "Seed persistence (consumer-owned seed survives update/re-add)|scenario_seed_persistence"
   "CI starter (ci module seeds usable workflows wired to @walle actions)|scenario_ci_starter"
   "Backend API route (adapter on → /api/health 200, seed survives update)|scenario_backend_api"
-  "Adapter: on-demand API route + static content pages (D9)|scenario_adapter"
-  "Redirects: astro.redirects pass-through + sitemap exclusion (D9)|scenario_redirects"
+  "Adapter: on-demand API route + static content pages|scenario_adapter"
+  "Redirects: astro.redirects pass-through + sitemap exclusion|scenario_redirects"
   "Component overrides (built-in name, site path, wrapping override, missing path and unknown name fail)|scenario_component_overrides"
   "Update propagation with fixture (consumer zones intact)|scenario_update_propagation"
   "CLI commands (dry-run, add, check)|scenario_cli_commands"

@@ -36,14 +36,14 @@ function themeCss(): string {
   return themePlugin.load("\0virtual:walle-theme.css") as string;
 }
 
-describe("generateThemeCss (D3 token table)", () => {
+describe("generateThemeCss (token table)", () => {
   beforeEach(() => {
     appConfigMock = structuredClone(baseAppConfig);
     fsExists = false;
     fsContent = "";
   });
 
-  it("maps every D3 family from a full theme.json to its --walle-* line", () => {
+  it("maps every token family from a full theme.json to its --walle-* line", () => {
     fsExists = true;
     fsContent = JSON.stringify({
       palette: {

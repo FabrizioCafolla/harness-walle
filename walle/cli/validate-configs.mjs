@@ -30,10 +30,10 @@ let failed = false;
 for (const { config, schema, required } of pairs) {
   if (!existsSync(resolve(root, config))) {
     if (required) {
-      console.error(`✗ ${config} — missing (required)`);
+      console.error(`✗ ${config}: missing (required)`);
       failed = true;
     } else {
-      console.log(`· ${config} — absent (optional), skipped`);
+      console.log(`· ${config}: absent (optional), skipped`);
     }
     continue;
   }

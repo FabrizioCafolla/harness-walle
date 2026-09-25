@@ -75,7 +75,7 @@ describe("splitProps", () => {
 
   it("returns an empty own when the claimed key is absent from this instance", () => {
     // "bar" is a real, valid own-key for this props shape (e.g. an optional prop OWN_KEYS
-    // declares) that simply wasn't passed this time — not an arbitrary undeclared key.
+    // declares) that simply wasn't passed this time, not an arbitrary undeclared key.
     const props: { foo: number; bar?: string } = { foo: 1 };
     const { own, rest } = splitProps(props, ["bar"]);
     expect(own).toEqual({});

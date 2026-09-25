@@ -112,7 +112,7 @@ ssr_enabled() {
 }
 
 # --- Config-driven paths (walle/walle.yml is the single source of truth) -------------
-# The config is real YAML but every entry is pipe-delimited, so awk alone parses it — no
+# The config is real YAML but every entry is pipe-delimited, so awk alone parses it: no
 # YAML runtime dep (the CLI must run as `curl | bash`).
 # ponytail: purpose-built reader for our flat schema, not a general YAML parser.
 
@@ -157,9 +157,9 @@ module_seed_paths()    { config_dests seed "$1"; }
 
 module_purpose() {
   case "$1" in
-    website) echo "Astro site — @walle components, layouts, styles, config and CLI scripts" ;;
+    website) echo "Astro site: @walle components, layouts, styles, config and CLI scripts" ;;
     ci) echo "GitHub Actions workflows (test + deploy) under @walle" ;;
-    ai) echo "AI harness — generated AGENTS.md block and @walle skills" ;;
+    ai) echo "AI harness: generated AGENTS.md block and @walle skills" ;;
     backend) echo "API routes (requires SSR enabled in src/configs/app.json)" ;;
     harness-coding|devcontainer) echo "Harness coding scaffold" ;;
     *) echo "walle module" ;;
@@ -412,10 +412,10 @@ EOF
     -not -path '*/.yarn/*' -not -name 'yarn.lock')
 
   # app.json in website/ carries Walle's own GH-Pages deployment identity AND its own demo-only
-  # content (commerce.mode: "shop", redirects to demo product handles) — reset/strip it to
+  # content (commerce.mode: "shop", redirects to demo product handles): reset/strip it to
   # neutral defaults for a fresh consumer (only when we just created the file, never on a
   # re-seed). seo.ogImage/seo.feeds are left as the demo has them (both enabled), and every
-  # other key that isn't demo-specific (D10).
+  # other key that isn't demo-specific.
   local app="${tgt_dir}/src/configs/app.json"
   if [ "$had_app" = "0" ] && [ "$DRY_RUN" != "1" ] && [ -f "$app" ]; then
     APP_JSON="$app" node -e '
@@ -458,7 +458,7 @@ generate_agents_block() {
   echo -e "\n### Active walle modules\n"
 
   for m in ${AGENTS_MODULES}; do
-    echo "- **${m}** — $(module_purpose "$m")"
+    echo "- **${m}**: $(module_purpose "$m")"
     local managed seed
     managed="$(module_managed_paths "$m")"
     seed="$(module_seed_paths "$m")"
@@ -467,7 +467,7 @@ generate_agents_block() {
   done
 
   if [ "${HARNESS_CODING_ENABLED:-0}" = "1" ]; then
-    echo "- **harness-coding** — $(module_purpose "devcontainer")"
+    echo "- **harness-coding**: $(module_purpose "devcontainer")"
     local m_dc s_dc
     m_dc="$(module_managed_paths "devcontainer")"
     s_dc="$(module_seed_paths "devcontainer")"
@@ -590,7 +590,7 @@ sync_module() {
 
 # Establish the harness-coding base (real justfile with markers, justfile.tooling,
 # .devcontainer/*, .pre-commit-config.yaml, AGENTS.md base block) BEFORE walle seeds and
-# injects. Walle owns none of these — it only injects its own blocks into files harness-coding
+# injects. Walle owns none of these; it only injects its own blocks into files harness-coding
 # already created. Runs harness-coding's own CLI so the base is always current, not a stale
 # copy vendored here. Override the source with WALLE_HARNESS_CODING_CLI (path to a local
 # cli.sh) for offline/e2e runs; defaults to fetching main over the network.
@@ -631,7 +631,7 @@ run_init_sync() {
 # =============================================================================
 
 # Writes .harness-walle/manifest.json. The `files` map records every path walle wrote, grouped by
-# class (managed | seed | inject) → module — same idea as harness-coding's manifest. Node
+# class (managed | seed | inject) → module, same idea as harness-coding's manifest. Node
 # assembles the JSON from the FILES_LOG the sync functions accumulate (single parser: awk
 # reads the config, node only groups what was recorded).
 write_manifest() {
@@ -978,7 +978,7 @@ cmd_add() {
 
   local present=0
   for m in "${mods[@]}"; do [ "$m" = "$NEW_MOD" ] && present=1; done
-  [ "$present" = "1" ] && print_info "'${NEW_MOD}' already declared — re-syncing."
+  [ "$present" = "1" ] && print_info "'${NEW_MOD}' already declared, re-syncing."
 
   if [ "$DRY_RUN" = "1" ]; then
     print_plan "add plan: '${NEW_MOD}'"
@@ -1065,13 +1065,13 @@ cmd_check() {
 # =============================================================================
 # 8b. DEPENDENCY DRIFT
 # =============================================================================
-# package.json is a SEED file (consumer-owned), so `update` never rewrites it — that would
+# package.json is a SEED file (consumer-owned), so `update` never rewrites it: that would
 # clobber the deps a consumer added. Instead we treat the source seed
 # (walle/website/package.json) as the reference for Walle-OWNED deps and compare the
 # consumer's versions against it. Consumer-added deps (not in the seed) are never touched.
 # `check` reports drift; `apply` bumps behind deps in place AND adds missing runtime
-# `dependencies` (Walle code the consumer synced hard-imports them — e.g. commerce/cart.ts
-# needs nanostores — so an absent one is a build breaker, not an opt-out). Missing
+# `dependencies` (Walle code the consumer synced hard-imports them, e.g. commerce/cart.ts
+# needs nanostores, so an absent one is a build breaker, not an opt-out). Missing
 # `devDependencies` (optional tooling) are only reported, never forced. Always exits 0
 # (informational) so it never fails an update.
 run_deps() {
@@ -1105,7 +1105,7 @@ for (const sec of SECTIONS)
       // A missing runtime `dependency` is a build breaker: Walle code the consumer
       // synced (e.g. commerce/cart.ts) hard-imports it, so it must be present. A
       // missing `devDependency` is optional tooling (vitest, playwright, astrobook)
-      // the consumer may deliberately skip — warn only, never force.
+      // the consumer may deliberately skip: warn only, never force.
       missing.push({ name, walle: wr, runtime: sec === "dependencies" });
       continue;
     }
@@ -1129,7 +1129,7 @@ if (mode === "apply") {
     for (const d of missingRuntime) console.log(`          ${d.name}  (added) ${d.walle}`);
     console.log(" [INFO] Run `yarn install` (or your package manager) to update the lockfile.");
   } else {
-    console.log(" [INFO] Walle dependencies already aligned — nothing to do.");
+    console.log(" [INFO] Walle dependencies already aligned, nothing to do.");
   }
   if (missingDev.length)
     console.log(
@@ -1157,12 +1157,12 @@ if (behind.length) {
   console.log(
     ` ⚠ ${behind.length} Walle dependency(ies) in your package.json are behind the tested set`
   );
-  console.log("   (Walle never rewrites package.json — it's yours):");
+  console.log("   (Walle never rewrites package.json; it's yours):");
   console.log("");
   console.log(`     ${pad("package", w1)}  ${pad("yours", w2)}  walle`);
   for (const d of behind)
     console.log(
-      `     ${pad(d.name, w1)}  ${pad(d.yours, w2)}  ${d.walle}${d.major ? "   ⚠ major — check breaking changes" : ""}`
+      `     ${pad(d.name, w1)}  ${pad(d.yours, w2)}  ${d.walle}${d.major ? "   ⚠ major: check breaking changes" : ""}`
     );
   console.log("");
   console.log("   Align them:  yarn up " + behind.map((d) => `${d.name}@${d.walle}`).join(" "));
@@ -1171,7 +1171,7 @@ if (behind.length) {
 if (missingRuntime.length) {
   console.log(
     `\n ⚠ ${missingRuntime.length} required Walle runtime dependency(ies) missing from package.json` +
-      " — builds that reach the code importing them (e.g. commerce) will fail:"
+      "; builds that reach the code importing them (e.g. commerce) will fail:"
   );
   console.log("     " + missingRuntime.map((d) => `${d.name}@${d.walle}`).join("  "));
   console.log("   Add them:    walle deps --apply   (or: yarn add " +
@@ -1213,7 +1213,7 @@ cmd_deps() {
 main() {
   # The command is the FIRST argument; everything after is passed to the subcommand
   # verbatim. (Scanning all args for a command keyword would mistake a flag value that
-  # happens to equal a command name — e.g. `init -n deps` — for the command itself.)
+  # happens to equal a command name, e.g. `init -n deps`, for the command itself.)
   [ $# -gt 0 ] || { usage; print_error "no command given"; }
   local cmd="$1"; shift
   case "$cmd" in

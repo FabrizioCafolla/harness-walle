@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Scenario: a consumer defines "site" once, at `@layer site` (D4), and every component that
+# Scenario: a consumer defines "site" once, at `@layer site`, and every component that
 # reads variant tokens (Button, Badge, a Section) picks it up with no per-component styling.
 
 scenario_site_variant() {
@@ -9,7 +9,7 @@ scenario_site_variant() {
     || fail "cli init failed" || return 1
   sandbox_install "$dir" || fail "yarn install failed" || return 1
 
-  # The consumer's own @layer site override, seeded empty by walle (D4): this is the ONLY
+  # The consumer's own @layer site override, seeded empty by walle: this is the ONLY
   # styling a site adds to brand the "site" variant everywhere it is used.
   cat >>"$dir/src/styles/global.css" <<'EOF'
 @layer site {

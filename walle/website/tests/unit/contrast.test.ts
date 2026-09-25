@@ -126,9 +126,9 @@ const pairings: [string, string, string, number][] = [
     NORMAL,
   ],
 ];
-// Badge's filled state now maps to --variant-fg on --variant-bg (D4), already covered by
-// the "[data-variant] fg on bg" describe block below — no separate literal pairing needed.
-// Its status coloring maps to --status-*-contrast on --status-* (D4), covered by the
+// Badge's filled state maps to --variant-fg on --variant-bg, already covered by
+// the "[data-variant] fg on bg" describe block below: no separate literal pairing needed.
+// Its status coloring maps to --status-*-contrast on --status-*, covered by the
 // "status tokens" describe block below.
 
 describe("default palette meets WCAG 2.2 AA", () => {
@@ -140,7 +140,7 @@ describe("default palette meets WCAG 2.2 AA", () => {
   }
 });
 
-// D4 variant model — brand variants plus their inverse rendering and status pairs.
+// Variant model: brand variants plus their inverse rendering and status pairs.
 const VARIANTS = ["primary", "secondary", "alternative"] as const;
 const VARIANT_PROPS = [
   "--variant-color",
@@ -200,7 +200,7 @@ describe("[data-variant] inverse (--variant-color on --surface) meets WCAG 2.2 A
   }
 });
 
-// site is defined identical to primary by construction (D4); enforce it stays that way,
+// site is defined identical to primary by construction; enforce it stays that way,
 // not just that the two happen to resolve to the same color today.
 describe('[data-variant="site"] matches [data-variant="primary"] line for line', () => {
   for (const prop of VARIANT_PROPS) {

@@ -25,7 +25,7 @@ describe("Badge", () => {
     });
     // Both attributes are present: variant still identifies the badge's variant, but the
     // CSS's [data-status] rule has higher specificity than the plain variant mapping, so
-    // status wins the coloring (D5). This asserts the markup contract that makes that possible.
+    // status wins the coloring. This asserts the markup contract that makes that possible.
     expect(html).toContain('data-variant="secondary"');
     expect(html).toContain('data-status="success"');
   });

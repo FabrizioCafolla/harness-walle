@@ -2,17 +2,16 @@ import { describe, expect, it } from "vitest";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
-// D1: every rule under @walle must sit inside a `walle.*` (or `site`) layer, so a consumer's
+// Every rule under @walle must sit inside a `walle.*` (or `site`) layer, so a consumer's
 // unlayered `@layer site` rule always wins regardless of load order. The one exception is a
 // `<style is:global>` block whose only content is an `@import "..." layer(walle.components);`
-// statement (design.md Risks: leaflet's own CSS, task 14.3) — Astro's scoped-style compiler
+// statement, for leaflet's own CSS: Astro's scoped-style compiler
 // would otherwise cid-scope selectors that leaflet creates at runtime and can never match.
 
 const walleRoot = join(__dirname, "../../src/@walle");
 
-// Components not yet migrated to D5's structure (groups 4-7 wrap each one's <style> in
-// @layer walle.components as part of its own task). This list may only shrink: each
-// component task removes its own entry as part of its verification. Never add a file
+// Components not yet migrated to the layered style structure. This list may only shrink: each
+// component migration removes its own entry as part of its verification. Never add a file
 // created after this list existed, those are born layered.
 const PENDING_MIGRATION: string[] = [];
 
@@ -156,7 +155,7 @@ describe("css-layers: every walle rule sits inside a walle.* layer", () => {
   }
 });
 
-// D1: the layer order is declared in exactly one place, the inline statement Head.astro
+// The layer order is declared in exactly one place, the inline statement Head.astro
 // renders as the first <head> child (astrobook.astro.head mirrors it for story pages), with
 // base.css's own copy as the fallback for any page that never renders Head.astro. A component
 // re-declaring the order itself only works by luck of module load order (whichever file's

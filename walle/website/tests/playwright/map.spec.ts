@@ -1,11 +1,11 @@
 import { expect, test } from "@playwright/test";
 import { storyRoutes } from "./storyRoutes";
 
-// D17: the map is only ever the astrobook stories before 16.3 mounts it on the demo site, so
+// The map currently mounts only in the astrobook stories, not yet on the demo site, so
 // this runs against the astrobook webServer (playwright.astrobook.config.ts), same as a11y.spec.ts.
 
 // A 1x1 transparent PNG. Routed in for every OSM tile request so the spec never depends on the
-// real tile server being reachable, per the tile-network heads-up on this task.
+// real tile server being reachable.
 const ONE_PX_PNG = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
   "base64"
@@ -22,7 +22,7 @@ function storyPath(id: string): string {
   return route.path;
 }
 
-test.describe("Map (D17)", () => {
+test.describe("Map", () => {
   test("no leaflet request before scroll, markers rendered after scroll, attribution visible", async ({
     page,
   }) => {
@@ -31,12 +31,12 @@ test.describe("Map (D17)", () => {
     );
 
     // Pushes the whole page down so the map's container starts well outside the viewport
-    // (plus the client's 200px IntersectionObserver rootMargin) at load — otherwise a normal
+    // (plus the client's 200px IntersectionObserver rootMargin) at load: otherwise a normal
     // 1280x720 viewport would already have the map (near the top of a short story page) in
     // view, and this test couldn't tell "before scroll" from "after scroll" apart.
     // document.documentElement doesn't exist yet when an addInitScript body runs (it fires
     // before the parser creates the <html> node), so the style has to wait for
-    // DOMContentLoaded — registered here first, it still runs before Map's own
+    // DOMContentLoaded: registered here first, it still runs before Map's own
     // DOMContentLoaded listener that sets up the IntersectionObserver.
     await page.addInitScript(() => {
       document.addEventListener("DOMContentLoaded", () => {

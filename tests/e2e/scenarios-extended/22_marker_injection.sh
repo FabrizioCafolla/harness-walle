@@ -54,7 +54,7 @@ inject_marker_block "${dir}/rewrite.txt" "\$block3b" "\$start" "\$end"
 after="\$(sha256sum "${dir}/rewrite.txt")"
 [ "\$before" = "\$after" ] || fail_case "re-injecting identical block content is not idempotent"
 
-# 4. bash content stays syntactically valid after injection — markers must be shell-comment
+# 4. bash content stays syntactically valid after injection: markers must be shell-comment
 # syntax (# ...), not the HTML markers used for Markdown, or the block breaks bash parsing.
 bash_start="# [test:START]"
 bash_end="# [test:END]"
@@ -67,7 +67,7 @@ echo "#!/usr/bin/env bash" >"${dir}/setup.sh"
 inject_marker_block "${dir}/setup.sh" "\$blockbash" "\$bash_start" "\$bash_end"
 bash -n "${dir}/setup.sh" || fail_case "injected bash block is not syntactically valid"
 
-# 5. YAML content stays parseable after injection (top-level key, no nested merge) — markers
+# 5. YAML content stays parseable after injection (top-level key, no nested merge): markers
 # must be YAML-comment syntax (# ...), not HTML markers, or the block breaks YAML parsing.
 yaml_start="# [test:START]"
 yaml_end="# [test:END]"

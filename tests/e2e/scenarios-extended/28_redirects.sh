@@ -1,5 +1,5 @@
-# Scenario: `astro.redirects` passes straight through to Astro's native redirects (D9). Astro's
-# own static-output redirect page already emits refresh/noindex/canonical — this only has to
+# Scenario: `astro.redirects` passes straight through to Astro's native redirects. Astro's
+# own static-output redirect page already emits refresh/noindex/canonical: this only has to
 # confirm the pass-through actually reaches Astro, and that walle additionally excludes the
 # redirect source from sitemap.xml (Astro's sitemap integration doesn't know about redirects).
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Scenario: app.json is validated at build time (D14/schema.ts): an unknown key, a wrong
+# Scenario: app.json is validated at build time (schema.ts): an unknown key, a wrong
 # type, and a removed key each fail `yarn build` with the file name and the key path, and
 # the removed key's error additionally names its replacement.
 

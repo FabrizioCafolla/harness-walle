@@ -27,7 +27,7 @@ export default defineConfig({
     // lock that blocks the next spawn; reuseExistingServer already covers the
     // healthy-server case, so force only fires on the broken one).
     command: "env -u CLAUDECODE -u CLAUDE_CODE_ENTRYPOINT yarn astrobook --force",
-    // Base-prefixed: routes mount under astro's base (see storyRoutes.ts) — the
+    // Base-prefixed: routes mount under astro's base (see storyRoutes.ts): the
     // unprefixed /astrobook answers inconsistently depending on the Accept header.
     url: "http://localhost:4321/harness-walle/astrobook",
     reuseExistingServer: true,

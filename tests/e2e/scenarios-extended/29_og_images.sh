@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Scenario: seo.ogImage (D13) — on by default for a fresh init (seeded from the demo's own
+# Scenario: seo.ogImage: on by default for a fresh init (seeded from the demo's own
 # app.json), off by default for an existing/updated consumer that never opted in, and a
 # per-collection template override actually changes the rendered image.
 
@@ -23,7 +23,7 @@ scenario_og_images() {
   assert_path_present "$dir/dist/og/posts/example.png" || return 1
 
   # "Off on update": update never touches app.json at all (seed-once), so an existing consumer
-  # who removes the whole seo block keeps OG off after an update — no route, no error.
+  # who removes the whole seo block keeps OG off after an update: no route, no error.
   node -e "
     const fs = require('fs');
     const p = '$dir/src/configs/app.json';

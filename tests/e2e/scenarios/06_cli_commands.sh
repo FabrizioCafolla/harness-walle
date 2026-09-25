@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Scenario: CLI v2 commands — dry-run (no-op), add <module>, and check — exercised via --source.
+# Scenario: CLI v2 commands: dry-run (no-op), add <module>, and check, exercised via --source.
 
 scenario_cli_commands() {
   local dir="${SANDBOX_DIR}/cli"

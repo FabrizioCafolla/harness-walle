@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Scenario: `walle deps` reports Walle-owned dependency drift and `--apply` aligns package.json
 # without touching consumer-added deps. package.json is seed-owned, so `update` never rewrites
-# it — `deps` is how a consumer catches up on Walle's tested dependency set.
+# it: `deps` is how a consumer catches up on Walle's tested dependency set.
 
 scenario_deps() {
   local dir="${SANDBOX_DIR}/deps"
@@ -62,8 +62,8 @@ scenario_deps() {
       { console.error("optional devDependency was force-added"); process.exit(1); }
   ' || { fail "deps --apply did not add missing runtime dep correctly"; return 1; }
 
-  # (e) Same generic path covers the newer runtime deps too (D13/D17: satori, @resvg/resvg-js,
-  # leaflet) — `run_deps` reads the whole seed package.json, so nothing was hardcoded for
+  # (e) Same generic path covers the newer runtime deps too (satori, @resvg/resvg-js,
+  # leaflet): `run_deps` reads the whole seed package.json, so nothing was hardcoded for
   # these; check one of them (leaflet) to prove the pattern actually generalizes.
   DIR="$dir" node -e '
     const fs = require("fs"), p = process.env.DIR + "/package.json";

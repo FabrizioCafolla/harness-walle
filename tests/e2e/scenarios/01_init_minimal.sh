@@ -22,7 +22,7 @@ scenario_init_minimal() {
   assert_path_absent "$dir/AGENTS.md" || return 1
 
   # Clean scaffold: no repo-internal files leaked, and no trace of the walle/ product root
-  # itself — the consumer only ever gets the resolved MANAGED/SEED paths inside it.
+  # itself: the consumer only ever gets the resolved MANAGED/SEED paths inside it.
   local leaked
   for leaked in tests openspec CHANGELOG.md VERSIONING.md template walle node_modules; do
     assert_path_absent "$dir/$leaked" || return 1
@@ -33,8 +33,8 @@ scenario_init_minimal() {
   assert_path_present "$dir/schemas" || return 1
   assert_path_present "$dir/scripts/@walle/cli.sh" || return 1
 
-  # D10: app.json is stripped of the demo's own commerce.mode and demo-product redirects on a
-  # fresh init — a consumer starts with commerce off and no dangling redirect to demo content.
+  # app.json is stripped of the demo's own commerce.mode and demo-product redirects on a
+  # fresh init: a consumer starts with commerce off and no dangling redirect to demo content.
   node -e "
     const app = require('$dir/src/configs/app.json');
     process.exit(!('commerce' in app) && !(app.astro && 'redirects' in app.astro) ? 0 : 1);
@@ -46,7 +46,7 @@ scenario_init_minimal() {
   assert_path_present "$dir/dist/index.html" || return 1
 
   # Component markup, not just a 200: the template page renders Navbar, and its config-driven
-  # title/heading text — a broken component or config load would leave these absent even on
+  # title/heading text: a broken component or config load would leave these absent even on
   # a 200 response.
   assert_file_contains "$dir/dist/index.html" 'data-component="Navbar"' || return 1
   assert_file_contains "$dir/dist/index.html" "Walle Design System" || return 1

@@ -14,7 +14,7 @@ runs:
   steps:
     - name: Checkout your repository using git
       uses: actions/checkout@v7
-    # Must run before setup-node's cache: yarn — that step shells out to `yarn` to resolve
+    # Must run before setup-node's cache: yarn; that step shells out to `yarn` to resolve
     # the cache dir, and the runner's global Yarn 1.x refuses once package.json pins a specific
     # version via packageManager. Enabling Corepack first makes `yarn` resolve to the pinned
     # version via the Corepack shim.
