@@ -58,6 +58,8 @@ test.describe("Map", () => {
     await page.locator("[data-map-container]").scrollIntoViewIfNeeded();
     await expect(page.locator(".leaflet-marker-icon")).toHaveCount(3);
     expect(requestUrls.some((u) => /leaflet/i.test(u))).toBe(true);
+    // leaflet.css sets overflow: hidden on the container: proof the lazy styles applied.
+    await expect(page.locator(".leaflet-container")).toHaveCSS("overflow", "hidden");
 
     await expect(page.locator(".leaflet-control-attribution")).toBeVisible();
   });

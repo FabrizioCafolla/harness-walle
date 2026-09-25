@@ -60,7 +60,7 @@ function buildPopup(marker: MarkerData): HTMLElement {
 }
 
 async function loadMap(container: HTMLElement, list: HTMLOListElement): Promise<void> {
-  const { default: L } = await import("leaflet");
+  const [{ default: L }] = await Promise.all([import("leaflet"), import("./leaflet-styles")]);
   const markers = parseMarkers(list);
 
   const map = L.map(container, {

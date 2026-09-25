@@ -145,17 +145,10 @@ function resolveDirectionsUrl(lat: number, lng: number, provider: NonNullable<Di
 </style>
 
 <style is:global>
-  /* A scoped block appends this component's data-astro-cid-* attribute to every selector
-     pulled in by an @import, including leaflet's own .leaflet-pane/.leaflet-marker-icon/etc:
-     those never carry that attribute since leaflet creates them at runtime, so the imported
-     rules would never match. Layered so it still composes with tokens.css's layer order. */
-  @import "leaflet/dist/leaflet.css" layer(walle.components);
-
   @layer walle.components {
-    /* Structural rules for leaflet's runtime-created elements: same reason as the @import
-       above, these must stay global. Prefixed with .map__container so they only ever
-       restyle a walle Map, never some other leaflet map a site mounts itself on the same
-       page. */
+    /* Leaflet creates these elements at runtime, so they never carry this component's scope
+       attribute: the rules stay global, prefixed with .map__container so they only restyle a
+       walle Map. */
     .map__container .map__marker {
       --map-marker-radius: 50%;
 
