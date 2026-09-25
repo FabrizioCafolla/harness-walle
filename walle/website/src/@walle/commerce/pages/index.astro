@@ -7,9 +7,8 @@ import { defaultVariant, shopifyEnabled, type ShopifyProduct } from "@walle/comm
 import config from "@walle/config";
 import { getCollection } from "astro:content";
 
-// Reading `mode` directly is a bridge until group 11's virtual:walle-features gates this at
-// the module graph level instead of at render time. `addToCartLabel` is not config-driven yet
-// (group 9 moves it to labels.cart.add); until then this keeps today's hardcoded fallback.
+// Reads `commerce.mode` directly rather than through feature-gating at the module graph
+// level. `addToCartLabel` is a hardcoded fallback, not yet config-driven.
 const commerce = config.app.commerce;
 const showBuyButton = commerce?.mode === "shop";
 const locale = config.app.website.language ?? "en-US";

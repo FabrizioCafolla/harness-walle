@@ -6,7 +6,7 @@
  *
  * Every control is an option so a consumer configures the card or detail page as they
  * like. The add button carries `data-variant-id` and `data-qty`; the cart layer
- * (CartMount.astro) delegates its click to `addToCart`, so a vetrina build ships no JS.
+ * (CartMount.astro) delegates its click to `addToCart`, so a build with commerce off ships no JS.
  */
 import { defaultVariant, formatMoney, isSingleVariant, type ShopifyProduct } from "./shopify";
 import { label as t, locale as siteLocale } from "@walle/utils";

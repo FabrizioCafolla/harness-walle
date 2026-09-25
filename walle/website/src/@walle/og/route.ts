@@ -24,10 +24,10 @@ function entryFromCollectionItem(id: string, data: Record<string, unknown>): OgE
 }
 
 /**
- * Template precedence (D13), as a pure function decoupled from the filesystem/dynamic-import
- * side of actually loading one — this is what a unit test exercises directly. `undefined`
- * means "no override configured", leaving `resolveOgTemplate` to fall back to walle's own
- * default template.
+ * Template precedence, as a pure function decoupled from the filesystem/dynamic-import side
+ * of actually loading one: this is what a unit test exercises directly. `undefined` means
+ * "no override configured", leaving `resolveOgTemplate` to fall back to walle's own default
+ * template.
  */
 export function pickOgTemplatePath(
   collection: string | undefined,
@@ -63,8 +63,8 @@ async function resolveOgTemplate(
 }
 
 /**
- * `/og/[...slug].png` (D10/D13): "default" for the site-wide image, `<collection>/<id>` for one
- * per entry of every collection listed in `seo.ogImage.collections`. Each gets its own template:
+ * `/og/[...slug].png`: "default" for the site-wide image, `<collection>/<id>` for one per
+ * entry of every collection listed in `seo.ogImage.collections`. Each gets its own template:
  * `templates[collection] ?? templates.default ?? walle's own default`.
  */
 export async function getStaticPaths(): Promise<OgImagePath[]> {
@@ -100,6 +100,6 @@ export const GET: APIRoute = async ({ props }) => {
   const theme = resolveOgTheme();
   const png = await renderOgImage(entry, { template, theme });
   // Node's `Buffer` is a real `Uint8Array` at runtime (a valid Response body), but its type
-  // doesn't structurally satisfy DOM's `BodyInit` in this lib config — a type-only mismatch.
+  // doesn't structurally satisfy DOM's `BodyInit` in this lib config: a type-only mismatch.
   return new Response(png as unknown as BodyInit, { headers: { "Content-Type": "image/png" } });
 };

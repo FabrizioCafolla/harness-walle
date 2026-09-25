@@ -3,8 +3,8 @@ import { resolve } from "node:path";
 // `?inline` embeds the file's bytes as a base64 data URI directly in this module's own build
 // output, immune to Vite relocating the compiled chunk elsewhere (unlike a runtime
 // `readFileSync(new URL("./fonts/Inter-Bold.woff", import.meta.url))`, which resolves against
-// wherever THIS code physically ends up after bundling, not its original source location —
-// see the ambient declaration in env.d.ts for why this needs one).
+// wherever THIS code physically ends up after bundling, not its original source location.
+// See the ambient declaration in env.d.ts for why this import needs one.
 import bundledFontDataUri from "./fonts/Inter-Bold.woff?inline";
 
 export type OgFont = {
@@ -21,7 +21,7 @@ export type OgImageFontConfig = {
   style?: "normal" | "italic";
 };
 
-// A `typography.fonts` entry (schema.ts's fontEntrySchema) — only its `provider: "local"` shape
+// A `typography.fonts` entry (schema.ts's fontEntrySchema): only its `provider: "local"` shape
 // is usable here, since satori renders fully offline and google/fontsource fonts are fetched
 // from a CDN by Astro's Fonts API at build time.
 export type TypographyFontConfig = {
@@ -31,7 +31,7 @@ export type TypographyFontConfig = {
   weights?: (string | number)[];
 };
 
-// satori accepts ttf, otf and woff — never woff2 (D13): its font parser can't inflate brotli.
+// satori accepts ttf, otf and woff, never woff2: its font parser can't inflate brotli.
 const SUPPORTED_EXTENSIONS = [".ttf", ".otf", ".woff"];
 
 function isSupportedFontFile(path: string): boolean {
@@ -53,7 +53,7 @@ function readCached(absPath: string): Buffer {
 
 let bundledDefault: OgFont | null = null;
 
-/** The last-resort fallback (D13): bundled, open-licensed (SIL OFL 1.1), never fetched. */
+/** The last-resort fallback: bundled, open-licensed (SIL OFL 1.1), never fetched. */
 function bundledDefaultFont(): OgFont {
   if (!bundledDefault) {
     const base64 = bundledFontDataUri.slice(bundledFontDataUri.indexOf(",") + 1);
@@ -63,7 +63,7 @@ function bundledDefaultFont(): OgFont {
 }
 
 /**
- * Resolution order (D13): `seo.ogImage.fonts` (site-configured, explicit for OG rendering) →
+ * Resolution order: `seo.ogImage.fonts` (site-configured, explicit for OG rendering) →
  * the site's `typography.fonts` local sources in a supported format → the bundled fallback.
  * Never touches the network.
  */

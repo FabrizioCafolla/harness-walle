@@ -15,9 +15,8 @@ export async function getStaticPaths() {
 
 const { product } = Astro.props as { product: ShopifyProduct };
 
-// Reading `mode` directly is a bridge until group 11's virtual:walle-features gates this at
-// the module graph level instead of at render time. `addToCartLabel` is not config-driven yet
-// (group 9 moves it to labels.cart.add); until then this keeps today's hardcoded fallback.
+// Reads `commerce.mode` directly rather than through feature-gating at the module graph
+// level. `addToCartLabel` is a hardcoded fallback, not yet config-driven.
 const commerce = config.app.commerce;
 const showBuyButton = commerce?.mode === "shop";
 const locale = config.app.website.language ?? "en-US";
@@ -137,8 +136,8 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
     {
       !showBuyButton && (
         <p class="purchase-card__note">
-          This demo is a vetrina: the catalog is live from Shopify, but the cart and checkout are
-          disabled. Enable them with <code>commerce.mode: "shop"</code> in app.json.
+          This demo runs in catalog mode: the catalog is live from Shopify, but the cart and
+          checkout are disabled. Enable them with <code>commerce.mode: "shop"</code> in app.json.
         </p>
       )
     }
@@ -266,7 +265,7 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
       margin: 0;
     }
 
-    /* Nike-style sticky add-to-cart bar — mobile only, a single full-width button revealed by
+    /* Sticky add-to-cart bar, mobile only, a single full-width button revealed by
        JS when the buy box is off-screen. Tapping it scrolls to the buy box so the shopper picks
        size/colour there. Works without JS too (it just stays hidden). */
     .pdp-sticky {

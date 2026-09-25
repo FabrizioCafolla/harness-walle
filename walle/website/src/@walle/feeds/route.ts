@@ -7,9 +7,9 @@ import { resolveInternalUrl } from "@walle/utils";
 import { stripBase } from "../utils/base-path";
 
 /**
- * D18. One entrypoint file is injected once per configured feed item (define-config.ts);
+ * One entrypoint file is injected once per configured feed item (define-config.ts);
  * whichever `path` it was registered under is how a request finds its own item back out of
- * `config.app.seo.feeds.items` at request time — `injectRoute` has no way to pass distinct
+ * `config.app.seo.feeds.items` at request time: `injectRoute` has no way to pass distinct
  * props per pattern for a plain API route the way `getStaticPaths` does for pages.
  */
 
@@ -46,7 +46,7 @@ function requiredField(
 }
 
 /**
- * Drops excluded drafts, maps each entry's fields per `item.fields` (default: identity —
+ * Drops excluded drafts, maps each entry's fields per `item.fields` (default: identity;
  * "date" reads `data.date` unless overridden), sorts by date descending and applies the
  * configured limit. Pure and side-effect free so a unit test can exercise every case (mapping,
  * draft exclusion, sort, limit, the missing-field error) without astro:content or a real build.

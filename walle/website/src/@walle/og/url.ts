@@ -2,8 +2,8 @@ import config from "@walle/config";
 import { withBase } from "../utils/base-path";
 
 /**
- * The URL an injected OG image is served at (D13): `/og/default.png` for the site default,
- * `/og/<collection>/<id>.png` for a collection entry — matching `route.ts`'s
+ * The URL an injected OG image is served at: `/og/default.png` for the site default,
+ * `/og/<collection>/<id>.png` for a collection entry, matching `route.ts`'s
  * `/og/[...slug].png` pattern and its own `getStaticPaths`.
  */
 export function ogImageUrl(collection?: string, id?: string): string {

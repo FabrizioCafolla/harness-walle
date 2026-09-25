@@ -4,7 +4,7 @@ export type OgEntry = { title: string; subtitle?: string; data: Record<string, u
 
 /**
  * A satori-compatible element tree. Satori's own input type is `ReactNode` (from "react",
- * which this project never installs — satori itself only needs an object shaped like this,
+ * which this project never installs; satori itself only needs an object shaped like this,
  * no React runtime involved), so templates are written against this narrower, self-contained
  * type instead and cast at the one point they actually reach satori (`renderOgImage` below).
  */
@@ -23,9 +23,9 @@ const WIDTH = 1200;
 const HEIGHT = 630;
 
 /**
- * Renders one OG image (D13): satori lays the element tree out to SVG, resvg rasterizes it to
- * a PNG buffer. Both are imported dynamically so a site that never enables `seo.ogImage` never
- * pulls satori/resvg's native binary into its build graph at all.
+ * Renders one OG image: satori lays the element tree out to SVG, resvg rasterizes it to a PNG
+ * buffer. Both are imported dynamically so a site that never enables `seo.ogImage` never pulls
+ * satori/resvg's native binary into its build graph at all.
  */
 export async function renderOgImage(
   entry: OgEntry,
@@ -39,7 +39,7 @@ export async function renderOgImage(
 
   const element = template(entry, theme);
   // Both casts land on the one boundary where our own narrower types (SatoriElement, OgFont)
-  // meet satori's: it needs `react`'s ReactNode type for `element` (never installed — satori
+  // meet satori's: it needs `react`'s ReactNode type for `element` (never installed; satori
   // itself only needs the plain object shape) and a fixed Weight union for `fonts[].weight`
   // (walle's own config leaves this a plain number, validated loosely by design).
   const svg = await satori(element as unknown as Parameters<typeof satori>[0], {

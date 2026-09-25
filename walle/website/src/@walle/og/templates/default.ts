@@ -3,7 +3,7 @@ import type { OgTheme } from "../theme";
 
 const MAX_TITLE_LENGTH = 90;
 
-/** Exported for its own unit coverage — a long title must never overflow the 1200x630 canvas. */
+/** Exported for its own unit coverage: a long title must never overflow the 1200x630 canvas. */
 export function truncateTitle(title: string, max: number = MAX_TITLE_LENGTH): string {
   if (title.length <= max) return title;
   return `${title.slice(0, max - 1).trimEnd()}…`;

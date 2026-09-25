@@ -28,8 +28,8 @@ export type OgTheme = {
 };
 
 /**
- * Palette, fonts, site title and logo a template renders against (D13) — fully self-resolved
- * from the parsed config, no arguments: `root` is only needed to resolve a relative font path
+ * Palette, fonts, site title and logo a template renders against, fully self-resolved from
+ * the parsed config, no arguments: `root` is only needed to resolve a relative font path
  * from `seo.ogImage.fonts`/`typography.fonts`, and defaults to the process cwd (true for every
  * real build; a test overrides it to point at fixtures).
  */
