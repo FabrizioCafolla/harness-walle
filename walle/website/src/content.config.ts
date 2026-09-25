@@ -20,17 +20,20 @@ const posts = defineCollection({
 });
 
 /**
- * The design-system wiki (repo-root `wiki/*.md`) rendered into the showcase site at /wiki, so the
- * docs are consultable from the running site. This starter is also seeded to consumer projects,
- * which have no such folder — so the base is guarded: when `../../wiki` is absent the loader points
- * at a pattern that matches nothing, yielding an empty collection instead of a build error. The
- * /wiki pages are in `website-seed-exclude`, so a consumer never ships this UI.
+ * The design-system wiki (every markdown file under the repo-root `wiki/`, ids keep the
+ * directory) rendered at /wiki.
+ * Consumer projects have no such folder, so the loader then matches nothing instead of failing;
+ * the /wiki pages are in `website-seed-exclude`.
  */
 const hasWiki = existsSync("../../wiki");
 const wiki = defineCollection({
   loader: glob({
     base: hasWiki ? "../../wiki" : "./src",
-    pattern: hasWiki ? "*.md" : "__no_wiki__/*.md",
+    pattern: hasWiki ? "**/*.md" : "__no_wiki__/*.md",
+  }),
+  schema: z.object({
+    title: z.string().optional(),
+    order: z.number().int().optional(),
   }),
 });
 
