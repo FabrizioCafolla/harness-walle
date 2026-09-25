@@ -228,7 +228,7 @@ The full guide, with the CSS pattern replacements and the feature migrations, is
   already declares (title, description, language, theme palette, base path). Astro-side knobs are
   overridden natively via `defineWalleConfig({ pwa: … })`, and `runtimeCaching` merges instead of
   replacing (consumer rules first). Off by default: no integration mounted, nothing added to any
-  page. See [wiki/pwa.md](wiki/pwa.md). This replaces the pattern of hand-patching manifest links
+  page. See [wiki/pwa.md](wiki/architecture/pwa.md). This replaces the pattern of hand-patching manifest links
   and a registration script into `Head.astro`, a MANAGED file, where the next `update` wiped them
   without `check` noticing.
 
@@ -374,7 +374,7 @@ Walle's `package.json` is a **seed** file — created once at `init` and owned b
 afterwards — so `walle update` deliberately never rewrites it (it would clobber the deps a
 consumer added). That means dependency bumps do **not** propagate automatically; each release lists
 its dependency changes here so a consumer can apply them with `yarn up <pkg>@<range>`. See
-[wiki/versioning.md](wiki/versioning.md#keeping-dependencies-current).
+[wiki/versioning.md](wiki/develop/versioning.md).
 
 Walle-owned dependencies validated for this release (bump these; leave your own deps alone):
 
@@ -392,8 +392,8 @@ CI actions (managed, so these **do** update on `walle update`): `actions/setup-n
 New **`walle deps`** command closes the loop: it compares your `package.json` against the release's
 seed and reports Walle-owned drift (run automatically after `update`, disable with
 `--no-deps-check`); `walle deps --apply` bumps just those entries, leaving your own dependencies
-untouched. See [wiki/cli.md](wiki/cli.md#deps) and
-[wiki/versioning.md](wiki/versioning.md#keeping-dependencies-current).
+untouched. See [wiki/cli.md](wiki/develop/cli.md) and
+[wiki/versioning.md](wiki/develop/versioning.md).
 
 **Fixed — CLI command dispatch:** the launcher scanned every argument for a command keyword, so a
 flag value equal to a command name (e.g. `init -n deps`, or a project literally named `check`) was
@@ -448,7 +448,7 @@ through verbatim.
   (Website · CI/CD · Harness coding), the how-it-works flow, quick-start, and a showcase CTA.
   Reframed around the website, GitHub Actions CI/CD and the AI-ready harness-coding base
   (infrastructure references removed).
-- **Shopify headless commerce module** (`src/@walle/commerce/`, [wiki/commerce.md](wiki/commerce.md)):
+- **Shopify headless commerce module** (`src/@walle/commerce/`, [wiki/commerce.md](wiki/architecture/ecommerce.md)):
   a `products` content collection sourced from the Storefront API at build time (with a bundled
   fixture fallback so the demo builds with no credentials), static `/products` listing and
   `/products/[handle]` detail pages (zoomable gallery, `descriptionHtml` body, `RELATED` upsell,
@@ -499,7 +499,7 @@ through verbatim.
 - **Commerce refinements**: listing cards drop the quantity stepper, keeping an icon+label add-to-cart
   (customizable text); the cart drawer shows the selected variant/size per line and uses the same
   grouped, bordered quantity stepper as the picker (fixed: its CSS was scoped and never matched the
-  JS-built lines — now `:global`). [wiki/commerce.md](wiki/commerce.md) has a full step-by-step Shopify
+  JS-built lines — now `:global`). [wiki/commerce.md](wiki/architecture/ecommerce.md) has a full step-by-step Shopify
   setup guide
   (Headless channel, public token, publishing, env vars, webhooks/build hook) and a "managing the
   store" table.
@@ -527,7 +527,7 @@ through verbatim.
   stops. Fixes a CI axe failure that only reproduced where fonts made a code block overflow.
 
 - **BREAKING — unified component prop vocabulary.** Every `@walle` component now uses the shared
-  API convention documented in [wiki/components.md](wiki/components.md#api-conventions). Consumer
+  API convention documented in [wiki/components.md](wiki/architecture/components.md). Consumer
   usages of `@walle` components need the following mechanical renames (find/replace):
 
   | Component        | Old prop                | New prop               |
