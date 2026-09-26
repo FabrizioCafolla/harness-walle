@@ -128,7 +128,7 @@ const tagAttrs = isLink
     .button {
       /* Public properties */
       --button-bg: var(--variant-bg);
-      --button-bg-hover: var(--variant-bg-hover);
+      --button-bg-hover: color-mix(in srgb, var(--button-bg), var(--black) 30%);
       --button-fg: var(--variant-fg);
       --button-border: var(--button-bg);
       --button-radius: var(--radius-xl);
@@ -182,7 +182,7 @@ const tagAttrs = isLink
 
     .button[data-inverse] {
       --button-bg: var(--surface);
-      --button-bg-hover: var(--surface-alt);
+      --button-bg-hover: color-mix(in srgb, var(--button-bg), var(--variant-color) 12%);
       --button-fg: var(--variant-color);
       --button-border: var(--variant-color);
     }
