@@ -38,10 +38,8 @@ const {
     {
       image && (
         <div class="image-container">
-          {
-            /* image.src is `string | ImageMetadata`; Astro's <Image> only overloads on one or
-               the other, so a union value never resolves to either branch on its own. */
-          }
+          {/* image.src is `string | ImageMetadata`; Astro's <Image> only overloads on one or
+               the other, so a union value never resolves to either branch on its own. */}
           <Image
             src={image.src as string}
             alt={image.alt}

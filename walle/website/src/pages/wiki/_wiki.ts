@@ -50,9 +50,7 @@ export function groupPages(entries: WikiEntryLike[]) {
   return [{ id: "overview", title: "Overview" }, ...SECTIONS]
     .map((section) => ({
       ...section,
-      pages: pages
-        .filter((p) => (p.section ?? "overview") === section.id)
-        .sort(byOrder),
+      pages: pages.filter((p) => (p.section ?? "overview") === section.id).sort(byOrder),
     }))
     .filter((group) => group.pages.length > 0);
 }
@@ -65,7 +63,8 @@ export function groupPages(entries: WikiEntryLike[]) {
 export function resolveLink(
   fromId: string,
   href: string
-): { kind: "wiki"; id: string; hash: string } | { kind: "repo"; path: string; hash: string } | null {
+):
+  { kind: "wiki"; id: string; hash: string } | { kind: "repo"; path: string; hash: string } | null {
   const match = href.match(/^([^#?]+\.md)(#.*)?$/i);
   if (!match || /^[a-z]+:|^\//i.test(href)) return null;
   const [, file, hash = ""] = match;

@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { groupPages, resolveLink, rewriteLinks, sectionOf, titleOf } from "../../src/pages/wiki/_wiki";
+import {
+  groupPages,
+  resolveLink,
+  rewriteLinks,
+  sectionOf,
+  titleOf,
+} from "../../src/pages/wiki/_wiki";
 
 describe("wiki sections", () => {
   it("takes the section from the first directory of the id", () => {
@@ -78,7 +84,8 @@ describe("wiki links", () => {
 
   it("rewrites only links whose target exists", () => {
     const ids = new Set(["architecture/style"]);
-    const html = '<a href="style.md">s</a><a href="missing.md">m</a><a href="../../CHANGELOG.md">c</a>';
+    const html =
+      '<a href="style.md">s</a><a href="missing.md">m</a><a href="../../CHANGELOG.md">c</a>';
     expect(rewriteLinks(html, "architecture/pwa", ids, "/base")).toBe(
       '<a href="/base/wiki/architecture/style">s</a><a href="missing.md">m</a>' +
         '<a href="https://github.com/FabrizioCafolla/harness-walle/blob/main/CHANGELOG.md">c</a>'

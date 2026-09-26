@@ -241,9 +241,7 @@ describe("withBase", () => {
   });
 
   it("prefixes the base onto an internal root-relative destination", () => {
-    expect(withBase("/products/example", "/harness-walle")).toBe(
-      "/harness-walle/products/example"
-    );
+    expect(withBase("/products/example", "/harness-walle")).toBe("/harness-walle/products/example");
   });
 
   it("is idempotent when the destination already carries the base", () => {

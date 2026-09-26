@@ -7,6 +7,8 @@ import { withBase } from "../utils/base-path";
  * `/og/[...slug].png` pattern and its own `getStaticPaths`.
  */
 export function ogImageUrl(collection?: string, id?: string): string {
-  const segments = collection ? [collection, id].filter((s): s is string => Boolean(s)) : ["default"];
+  const segments = collection
+    ? [collection, id].filter((s): s is string => Boolean(s))
+    : ["default"];
   return withBase(`/og/${segments.join("/")}.png`, config.app.astro.basePath);
 }

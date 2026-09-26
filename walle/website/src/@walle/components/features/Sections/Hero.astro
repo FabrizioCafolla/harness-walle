@@ -119,10 +119,8 @@ const hasSubtitle = Astro.slots.has("subtitle") || Boolean(subtitle);
             { "hero-image-container-first": imagePosition === "start" },
           ]}
         >
-          {
-            /* image.src is `string | ImageMetadata`; Astro's <Image> only overloads on one or
-               the other, so a union value never resolves to either branch on its own. */
-          }
+          {/* image.src is `string | ImageMetadata`; Astro's <Image> only overloads on one or
+               the other, so a union value never resolves to either branch on its own. */}
           <Image
             src={image.src as string}
             alt={image.alt}

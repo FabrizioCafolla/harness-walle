@@ -28,7 +28,15 @@ export interface Props
   centered?: boolean;
 }
 
-const OWN_KEYS = ["title", "columns", "minColumnWidth", "centered", "variant", "filled", "muted"] as const;
+const OWN_KEYS = [
+  "title",
+  "columns",
+  "minColumnWidth",
+  "centered",
+  "variant",
+  "filled",
+  "muted",
+] as const;
 
 const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const {

@@ -38,6 +38,10 @@ Sites below 0.6 apply the intermediate CHANGELOG entries first, then update to 0
 `just walle-deps --apply`: 0.7.0 adds `leaflet`, `satori` and `@resvg/resvg-js` and moves several
 dependencies to new majors.
 
+Set the site's Node version to 24, which the 0.7.0 `engines` field requires: `.nvmrc`, plus any
+`node-version` in your own workflows (the walle test action reads `.nvmrc`). `update` never
+touches `.nvmrc`, a seed file, so change it yourself.
+
 ### 2. Config
 
 The build now validates every config file and stops on an error that names the file and the key.

@@ -149,6 +149,10 @@ properties and section components.
   `eslint` 10.11, `@typescript-eslint/*` 8.70, `prettier` 3.9.9, `yarn` 4.18.0.
 - New: `leaflet`, `satori`, `@resvg/resvg-js`, `@astrojs/check` (plus `@emnapi/core` and
   `@emnapi/runtime`, required peers of its WebAssembly runtime).
+- Node 24 is required (`engines`); a site's `.nvmrc` and CI `node-version` are seed files that
+  `update` leaves alone, so set them to 24 by hand.
+- The repository is prettier-clean and CI runs `yarn format`, so managed files no longer fail a
+  consumer's `prettier --check` or the seeded pre-commit hook.
 - GitHub Actions: `softprops/action-gh-release` v3; `actions/checkout` v7 in the CI seed.
 - Kept: `typescript` on 6.0.x (`@typescript-eslint` and `@astrojs/check` do not accept 7 yet),
   `prettier-plugin-astro` on 0.14.x (1.0.1 is not idempotent on walle sources), Node 24 (active

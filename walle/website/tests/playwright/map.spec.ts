@@ -26,8 +26,9 @@ test.describe("Map", () => {
   test("no leaflet request before scroll, markers rendered after scroll, attribution visible", async ({
     page,
   }) => {
-    await page.route((url) => route(url.toString()), (r) =>
-      r.fulfill({ status: 200, contentType: "image/png", body: ONE_PX_PNG })
+    await page.route(
+      (url) => route(url.toString()),
+      (r) => r.fulfill({ status: 200, contentType: "image/png", body: ONE_PX_PNG })
     );
 
     // Pushes the whole page down so the map's container starts well outside the viewport
@@ -65,8 +66,9 @@ test.describe("Map", () => {
   });
 
   test("markers get an accessible name and their own data-variant", async ({ page }) => {
-    await page.route((url) => route(url.toString()), (r) =>
-      r.fulfill({ status: 200, contentType: "image/png", body: ONE_PX_PNG })
+    await page.route(
+      (url) => route(url.toString()),
+      (r) => r.fulfill({ status: 200, contentType: "image/png", body: ONE_PX_PNG })
     );
 
     await page.goto(storyPath("features/map/all-variants"));

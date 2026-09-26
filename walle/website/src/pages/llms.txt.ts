@@ -25,7 +25,8 @@ export const GET: APIRoute = async ({ site }) => {
 
   // Commerce off: no /products route, no products collection: same gate as the
   // injected pages themselves.
-  const commerceOn = config.app.commerce?.mode === "catalog" || config.app.commerce?.mode === "shop";
+  const commerceOn =
+    config.app.commerce?.mode === "catalog" || config.app.commerce?.mode === "shop";
   const products = commerceOn ? await getCollection("products") : [];
 
   const lines = [

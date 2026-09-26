@@ -57,7 +57,12 @@ let bundledDefault: OgFont | null = null;
 function bundledDefaultFont(): OgFont {
   if (!bundledDefault) {
     const base64 = bundledFontDataUri.slice(bundledFontDataUri.indexOf(",") + 1);
-    bundledDefault = { name: "Inter", data: Buffer.from(base64, "base64"), weight: 700, style: "normal" };
+    bundledDefault = {
+      name: "Inter",
+      data: Buffer.from(base64, "base64"),
+      weight: 700,
+      style: "normal",
+    };
   }
   return bundledDefault;
 }

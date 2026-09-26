@@ -16,12 +16,14 @@ export { z };
  */
 function removedKey(guidance: string) {
   const message = `This key has been removed. Use "${guidance}" instead.`;
-  return z
-    .unknown()
-    .optional()
-    .refine((value) => value === undefined, { message })
-    // `refine` has no JSON Schema form; `not: {}` makes ajv reject the key whenever present.
-    .meta({ not: {}, description: message });
+  return (
+    z
+      .unknown()
+      .optional()
+      .refine((value) => value === undefined, { message })
+      // `refine` has no JSON Schema form; `not: {}` makes ajv reject the key whenever present.
+      .meta({ not: {}, description: message })
+  );
 }
 
 const logoSchema = z

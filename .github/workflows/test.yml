@@ -40,6 +40,11 @@ jobs:
         working-directory: walle/website
         run: yarn test:unit
 
+      - name: Format
+        timeout-minutes: 3
+        working-directory: walle/website
+        run: yarn format
+
   a11y:
     name: Accessibility (axe-core)
     runs-on: ubuntu-22.04

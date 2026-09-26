@@ -433,9 +433,7 @@ export function resolvePwaOptions(
       // module evaluation, before any runtimeCaching rule is registered, and the worker
       // silently caches nothing at all (vite-pwa/vite-plugin-pwa#731, #400).
       navigateFallback: null,
-      additionalManifestEntries: offlineUrl
-        ? [{ url: offlineUrl, revision: offlineRevision }]
-        : [],
+      additionalManifestEntries: offlineUrl ? [{ url: offlineUrl, revision: offlineRevision }] : [],
       runtimeCaching: [
         {
           urlPattern: ({ request }: { request: Request }) => request.mode === "navigate",
@@ -512,10 +510,7 @@ function wallePwaIntegration(
  * the service worker it falls back through: `resolvePwaOptions` wires the matching
  * `additionalManifestEntries`/`handlerDidError` for the same flag.
  */
-function walleOfflineRouteIntegration(
-  pwa: PwaConfigSection = {},
-  root: string
-): AstroIntegration {
+function walleOfflineRouteIntegration(pwa: PwaConfigSection = {}, root: string): AstroIntegration {
   const enabled = pwa.enabled === true && !!pwa.offline;
   return {
     name: "walle-offline-route",
@@ -774,14 +769,15 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
     appConfig as { commerce?: { mode?: string; pages?: { list?: string; detail?: string } } }
   ).commerce;
   const pwa = (appConfig as { pwa?: PwaConfigSection }).pwa ?? {};
-  const seo = (
-    appConfig as {
-      seo?: {
-        ogImage?: { enabled?: boolean };
-        feeds?: { enabled?: boolean; items?: Array<{ path: string }> };
-      };
-    }
-  ).seo ?? {};
+  const seo =
+    (
+      appConfig as {
+        seo?: {
+          ogImage?: { enabled?: boolean };
+          feeds?: { enabled?: boolean; items?: Array<{ path: string }> };
+        };
+      }
+    ).seo ?? {};
   // Fail fast, at config-build time, the same as the parseConfig calls above: an invalid
   // override surfaces here, not as a missing component the first time a page renders.
   resolveEmbeddedComponents(components, process.cwd());
@@ -792,7 +788,8 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
   const offlineExclude = pwa.enabled === true && pwa.offline ? ["/offline"] : [];
   // A feed is a machine-readable alternate of a listing page, never content of its own:
   // same exclusion reasoning as the offline fallback.
-  const feedsExclude = seo.feeds?.enabled === true ? (seo.feeds.items ?? []).map((i) => i.path) : [];
+  const feedsExclude =
+    seo.feeds?.enabled === true ? (seo.feeds.items ?? []).map((i) => i.path) : [];
   const sitemapExclude = [
     ...(astro.sitemapExclude ?? []),
     ...redirectSources,

@@ -53,7 +53,11 @@ function requiredField(
  * configured limit (50 when unset). Pure and side-effect free so a unit test can exercise every case (mapping,
  * draft exclusion, sort, limit, the missing-field error) without astro:content or a real build.
  */
-export function buildFeedItems(entries: FeedEntry[], item: FeedItemConfig, site: string | URL): RSSFeedItem[] {
+export function buildFeedItems(
+  entries: FeedEntry[],
+  item: FeedItemConfig,
+  site: string | URL
+): RSSFeedItem[] {
   const fields = item.fields;
   const kept = entries.filter((entry) => !(item.excludeDrafts && entry.data.draft === true));
 

@@ -21,7 +21,12 @@ export const Default = {
 };
 
 export const FilledPrimary = {
-  args: { title: "How it works", steps, variant: "primary", filled: true } satisfies SectionFlowProps,
+  args: {
+    title: "How it works",
+    steps,
+    variant: "primary",
+    filled: true,
+  } satisfies SectionFlowProps,
 };
 
 export const FilledSecondary = {

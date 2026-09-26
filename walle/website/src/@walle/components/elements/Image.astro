@@ -47,19 +47,19 @@ export interface Props extends BaseProps {
   widths?: number[];
 }
 
-const OWN_KEYS = ["image", "width", "height", "loading", "ratio", "sizes", "widths", "class"] as const;
+const OWN_KEYS = [
+  "image",
+  "width",
+  "height",
+  "loading",
+  "ratio",
+  "sizes",
+  "widths",
+  "class",
+] as const;
 
 const { own, rest } = splitProps(Astro.props, OWN_KEYS);
-const {
-  image,
-  width,
-  height,
-  loading = "lazy",
-  ratio,
-  sizes,
-  widths,
-  class: className,
-} = own;
+const { image, width, height, loading = "lazy", ratio, sizes, widths, class: className } = own;
 
 const isRemote = typeof image.src === "string";
 
