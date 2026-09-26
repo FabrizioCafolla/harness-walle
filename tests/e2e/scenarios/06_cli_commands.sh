@@ -23,6 +23,22 @@ scenario_cli_commands() {
   # (c) check passes on a conformant consumer.
   cli check -p "$dir" >/dev/null 2>&1 || { fail "check failed on a conformant consumer"; return 1; }
 
+  # (c2) add backend warns while astro.adapter is not "node", and stops warning once it is.
+  local out
+  out="$(cli add backend --source "$REPO_ROOT" -p "$dir" 2>&1)" || { fail "add backend failed"; return 1; }
+  echo "$out" | grep -qF 'astro.adapter' || { fail "add backend should warn about the node adapter"; return 1; }
+  node -e "
+    const fs = require('fs'), p = '$dir/src/configs/app.json';
+    const j = JSON.parse(fs.readFileSync(p, 'utf8'));
+    j.astro.adapter = 'node';
+    fs.writeFileSync(p, JSON.stringify(j, null, 2) + '\n');
+  " || { fail "could not set astro.adapter"; return 1; }
+  out="$(cli add backend --source "$REPO_ROOT" -p "$dir" 2>&1)" || { fail "re-add backend failed"; return 1; }
+  if echo "$out" | grep -qF 'requires astro.adapter'; then
+    fail "add backend still warns with astro.adapter set to node"
+    return 1
+  fi
+
   # (d) check fails on a v1 manifest.
   local v1="${SANDBOX_DIR}/cli-v1"
   mkdir -p "$v1/.harness-walle"

@@ -95,8 +95,8 @@ publishes the GitHub release from the changelog entry.
 ## Verifying a change before it ships
 
 - `just e2e`: the real integration test: scaffolds consumers from your working tree via
-  `--source` and exercises init/update/add/check across every module, including a static+SSR
-  build and a live server check.
+  `--source` and exercises init/update/add/check across every module, including a static + node
+  adapter build and a live server check.
 - `just validate-configs` / `yarn lint` / `yarn test`: this repo's own demo site is consumer
   #1; keep it green the same way any consumer would.
 - `just astrobook` / `just astrobook-test`: visual catalog and regression suite for anything in

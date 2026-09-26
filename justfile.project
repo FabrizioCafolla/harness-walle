@@ -36,7 +36,7 @@ build:
     just yarn install
     just yarn build
 
-# Run the e2e harness — fast core (init, SSR, update-idempotent, CLI commands, component
+# Run the e2e harness: fast core (init, node adapter, update-idempotent, CLI commands, component
 # variants). Auto-cleans .sandbox on a fully green run; kept on failure for debugging
 # (opt out entirely with E2E_KEEP_SANDBOX=1).
 [group('walle')]

@@ -107,8 +107,8 @@ validate_module() {
   esac
 }
 
-ssr_enabled() {
-  node -e "try{const a=require('$1/src/configs/app.json');process.exit(a&&a.astro&&a.astro.ssr&&a.astro.ssr.enabled===true?0:1)}catch(e){process.exit(1)}" 2>/dev/null
+node_adapter_enabled() {
+  node -e "try{const a=require('$1/src/configs/app.json');process.exit(a&&a.astro&&a.astro.adapter==='node'?0:1)}catch(e){process.exit(1)}" 2>/dev/null
 }
 
 # --- Config-driven paths (walle/walle.yml is the single source of truth) -------------
@@ -160,7 +160,7 @@ module_purpose() {
     website) echo "Astro site: @walle components, layouts, styles, config and CLI scripts" ;;
     ci) echo "GitHub Actions workflows (test + deploy) under @walle" ;;
     ai) echo "AI harness: generated AGENTS.md block and @walle skills" ;;
-    backend) echo "API routes (requires SSR enabled in src/configs/app.json)" ;;
+    backend) echo "API routes (requires astro.adapter: \"node\" in src/configs/app.json)" ;;
     harness-coding|devcontainer) echo "Harness coding scaffold" ;;
     *) echo "walle module" ;;
   esac
@@ -1007,8 +1007,8 @@ cmd_add() {
   write_walle_config_yml "$PROJ_PATH" "${mods[@]}"
   print_info "Module '${NEW_MOD}' added."
 
-  if [ "$NEW_MOD" = "backend" ] && ! ssr_enabled "$PROJ_PATH"; then
-    print_warn "backend requires SSR in src/configs/app.json"
+  if [ "$NEW_MOD" = "backend" ] && ! node_adapter_enabled "$PROJ_PATH"; then
+    print_warn "backend requires astro.adapter: \"node\" in src/configs/app.json"
   fi
 }
 
