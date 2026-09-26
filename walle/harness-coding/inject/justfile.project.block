@@ -5,7 +5,7 @@ cli_filename := "./scripts/@walle/cli.sh"
 walle-setup:
     just yarn install
     #!/usr/bin/env bash
-    [ -d .git ] && [ -d .husky ] && git config core.hooksPath .husky || true
+    git rev-parse --is-inside-work-tree >/dev/null 2>&1 && [ -d .husky ] && git config core.hooksPath .husky || true
     just validate-configs
 
 # Walle cli

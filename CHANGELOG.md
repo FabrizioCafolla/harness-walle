@@ -93,6 +93,9 @@ that walle provides as routes. **Migration guide:
 
 ### Fixed
 
+- `just walle-setup` never set `core.hooksPath` in a git submodule or worktree, where `.git` is a
+  file: it tested `[ -d .git ]` and now asks git (`git rev-parse --is-inside-work-tree`). The
+  injected recipe is re-synced by `update`.
 - `BlogTableOfContents` and `BlogArticleNavigation` named `Ronzino-Bold` and `Ronzino-Medium`, fonts
   no walle version defines, so their labels fell back to a generic sans-serif. They use
   `--font-heading` now.
