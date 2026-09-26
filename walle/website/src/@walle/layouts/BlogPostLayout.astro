@@ -68,12 +68,7 @@ const entryOgImage =
       </div>
     ) : (
       <>
-        <SectionHeaderStandard
-          title={title}
-          subtitle={description}
-          variant="secondary"
-          filled={true}
-        >
+        <SectionHeaderStandard title={title} subtitle={description} muted>
           <div class="meta-wrapper">
             {(author || publishDate || readingTime) && (
               <ul class="meta-info no-markers" aria-label={label("blog.info")}>

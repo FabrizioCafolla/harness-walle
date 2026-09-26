@@ -158,7 +158,8 @@ Removed global helpers:
 | Section, SectionFlow, SectionColumns | `variant="gray"` | `muted` |
 | Section, SectionFlow, SectionColumns | `variant="primary"` | `filled` (plus `variant` for another color) |
 | HeaderStandard | `variant="white"` | no prop (the default) |
-| HeaderStandard | `variant="primary"` or `"secondary"` | `filled` plus `variant` |
+| HeaderStandard | `variant="primary"` | `filled` |
+| HeaderStandard | `variant="secondary"` (the light band) | `muted` |
 | DetailLayout | CSS on `.detail-badges` | `badgesAlign` |
 
 Visible changes in components:

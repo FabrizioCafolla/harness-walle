@@ -59,7 +59,7 @@ left empty by default so a consumer defines it once and every component picks it
 | `ProductCard` | ✓ | none |
 | `Map` (per marker) | ✓ | none |
 | `Section`, `SectionColumns`, `SectionFlow`, `Hero`, `CallToAction` | ✓ | `filled`, `muted` |
-| `HeaderStandard` | ✓ | `filled` |
+| `HeaderStandard` | ✓ | `filled`, `muted` |
 | `SectionWrapper` (internal, composed by the above) | ✓ | `filled`, `muted` |
 
 A filled `Button` derives its hover state from `--button-bg` (30% toward `--black`), so

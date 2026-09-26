@@ -60,4 +60,27 @@ describe("HeaderStandard", () => {
     expect(filledHtml).toContain("data-filled");
     expect(filledHtml).toContain('data-variant="secondary"');
   });
+
+  it("muted maps to data-muted", async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(HeaderStandard, {
+      props: { title: "Muted header", muted: true },
+    });
+    expect(html).toContain("data-muted");
+  });
+
+  it("marks the grid centered only without an image, so the subtitle can center", async () => {
+    const container = await AstroContainer.create();
+    const plain = await container.renderToString(HeaderStandard, { props: { title: "T" } });
+    expect(plain).toContain("is-centered");
+    const left = await container.renderToString(HeaderStandard, {
+      props: { title: "T", centered: false },
+    });
+    expect(left).not.toContain("is-centered");
+    const withImage = await container.renderToString(HeaderStandard, {
+      props: { title: "T", image: { src: "/img/demo.jpg", alt: "Demo" } },
+    });
+    expect(withImage).not.toContain("is-centered");
+    expect(source).toMatch(/\.is-centered \.header-subtitle\s*\{\s*margin-inline:\s*auto;/);
+  });
 });

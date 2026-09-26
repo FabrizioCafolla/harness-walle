@@ -4,7 +4,7 @@ import type { BaseProps, VariantProps, ModifierProps } from "../../shared/types"
 import { splitProps } from "../../shared/attrs";
 import SectionWrapper from "./SectionWrapper.astro";
 
-export interface Props extends BaseProps<"section">, VariantProps, Pick<ModifierProps, "filled"> {
+export interface Props extends BaseProps<"section">, VariantProps, Pick<ModifierProps, "filled" | "muted"> {
   /** Main page title (h1) */
   title: string;
   /** Subtitle or page description */
@@ -20,7 +20,7 @@ export interface Props extends BaseProps<"section">, VariantProps, Pick<Modifier
   centered?: boolean;
 }
 
-const OWN_KEYS = ["title", "subtitle", "image", "imageRight", "variant", "filled", "centered"] as const;
+const OWN_KEYS = ["title", "subtitle", "image", "imageRight", "variant", "filled", "muted", "centered"] as const;
 
 const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const {
@@ -30,14 +30,16 @@ const {
   imageRight = false,
   variant,
   filled = false,
+  muted = false,
   centered = true,
 } = own;
 
+const isCentered = centered && !image;
 const hasSubtitle = Astro.slots.has("subtitle") || Boolean(subtitle);
 ---
 
-<SectionWrapper centered={centered && !image} variant={variant} filled={filled} {...rest}>
-  <div class:list={["header-grid", { "has-image": !!image, "image-right": imageRight }]}>
+<SectionWrapper centered={isCentered} variant={variant} filled={filled} muted={muted} {...rest}>
+  <div class:list={["header-grid", { "has-image": !!image, "image-right": imageRight, "is-centered": isCentered }]}>
     <div class="header-extra">
       <h1 class="header-title">{Astro.slots.has("title") ? <slot name="title" /> : title}</h1>
       {
@@ -105,6 +107,11 @@ const hasSubtitle = Astro.slots.has("subtitle") || Boolean(subtitle);
       margin: 0;
       color: inherit;
       opacity: 0.9;
+    }
+
+    /* The subtitle's max-width would otherwise leave its box on the left of a centered header. */
+    .is-centered .header-subtitle {
+      margin-inline: auto;
     }
 
     .header-media {

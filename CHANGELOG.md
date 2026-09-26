@@ -156,7 +156,8 @@ Components:
 | Section, SectionFlow, SectionColumns | `variant="gray"` | `muted` |
 | Section, SectionFlow, SectionColumns | `variant="primary"` | `filled` |
 | HeaderStandard | `variant="white"` | no prop |
-| HeaderStandard | `variant="primary" / "secondary"` | `filled` plus `variant` |
+| HeaderStandard | `variant="primary"` | `filled` |
+| HeaderStandard | `variant="secondary"` (the light band) | `muted` |
 
 Tokens and config:
 
