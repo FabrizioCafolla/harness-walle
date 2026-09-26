@@ -57,6 +57,7 @@ hit:
 | selectors on walle inner classes (`__`, `.section-title`, `.header-title`, `.cta-card`) | depends on walle internals | public custom properties, props or slots |
 | `:global(.button)` and other `:global()` rules on walle components | depends on walle internals | a `class` on the component plus custom properties |
 | palette, gray, shadow, radius or font values defined in CSS (`--primary:`, `--gray-`, `@font-face`, Google Fonts `@import`) | bypasses the theme | `theme.json` (`palette`, `neutral`, `shadow`, `radii`, `typography.fonts`) |
+| the site's own class named `prose` on an element that is not rendered markdown | walle's global `.prose` (`styles/prose.css`) now styles it: 40px `h1`, 20px `p`, its colors | rename the class (for example `page-text`) or restyle it in `@layer site` |
 | site CSS outside `@layer site` | loses the layer guarantee | wrap it in `@layer site { }` |
 | pages at paths walle now provides (`/products`, `/offline`, `/og/`, a configured feed path) | collides with injected routes | the matching `app.json` feature, or a `./src/...` override |
 

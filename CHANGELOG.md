@@ -26,6 +26,10 @@ that walle provides as routes. **Migration guide:
   `text-centered`, global `ul.meta-info`/`ul.tags` and `section` styling, the Button entrance
   animation and `effects`, and the tokens `--box-shadow`, `--box-shadow-hover`, `--gray-gradient`,
   `--transition-smooth`, `palette.accent`, `palette.muted`.
+- **`.prose` is a global class.** `styles/prose.css` styles every element with the class `prose`
+  (font size, line height, colors, `p`, headings, lists, code), not only the blog post body. A
+  site's own element named `prose` picks those rules up; rename the site's class (for example
+  `page-text`) or restyle it in `@layer site`.
 - **One locale source.** `website.language` drives every date, price and number; walle's interface
   strings come from `app.json` `labels`. `commerce.locale` and `commerce.addToCartLabel` are removed.
 - **`astro.ssr.enabled` is replaced by `astro.adapter: "node"`.** The site stays static; only routes
@@ -66,6 +70,11 @@ that walle provides as routes. **Migration guide:
   `#1b7a43`, so these clear WCAG AA as text and as fill. Visible on sites without their own
   `theme.json` palette.
 - Blog post tags use the theme radius instead of a pill (`--blog-tag-radius: 2rem` restores it).
+- Section content has a 16px gutter at 640px and below, was 24px (`--wrapper-gutter: var(--space-xl)`
+  on `.section-wrapper` restores it).
+- Dates follow `website.language`: `en-US` shows "Jul 31, 2025", `en-GB` keeps "31 Jul 2025".
+- Fonts from the `google` provider can have different metrics than Google's CSS API; use
+  `fontsource` for a family that must match its previous rendering.
 - `Head` emits an RSS alternate link only for enabled `seo.feeds` items, not an unconditional
   `rss.xml` link.
 - New sites start without commerce or demo redirects, with OG images and a `posts` feed enabled.
@@ -84,6 +93,11 @@ that walle provides as routes. **Migration guide:
 
 ### Fixed
 
+- `BlogTableOfContents` and `BlogArticleNavigation` named `Ronzino-Bold` and `Ronzino-Medium`, fonts
+  no walle version defines, so their labels fell back to a generic sans-serif. They use
+  `--font-heading` now.
+- `BlogPostLayout` renders its header `muted` (the light band it had in 0.6) instead of a solid
+  brand fill, and a centered `HeaderStandard` centers its subtitle.
 - `HeaderStandard` `imageRight` had no effect and the image always rendered after the text. It now
   follows the documented default (image first); a site that relied on the old behavior adds
   `imageRight`.

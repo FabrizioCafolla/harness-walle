@@ -53,6 +53,10 @@ The build now validates every config file and stops on an error that names the f
 | redirect pages or a catch-all redirect route | `astro.redirects`; redirect sources leave the sitemap automatically, so drop their `sitemapExclude` entries |
 | unknown keys | removed: the build names them |
 
+Dates follow `website.language`: with `en-US` a date reads "Jul 31, 2025", with `en-GB` it keeps the
+day month year order ("31 Jul 2025"). Set the language that matches the format your site showed
+before.
+
 Add `labels` for every walle interface string you want in your own language: skip link,
 breadcrumbs, carousel, filters, cart, price, offline page, 404, table of contents, navigation,
 footer, blog, products and reading time. Anything missing stays in English.
@@ -96,6 +100,11 @@ Move design values defined in your CSS into `theme.json`:
 | radii | `radii.sm`, `md`, `lg`, `xl` |
 | `@font-face` rules or a Google Fonts import | `typography.fonts` (self-hosted at build time) |
 
+Fonts from the `google` provider are served through Astro's Fonts API and can carry different
+metrics than Google's own CSS API returns, so text may set slightly wider or narrower than before.
+If a site must match its old rendering exactly, use the `fontsource` provider for that family and
+compare in a browser.
+
 Token renames:
 
 | Before | After |
@@ -134,6 +143,11 @@ most workarounds can be deleted. Replace each pattern with a supported rung of
 | a footer wrap fix | nothing: the footer navigation wraps by default |
 | colors for a one-off brand variant | the `site` variant |
 
+Walle ships a global `.prose` class (`styles/prose.css`) for rendered markdown. Any element of
+yours that uses the class name `prose` now inherits its font size, line height, colors, paragraph,
+heading and list rules. Rename your own class (for example `page-text`), or restyle the element in
+`@layer site`.
+
 Removed global helpers:
 
 | Before | After |
@@ -143,6 +157,9 @@ Removed global helpers:
 | `container-centered`, `text-centered` | the `centered` prop on sections |
 | `ul.meta-info`, `ul.tags` global styles | styled inside the components that use them |
 | global `section` padding | the section components own their spacing (`--wrapper-padding-y`) |
+
+A plain `<section>` element of your own no longer gets vertical padding from walle. If one relied
+on it, give it padding in `@layer site`, or use a walle section component.
 
 ### 5. Components
 
@@ -167,6 +184,8 @@ Visible changes in components:
 - HeaderStandard: `imageRight` used to have no effect, so the image always rendered after the text.
   It now works as documented: the image comes first by default and `imageRight` puts it after. If
   your header relied on the old behavior, add `imageRight`.
+- Section content keeps a 16px gutter at 640px and below (it was 24px). To restore the old
+  gutter: `@layer site { .section-wrapper { --wrapper-gutter: var(--space-xl); } }`.
 - Blog post tags use the theme radius instead of a pill. For the old pill:
   `@layer site { .tag { --blog-tag-radius: 2rem; } }`.
 

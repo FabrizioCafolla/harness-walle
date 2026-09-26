@@ -34,7 +34,9 @@ Site-wide design values. Every key is optional; anything you leave out keeps wal
 `*-contrast` is the text color on a filled variant background: set it whenever you change a
 variant color, so filled buttons, badges and sections keep readable text. Fonts listed in
 `typography.fonts` are downloaded at build time and served from your own site; no request goes to
-a font host.
+a font host. The `google` provider can serve different metrics than Google's own CSS API, so text
+may set a little wider or narrower; the `fontsource` provider is the alternative when a family
+must match its previous rendering.
 
 ## 2. Site-wide component custom properties
 
