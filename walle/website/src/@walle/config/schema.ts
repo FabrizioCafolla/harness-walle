@@ -199,7 +199,7 @@ const commerceSchema = z
   .strict();
 
 const breadcrumbsLabelsSchema = z
-  .object({ nav: z.string().optional(), back: z.string().optional() })
+  .object({ nav: z.string().optional(), back: z.string().optional(), home: z.string().optional() })
   .strict();
 
 const carouselLabelsSchema = z
@@ -263,6 +263,19 @@ const notFoundLabelsSchema = z
   })
   .strict();
 
+const productsLabelsSchema = z
+  .object({
+    title: z.string().optional(),
+    type: z.string().optional(),
+    searchPlaceholder: z.string().optional(),
+    status: z.string().optional(),
+    empty: z.string().optional(),
+    related: z.string().optional(),
+    galleryHeading: z.string().optional(),
+    gallery: z.string().optional(),
+  })
+  .strict();
+
 const mapLabelsSchema = z
   .object({
     directions: z.string().optional(),
@@ -323,6 +336,7 @@ const labelsSchema = z
     nav: navLabelsSchema.optional(),
     footer: footerLabelsSchema.optional(),
     blog: blogLabelsSchema.optional(),
+    products: productsLabelsSchema.optional(),
     map: mapLabelsSchema.optional(),
   })
   .strict();

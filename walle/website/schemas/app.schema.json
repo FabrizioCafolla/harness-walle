@@ -265,6 +265,9 @@
             },
             "back": {
               "type": "string"
+            },
+            "home": {
+              "type": "string"
             }
           },
           "additionalProperties": false
@@ -468,6 +471,36 @@
               "type": "string"
             },
             "empty": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "products": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "searchPlaceholder": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "empty": {
+              "type": "string"
+            },
+            "related": {
+              "type": "string"
+            },
+            "galleryHeading": {
+              "type": "string"
+            },
+            "gallery": {
               "type": "string"
             }
           },

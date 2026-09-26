@@ -55,7 +55,7 @@ The build now validates every config file and stops on an error that names the f
 
 Add `labels` for every walle interface string you want in your own language: skip link,
 breadcrumbs, carousel, filters, cart, price, offline page, 404, table of contents, navigation,
-footer, blog and reading time. Anything missing stays in English.
+footer, blog, products and reading time. Anything missing stays in English.
 
 Commerce pages and collections are now provided by walle:
 

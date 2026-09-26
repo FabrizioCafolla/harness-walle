@@ -5,14 +5,14 @@ import ProductBuyCard from "@walle/commerce/ProductBuyCard.astro";
 import { resolveInternalUrl } from "@walle/utils";
 import { defaultVariant, shopifyEnabled, type ShopifyProduct } from "@walle/commerce/shopify";
 import config from "@walle/config";
+import { label } from "@walle/utils/i18n";
 import { getCollection } from "astro:content";
 
-// Reads `commerce.mode` directly rather than through feature-gating at the module graph
-// level. `addToCartLabel` is a hardcoded fallback, not yet config-driven.
+// Reads `commerce.mode` directly rather than through feature-gating at the module graph level.
 const commerce = config.app.commerce;
 const showBuyButton = commerce?.mode === "shop";
 const locale = config.app.website.language ?? "en-US";
-const addToCartLabel = "Add to cart";
+const addToCartLabel = label("cart.add");
 const showAddToCartOnCards = commerce?.showAddToCartOnCards ?? true;
 
 const entries = await getCollection("products");
@@ -43,16 +43,8 @@ function toCard(p: ShopifyProduct) {
 }
 ---
 
-<BaseLayout
-  headerTitle="Products"
-  headerDescription="Demo catalog sourced from Shopify at build time, with an in-memory cart so the full flow is browsable without a store."
->
-  <SectionHeaderStandard
-    title="Products"
-    subtitle="A demo catalog read from Shopify at build time. Prices and availability refresh on every rebuild."
-    variant="primary"
-    filled={true}
-  />
+<BaseLayout headerTitle={label("products.title")}>
+  <SectionHeaderStandard title={label("products.title")} variant="primary" filled={true} />
 
   <div class="products">
     {
@@ -68,15 +60,18 @@ function toCard(p: ShopifyProduct) {
     {
       types.length > 1 && (
         <CollectionFilters
-          facets={[{ key: "type", label: "Type", options: types }]}
-          labels={{ searchPlaceholder: "Search products…", status: "{n} products shown" }}
+          facets={[{ key: "type", label: label("products.type"), options: types }]}
+          labels={{
+            searchPlaceholder: label("products.searchPlaceholder"),
+            status: label("products.status"),
+          }}
         />
       )
     }
 
     {
       products.length === 0 ? (
-        <p class="products__empty">No products found.</p>
+        <p class="products__empty">{label("products.empty")}</p>
       ) : (
         <div class="products__grid">
           {products.map((p) => (

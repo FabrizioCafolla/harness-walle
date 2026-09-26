@@ -26,6 +26,11 @@ the navbar's `actions` slot instead of the default floating badge.
 `commerce.showAddToCartOnCards` controls whether the listing's cards carry their own add-to-cart
 control in `shop` mode.
 
+Every string the two routes render (page title, filter labels, empty state, "You might also
+like", gallery labels) comes from the `labels.products.*` keys, with English defaults; the
+add-to-cart text is `labels.cart.add`. The pages show no demo copy: the note about the bundled
+demo catalog appears only while the Shopify env vars are unset.
+
 ## Catalog: build time
 
 `shopifyLoader()` (`src/@walle/commerce/shopify.ts`) is an Astro Content Layer loader. With

@@ -6,6 +6,7 @@ import { defaultVariant, formatMoney, type ShopifyProduct } from "@walle/commerc
 import type { ProductData } from "@walle/components/features/Card/ProductCard.astro";
 import { resolveInternalUrl } from "@walle/utils";
 import config from "@walle/config";
+import { label } from "@walle/utils/i18n";
 import { getCollection, getEntry } from "astro:content";
 
 export async function getStaticPaths() {
@@ -15,12 +16,11 @@ export async function getStaticPaths() {
 
 const { product } = Astro.props as { product: ShopifyProduct };
 
-// Reads `commerce.mode` directly rather than through feature-gating at the module graph
-// level. `addToCartLabel` is a hardcoded fallback, not yet config-driven.
+// Reads `commerce.mode` directly rather than through feature-gating at the module graph level.
 const commerce = config.app.commerce;
 const showBuyButton = commerce?.mode === "shop";
 const locale = config.app.website.language ?? "en-US";
-const addToCartLabel = "Add to cart";
+const addToCartLabel = label("cart.add");
 
 const productImage = (url: string) => (url.startsWith("http") ? url : resolveInternalUrl(url));
 
@@ -61,15 +61,15 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
   title={product.title}
   description={product.seo.description ?? undefined}
   breadcrumbs={[
-    { label: "Home", href: resolveInternalUrl("/") },
-    { label: "Products", href: resolveInternalUrl("/products") },
+    { label: label("breadcrumbs.home"), href: resolveInternalUrl("/") },
+    { label: label("products.title"), href: resolveInternalUrl("/products") },
     { label: product.title },
   ]}
   product={productData}
 >
-  <h2 class="sr-only">Product gallery and details</h2>
+  <h2 class="sr-only">{label("products.galleryHeading")}</h2>
   <Carousel
-    label={`${product.title} gallery`}
+    label={label("products.gallery").replace("{title}", product.title)}
     perView={1}
     controls={images.length > 1}
     counter={images.length > 1}
@@ -97,7 +97,7 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
     {
       recommended.length > 0 && (
         <section class="upsell" aria-labelledby="upsell-heading">
-          <h2 id="upsell-heading">You might also like</h2>
+          <h2 id="upsell-heading">{label("products.related")}</h2>
           <ul class="upsell__grid">
             {recommended.map((r) => {
               const rv = defaultVariant(r);
@@ -133,14 +133,6 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
       showBuyButton={showBuyButton}
       showQuantity={showBuyButton}
     />
-    {
-      !showBuyButton && (
-        <p class="purchase-card__note">
-          This demo runs in catalog mode: the catalog is live from Shopify, but the cart and
-          checkout are disabled. Enable them with <code>commerce.mode: "shop"</code> in app.json.
-        </p>
-      )
-    }
   </div>
 
   {
@@ -256,12 +248,6 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
 
     .purchase-card__title {
       font-size: 1.2rem;
-      margin: 0;
-    }
-
-    .purchase-card__note {
-      font-size: 0.85rem;
-      color: var(--text-muted);
       margin: 0;
     }
 
