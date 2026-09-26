@@ -185,7 +185,7 @@ Visible changes in components:
   It now works as documented: the image comes first by default and `imageRight` puts it after. If
   your header relied on the old behavior, add `imageRight`.
 - Section content keeps a 16px gutter at 640px and below (it was 24px). To restore the old
-  gutter: `@layer site { .section-wrapper { --wrapper-gutter: var(--space-xl); } }`.
+  gutter: `@layer site { @media (max-width: 640px) { .section-wrapper { --wrapper-gutter: var(--space-lg); } } }`.
 - Blog post tags use the theme radius instead of a pill. For the old pill:
   `@layer site { .tag { --blog-tag-radius: 2rem; } }`.
 

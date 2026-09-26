@@ -70,8 +70,8 @@ that walle provides as routes. **Migration guide:
   `#1b7a43`, so these clear WCAG AA as text and as fill. Visible on sites without their own
   `theme.json` palette.
 - Blog post tags use the theme radius instead of a pill (`--blog-tag-radius: 2rem` restores it).
-- Section content has a 16px gutter at 640px and below, was 24px (`--wrapper-gutter: var(--space-xl)`
-  on `.section-wrapper` restores it).
+- Section content has a 16px gutter at 640px and below, was 24px (`--wrapper-gutter: var(--space-lg)`
+  on `.section-wrapper` inside `@media (max-width: 640px)` restores it).
 - Dates follow `website.language`: `en-US` shows "Jul 31, 2025", `en-GB` keeps "31 Jul 2025".
 - Fonts from the `google` provider can have different metrics than Google's CSS API; use
   `fontsource` for a family that must match its previous rendering.
