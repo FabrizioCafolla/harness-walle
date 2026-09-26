@@ -24,6 +24,64 @@ WALLE_END_SH="# [walle:END]"
 WALLE_START_JS="// [walle:START]"
 WALLE_END_JS="// [walle:END]"
 
+# JSON the CLI writes into consumer-owned files must already match prettier's output, or the
+# consumer's `prettier --check .` fails on a fresh init. Prettier's JSON printer differs from
+# JSON.stringify(v, null, 2) in two ways that matter here: an array of primitives that fits in
+# 100 columns stays on one line, and an object stays on one line when the source had its first
+# key on the `{` line and it fits. `readPretty(text)` parses and remembers which objects were
+# inline; `pretty(value)` writes them back the same way (prepended to a `node -e` script).
+# package.json is not written with it: prettier formats that file like JSON.stringify.
+PRETTY_JSON_JS='
+const inlineObjects = new Map();
+const readPretty = (text) => {
+  const open = [];
+  for (let i = 0, str = false; i < text.length; i++) {
+    const c = text[i];
+    if (str) { if (c === "\\") i++; else if (c === "\"") str = false; }
+    else if (c === "\"") str = true;
+    else if (c === "{") open.push(!/^[ \t]*\r?\n/.test(text.slice(i + 1)));
+  }
+  const value = JSON.parse(text);
+  const mark = (v) => {
+    if (!v || typeof v !== "object") return;
+    if (!Array.isArray(v)) inlineObjects.set(v, open.shift());
+    Object.values(v).forEach(mark);
+  };
+  mark(value);
+  return value;
+};
+const flat = (v) => {
+  if (v === null || typeof v !== "object") return JSON.stringify(v);
+  const parts = (Array.isArray(v) ? v : Object.keys(v)).map((x) => {
+    const e = Array.isArray(v) ? x : v[x];
+    if (e !== null && typeof e === "object" && (Array.isArray(v) || Array.isArray(e))) return null;
+    const f = e !== null && typeof e === "object" && !inlineObjects.get(e) ? null : flat(e);
+    return f === null ? null : Array.isArray(v) ? f : JSON.stringify(x) + ": " + f;
+  });
+  if (parts.includes(null)) return null;
+  if (!Array.isArray(v)) return parts.length ? "{ " + parts.join(", ") + " }" : "{}";
+  return "[" + parts.join(", ") + "]";
+};
+const pretty = (v, ind = "", room = 0) => {
+  if (v === null || typeof v !== "object") return JSON.stringify(v);
+  const isArr = Array.isArray(v);
+  const keys = isArr ? v : Object.keys(v);
+  if (!keys.length) return isArr ? "[]" : "{}";
+  if (isArr || inlineObjects.get(v)) {
+    const one = flat(v);
+    if (one !== null && ind.length + room + one.length <= 100) return one;
+  }
+  const i2 = ind + "  ";
+  const items = isArr
+    ? v.map((x, k) => i2 + pretty(x, i2, k < v.length - 1 ? 1 : 0))
+    : keys.map((k, j) => {
+        const pre = JSON.stringify(k) + ": ";
+        return i2 + pre + pretty(v[k], i2, pre.length + (j < keys.length - 1 ? 1 : 0));
+      });
+  return (isArr ? "[" : "{") + "\n" + items.join(",\n") + "\n" + ind + (isArr ? "]" : "}");
+};
+'
+
 # Execution State
 INTENTIONAL_EXIT=0
 DRY_RUN=0
@@ -418,9 +476,9 @@ EOF
   # other key that isn't demo-specific.
   local app="${tgt_dir}/src/configs/app.json"
   if [ "$had_app" = "0" ] && [ "$DRY_RUN" != "1" ] && [ -f "$app" ]; then
-    APP_JSON="$app" node -e '
+    APP_JSON="$app" node -e "$PRETTY_JSON_JS"'
       const fs = require("fs"), p = process.env.APP_JSON;
-      const c = JSON.parse(fs.readFileSync(p, "utf8"));
+      const c = readPretty(fs.readFileSync(p, "utf8"));
       if (c.astro) {
         c.astro.baseUrl = "http://localhost:4321";
         c.astro.basePath = "/";
@@ -429,7 +487,7 @@ EOF
       if (c.website) { c.website.title = "My Walle Site"; }
       delete c.commerce;
       if (!c.labels) c.labels = {};
-      fs.writeFileSync(p, JSON.stringify(c, null, 2) + "\n");
+      fs.writeFileSync(p, pretty(c) + "\n");
     '
   fi
 
@@ -437,11 +495,11 @@ EOF
   # (commerce is off on a fresh site): drop both so a new site starts with no dead links.
   local nav="${tgt_dir}/src/configs/navbar.json"
   if [ "$had_app" = "0" ] && [ "$DRY_RUN" != "1" ] && [ -f "$nav" ]; then
-    NAV_JSON="$nav" node -e '
+    NAV_JSON="$nav" node -e "$PRETTY_JSON_JS"'
       const fs = require("fs"), p = process.env.NAV_JSON;
-      const c = JSON.parse(fs.readFileSync(p, "utf8"));
+      const c = readPretty(fs.readFileSync(p, "utf8"));
       c.items = (c.items || []).filter((i) => i.url !== "/showcase" && i.url !== "/products");
-      fs.writeFileSync(p, JSON.stringify(c, null, 2) + "\n");
+      fs.writeFileSync(p, pretty(c) + "\n");
     '
   fi
 }

@@ -35,7 +35,9 @@ walle's `engines` field: `update` never touches seed files, so an old `.nvmrc` s
 runs the wrong Node. The same goes for `.prettierignore`: if the site runs `prettier --check .`,
 it must list `.vscode/settings.json`, `.vscode/extensions.json`, `AGENTS.md`, `.harness-walle`,
 `.harness-coding` and `.claude/skills/@walle` (generated or copied by the CLI; the `AGENTS.md`
-marker block must stay byte exact). Do not ignore `src/@walle`: it is prettier-clean.
+marker block must stay byte exact). Do not ignore `src/@walle`: it is prettier-clean. Also list `test-results` and `playwright-report`.
+Check `.husky/pre-commit`: `cmd || (fix; exit 1)` exits only the subshell and never blocks a
+commit; it must read `cmd || { fix; exit 1; }`, and `.husky/pre-push` must chain with `&&`.
 
 Read the CHANGELOG entry for every release you cross. Releases before 1.0 may break the public API
 in a minor version, and the CHANGELOG marks those entries as BREAKING with a migration guide

@@ -54,7 +54,19 @@ AGENTS.md
 .harness-walle
 .harness-coding
 .claude/skills/@walle
+test-results
+playwright-report
 ```
+
+Also fix `.husky/pre-commit` if it came from an older seed. `cmd || (fix; exit 1)` only exits the
+subshell, so a lint or format error never stopped the commit. Use braces:
+
+```sh
+yarn lint || { yarn lint:fix; exit 1; }
+yarn format || { yarn format:fix; exit 1; }
+```
+
+and `yarn lint && yarn test:unit` in `.husky/pre-push`.
 
 ### 2. Config
 

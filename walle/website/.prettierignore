@@ -4,6 +4,8 @@ dist
 node_modules
 .yarn
 tests/e2e/.sandbox
+test-results
+playwright-report
 
 src/components/features/Analytics.astro
 

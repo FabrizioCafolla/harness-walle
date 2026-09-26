@@ -55,4 +55,6 @@ website-seed-exclude:
   - playwright.astrobook.config.ts
   - vitest.config.ts
   - .gitignore
+  - test-results
+  - playwright-report
   - .env

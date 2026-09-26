@@ -156,6 +156,11 @@ properties and section components.
   lists the paths the CLI generates or copies (`.harness-walle`, `.harness-coding`,
   `.claude/skills/@walle`, `AGENTS.md`, `.vscode/*.json`); existing sites add those lines
   themselves, `update` never touches the file.
+- The seeded `.husky/pre-commit` now blocks the commit on a lint or format error (the old
+  `cmd || (fix; exit 1)` exited only its subshell) and `.husky/pre-push` chains with `&&`; existing
+  sites fix those two seed files themselves. A fresh `init` is prettier-clean: the JSON the CLI
+  writes into `app.json` and `navbar.json` keeps prettier's layout, and `test-results` and
+  `playwright-report` are not seeded.
 - GitHub Actions: `softprops/action-gh-release` v3; `actions/checkout` v7 in the CI seed.
 - Kept: `typescript` on 6.0.x (`@typescript-eslint` and `@astrojs/check` do not accept 7 yet),
   `prettier-plugin-astro` on 0.14.x (1.0.1 is not idempotent on walle sources), Node 24 (active

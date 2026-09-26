@@ -40,6 +40,26 @@ scenario_husky_seed() {
   ( cd "$dir" && git log --oneline -1 ) | grep -q "e2e" ||
     { fail "commit was not created; pre-commit hook likely did not run"; return 1; }
 
+  # A fresh init must be prettier-clean: the hook runs `yarn format` (prettier --check .), so a
+  # warning in its output means a file the CLI wrote does not match prettier.
+  ! grep -q '\[warn\]' "${dir}/.e2e-commit.log" ||
+    { fail "prettier warnings in the first commit (a CLI-written file is not prettier-clean):"; grep '\[warn\]' "${dir}/.e2e-commit.log" >&2; return 1; }
+
+  # The hook must actually block: a misformatted file (lint passes, prettier does not) has to
+  # fail the commit and leave no new commit behind.
+  local before after
+  before="$(cd "$dir" && git rev-parse HEAD)"
+  printf 'export const   value   =   1;\n' >"${dir}/src/e2e-misformatted.ts"
+  if ( cd "$dir" && git add src/e2e-misformatted.ts && \
+    GIT_AUTHOR_NAME=e2e GIT_AUTHOR_EMAIL=e2e@e2e.test \
+    GIT_COMMITTER_NAME=e2e GIT_COMMITTER_EMAIL=e2e@e2e.test \
+    git commit -m "e2e bad" ) >"${dir}/.e2e-blocked.log" 2>&1; then
+    fail "pre-commit did not block a misformatted file"; return 1
+  fi
+  after="$(cd "$dir" && git rev-parse HEAD)"
+  [ "$before" = "$after" ] || { fail "a commit was created despite the failing pre-commit hook"; return 1; }
+  ( cd "$dir" && git reset -q && rm -f src/e2e-misformatted.ts )
+
   # Consumer customizes the hook; a subsequent update must leave it untouched (SEED, not MANAGED).
   printf '#!/usr/bin/env sh\necho customized\n' >"$dir/.husky/pre-commit"
 
