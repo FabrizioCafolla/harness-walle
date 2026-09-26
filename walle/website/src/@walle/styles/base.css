@@ -30,7 +30,7 @@
     background-color: var(--surface);
     word-wrap: break-word;
     overflow-wrap: break-word;
-    color: var(--gray-darker);
+    color: var(--text);
     font-size: var(--font-size-body);
     line-height: 1.6;
     text-decoration: none;

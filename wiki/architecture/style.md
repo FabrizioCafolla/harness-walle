@@ -16,7 +16,7 @@ plain selector in `@layer site` beats walle without `!important` or specificity 
 Unlayered CSS beats every layer too, but a consumer should keep overrides inside `@layer site`
 so the order stays explicit rather than accidental. `src/@walle/styles/layers.ts` is the single
 source of truth for the order; `Head.astro` renders it as an inline `<style is:inline>` that is
-the first child of `<head>`, and `styles/base.css` carries a redundant copy of the same
+the first child of `<head>`, and `styles/tokens.css` carries a redundant copy of the same
 declaration for any page that bypasses `Head.astro`.
 
 ## The layers
@@ -63,7 +63,8 @@ component never reads a `--walle-*` variable or `theme.json` directly.
 There are three groups of tokens:
 
 - **Palette and neutral**: brand colors (`--primary`/`--secondary`/`--alternative`, each with
-  `-light`/`-dark`/`-contrast`) and a gray scale (`--gray-light` through `--gray-darker`).
+  `-light`/`-dark`/`-contrast`; `-dark` is the link-hover and outline/inverse hover color, a
+  filled button's hover background derives from `--button-bg` instead) and a gray scale (`--gray-light` through `--gray-darker`).
 - **Semantic**: `--surface`, `--surface-alt`, `--text`, `--text-muted`, `--heading`, `--border`,
   `--link`, `--link-hover`, `--focus-ring`, `--disabled-opacity`, plus `--status-success`/
   `-warning`/`-danger` and their own `-contrast` pairs. Components reference **only** these for

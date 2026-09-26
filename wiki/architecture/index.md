@@ -20,6 +20,7 @@ beyond configs and CSS variables.
 | Content | `src/@walle/content/` | `walleCollections()`: the products content collection, gated by `commerce.mode` |
 | Commerce | `src/@walle/commerce/` | Shopify catalog loader, cart, variant picker; see [ecommerce](ecommerce.md) |
 | PWA | virtual modules resolved by `define-config.ts` | Manifest, service worker, offline page; see [pwa](pwa.md) |
+| CI/CD | `walle/ci/`, `.github/workflows/` | Reusable composite actions and seeded workflows; see [ci-cd](ci-cd.md) |
 | OG images | `src/@walle/og/` | satori + resvg rendering behind `/og/[...slug].png`; see [seo](seo.md#og-images) |
 | Feeds | `src/@walle/feeds/` | `@astrojs/rss`-backed injected route per configured feed; see [seo](seo.md#rss-feeds) |
 | Utils | `src/@walle/utils/` | `label()`/i18n, structured-data builders, site-path resolution, base-path helpers |

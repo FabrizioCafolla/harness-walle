@@ -4,9 +4,8 @@ import { join } from "node:path";
 
 // Every rule under @walle must sit inside a `walle.*` (or `site`) layer, so a consumer's
 // unlayered `@layer site` rule always wins regardless of load order. The one exception is a
-// `<style is:global>` block whose only content is an `@import "..." layer(walle.components);`
-// statement, for leaflet's own CSS: Astro's scoped-style compiler
-// would otherwise cid-scope selectors that leaflet creates at runtime and can never match.
+// stylesheet whose only content is `@import "..." layer(walle.components);` statements, like
+// Map/leaflet.css, which wraps leaflet's own CSS in the component layer.
 
 const walleRoot = join(__dirname, "../../src/@walle");
 
@@ -78,7 +77,7 @@ function styleBlocks(source: string): { content: string; offset: number }[] {
   return blocks;
 }
 
-/** The leaflet exception: a block whose only content is one or more bare `@import` statements. */
+/** The leaflet exception: content that is only bare `@import` statements. */
 function isImportOnly(content: string): boolean {
   const trimmed = content.trim();
   if (!trimmed) return false;
@@ -115,7 +114,7 @@ describe("css-layers: every walle rule sits inside a walle.* layer", () => {
   it("accepts the leaflet-style import-only exception", () => {
     const content = '\n  @import "leaflet/dist/leaflet.css" layer(walle.components);\n';
     expect(isImportOnly(content)).toBe(true);
-    expect(check("Map.astro", content)).toEqual([]);
+    expect(check("leaflet.css", content)).toEqual([]);
   });
 
   for (const file of collectFiles(walleRoot, [".css"])) {
@@ -138,7 +137,7 @@ describe("css-layers: every walle rule sits inside a walle.* layer", () => {
 
 // The layer order is declared in exactly one place, the inline statement Head.astro
 // renders as the first <head> child (astrobook.astro.head mirrors it for story pages), with
-// base.css's own copy as the fallback for any page that never renders Head.astro. A component
+// tokens.css's own copy as the fallback for any page that never renders Head.astro. A component
 // re-declaring the order itself only works by luck of module load order (whichever file's
 // bare `@layer a, b, c;` statement is first on the page wins, and Vite's dev-mode injection
 // order is not guaranteed), so it must never come back once removed.

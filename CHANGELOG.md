@@ -73,6 +73,14 @@ that walle provides as routes. **Migration guide:
   adds a workaround cleanup pass.
 - The wiki is reorganized into Get Started, Develop, Architecture and AI, and `.harness-walle/docs/`
   now holds those four sections instead of four flat pages.
+- A filled `Button` derives its hover background from `--button-bg` (30% toward `--black`) instead
+  of the variant's `*-dark` token, so one `--button-bg` override moves every state. Default hover
+  shades are slightly lighter than before. A light variant with a dark `-contrast` should also set
+  `--button-bg-hover`.
+- RSS feeds keep the 50 newest entries when `limit` is not set.
+- The seeded `posts` collection requires `publishDate`, which the seeded feed orders and dates
+  entries by.
+- Body text uses `--text` (was `--gray-darker`), so overriding `--text` restyles it.
 
 ### Fixed
 
@@ -85,6 +93,20 @@ that walle provides as routes. **Migration guide:
 - `CollectionFilters` search input overflowed its container at 320px.
 - `sitemapExclude` did nothing on sites with a non-root base path.
 - The layer order is declared on Astrobook pages too, so story styles match the site.
+- A fresh `walle init` site no longer links `/showcase` or `/products` from the navbar, the home
+  page or `llms.txt`.
+- Generated Open Graph images ignored `theme.json` (palette and fonts) and always used the default
+  theme.
+- Interface strings that were still hardcoded now come from `labels`: card link names, post dates,
+  table of contents names and announcements, scrollable regions, logo alt text and the products
+  pages (new `labels.products.*`, `labels.card`, `labels.scrollableRegion`, `labels.logo`).
+- The managed product pages no longer show demo copy on real sites.
+- The JSON schemas rejected nothing for removed keys (`astro.ssr`, `commerce.showBuyButton`,
+  `commerce.locale`, `commerce.addToCartLabel`); `validate-configs` now reports them.
+- A malformed `theme.json` stops the build with an error instead of silently using the defaults.
+- `walle add backend` checks `astro.adapter: "node"` (it still looked for the removed `astro.ssr`).
+- The generated post OG image is used only when `posts` is in `seo.ogImage.collections`, and a
+  post's own `image` wins over it.
 
 ### Performance
 

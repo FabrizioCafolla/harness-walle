@@ -62,6 +62,13 @@ left empty by default so a consumer defines it once and every component picks it
 | `HeaderStandard` | ✓ | `filled` |
 | `SectionWrapper` (internal, composed by the above) | ✓ | `filled`, `muted` |
 
+A filled `Button` derives its hover state from `--button-bg` (30% toward `--black`), so
+overriding `--button-bg` on a class moves the hover with it; `--button-bg-hover` is there for
+an exact color. The variant's `*-dark` token still drives link hover and the hover text of
+outline and inverse buttons, not the filled background. A light variant (one with a dark
+`-contrast`) should also set `--button-bg-hover`, since darkening the background lowers the
+contrast against dark text.
+
 Components not listed have no variant or modifier: `Image`, `Price`, `Navbar`, `Footer`,
 `Breadcrumbs`, `Carousel`, `CollectionFilters`, the blog components, `Head`, `StructuredData`.
 
@@ -103,6 +110,14 @@ for how to set these.
 | `SectionColumns` | `--section-columns-gap` (plus `SectionWrapper`'s own) |
 | `HeaderStandard` | `--header-standard-image-radius` (plus `SectionWrapper`'s own) |
 | `BlogPostLayout` tags (`.tag`) | `--blog-tag-radius` |
+
+**Commerce** (`@walle/commerce/`, mounted only when `commerce.mode` is `"shop"`)
+
+| Component | Properties |
+|---|---|
+| `VariantPicker` | `--cart-add-bg`, `--cart-add-bg-hover` |
+| `CartBadge` | `--cart-badge-bg`, `--cart-badge-fg` |
+| `CartMount` | `--cart-drawer-bg`, `--cart-drawer-border`, `--cart-backdrop`, `--cart-checkout-bg`, `--cart-checkout-bg-hover` |
 
 `Analytics`, `Head` and `StructuredData` render no visual chrome and publish no custom
 properties.
@@ -176,12 +191,16 @@ markers: the list is the only visible content without JavaScript, and stays reac
 assistive technology after the client hides it. Coordinates outside a valid lat/lng range are
 dropped; with nothing left to show, the component renders nothing at all.
 
-Leaflet's own stylesheet is imported into the component layer from a dedicated
-`<style is:global>` block (`@import "leaflet/dist/leaflet.css" layer(walle.components)`):
-inside a normal scoped block, Astro's compiler would append this component's own scope
-attribute to leaflet's selectors, which never match the elements leaflet creates at runtime.
-Walle's own marker/popup/control rules live in that same global block, prefixed with
-`.map__container` so they only ever restyle a walle `Map`; see
+Leaflet's own stylesheet is not part of any Astro style block: `Map/leaflet.css` holds a single
+`@import "leaflet/dist/leaflet.css" layer(walle.components)`, and `leaflet-styles.ts` injects it
+as a `<style>` element when the map initializes. Astro links every stylesheet in a page's module
+graph, dynamic imports included, so importing it as CSS would link it on every page whose module
+graph reaches `Map`, whether or not a map renders; injecting it as text keeps it out until a map
+exists, and the layer wrapper keeps walle and site rules winning over leaflet's defaults.
+Walle's own marker/popup/control rules live in a `<style is:global>` block, because Astro's
+scoped-style compiler would append this component's scope attribute to selectors that leaflet
+creates at runtime and can never match. They are prefixed with `.map__container` so they only
+ever restyle a walle `Map`; see
 [style](style.md#section-wrapper-crossing-the-scoping-boundary) for the general mechanism.
 Leaflet, its stylesheet, and the map runtime are all loaded lazily on scroll, in their own
 chunk, never in the page's eager bundle.
