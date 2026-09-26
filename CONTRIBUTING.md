@@ -114,8 +114,9 @@ above before a PR that touches components, layouts, or navbar/footer behavior.
 
 - Run `just e2e` and `yarn test` locally first (also enforced by the pre-commit/pre-push hooks).
 - Update `CHANGELOG.md` under `[Unreleased]` if the change is user-visible.
-- CI runs lint, unit tests, and the e2e harness. Playwright is currently disabled in CI (see
-  [Testing a change](#testing-a-change)): run it locally instead.
+- CI runs lint, the type check (`yarn check`), unit tests (including the contract tests), the axe
+  accessibility suite, and the e2e harness. The navbar and visual-regression Playwright job is
+  currently disabled in CI (see [Testing a change](#testing-a-change)): run it locally instead.
 
 ## Releasing
 
