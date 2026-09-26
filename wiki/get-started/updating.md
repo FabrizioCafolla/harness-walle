@@ -42,6 +42,20 @@ Set the site's Node version to 24, which the 0.7.0 `engines` field requires: `.n
 `node-version` in your own workflows (the walle test action reads `.nvmrc`). `update` never
 touches `.nvmrc`, a seed file, so change it yourself.
 
+If your pre-commit hook or CI runs `prettier --check .`, add the paths walle writes to your
+`.prettierignore` (also a seed file, so `update` leaves it alone). Walle's own source under
+`src/@walle` is prettier-clean, but these are generated or copied by the CLI, and the marker block
+in `AGENTS.md` must stay byte exact:
+
+```text
+.vscode/settings.json
+.vscode/extensions.json
+AGENTS.md
+.harness-walle
+.harness-coding
+.claude/skills/@walle
+```
+
 ### 2. Config
 
 The build now validates every config file and stops on an error that names the file and the key.

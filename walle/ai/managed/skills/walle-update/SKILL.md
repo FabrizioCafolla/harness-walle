@@ -32,7 +32,10 @@ just build
 
 Check that `.nvmrc` (and any `node-version` in the site's own workflows) matches the Node major in
 walle's `engines` field: `update` never touches seed files, so an old `.nvmrc` stays behind and CI
-runs the wrong Node.
+runs the wrong Node. The same goes for `.prettierignore`: if the site runs `prettier --check .`,
+it must list `.vscode/settings.json`, `.vscode/extensions.json`, `AGENTS.md`, `.harness-walle`,
+`.harness-coding` and `.claude/skills/@walle` (generated or copied by the CLI; the `AGENTS.md`
+marker block must stay byte exact). Do not ignore `src/@walle`: it is prettier-clean.
 
 Read the CHANGELOG entry for every release you cross. Releases before 1.0 may break the public API
 in a minor version, and the CHANGELOG marks those entries as BREAKING with a migration guide

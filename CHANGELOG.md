@@ -151,8 +151,11 @@ properties and section components.
   `@emnapi/runtime`, required peers of its WebAssembly runtime).
 - Node 24 is required (`engines`); a site's `.nvmrc` and CI `node-version` are seed files that
   `update` leaves alone, so set them to 24 by hand.
-- The repository is prettier-clean and CI runs `yarn format`, so managed files no longer fail a
-  consumer's `prettier --check` or the seeded pre-commit hook.
+- The repository is prettier-clean and CI runs `yarn format`, so `src/@walle` no longer fails a
+  consumer's `prettier --check` or the seeded pre-commit hook. The seeded `.prettierignore` now
+  lists the paths the CLI generates or copies (`.harness-walle`, `.harness-coding`,
+  `.claude/skills/@walle`, `AGENTS.md`, `.vscode/*.json`); existing sites add those lines
+  themselves, `update` never touches the file.
 - GitHub Actions: `softprops/action-gh-release` v3; `actions/checkout` v7 in the CI seed.
 - Kept: `typescript` on 6.0.x (`@typescript-eslint` and `@astrojs/check` do not accept 7 yet),
   `prettier-plugin-astro` on 0.14.x (1.0.1 is not idempotent on walle sources), Node 24 (active
