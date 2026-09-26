@@ -29,8 +29,8 @@ const shouldShowBrand = hasLogo || hasTitle;
               {hasLogo && (
                 <img
                   src={footerConfig.logo.src}
-                  alt={footerConfig.logo.alt || footerConfig.logo.title || "Logo"}
-                  aria-label={footerConfig.logo.alt || footerConfig.logo.title || "Logo"}
+                  alt={footerConfig.logo.alt || footerConfig.logo.title || t("logo")}
+                  aria-label={footerConfig.logo.alt || footerConfig.logo.title || t("logo")}
                   width={footerConfig.logo.width || 32}
                   height={footerConfig.logo.height || 32}
                   class={footerConfig.logo.cssClasses || ""}

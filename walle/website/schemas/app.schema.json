@@ -257,6 +257,21 @@
         "skipLink": {
           "type": "string"
         },
+        "scrollableRegion": {
+          "type": "string"
+        },
+        "logo": {
+          "type": "string"
+        },
+        "card": {
+          "type": "object",
+          "properties": {
+            "read": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
         "breadcrumbs": {
           "type": "object",
           "properties": {
@@ -418,6 +433,15 @@
             },
             "collapsed": {
               "type": "string"
+            },
+            "toggle": {
+              "type": "string"
+            },
+            "navigateTo": {
+              "type": "string"
+            },
+            "navigated": {
+              "type": "string"
             }
           },
           "additionalProperties": false
@@ -452,6 +476,9 @@
         "blog": {
           "type": "object",
           "properties": {
+            "publishedOn": {
+              "type": "string"
+            },
             "readingProgress": {
               "type": "string"
             },

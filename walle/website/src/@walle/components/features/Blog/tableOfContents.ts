@@ -32,6 +32,10 @@ export interface TableOfContentsOptions {
   labels?: {
     expanded?: string | null;
     collapsed?: string | null;
+    toggle?: string | null;
+    /** Template with a `{title}` placeholder. */
+    navigateTo?: string | null;
+    navigated?: string | null;
   };
 }
 
@@ -174,7 +178,8 @@ export class TableOfContentsManager {
     link.textContent = tocItem.text;
     link.setAttribute("data-toc-index", index.toString());
     link.setAttribute("data-level", tagName === "H2" ? "2" : "3");
-    link.setAttribute("aria-label", `Navigate to: ${tocItem.text}`);
+    const navigateTo = this.options.labels?.navigateTo;
+    if (navigateTo) link.setAttribute("aria-label", navigateTo.replace("{title}", tocItem.text));
     link.setAttribute("role", "link");
 
     // Add indentation for h3
@@ -281,7 +286,8 @@ export class TableOfContentsManager {
     header.setAttribute("tabindex", "0");
     header.setAttribute("aria-expanded", "true");
     header.setAttribute("aria-controls", "toc-nav");
-    header.setAttribute("aria-label", "Toggle table of contents");
+    const toggle = this.options.labels?.toggle;
+    if (toggle) header.setAttribute("aria-label", toggle);
 
     // Keyboard support
     header.addEventListener("keydown", (e) => {
@@ -452,7 +458,7 @@ export class TableOfContentsManager {
   private onScrollComplete(link: HTMLElement): void {
     this.isScrolling = false;
     link.classList.remove("navigating");
-    if (this.isMobile) this.announceToScreenReader("Navigated to section");
+    if (this.isMobile) this.announceToScreenReader(this.options.labels?.navigated || "");
     // Force active state for the clicked target (helps when threshold logic hasn't run yet)
     const targetId = link.getAttribute("href")?.substring(1);
     if (targetId) {

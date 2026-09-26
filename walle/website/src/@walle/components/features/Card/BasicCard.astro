@@ -1,6 +1,6 @@
 ---
 import config from "@walle/config";
-import { formatDate } from "@walle/utils";
+import { formatDate, label } from "@walle/utils";
 import type { BaseProps, Variant } from "../../shared/types";
 import { splitProps, variantAttrs } from "../../shared/attrs";
 
@@ -81,7 +81,7 @@ const truncatedContent =
   target={target}
   rel={target === "_blank" ? "noopener" : undefined}
   class={cardClasses}
-  aria-label={`Read ${title}`}
+  aria-label={label("card.read").replace("{title}", title)}
   {...variantAttrs({ variant })}
   {...rest}
 >

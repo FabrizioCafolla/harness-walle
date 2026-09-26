@@ -47,7 +47,7 @@ const siteInfo = {
     <StructuredData data={[websiteJsonLd(siteInfo), organizationJsonLd(siteInfo)]} />
     <slot name="head" />
   </head>
-  <body>
+  <body data-label-scrollable={label("scrollableRegion")}>
     <a href="#main-content" class="skip-link">{label("skipLink", skipLinkLabel)}</a>
     <slot />
     <Analytics
@@ -77,7 +77,8 @@ const siteInfo = {
         needsFocus.forEach((el) => {
           el.setAttribute("tabindex", "0");
           el.setAttribute("role", "region");
-          if (!el.hasAttribute("aria-label")) el.setAttribute("aria-label", "Scrollable content");
+          const name = document.body.dataset.labelScrollable;
+          if (name && !el.hasAttribute("aria-label")) el.setAttribute("aria-label", name);
         });
       }
       // One frame later: the geometry these reads need is only final once the page has been

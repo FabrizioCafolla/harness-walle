@@ -28,14 +28,14 @@ const shouldShowBrand = hasLogo || hasTitle;
             <div class="brand-container">
               <a
                 href={resolveInternalUrl(config.logo?.url || "/")}
-                title={config.logo?.title || "Home"}
+                title={config.logo?.title || t("breadcrumbs.home")}
                 class="brand-link"
               >
                 {hasLogo ? (
                   <img
                     src={config.logo.src}
-                    alt={config.logo.alt || config.logo.title || "Logo"}
-                    aria-label={config.logo.alt || config.logo.title || "Logo"}
+                    alt={config.logo.alt || config.logo.title || t("logo")}
+                    aria-label={config.logo.alt || config.logo.title || t("logo")}
                     width={config.logo.width || 50}
                     height={config.logo.height || 50}
                     loading="eager"

@@ -29,7 +29,7 @@ the build naming the file and the key path; a removed key's error also names its
 | `commerce` | object | See [ecommerce](ecommerce.md) |
 | `seo.ogImage`, `seo.feeds` | object | See [seo](seo.md) |
 | `map` | object | Default tiles and directions provider for every `Map` instance; see [components](components.md#map) |
-| `labels` | object | Every user-facing/screen-reader string walle emits, grouped by area (skip link, breadcrumbs, carousel, filters, cart, price, offline, not-found, table of contents, nav, footer, blog, products, map). Each leaf has an English default; anything you don't set stays in English |
+| `labels` | object | Every user-facing/screen-reader string walle emits, grouped by area (skip link, logo and scrollable-region names, card, breadcrumbs, carousel, filters, cart, price, offline, not-found, table of contents, nav, footer, blog, products, map). Each leaf has an English default; anything you don't set stays in English |
 
 ## `navbar.json` / `footer.json`
 

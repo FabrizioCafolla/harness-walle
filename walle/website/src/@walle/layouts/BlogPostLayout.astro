@@ -82,7 +82,10 @@ const entryOgImage = id && config.app.seo?.ogImage?.enabled ? ogImageUrl("posts"
                     <time
                       class="meta-date"
                       datetime={publishDate.toISOString()}
-                      aria-label={`Published on ${formatDate(publishDate.toString())}`}
+                      aria-label={label("blog.publishedOn").replace(
+                        "{date}",
+                        formatDate(publishDate.toString()) ?? ""
+                      )}
                     >
                       {formatDate(publishDate.toString())}
                     </time>

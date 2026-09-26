@@ -14,7 +14,7 @@ const OWN_KEYS = ["config", "class"] as const;
 const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const { config, class: className } = own;
 const items = Array.isArray(config.items) ? config.items : [];
-const title = config.logo?.title || "Home";
+const title = config.logo?.title || t("breadcrumbs.home");
 ---
 
 <header class:list={["navbar-minimal", className]} {...rest}>

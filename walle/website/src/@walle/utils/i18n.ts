@@ -5,6 +5,9 @@ import config from "@walle/config";
 // fallback when neither a component prop nor a site label supplies one.
 const DEFAULTS = {
   skipLink: "Skip to content",
+  scrollableRegion: "Scrollable content",
+  logo: "Logo",
+  "card.read": "Read {title}",
   "breadcrumbs.nav": "Breadcrumb",
   "breadcrumbs.back": "Back",
   "breadcrumbs.home": "Home",
@@ -44,6 +47,9 @@ const DEFAULTS = {
   "toc.loading": "Loading...",
   "toc.expanded": "Table of contents expanded",
   "toc.collapsed": "Table of contents collapsed",
+  "toc.toggle": "Toggle table of contents",
+  "toc.navigateTo": "Navigate to: {title}",
+  "toc.navigated": "Navigated to section",
   // `{duration}` is filled by the caller with a fully localized `Intl.NumberFormat` unit
   // string (e.g. "5 minutes" / "5 minuti"), so the pluralization is never English-only.
   readingTime: "{duration} read",
@@ -51,6 +57,7 @@ const DEFAULTS = {
   "nav.toggle": "Toggle navigation menu",
   "footer.nav": "Footer navigation",
   "footer.social": "Social links",
+  "blog.publishedOn": "Published on {date}",
   "blog.readingProgress": "Article reading progress",
   "blog.articleNavigation": "Article navigation",
   "blog.previousArticle": "Previous Article",

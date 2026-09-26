@@ -10,6 +10,9 @@ const navLabel = t("toc.nav");
 const loadingText = t("toc.loading");
 const expandedText = t("toc.expanded");
 const collapsedText = t("toc.collapsed");
+const toggleText = t("toc.toggle");
+const navigateToText = t("toc.navigateTo");
+const navigatedText = t("toc.navigated");
 // CSS `content` needs a quoted string literal; a site label could contain a quote or
 // backslash, so it's escaped before being embedded in the inline custom property.
 const cssEscapedLoadingText = loadingText.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
@@ -21,6 +24,9 @@ const cssEscapedLoadingText = loadingText.replace(/\\/g, "\\\\").replace(/"/g, '
   style={`--_toc-loading-text: "${cssEscapedLoadingText}";`}
   data-label-expanded={expandedText}
   data-label-collapsed={collapsedText}
+  data-label-toggle={toggleText}
+  data-label-navigate-to={navigateToText}
+  data-label-navigated={navigatedText}
 >
   <h3>{heading}</h3>
   <nav class="toc-nav" id="toc-nav" aria-label={navLabel}></nav>
@@ -446,6 +452,9 @@ const cssEscapedLoadingText = loadingText.replace(/\\/g, "\\\\").replace(/"/g, '
     options.labels = {
       expanded: tocEl.getAttribute("data-label-expanded"),
       collapsed: tocEl.getAttribute("data-label-collapsed"),
+      toggle: tocEl.getAttribute("data-label-toggle"),
+      navigateTo: tocEl.getAttribute("data-label-navigate-to"),
+      navigated: tocEl.getAttribute("data-label-navigated"),
     };
   }
 

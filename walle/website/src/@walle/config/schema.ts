@@ -263,6 +263,8 @@ const notFoundLabelsSchema = z
   })
   .strict();
 
+const cardLabelsSchema = z.object({ read: z.string().optional() }).strict();
+
 const productsLabelsSchema = z
   .object({
     title: z.string().optional(),
@@ -290,6 +292,9 @@ const tocLabelsSchema = z
     loading: z.string().optional(),
     expanded: z.string().optional(),
     collapsed: z.string().optional(),
+    toggle: z.string().optional(),
+    navigateTo: z.string().optional(),
+    navigated: z.string().optional(),
   })
   .strict();
 
@@ -309,6 +314,7 @@ const footerLabelsSchema = z
 
 const blogLabelsSchema = z
   .object({
+    publishedOn: z.string().optional(),
     readingProgress: z.string().optional(),
     articleNavigation: z.string().optional(),
     previousArticle: z.string().optional(),
@@ -324,6 +330,9 @@ const blogLabelsSchema = z
 const labelsSchema = z
   .object({
     skipLink: z.string().optional(),
+    scrollableRegion: z.string().optional(),
+    logo: z.string().optional(),
+    card: cardLabelsSchema.optional(),
     breadcrumbs: breadcrumbsLabelsSchema.optional(),
     carousel: carouselLabelsSchema.optional(),
     filters: filtersLabelsSchema.optional(),
