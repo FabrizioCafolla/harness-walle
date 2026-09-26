@@ -722,10 +722,12 @@ walle_docs_enabled() {
 sync_walle_docs() {
   local src_dir="$1" tgt_dir="$2"
   walle_docs_enabled "$tgt_dir" || return 0
-  for f in cli.md modules.md managed-vs-seed.md versioning.md; do
-    if [ "$DRY_RUN" = "1" ]; then plan_path "${src_dir}/wiki/${f}" "${tgt_dir}/.harness-walle/docs/${f}"
-    else sync_path "${src_dir}/wiki/${f}" "${tgt_dir}/.harness-walle/docs/${f}"; fi
+  local d
+  for d in get-started develop architecture ai; do
+    if [ "$DRY_RUN" = "1" ]; then plan_path "${src_dir}/wiki/${d}" "${tgt_dir}/.harness-walle/docs/${d}"
+    else sync_path "${src_dir}/wiki/${d}" "${tgt_dir}/.harness-walle/docs/${d}"; fi
   done
+  [ "$DRY_RUN" = "1" ] || rm -f "${tgt_dir}/.harness-walle/docs/"{cli,modules,managed-vs-seed,versioning}.md
 }
 
 # Migrate a consumer's Walle state to the current layout, idempotently. Three legacy shapes

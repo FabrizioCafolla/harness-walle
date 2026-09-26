@@ -3,7 +3,7 @@
 # init runs harness-coding's own CLI (update --force) to establish the base, then walle injects
 # its marker block into setup-devcontainer.project.sh (the only inject in this module) and seeds
 # justfile.project, .husky/ and docker-compose.project.yml once, write-once, never touched by
-# `update` again (see wiki/managed-vs-seed.md). Walle vendors no base devcontainer file itself.
+# `update` again (see wiki/develop/managed-vs-seed.md). Walle vendors no base devcontainer file itself.
 # The default case reaches the network to fetch harness-coding; set WALLE_HARNESS_CODING_CLI to a
 # local cli.sh to run it offline (the env var inherits into the cli() subshell).
 

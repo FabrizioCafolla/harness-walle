@@ -127,7 +127,7 @@ always present:
 | `.harness-walle/manifest.json`  | The consumer manifest (`schemaVersion`, name, `walleVersion`, `modules`, `devcontainer.enabled`, `files`) |
 | `.harness-walle/config.yml`     | Consumer-facing setup config (currently just `docs: true/false`). Created with defaults if absent, yours to edit freely after |
 | `.harness-walle/lock`           | Single line: the resolved source ref (a tag, or `local` when `--source` is used). Written on every `init`/`update` |
-| `.harness-walle/docs/`          | Curated copy of this Develop section from the pinned release. Refreshed on `init`/`update` unless `config.yml`'s `docs: false` |
+| `.harness-walle/docs/`          | Copy of the wiki sections (Get Started, Develop, Architecture, AI) from the pinned release. Refreshed on `init`/`update` unless `config.yml`'s `docs: false` |
 
 A consumer on an older layout, a root `.walle.config.json` file or the earlier `.walle/` folder,
 is migrated automatically on the next CLI command: the folder is renamed to `.harness-walle/`, a

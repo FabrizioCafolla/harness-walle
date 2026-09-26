@@ -71,7 +71,8 @@ that walle provides as routes. **Migration guide:
 - New sites start without commerce or demo redirects, with OG images and a `posts` feed enabled.
 - The `ai` module's `AGENTS.md` block and skills describe the customization ladder; `walle-update`
   adds a workaround cleanup pass.
-- The wiki is reorganized into Get Started, Develop, Architecture and AI.
+- The wiki is reorganized into Get Started, Develop, Architecture and AI, and `.harness-walle/docs/`
+  now holds those four sections instead of four flat pages.
 
 ### Fixed
 
