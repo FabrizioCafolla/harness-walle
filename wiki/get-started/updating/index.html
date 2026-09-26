@@ -1,0 +1,441 @@
+<!DOCTYPE html><html lang="en-US"><head><style>@layer walle.base, walle.components, walle.utilities, site;</style><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/harness-walle/images/profile.jpeg"><link rel="sitemap" href="/harness-walle/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Walle" href="https://fabriziocafolla.github.io/harness-walle/rss.xml"><meta name="generator" content="Astro v7.3.4"><style>@font-face{font-family:Inter-a8725d4171d9e300;src:url("/harness-walle/_astro/fonts/91753f8d8da3aeb7.woff2") format("woff2");font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-weight:400;font-style:italic;}@font-face{font-family:Inter-a8725d4171d9e300;src:url("/harness-walle/_astro/fonts/91753f8d8da3aeb7.woff2") format("woff2");font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-weight:600;font-style:italic;}@font-face{font-family:Inter-a8725d4171d9e300;src:url("/harness-walle/_astro/fonts/91753f8d8da3aeb7.woff2") format("woff2");font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-weight:700;font-style:italic;}@font-face{font-family:Inter-a8725d4171d9e300;src:url("/harness-walle/_astro/fonts/e868cdf4720e9ea5.woff2") format("woff2");font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-weight:400;font-style:normal;}@font-face{font-family:Inter-a8725d4171d9e300;src:url("/harness-walle/_astro/fonts/e868cdf4720e9ea5.woff2") format("woff2");font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-weight:600;font-style:normal;}@font-face{font-family:Inter-a8725d4171d9e300;src:url("/harness-walle/_astro/fonts/e868cdf4720e9ea5.woff2") format("woff2");font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-weight:700;font-style:normal;}@font-face{font-family:"Inter-a8725d4171d9e300 fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:italic;size-adjust:107.7766%;ascent-override:89.885%;descent-override:22.3806%;line-gap-override:0%;}@font-face{font-family:"Inter-a8725d4171d9e300 fallback: Arial";src:local("Arial");font-display:swap;font-weight:600;font-style:italic;size-adjust:107.7766%;ascent-override:89.885%;descent-override:22.3806%;line-gap-override:0%;}@font-face{font-family:"Inter-a8725d4171d9e300 fallback: Arial Bold";src:local("Arial Bold");font-display:swap;font-weight:700;font-style:italic;size-adjust:100.1017%;ascent-override:96.7765%;descent-override:24.0966%;line-gap-override:0%;}@font-face{font-family:"Inter-a8725d4171d9e300 fallback: Arial";src:local("Arial");font-display:swap;font-weight:400;font-style:normal;size-adjust:107.7766%;ascent-override:89.885%;descent-override:22.3806%;line-gap-override:0%;}@font-face{font-family:"Inter-a8725d4171d9e300 fallback: Arial";src:local("Arial");font-display:swap;font-weight:600;font-style:normal;size-adjust:107.7766%;ascent-override:89.885%;descent-override:22.3806%;line-gap-override:0%;}@font-face{font-family:"Inter-a8725d4171d9e300 fallback: Arial Bold";src:local("Arial Bold");font-display:swap;font-weight:700;font-style:normal;size-adjust:100.1017%;ascent-override:96.7765%;descent-override:24.0966%;line-gap-override:0%;}:root{--walle-font-body:Inter-a8725d4171d9e300,"Inter-a8725d4171d9e300 fallback: Arial","Inter-a8725d4171d9e300 fallback: Arial Bold",sans-serif;}</style><link rel="preload" href="/harness-walle/_astro/fonts/91753f8d8da3aeb7.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/harness-walle/_astro/fonts/e868cdf4720e9ea5.woff2" as="font" type="font/woff2" crossorigin><!-- Canonical URL --><link rel="canonical" href="https://fabriziocafolla.github.io/harness-walle/wiki/get-started/updating"><!-- Primary Meta Tags --><title>Updating | Walle</title><meta name="title" content="Updating | Walle"><meta name="description" content="Walle design-system documentation"><meta name="robots" content="index, follow"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://fabriziocafolla.github.io/harness-walle/wiki/get-started/updating"><meta property="og:title" content="Updating | Walle"><meta property="og:description" content="Walle design-system documentation"><meta property="og:image" content="https://fabriziocafolla.github.io/harness-walle/og/default.png"><meta property="og:locale" content="en_US"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://fabriziocafolla.github.io/harness-walle/wiki/get-started/updating"><meta property="twitter:title" content="Updating | Walle"><meta property="twitter:description" content="Walle design-system documentation"><meta property="twitter:image" content="https://fabriziocafolla.github.io/harness-walle/og/default.png"><script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebSite","name":"Walle","description":"Design System","url":"https://fabriziocafolla.github.io/harness-walle"},{"@context":"https://schema.org","@type":"Organization","name":"Walle","url":"https://fabriziocafolla.github.io/harness-walle","logo":"https://fabriziocafolla.github.io/images/banner.png"}]</script><style>.wiki-page[data-astro-cid-6sfpakxj]{grid-template-columns:1fr;gap:2rem;max-width:64rem;margin:0 auto;padding:0 1rem;display:grid}@media (width>=60rem){.wiki-page[data-astro-cid-6sfpakxj]{grid-template-columns:14rem 1fr}.wiki-nav[data-astro-cid-6sfpakxj]{align-self:start;position:sticky;top:1rem}}.wiki-nav[data-astro-cid-6sfpakxj] ul[data-astro-cid-6sfpakxj]{gap:.35rem;margin:.5rem 0 0;padding:0;list-style:none;display:grid}.wiki-nav__section[data-astro-cid-6sfpakxj]{text-transform:uppercase;letter-spacing:.05em;margin:1rem 0 0;font-size:.875rem}.wiki-nav[data-astro-cid-6sfpakxj] [data-astro-cid-6sfpakxj][aria-current=page]{font-weight:700}.wiki-content[data-astro-cid-6sfpakxj]{min-width:0;max-width:72ch;line-height:1.7}.wiki-content[data-astro-cid-6sfpakxj] pre{overflow-x:auto}.wiki-content[data-astro-cid-6sfpakxj] table{border-collapse:collapse;max-width:100%;display:block;overflow-x:auto}.wiki-content[data-astro-cid-6sfpakxj] img{max-width:100%;height:auto}.wiki-content[data-astro-cid-6sfpakxj] a{text-decoration:underline}
+</style><link rel="stylesheet" href="/harness-walle/_astro/layouts.BxBI5EBW.css"><script type="module" src="/harness-walle/_astro/page.Dv3oULGt.js"></script></head><body data-label-scrollable="Scrollable content"><a href="#main-content" class="skip-link">Skip to content</a><header class="site-header"><div class="container"><nav class="main-nav" aria-label="Main navigation" data-component="Navbar" data-nav-root="true"><div class="brand-container"><a href="/harness-walle" title="Walle" class="brand-link"><span class="brand-title">Walle</span></a></div><div class="nav-container" id="nav-908yfat"><ul class="nav-links" data-nav-level="1" data-component="NavbarLinks"><li class="nav-item" data-component="NavbarItem"><a href="/harness-walle" class="nav-link" target="_self"><span>Home</span></a></li><li class="nav-item" data-component="NavbarItem"><a href="/harness-walle/showcase" class="nav-link" target="_self"><span>Showcase</span></a></li><li class="nav-item" data-component="NavbarItem"><a href="/harness-walle/blog" class="nav-link" target="_self"><span>Blog</span></a></li><li class="nav-item" data-component="NavbarItem"><a href="/harness-walle/products" class="nav-link" target="_self"><span>Products</span></a></li><li class="nav-item has-dropdown" data-component="NavbarItem"><div class="dropdown-container"><button class="nav-link dropdown-trigger" aria-expanded="false" aria-haspopup="true"><span>Company</span><svg width="12" height="12" viewBox="0 0 1664 1312" aria-hidden="true" class="dropdown-arrow" data-icon="fa:chevron-down"><symbol id="ai:fa:chevron-down"><path fill="currentColor" d="m1619 552l-742 741q-19 19-45 19t-45-19L45 552q-19-19-19-45.5T45 461l166-165q19-19 45-19t45 19l531 531l531-531q19-19 45-19t45 19l166 165q19 19 19 45.5t-19 45.5"/></symbol><use href="#ai:fa:chevron-down"></use></svg></button><ul class="dropdown-menu" data-component="NavbarDropdown"><li class="dropdown-item"><a href="/harness-walle/privacy-policy" class="dropdown-link" target="_self"><span>Privacy Policy</span></a></li><li class="dropdown-item"><a href="/harness-walle/terms-and-conditions" class="dropdown-link" target="_self"><span>Terms &amp; Conditions</span></a></li></ul></div></li><li class="nav-item" data-component="NavbarItem"><a href="https://www.linkedin.com/in/fabrizio-cafolla/" class="nav-link" target="_blank" aria-label="Go to https://www.linkedin.com/in/fabrizio-cafolla/"><svg width="20" height="20" viewBox="0 0 1536 1504" aria-hidden="true" data-icon="fa:linkedin"><symbol id="ai:fa:linkedin"><path fill="currentColor" d="M349 497v991H19V497zm21-306q1 73-50.5 122T184 362h-2q-82 0-132-49T0 191q0-74 51.5-122.5T186 20t133 48.5T370 191m1166 729v568h-329V958q0-105-40.5-164.5T1040 734q-63 0-105.5 34.5T871 854q-11 30-11 81v553H531q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52t87-43.5T1157 474q171 0 275 113.5T1536 920"/></symbol><use href="#ai:fa:linkedin"></use></svg></a></li><li class="nav-item" data-component="NavbarItem"><a href="https://github.com/FabrizioCafolla" class="nav-link" target="_blank" aria-label="Go to https://github.com/FabrizioCafolla"><svg width="20" height="20" viewBox="0 0 1536 1504" aria-hidden="true" data-icon="fa:github"><symbol id="ai:fa:github"><path fill="currentColor" d="M768 0q209 0 385.5 103T1433 382.5T1536 768q0 251-146.5 451.5T1011 1497q-27 5-40-7t-13-30q0-3 .5-76.5t.5-134.5q0-97-52-142q57-6 102.5-18t94-39t81-66.5t53-105T1258 728q0-119-79-206q37-91-8-204q-28-9-81 11t-92 44l-38 24q-93-26-192-26t-192 26q-16-11-42.5-27T450 331.5T365 318q-45 113-8 204q-79 87-79 206q0 85 20.5 150T351 983t80.5 67t94 39t102.5 18q-39 36-49 103q-21 10-45 15t-57 5t-65.5-21.5T356 1146q-19-32-48.5-52t-49.5-24l-20-3q-21 0-29 4.5t-5 11.5t9 14t13 12l7 5q22 10 43.5 38t31.5 51l10 23q13 38 44 61.5t67 30t69.5 7t55.5-3.5l23-4q0 38 .5 88.5t.5 54.5q0 18-13 30t-40 7q-232-77-378.5-277.5T0 768q0-209 103-385.5T382.5 103T768 0M291 1103q3-7-7-12q-10-3-13 2q-3 7 7 12q9 6 13-2m31 34q7-5-2-16q-10-9-16-3q-7 5 2 16q10 10 16 3m30 45q9-7 0-19q-8-13-17-6q-9 5 0 18t17 7m42 42q8-8-4-19q-12-12-20-3q-9 8 4 19q12 12 20 3m57 25q3-11-13-16q-15-4-19 7t13 15q15 6 19-6m63 5q0-13-17-11q-16 0-16 11q0 13 17 11q16 0 16-11m58-10q-2-11-18-9q-16 3-14 15t18 8t14-14"/></symbol><use href="#ai:fa:github"></use></svg></a></li><li class="nav-item" data-component="NavbarItem"><a href="/harness-walle/wiki" class="nav-link active" target="_self"><span>Docs</span></a></li></ul></div><button class="cart-badge cart-badge--inline" data-cart-badge data-cart-keep="true" aria-label="Open cart" data-astro-cid-ca2bctbz><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" data-astro-cid-ca2bctbz><circle cx="9" cy="21" r="1" data-astro-cid-ca2bctbz></circle><circle cx="20" cy="21" r="1" data-astro-cid-ca2bctbz></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" data-astro-cid-ca2bctbz></path></svg><span class="cart-badge__count" data-cart-count aria-live="polite" data-astro-cid-ca2bctbz>0</span></button><button id="mobile-menu-toggle" class="hamburger" aria-controls="nav-908yfat" aria-expanded="false" aria-label="Toggle navigation menu"><span class="hamburger-line"></span><span class="hamburger-line"></span><span class="hamburger-line"></span></button></nav></div></header><script type="module">function e(){let e=document.getElementById(`mobile-menu-toggle`),t=e?.getAttribute(`aria-controls`),n=document.getElementById(t||``);if(!e||!n)return;let r=e=>{e.classList.remove(`active`),e.querySelector(`.dropdown-trigger`)?.setAttribute(`aria-expanded`,`false`)},i=()=>{e.classList.remove(`active`),e.setAttribute(`aria-expanded`,`false`),n.classList.remove(`show`),document.body.classList.remove(`menu-open`),document.querySelectorAll(`.nav-item.active`).forEach(r)},a=()=>{e.classList.add(`active`),e.setAttribute(`aria-expanded`,`true`),n.classList.add(`show`),document.body.classList.add(`menu-open`)};e.addEventListener(`click`,()=>{e.getAttribute(`aria-expanded`)===`true`?i():a()}),document.querySelectorAll(`.dropdown-trigger`).forEach(e=>{e.addEventListener(`click`,t=>{t.preventDefault(),t.stopPropagation();let n=e.closest(`.nav-item`),i=n?.classList.contains(`active`);n?.parentElement?.querySelectorAll(`.nav-item.active`).forEach(e=>{e!==n&&r(e)}),n?.classList.toggle(`active`,!i),e.setAttribute(`aria-expanded`,String(!i))})}),n.querySelectorAll(`a:not(.dropdown-trigger)`).forEach(e=>{e.addEventListener(`click`,()=>{window.innerWidth<=768&&i()})}),document.addEventListener(`click`,t=>{let r=e.classList.contains(`active`),a=t.target;r&&!n.contains(a)&&!e.contains(a)&&i()}),document.addEventListener(`keydown`,t=>{if(t.key!==`Escape`)return;let n=document.querySelector(`.nav-item.active`);if(n){let e=n.querySelector(`.dropdown-trigger`);r(n),e?.focus();return}e.classList.contains(`active`)&&(i(),e.focus())}),window.addEventListener(`resize`,()=>{window.innerWidth>768&&e.classList.contains(`active`)&&i()});let o=document.querySelector(`.site-header`),s=()=>{o?.classList.toggle(`scrolled`,window.scrollY>20)};requestAnimationFrame(s),window.addEventListener(`scroll`,s,{passive:!0})}document.addEventListener(`DOMContentLoaded`,e),document.addEventListener(`astro:page-load`,e);</script><main id="main-content" tabindex="-1"><div class="wiki-page" data-astro-cid-6sfpakxj><nav class="wiki-nav" aria-label="Wiki pages" data-astro-cid-6sfpakxj><a href="/harness-walle/wiki" data-astro-cid-6sfpakxj>All pages</a><h2 class="wiki-nav__section" data-astro-cid-6sfpakxj>Overview</h2><ul data-astro-cid-6sfpakxj><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/readme" data-astro-cid-6sfpakxj>Walle documentation</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/ai" data-astro-cid-6sfpakxj>AI</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/architecture" data-astro-cid-6sfpakxj>Architecture</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/develop" data-astro-cid-6sfpakxj>Develop</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/get-started" data-astro-cid-6sfpakxj>Get started</a></li></ul><h2 class="wiki-nav__section" data-astro-cid-6sfpakxj>Get Started</h2><ul data-astro-cid-6sfpakxj><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/get-started/first-site" data-astro-cid-6sfpakxj>Your first site</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/get-started/customize" data-astro-cid-6sfpakxj>Customize</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/get-started/updating" aria-current="page" data-astro-cid-6sfpakxj>Updating</a></li></ul><h2 class="wiki-nav__section" data-astro-cid-6sfpakxj>Develop</h2><ul data-astro-cid-6sfpakxj><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/develop/repo-guide" data-astro-cid-6sfpakxj>Repo guide</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/develop/cli" data-astro-cid-6sfpakxj>CLI reference</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/develop/managed-vs-seed" data-astro-cid-6sfpakxj>Managed vs seed</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/develop/astrobook" data-astro-cid-6sfpakxj>Astrobook</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/develop/testing" data-astro-cid-6sfpakxj>Testing</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/develop/versioning" data-astro-cid-6sfpakxj>Versioning</a></li></ul><h2 class="wiki-nav__section" data-astro-cid-6sfpakxj>Architecture</h2><ul data-astro-cid-6sfpakxj><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/architecture/configuration" data-astro-cid-6sfpakxj>Configuration</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/architecture/components" data-astro-cid-6sfpakxj>Components</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/architecture/style" data-astro-cid-6sfpakxj>Style</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/architecture/ecommerce" data-astro-cid-6sfpakxj>Ecommerce</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/architecture/ci-cd" data-astro-cid-6sfpakxj>CI/CD</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/architecture/pwa" data-astro-cid-6sfpakxj>PWA</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/architecture/seo" data-astro-cid-6sfpakxj>SEO</a></li></ul><h2 class="wiki-nav__section" data-astro-cid-6sfpakxj>AI</h2><ul data-astro-cid-6sfpakxj><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/ai/agents-md" data-astro-cid-6sfpakxj>AGENTS.md block</a></li><li data-astro-cid-6sfpakxj><a href="/harness-walle/wiki/ai/skills" data-astro-cid-6sfpakxj>Skills</a></li></ul></nav><article class="wiki-content" data-astro-cid-6sfpakxj><h1 id="updating">Updating</h1>
+<h2 id="the-update-flow">The update flow</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">just</span><span style="color:#9ECBFF"> walle-update</span><span style="color:#6A737D">          # re-sync the @walle/ engine to the pinned or latest release</span></span>
+<span class="line"><span style="color:#B392F0">just</span><span style="color:#9ECBFF"> walle-deps</span><span style="color:#6A737D">            # report dependency drift against walle's package.json</span></span>
+<span class="line"><span style="color:#B392F0">just</span><span style="color:#9ECBFF"> walle-deps</span><span style="color:#79B8FF"> --apply</span><span style="color:#6A737D">    # align walle-owned dependencies and add missing runtime ones</span></span>
+<span class="line"><span style="color:#B392F0">just</span><span style="color:#9ECBFF"> walle-check</span><span style="color:#6A737D">           # validate the manifest, the version pin and the configs</span></span>
+<span class="line"><span style="color:#B392F0">just</span><span style="color:#9ECBFF"> build</span></span></code></pre>
+<p><code>walle-update</code> rewrites managed files only (everything under <code>@walle/</code> paths, the JSON schemas and
+the managed CI actions). Your pages, content, configs and styles are never touched. The pinned
+release lives in <code>.harness-walle/manifest.json</code> as <code>walleVersion</code>; to move to a specific release,
+pass it explicitly (<code>just walle-update -w v0.7.0</code>). To roll back, update again with the previous
+tag.</p>
+<p>Before updating across a minor version, read the migration guide for that release below. Releases
+before 1.0 may break the public API in a minor version; the <a href="https://github.com/FabrizioCafolla/harness-walle/blob/main/CHANGELOG.md">CHANGELOG</a> marks
+those entries as BREAKING.</p>
+<h2 id="migrating-to-070">Migrating to 0.7.0</h2>
+<p>0.7.0 turns walle’s styling and configuration into a public, documented extension model: cascade
+layers, public custom properties, one variant vocabulary, embedded component overrides, and a
+config that is validated at build time. Most sites need a few config edits and can then delete
+their CSS workarounds. Work through the steps in order and build after each one.</p>
+<h3 id="1-prerequisites">1. Prerequisites</h3>
+<p>Sites below 0.6 apply the intermediate CHANGELOG entries first, then update to 0.7.0. Then run
+<code>just walle-deps --apply</code>: 0.7.0 adds <code>leaflet</code>, <code>satori</code> and <code>@resvg/resvg-js</code> and moves several
+dependencies to new majors.</p>
+<p>Set the site’s Node version to 24, which the 0.7.0 <code>engines</code> field requires: <code>.nvmrc</code>, plus any
+<code>node-version</code> in your own workflows (the walle test action reads <code>.nvmrc</code>). <code>update</code> never
+touches <code>.nvmrc</code>, a seed file, so change it yourself.</p>
+<p>If your pre-commit hook or CI runs <code>prettier --check .</code>, add the paths walle writes to your
+<code>.prettierignore</code> (also a seed file, so <code>update</code> leaves it alone). Walle’s own source under
+<code>src/@walle</code> is prettier-clean, but these are generated or copied by the CLI, and the marker block
+in <code>AGENTS.md</code> must stay byte exact:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>.vscode/settings.json</span></span>
+<span class="line"><span>.vscode/extensions.json</span></span>
+<span class="line"><span>AGENTS.md</span></span>
+<span class="line"><span>.harness-walle</span></span>
+<span class="line"><span>.harness-coding</span></span>
+<span class="line"><span>.claude/skills/@walle</span></span>
+<span class="line"><span>test-results</span></span>
+<span class="line"><span>playwright-report</span></span></code></pre>
+<p>Also fix <code>.husky/pre-commit</code> if it came from an older seed. <code>cmd || (fix; exit 1)</code> only exits the
+subshell, so a lint or format error never stopped the commit. Use braces:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">yarn</span><span style="color:#9ECBFF"> lint</span><span style="color:#F97583"> ||</span><span style="color:#E1E4E8"> { </span><span style="color:#B392F0">yarn</span><span style="color:#9ECBFF"> lint:fix</span><span style="color:#E1E4E8">; </span><span style="color:#79B8FF">exit</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">; }</span></span>
+<span class="line"><span style="color:#B392F0">yarn</span><span style="color:#9ECBFF"> format</span><span style="color:#F97583"> ||</span><span style="color:#E1E4E8"> { </span><span style="color:#B392F0">yarn</span><span style="color:#9ECBFF"> format:fix</span><span style="color:#E1E4E8">; </span><span style="color:#79B8FF">exit</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">; }</span></span></code></pre>
+<p>and <code>yarn lint &amp;&amp; yarn test:unit</code> in <code>.husky/pre-push</code>.</p>
+<h3 id="2-config">2. Config</h3>
+<p>The build now validates every config file and stops on an error that names the file and the key.</p>
+<table>
+<thead>
+<tr>
+<th>Before</th>
+<th>After</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>astro.ssr.enabled: true</code></td>
+<td><code>astro.adapter: "node"</code> (the site stays static; only routes with <code>prerender = false</code> render on demand)</td>
+</tr>
+<tr>
+<td><code>commerce.showBuyButton: true</code></td>
+<td><code>commerce.mode: "shop"</code></td>
+</tr>
+<tr>
+<td><code>commerce.showBuyButton: false</code> with a catalog</td>
+<td><code>commerce.mode: "catalog"</code></td>
+</tr>
+<tr>
+<td>a <code>commerce</code> block on a site that sells nothing</td>
+<td>delete the block: commerce is off by default</td>
+</tr>
+<tr>
+<td><code>commerce.locale</code></td>
+<td><code>website.language</code> (drives every date, price and number)</td>
+</tr>
+<tr>
+<td><code>commerce.addToCartLabel</code></td>
+<td><code>labels.cart.add</code></td>
+</tr>
+<tr>
+<td>redirect pages or a catch-all redirect route</td>
+<td><code>astro.redirects</code>; redirect sources leave the sitemap automatically, so drop their <code>sitemapExclude</code> entries</td>
+</tr>
+<tr>
+<td>unknown keys</td>
+<td>removed: the build names them</td>
+</tr>
+</tbody>
+</table>
+<p>Dates follow <code>website.language</code>: with <code>en-US</code> a date reads “Jul 31, 2025”, with <code>en-GB</code> it keeps the
+day month year order (“31 Jul 2025”). Set the language that matches the format your site showed
+before.</p>
+<p>Add <code>labels</code> for every walle interface string you want in your own language: skip link,
+breadcrumbs, carousel, filters, cart, price, offline page, 404, table of contents, navigation,
+footer, blog, products and reading time. Anything missing stays in English.</p>
+<p>Commerce pages and collections are now provided by walle:</p>
+<ul>
+<li>
+<p>Delete the seeded <code>src/pages/products/index.astro</code>, <code>src/pages/products/[handle].astro</code> and any
+<code>src/pages/products/example*.astro</code> demo pages from 0.6.x: walle injects <code>/products</code> and
+<code>/products/[handle]</code> when <code>commerce.mode</code> is <code>catalog</code> or <code>shop</code>, and a local file on the same
+path collides with it. To keep a customized page, move it outside <code>src/pages/</code> and point
+<code>commerce.pages.list</code> or <code>commerce.pages.detail</code> at it.</p>
+</li>
+<li>
+<p>In <code>src/content.config.ts</code>, replace your own products collection (and its <code>shopifyLoader</code>
+import) with walle’s:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { walleCollections } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "@walle/content"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> appConfig </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> "./configs/app.json"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> const</span><span style="color:#79B8FF"> collections</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> { posts, </span><span style="color:#F97583">...</span><span style="color:#B392F0">walleCollections</span><span style="color:#E1E4E8">(appConfig.commerce?.mode) };</span></span></code></pre>
+</li>
+<li>
+<p>Guard any page of yours that reads the products collection (for example <code>llms.txt.ts</code>) on
+<code>commerce.mode</code>, since the collection does not exist when commerce is off.</p>
+</li>
+</ul>
+<p>RSS: <code>Head</code> no longer emits an <code>rss.xml</code> alternate link by default; it emits one per enabled
+<code>seo.feeds</code> item. If you have your own <code>src/pages/rss.xml.*</code>, either move the feed to <code>seo.feeds</code>
+(walle then provides the route and the link) or keep your page and add the link yourself. Delete
+your page if it uses the same path as a configured feed.</p>
+<h3 id="3-theme">3. Theme</h3>
+<p>Move design values defined in your CSS into <code>theme.json</code>:</p>
+<table>
+<thead>
+<tr>
+<th>In your CSS</th>
+<th>In <code>theme.json</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>brand colors</td>
+<td><code>palette.primary</code>, <code>-light</code>, <code>-dark</code> (same for <code>secondary</code>, <code>alternative</code>)</td>
+</tr>
+<tr>
+<td>text color on filled brand backgrounds</td>
+<td><code>palette.primary-contrast</code> (and <code>secondary-</code>, <code>alternative-</code>)</td>
+</tr>
+<tr>
+<td>heading color</td>
+<td><code>palette.heading</code></td>
+</tr>
+<tr>
+<td>gray scale</td>
+<td><code>neutral.light</code>, <code>base</code>, <code>medium</code>, <code>dark</code>, <code>darker</code></td>
+</tr>
+<tr>
+<td>shadows</td>
+<td><code>shadow.sm</code>, <code>md</code>, <code>lg</code></td>
+</tr>
+<tr>
+<td>radii</td>
+<td><code>radii.sm</code>, <code>md</code>, <code>lg</code>, <code>xl</code></td>
+</tr>
+<tr>
+<td><code>@font-face</code> rules or a Google Fonts import</td>
+<td><code>typography.fonts</code> (self-hosted at build time)</td>
+</tr>
+</tbody>
+</table>
+<p>Fonts from the <code>google</code> provider are served through Astro’s Fonts API and can carry different
+metrics than Google’s own CSS API returns, so text may set slightly wider or narrower than before.
+If a site must match its old rendering exactly, use the <code>fontsource</code> provider for that family and
+compare in a browser.</p>
+<p>Token renames:</p>
+<table>
+<thead>
+<tr>
+<th>Before</th>
+<th>After</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--box-shadow</code></td>
+<td><code>--shadow-md</code></td>
+</tr>
+<tr>
+<td><code>--box-shadow-hover</code></td>
+<td><code>--shadow-lg</code></td>
+</tr>
+<tr>
+<td><code>--transition-smooth</code></td>
+<td><code>--transition</code> or <code>--transition-normal</code></td>
+</tr>
+<tr>
+<td><code>--gray-gradient</code></td>
+<td>removed</td>
+</tr>
+<tr>
+<td><code>palette.accent</code>, <code>palette.muted</code></td>
+<td>removed (they were never used)</td>
+</tr>
+</tbody>
+</table>
+<p>Default values that changed and are visible on a site without its own <code>theme.json</code> palette:</p>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Before</th>
+<th>After</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--alternative</code></td>
+<td><code>#c99a3f</code></td>
+<td><code>#8a6423</code></td>
+</tr>
+<tr>
+<td><code>--alternative-dark</code></td>
+<td><code>#a97f2c</code></td>
+<td><code>#73531d</code></td>
+</tr>
+<tr>
+<td><code>--alternative-contrast</code></td>
+<td><code>--black</code></td>
+<td><code>--white</code></td>
+</tr>
+<tr>
+<td><code>--status-success</code></td>
+<td><code>#1f874b</code></td>
+<td><code>#1b7a43</code></td>
+</tr>
+</tbody>
+</table>
+<p>These clear WCAG AA as both text and fill. Set your own values in <code>theme.json</code> to keep the old
+look.</p>
+<h3 id="4-css">4. CSS</h3>
+<p>Wrap all of your CSS in <code>@layer site { }</code>. It then beats walle without any specificity tricks, and
+most workarounds can be deleted. Replace each pattern with a supported rung of
+<a href="/harness-walle/wiki/get-started/customize">the customization ladder</a>:</p>
+<table>
+<thead>
+<tr>
+<th>Pattern in your CSS</th>
+<th>Replace with</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>repeated classes to win specificity (<code>.button.button.button</code>)</td>
+<td>the plain selector inside <code>@layer site</code></td>
+</tr>
+<tr>
+<td><code>!important</code> on walle selectors</td>
+<td>the component’s public custom property</td>
+</tr>
+<tr>
+<td>radius overrides on walle components</td>
+<td><code>theme.json</code> <code>radii</code> or <code>--&lt;component&gt;-radius</code></td>
+</tr>
+<tr>
+<td>selectors on walle inner classes (<code>.section-title</code>, <code>.header-title</code>, <code>.text-container</code>)</td>
+<td><code>--heading</code>, the component’s properties, or a slot</td>
+</tr>
+<tr>
+<td><code>:global(.button)</code> or other <code>:global()</code> rules on walle components</td>
+<td>a <code>class</code> on the component plus custom properties</td>
+</tr>
+<tr>
+<td>a footer wrap fix</td>
+<td>nothing: the footer navigation wraps by default</td>
+</tr>
+<tr>
+<td>colors for a one-off brand variant</td>
+<td>the <code>site</code> variant</td>
+</tr>
+</tbody>
+</table>
+<p>Walle ships a global <code>.prose</code> class (<code>styles/prose.css</code>) for rendered markdown. Any element of
+yours that uses the class name <code>prose</code> now inherits its font size, line height, colors, paragraph,
+heading and list rules. Rename your own class (for example <code>page-text</code>), or restyle the element in
+<code>@layer site</code>.</p>
+<p>Removed global helpers:</p>
+<table>
+<thead>
+<tr>
+<th>Before</th>
+<th>After</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>spacing utility classes</td>
+<td>your own CSS in <code>@layer site</code>, or component props</td>
+</tr>
+<tr>
+<td><code>visible-xs</code>, <code>visible-sm</code></td>
+<td>your own media queries</td>
+</tr>
+<tr>
+<td><code>container-centered</code>, <code>text-centered</code></td>
+<td>the <code>centered</code> prop on sections</td>
+</tr>
+<tr>
+<td><code>ul.meta-info</code>, <code>ul.tags</code> global styles</td>
+<td>styled inside the components that use them</td>
+</tr>
+<tr>
+<td>global <code>section</code> padding</td>
+<td>the section components own their spacing (<code>--wrapper-padding-y</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>A plain <code>&lt;section&gt;</code> element of your own no longer gets vertical padding from walle. If one relied
+on it, give it padding in <code>@layer site</code>, or use a walle section component.</p>
+<h3 id="5-components">5. Components</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Before</th>
+<th>After</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Button</td>
+<td><code>variant="white"</code></td>
+<td><code>inverse</code></td>
+</tr>
+<tr>
+<td>Button</td>
+<td><code>variant="white"</code> with <code>outline</code></td>
+<td><code>inverse outline</code></td>
+</tr>
+<tr>
+<td>Button</td>
+<td><code>effects</code></td>
+<td>removed</td>
+</tr>
+<tr>
+<td>Badge</td>
+<td><code>variant="gray"</code></td>
+<td><code>muted</code></td>
+</tr>
+<tr>
+<td>Badge</td>
+<td><code>variant="success"</code>, <code>"warning"</code>, <code>"danger"</code></td>
+<td><code>status="success"</code>, <code>"warning"</code>, <code>"danger"</code></td>
+</tr>
+<tr>
+<td>Link</td>
+<td><code>variant="default"</code></td>
+<td>no prop</td>
+</tr>
+<tr>
+<td>Link</td>
+<td><code>variant="muted"</code>, <code>variant="unstyled"</code></td>
+<td><code>muted</code>, <code>unstyled</code></td>
+</tr>
+<tr>
+<td>Section, SectionFlow, SectionColumns</td>
+<td><code>variant="gray"</code></td>
+<td><code>muted</code></td>
+</tr>
+<tr>
+<td>Section, SectionFlow, SectionColumns</td>
+<td><code>variant="primary"</code></td>
+<td><code>filled</code> (plus <code>variant</code> for another color)</td>
+</tr>
+<tr>
+<td>HeaderStandard</td>
+<td><code>variant="white"</code></td>
+<td>no prop (the default)</td>
+</tr>
+<tr>
+<td>HeaderStandard</td>
+<td><code>variant="primary"</code></td>
+<td><code>filled</code></td>
+</tr>
+<tr>
+<td>HeaderStandard</td>
+<td><code>variant="secondary"</code> (the light band)</td>
+<td><code>muted</code></td>
+</tr>
+<tr>
+<td>DetailLayout</td>
+<td>CSS on <code>.detail-badges</code></td>
+<td><code>badgesAlign</code></td>
+</tr>
+</tbody>
+</table>
+<p>Visible changes in components:</p>
+<ul>
+<li>HeaderStandard: <code>imageRight</code> used to have no effect, so the image always rendered after the text.
+It now works as documented: the image comes first by default and <code>imageRight</code> puts it after. If
+your header relied on the old behavior, add <code>imageRight</code>.</li>
+<li>Section content keeps a 16px gutter at 640px and below (it was 24px). To restore the old
+gutter: <code>@layer site { @media (max-width: 640px) { .section-wrapper { --wrapper-gutter: var(--space-lg); } } }</code>.</li>
+<li>Blog post tags use the theme radius instead of a pill. For the old pill:
+<code>@layer site { .tag { --blog-tag-radius: 2rem; } }</code>.</li>
+</ul>
+<h3 id="6-features">6. Features</h3>
+<p>Replace site code that walle now provides:</p>
+<table>
+<thead>
+<tr>
+<th>Your site has</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>an offline page plus a workbox rule for it</td>
+<td><code>pwa.offline: true</code> (or a <code>./</code> path to your own page); remove the page, the rule and its <code>sitemapExclude</code> entry</td>
+</tr>
+<tr>
+<td>custom workbox <code>globIgnores</code> for cart chunks, or a glob for font files</td>
+<td>remove them: walle ignores commerce chunks when commerce is not <code>shop</code> and precaches self-hosted fonts</td>
+</tr>
+<tr>
+<td>an Open Graph image endpoint</td>
+<td><code>seo.ogImage</code>, with a custom template per collection if needed</td>
+</tr>
+<tr>
+<td>a local leaflet map component</td>
+<td><code>Map</code></td>
+</tr>
+<tr>
+<td>a collection-based RSS endpoint</td>
+<td><code>seo.feeds</code> (keep your own if it filters entries, emits other formats, or reads a nested field: <code>fields</code> maps top-level entry fields only)</td>
+</tr>
+<tr>
+<td>a Google Fonts import or <code>@font-face</code> rules</td>
+<td><code>theme.json</code> <code>typography.fonts</code></td>
+</tr>
+<tr>
+<td>a local hero or call-to-action section</td>
+<td>compare with <code>Hero</code> and <code>CallToAction</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="7-verify">7. Verify</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">just</span><span style="color:#9ECBFF"> validate-configs</span></span>
+<span class="line"><span style="color:#B392F0">just</span><span style="color:#9ECBFF"> build</span></span></code></pre>
+<p>Then check the pages that had CSS overrides in a browser, at desktop and at 320px width.</p>
+</article></div></main><footer data-astro-cid-wk7hliiz><div class="footer-container" data-astro-cid-wk7hliiz><div class="footer-section footer-left" data-astro-cid-wk7hliiz><div class="copyright" data-astro-cid-wk7hliiz><a href="/harness-walle" class="brand-link " data-astro-cid-wk7hliiz><span class data-astro-cid-wk7hliiz>Walle</span></a><span class="license" data-astro-cid-wk7hliiz>2026 &copy; </span></div></div><div class="footer-section footer-center" data-astro-cid-wk7hliiz><nav class="footer-nav" aria-label="Footer navigation" data-astro-cid-wk7hliiz><ul class="footer-nav__list" data-astro-cid-wk7hliiz><li data-astro-cid-wk7hliiz><a href="/harness-walle/privacy-policy" data-astro-cid-wk7hliiz>Privacy Policy</a></li><li data-astro-cid-wk7hliiz><a href="/harness-walle/terms-and-conditions" data-astro-cid-wk7hliiz>Terms &amp; Conditions</a></li></ul></nav></div><div class="footer-section footer-right" data-astro-cid-wk7hliiz><ul class="social-links" aria-label="Social links" data-astro-cid-wk7hliiz><li data-astro-cid-wk7hliiz><a href="https://www.linkedin.com/in/fabrizio-cafolla/" target="_blank" rel="noopener noreferrer" class="astro-wk7hliiz" aria-label="linkedin" data-astro-cid-wk7hliiz><svg width="20" height="20" viewBox="0 0 1536 1504" aria-hidden="true" data-astro-cid-wk7hliiz="true" data-icon="fa:linkedin"><use href="#ai:fa:linkedin"></use></svg></a></li><li data-astro-cid-wk7hliiz><a href="https://github.com/FabrizioCafolla" target="_blank" rel="noopener noreferrer" class="astro-wk7hliiz" aria-label="github" data-astro-cid-wk7hliiz><svg width="20" height="20" viewBox="0 0 1536 1504" aria-hidden="true" data-astro-cid-wk7hliiz="true" data-icon="fa:github"><use href="#ai:fa:github"></use></svg></a></li></ul></div></div></footer><dialog class="cart-drawer" data-cart-drawer data-locale="en-US" data-label-decrease="Decrease quantity" data-label-increase="Increase quantity" data-label-remove="Remove" aria-label="Shopping cart" data-astro-cid-srceaava><div class="cart-drawer__head" data-astro-cid-srceaava><h2 data-astro-cid-srceaava>Your cart</h2><button class="cart-drawer__close" data-cart-close aria-label="Close cart" data-astro-cid-srceaava><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" data-astro-cid-srceaava><path d="M18 6 6 18M6 6l12 12" data-astro-cid-srceaava></path></svg></button></div><p class="cart-drawer__empty" data-cart-empty data-astro-cid-srceaava>Your cart is empty.</p><ul class="cart-drawer__lines" data-cart-lines data-astro-cid-srceaava></ul><div class="cart-drawer__foot" data-cart-foot hidden data-astro-cid-srceaava><div class="cart-drawer__subtotal" data-astro-cid-srceaava><span data-astro-cid-srceaava>Subtotal</span><span data-cart-subtotal data-astro-cid-srceaava></span></div><button class="cart-checkout" data-cart-checkout data-astro-cid-srceaava>Checkout</button></div></dialog><script type="module" src="/harness-walle/_astro/CartMount.astro_astro_type_script_index_0_lang.fV31Tgcq.js"></script><script type="module">function e(){let e=document.querySelectorAll(`pre,table,[data-scrollable]`);if(e.length===0)return;let t=[];e.forEach(e=>{e.hasAttribute(`tabindex`)||(e.scrollWidth>e.clientWidth||e.scrollHeight>e.clientHeight)&&!e.querySelector(`a[href],button,input,select,textarea,[tabindex]`)&&t.push(e)}),t.forEach(e=>{e.setAttribute(`tabindex`,`0`),e.setAttribute(`role`,`region`);let t=document.body.dataset.labelScrollable;t&&!e.hasAttribute(`aria-label`)&&e.setAttribute(`aria-label`,t)})}var t=()=>requestAnimationFrame(e);document.addEventListener(`DOMContentLoaded`,t),document.addEventListener(`astro:page-load`,t);</script></body></html>
