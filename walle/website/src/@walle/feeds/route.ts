@@ -19,6 +19,8 @@ export type FeedEntry = { id: string; data: Record<string, unknown> };
 
 export const prerender = true;
 
+const DEFAULT_FEED_LIMIT = 50;
+
 function findFeedItem(pathname: string): FeedItemConfig {
   const items = config.app.seo?.feeds?.items ?? [];
   const path = stripBase(pathname, import.meta.env.BASE_URL || "/");
@@ -48,7 +50,7 @@ function requiredField(
 /**
  * Drops excluded drafts, maps each entry's fields per `item.fields` (default: identity;
  * "date" reads `data.date` unless overridden), sorts by date descending and applies the
- * configured limit. Pure and side-effect free so a unit test can exercise every case (mapping,
+ * configured limit (50 when unset). Pure and side-effect free so a unit test can exercise every case (mapping,
  * draft exclusion, sort, limit, the missing-field error) without astro:content or a real build.
  */
 export function buildFeedItems(entries: FeedEntry[], item: FeedItemConfig, site: string | URL): RSSFeedItem[] {
@@ -72,7 +74,7 @@ export function buildFeedItems(entries: FeedEntry[], item: FeedItemConfig, site:
   });
 
   mapped.sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
-  return item.limit ? mapped.slice(0, item.limit) : mapped;
+  return mapped.slice(0, item.limit ?? DEFAULT_FEED_LIMIT);
 }
 
 export const GET: APIRoute = async (context) => {

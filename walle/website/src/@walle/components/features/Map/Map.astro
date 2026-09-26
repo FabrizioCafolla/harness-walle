@@ -52,7 +52,12 @@ const {
 
 function isValidCoordinate(lat: number, lng: number): boolean {
   return (
-    Number.isFinite(lat) && lat >= -90 && lat <= 90 && Number.isFinite(lng) && lng >= -180 && lng <= 180
+    Number.isFinite(lat) &&
+    lat >= -90 &&
+    lat <= 90 &&
+    Number.isFinite(lng) &&
+    lng >= -180 &&
+    lng <= 180
   );
 }
 
@@ -66,9 +71,14 @@ const resolvedTiles: NonNullable<MapTiles> = tiles ??
     subdomains: "abc",
     maxZoom: 19,
   };
-const resolvedDirections: NonNullable<Directions> = directions ?? config.app.map?.directions ?? "google";
+const resolvedDirections: NonNullable<Directions> =
+  directions ?? config.app.map?.directions ?? "google";
 
-function resolveDirectionsUrl(lat: number, lng: number, provider: NonNullable<Directions>): string | undefined {
+function resolveDirectionsUrl(
+  lat: number,
+  lng: number,
+  provider: NonNullable<Directions>
+): string | undefined {
   switch (provider) {
     case "google":
       return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
@@ -84,7 +94,11 @@ function resolveDirectionsUrl(lat: number, lng: number, provider: NonNullable<Di
 
 {
   validMarkers.length > 0 && (
-    <section aria-label={regionLabel ?? t("map.region")} {...attrs}>
+    <section
+      aria-label={regionLabel ?? t("map.region")}
+      {...attrs}
+      class:list={["map", attrs.class]}
+    >
       <div
         class="map__container"
         data-map-container
@@ -102,7 +116,12 @@ function resolveDirectionsUrl(lat: number, lng: number, provider: NonNullable<Di
           const directionsHref =
             marker.href ?? resolveDirectionsUrl(marker.lat, marker.lng, resolvedDirections);
           return (
-            <li data-lat={marker.lat} data-lng={marker.lng} data-variant={marker.variant ?? "primary"} data-title={marker.title}>
+            <li
+              data-lat={marker.lat}
+              data-lng={marker.lng}
+              data-variant={marker.variant ?? "primary"}
+              data-title={marker.title}
+            >
               <p class="map__marker-title">{marker.title}</p>
               {marker.description && <p class="map__marker-description">{marker.description}</p>}
               {directionsHref && (
@@ -124,7 +143,7 @@ function resolveDirectionsUrl(lat: number, lng: number, provider: NonNullable<Di
        rule below falls back to the variant tokens (--variant-bg/--variant-fg), so a marker's
        own data-variant already colors it, and a site only needs these two to force every
        marker to one fixed color regardless of variant. */
-    .map__container {
+    .map {
       --map-height: 400px;
       --map-radius: var(--radius-md);
       --map-border: var(--border);
@@ -135,7 +154,10 @@ function resolveDirectionsUrl(lat: number, lng: number, provider: NonNullable<Di
       --map-control-bg: var(--surface);
       --map-control-fg: var(--text);
       --map-control-radius: var(--radius-sm);
+      --map-marker-radius: 50%;
+    }
 
+    .map__container {
       height: var(--map-height);
       border-radius: var(--map-radius);
       border: 1px solid var(--map-border);
@@ -150,8 +172,6 @@ function resolveDirectionsUrl(lat: number, lng: number, provider: NonNullable<Di
        attribute: the rules stay global, prefixed with .map__container so they only restyle a
        walle Map. */
     .map__container .map__marker {
-      --map-marker-radius: 50%;
-
       width: var(--map-marker-size, 28px);
       height: var(--map-marker-size, 28px);
       border-radius: var(--map-marker-radius);

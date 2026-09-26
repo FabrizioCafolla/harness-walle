@@ -14,6 +14,14 @@ describe("Map", () => {
     expect(html).toContain("Rome office");
   });
 
+  it("puts the root .map class next to a consumer class on the section", async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(Map, {
+      props: { markers: [{ lat: 41.9, lng: 12.5, title: "Rome" }], class: "office-map" },
+    });
+    expect(html).toMatch(/<section[^>]*class="[^"]*\bmap\b[^"]*\boffice-map\b/);
+  });
+
   it("skips markers with invalid coordinates", async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(Map, {

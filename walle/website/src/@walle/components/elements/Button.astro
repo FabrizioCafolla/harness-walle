@@ -1,7 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
 import type { BaseProps, Size, Variant } from "../shared/types";
-import { splitProps, variantAttrs } from "../shared/attrs";
+import { linkAttrs, splitProps, variantAttrs } from "../shared/attrs";
 
 export interface Props extends BaseProps {
   /**
@@ -107,7 +107,7 @@ const isLink = Boolean(href) && !disabled;
 const Tag = isLink ? "a" : "button";
 
 const tagAttrs = isLink
-  ? { href, target, rel: target === "_blank" ? "noopener" : undefined }
+  ? { href, target, rel: linkAttrs({ target }).rel }
   : { type, disabled, "aria-disabled": disabled ? ("true" as const) : undefined };
 ---
 

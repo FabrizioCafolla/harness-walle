@@ -15,12 +15,13 @@ export { z };
  * key" error) but only ever validates when absent.
  */
 function removedKey(guidance: string) {
+  const message = `This key has been removed. Use "${guidance}" instead.`;
   return z
     .unknown()
     .optional()
-    .refine((value) => value === undefined, {
-      message: `This key has been removed. Use "${guidance}" instead.`,
-    });
+    .refine((value) => value === undefined, { message })
+    // `refine` has no JSON Schema form; `not: {}` makes ajv reject the key whenever present.
+    .meta({ not: {}, description: message });
 }
 
 const logoSchema = z
@@ -394,6 +395,7 @@ const feedItemSchema = z
     fields: feedFieldsSchema.optional(),
     // `{id}` substituted per entry: the collection entry's own detail page.
     link: z.string(),
+    // Newest entries kept; 50 when unset.
     limit: z.number().optional(),
     excludeDrafts: z.boolean().optional(),
   })

@@ -11,7 +11,8 @@ const posts = defineCollection({
     description: z.string(),
     slug: z.string().optional(),
     tags: z.array(z.string().max(24)).min(1).max(10).optional(),
-    publishDate: z.date().optional(),
+    // Required: the seeded RSS feed orders and dates its items by it.
+    publishDate: z.date(),
     readingTime: z.string().optional(),
     author: z.string().optional(),
     image: z.string().optional(),

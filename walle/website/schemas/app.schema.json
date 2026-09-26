@@ -111,7 +111,10 @@
           "type": "string",
           "enum": ["node"]
         },
-        "ssr": {},
+        "ssr": {
+          "not": {},
+          "description": "This key has been removed. Use \"astro.adapter\" instead."
+        },
         "prefetch": {
           "anyOf": [
             {
@@ -245,9 +248,18 @@
           },
           "additionalProperties": false
         },
-        "showBuyButton": {},
-        "locale": {},
-        "addToCartLabel": {}
+        "showBuyButton": {
+          "not": {},
+          "description": "This key has been removed. Use \"commerce.mode\" instead."
+        },
+        "locale": {
+          "not": {},
+          "description": "This key has been removed. Use \"website.language\" instead."
+        },
+        "addToCartLabel": {
+          "not": {},
+          "description": "This key has been removed. Use \"labels\" instead."
+        }
       },
       "additionalProperties": false
     },

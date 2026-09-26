@@ -187,10 +187,14 @@ function walleCommerceRoutesIntegration(
 function readThemeJson(): Record<string, any> {
   const themeUrl = new URL("../configs/theme.json", import.meta.url);
   if (!existsSync(fileURLToPath(themeUrl))) return {};
+  const raw = readFileSync(themeUrl, "utf8");
+  if (!raw.trim()) return {};
   try {
-    return JSON.parse(readFileSync(themeUrl, "utf8"));
-  } catch {
-    return {};
+    return JSON.parse(raw);
+  } catch (err) {
+    throw new Error(
+      `src/configs/theme.json is not valid JSON: ${err instanceof Error ? err.message : String(err)}`
+    );
   }
 }
 

@@ -50,12 +50,17 @@ vi.mock("node:fs", () => ({
   statSync: () => ({ isFile: () => fsIsFile }),
 }));
 
+// Every describe below reads theme.json through the fs mock, and a malformed one now throws:
+// reset it for all of them so no test inherits another's file state.
+beforeEach(() => {
+  fsExists = false;
+  fsContent = "";
+  fsIsFile = true;
+});
+
 describe("defineWalleConfig", () => {
   beforeEach(() => {
     appConfigMock = structuredClone(baseAppConfig);
-    fsExists = false;
-    fsContent = "";
-    fsIsFile = true;
   });
 
   it("throws referencing app.json and the key path for an unknown key", () => {
@@ -186,12 +191,10 @@ describe("defineWalleConfig", () => {
     expect(themePlugin.load("\0virtual:walle-theme.css")).toBe("");
   });
 
-  it("yields empty theme CSS when theme.json is present but malformed", () => {
+  it("stops the build with a clear error when theme.json is present but malformed", () => {
     fsExists = true;
     fsContent = "{not json";
-    const config = defineWalleConfig();
-    const themePlugin = findThemePlugin(config);
-    expect(themePlugin.load("\0virtual:walle-theme.css")).toBe("");
+    expect(() => defineWalleConfig()).toThrow(/theme\.json is not valid JSON/);
   });
 });
 

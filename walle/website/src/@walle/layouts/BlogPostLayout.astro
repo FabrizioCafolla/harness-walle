@@ -25,15 +25,21 @@ const {
   id,
 } = Astro.props;
 
-// This post's own OG image, only when the feature is on; otherwise `ogImageUrl` would
-// point at a route that doesn't exist.
-const entryOgImage = id && config.app.seo?.ogImage?.enabled ? ogImageUrl("posts", id) : undefined;
+// This post's generated OG image exists only when the feature is on and `posts` is one of its
+// collections; otherwise `ogImageUrl` would point at a route that doesn't exist. A post's own
+// `image` is passed as the explicit OG image below, so it always wins over the generated one.
+const ogImage = config.app.seo?.ogImage;
+const entryOgImage =
+  id && ogImage?.enabled && ogImage.collections?.includes("posts")
+    ? ogImageUrl("posts", id)
+    : undefined;
 ---
 
 <BaseLayout
   headerTitle={title}
   headerDescription={description}
   headerImage={image}
+  headerOgImage={image}
   headerEntryOgImage={entryOgImage}
   headerPublishedTime={publishDate}
 >

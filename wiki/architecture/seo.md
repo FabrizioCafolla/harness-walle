@@ -103,6 +103,6 @@ configured item) built on `@astrojs/rss`. `fields` maps a feed's own vocabulary
 (`title`/`description`/`date`/`categories`) onto the collection's actual schema keys, so a
 collection using e.g. `publishDate` instead of `date` doesn't need renaming just to feed one.
 Drafts are excluded when `excludeDrafts` is set, entries sort by date descending, `limit` caps
-the result, and a missing mapped field on a kept entry fails the build naming the feed,
+the result (50 when unset), and a missing mapped field on a kept entry fails the build naming the feed,
 collection, and field. `Head.astro` emits one `<link rel="alternate" type="application/rss+xml">`
 per enabled feed item; disabled means no route and no link at all.

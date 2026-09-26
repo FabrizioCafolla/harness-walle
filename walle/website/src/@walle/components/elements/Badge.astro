@@ -1,7 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
 import type { BaseProps, Size, Variant } from "../shared/types";
-import { splitProps, variantAttrs } from "../shared/attrs";
+import { linkAttrs, splitProps, variantAttrs } from "../shared/attrs";
 
 export interface Props extends BaseProps {
   /**
@@ -99,7 +99,7 @@ const badgeClasses = [
 
 const Element = href ? "a" : "span";
 
-const hrefAttrs = href ? { href, target, rel: target === "_blank" ? "noopener" : undefined } : {};
+const hrefAttrs = href ? { href, target, rel: linkAttrs({ target }).rel } : {};
 ---
 
 <Element

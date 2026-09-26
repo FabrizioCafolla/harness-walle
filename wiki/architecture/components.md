@@ -186,6 +186,10 @@ Walle's own marker/popup/control rules live in that same global block, prefixed 
 Leaflet, its stylesheet, and the map runtime are all loaded lazily on scroll, in their own
 chunk, never in the page's eager bundle.
 
+The public `--map-*` properties are declared on the root `.map` class (the component's own
+`<section>`), so a site sets them on `.map`, on its own class passed as `class`, or on any
+wrapper, without reaching into `.map__container`.
+
 Each marker takes an optional `variant`, so a map with several locations can color them
 independently the same way any other component does.
 

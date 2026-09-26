@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import Ajv from "ajv";
 
 import { generateSchemas } from "../../../cli/generate-schemas.mjs";
 
@@ -18,4 +19,24 @@ describe("committed schemas match the generated output", () => {
       expect(committed).toEqual(generated[file]);
     });
   }
+});
+
+describe("removed config keys stay rejected in the JSON schema", () => {
+  const validate = new Ajv({ strict: false }).compile(generateSchemas()["app.schema.json"]);
+  const base = JSON.parse(readFileSync(join(__dirname, "../../src/configs/app.json"), "utf-8"));
+
+  it("accepts the demo config", () => {
+    expect(validate(base)).toBe(true);
+  });
+
+  it.each([
+    ["astro", "ssr", { enabled: true }],
+    ["commerce", "showBuyButton", true],
+    ["commerce", "locale", "it-IT"],
+    ["commerce", "addToCartLabel", "Add"],
+  ])("rejects %s.%s", (section, key, value) => {
+    const config = structuredClone(base);
+    config[section] = { ...config[section], [key]: value };
+    expect(validate(config)).toBe(false);
+  });
 });

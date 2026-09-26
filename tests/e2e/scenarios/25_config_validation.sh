@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Scenario: app.json is validated at build time (schema.ts): an unknown key, a wrong
 # type, and a removed key each fail `yarn build` with the file name and the key path, and
-# the removed key's error additionally names its replacement.
+# the removed key's error additionally names its replacement. A malformed theme.json stops
+# the build too.
 
 # Applies the given JS patch function body to app.json's parsed object, in the given sandbox.
 patch_app_json() {
@@ -77,6 +78,17 @@ scenario_config_validation() {
   echo "$block" | grep -q 'Use "astro.adapter" instead' \
     || { fail "removed-key error does not name the replacement astro.adapter"; return 1; }
   cp "$dir/.e2e-app.json.orig" "$dir/src/configs/app.json"
+
+  # Malformed theme.json: the build stops and names the file, instead of silently building
+  # with the default theme.
+  printf '{ "palette": ' >"$dir/src/configs/theme.json"
+  if sandbox_build "$dir" >/dev/null 2>&1; then
+    fail "build should fail on a malformed theme.json"
+    return 1
+  fi
+  grep -q 'theme.json is not valid JSON' "$dir/.e2e-build.log" \
+    || { fail "malformed theme.json error does not name theme.json"; return 1; }
+  rm -f "$dir/src/configs/theme.json"
 
   # Restored to the valid config: the build gate is on the mutation, not the sandbox itself.
   sandbox_build "$dir" || fail "build should succeed once app.json is restored" || return 1
