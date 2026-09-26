@@ -43,6 +43,20 @@ declare module "virtual:walle-fonts" {
   export const fonts: Array<{ cssVariable: string; preload: boolean }>;
 }
 
+/** Palette and `typography.fonts` from theme.json, resolved at config time for OG rendering. */
+declare module "virtual:walle-theme-data" {
+  const data: {
+    palette: Record<string, string>;
+    fonts: Array<{
+      name: string;
+      provider: "local" | "google" | "fontsource";
+      src?: string[];
+      weights?: (string | number)[];
+    }>;
+  };
+  export default data;
+}
+
 /**
  * One export per embeddable component (D6), each typed against its own "standard" walle
  * implementation. A site override must accept the same props and slots to be a valid

@@ -619,6 +619,26 @@ function walleFontsPlugin(entries: WalleFontEntry[] | undefined) {
   };
 }
 
+/**
+ * The theme values OG rendering needs (palette and `typography.fonts`), embedded as data.
+ * `og/theme.ts` runs from a prerender chunk whose `import.meta.url` is nowhere near
+ * `src/configs/`, so it cannot read theme.json from disk itself.
+ */
+function walleThemeDataPlugin(theme: Record<string, any>) {
+  const virtualId = "virtual:walle-theme-data";
+  const resolvedId = "\0" + virtualId;
+  const data = { palette: theme.palette ?? {}, fonts: theme.typography?.fonts ?? [] };
+  return {
+    name: "walle-theme-data",
+    resolveId(id: string) {
+      return id === virtualId ? resolvedId : null;
+    },
+    load(id: string) {
+      return id === resolvedId ? `export default ${JSON.stringify(data)};` : null;
+    },
+  };
+}
+
 function resolvePwaHead(
   app: { astro?: Record<string, any>; pwa?: PwaConfigSection },
   overrides: Record<string, any> = {}
@@ -850,6 +870,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
         walleComponentsPlugin(process.cwd(), components),
         wallePwaHeadPlugin(pwaHead),
         walleFontsPlugin(walleFontEntries),
+        walleThemeDataPlugin(readThemeJson()),
         walleFeaturesPlugin(commerce?.mode),
         walleSlimBarrelsPlugin(process.cwd()),
         ...(consumerVite.plugins ?? []),

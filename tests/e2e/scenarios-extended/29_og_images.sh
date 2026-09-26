@@ -22,6 +22,25 @@ scenario_og_images() {
   assert_path_present "$dir/dist/og/default.png" || return 1
   assert_path_present "$dir/dist/og/posts/example.png" || return 1
 
+  # theme.json's palette must reach the OG renderer (prerender chunk cannot read it from disk):
+  # a primary color change has to change the rendered default image.
+  local before after
+  before=$(md5sum <"$dir/dist/og/default.png")
+  node -e "
+    const fs = require('fs');
+    const p = '$dir/src/configs/theme.json';
+    const j = fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, 'utf8')) : {};
+    j.palette = { ...(j.palette || {}), primary: '#ff0000' };
+    fs.writeFileSync(p, JSON.stringify(j, null, 2) + '\n');
+  " || fail "could not set theme.json palette" || return 1
+  sandbox_build "$dir" \
+    || { cat "${dir}/.e2e-build.log" >&2; fail "themed og build failed"; return 1; }
+  after=$(md5sum <"$dir/dist/og/default.png")
+  if [ "$before" = "$after" ]; then
+    fail "theme.json palette.primary was ignored by OG image rendering"
+    return 1
+  fi
+
   # "Off on update": update never touches app.json at all (seed-once), so an existing consumer
   # who removes the whole seo block keeps OG off after an update: no route, no error.
   node -e "

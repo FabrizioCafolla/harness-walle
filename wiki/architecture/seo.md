@@ -92,7 +92,9 @@ Fonts (`og/fonts.ts`) resolve in order: `seo.ogImage.fonts` (explicit for OG ren
 site's `typography.fonts` local sources in a format satori accepts (`ttf`, `otf`, `woff`, never
 `woff2`: satori's font parser can't inflate brotli), then a bundled Inter fallback (SIL OFL
 1.1). Resolution never touches the network. Theme (`og/theme.ts`) resolves palette, fonts, site
-title and logo fully from the parsed config, no arguments needed at the call site.
+title and logo fully from the parsed config, no arguments needed at the call site; `theme.json`'s
+palette and fonts reach it through a virtual module filled at config time, since the prerender
+chunk cannot read the file from disk.
 
 ## RSS feeds
 
