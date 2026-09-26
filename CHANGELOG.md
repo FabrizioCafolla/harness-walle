@@ -4,7 +4,7 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/develop/versioning.md).
 
-## [0.7.0] - Unreleased
+## [0.7.0] - 2026-09-26
 
 An extensible design system: cascade layers, one variant and modifier vocabulary, public custom
 properties, embedded component overrides, a config validated at build time, and optional features
