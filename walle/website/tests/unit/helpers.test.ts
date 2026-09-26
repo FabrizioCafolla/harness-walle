@@ -42,8 +42,12 @@ describe("formatDate", () => {
     expect(formatDate("")).toBeNull();
   });
 
-  it("formats as 'D Mon YYYY'", () => {
-    expect(formatDate("2026-03-05T00:00:00.000Z")).toBe("5 Mar 2026");
+  it("formats with an explicit locale", () => {
+    expect(formatDate("2026-03-05T00:00:00.000Z", "en-GB")).toBe("5 Mar 2026");
+  });
+
+  it("formats with an it-IT locale", () => {
+    expect(formatDate("2026-03-05T00:00:00.000Z", "it-IT")).toBe("5 mar 2026");
   });
 });
 

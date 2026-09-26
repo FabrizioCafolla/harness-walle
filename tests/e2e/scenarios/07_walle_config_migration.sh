@@ -2,7 +2,7 @@
 # Scenario: legacy consumer layouts self-heal on any command. (a) a root .walle.config.json
 # migrates into .harness-walle/manifest.json on update; (b) an old `.walle/` state dir with a
 # schemaVersion-2 files map (path->module) is renamed to `.harness-walle/` and reshaped to v3
-# (module->[paths]) — content preserved, old paths gone, check passes.
+# (module->[paths]): content preserved, old paths gone, check passes.
 
 scenario_walle_config_migration() {
   local dir="${SANDBOX_DIR}/migrate"

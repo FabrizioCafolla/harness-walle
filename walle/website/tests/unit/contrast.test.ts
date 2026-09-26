@@ -9,14 +9,58 @@ import { join } from "node:path";
  * this test keeps the palette honest.
  */
 
-const css = readFileSync(join(__dirname, "../../src/@walle/styles/global.css"), "utf-8");
+const css = readFileSync(join(__dirname, "../../src/@walle/styles/tokens.css"), "utf-8");
 
-/** Extract the default hex of a `--token: var(--walle-*, #hex)` or `--token: #hex` declaration. */
-function tokenDefault(name: string): string {
-  const re = new RegExp(`${name}:\\s*(?:var\\([^,]+,\\s*)?(#[0-9a-fA-F]{3,6})\\)?;`);
+/** Raw declaration value of a top-level (`:root`) custom property, before resolving `var()`. */
+function findDeclarationRaw(name: string): string {
+  const re = new RegExp(`${name}:\\s*([^;]+);`);
   const m = css.match(re);
-  if (!m) throw new Error(`token ${name} not found in global.css`);
-  return m[1];
+  if (!m) throw new Error(`token ${name} not found in tokens.css`);
+  return m[1].trim();
+}
+
+/**
+ * Resolves a declaration value down to a literal hex: follows `var(--walle-*, fallback)`
+ * bridges (never set by the default theme, so the fallback is the real default) and plain
+ * alias references like `var(--primary)` recursively.
+ */
+function resolveValue(raw: string): string {
+  const hexMatch = raw.match(/^(#[0-9a-fA-F]{3,8})$/);
+  if (hexMatch) return hexMatch[1];
+  const varMatch = raw.match(/^var\(\s*(--[a-zA-Z0-9-]+)\s*(?:,\s*(.+))?\)$/);
+  if (varMatch) {
+    const [, refName, fallback] = varMatch;
+    if (refName.startsWith("--walle-")) {
+      if (!fallback) throw new Error(`no fallback for bridge var ${refName}`);
+      return resolveValue(fallback.trim());
+    }
+    return resolveValue(findDeclarationRaw(refName));
+  }
+  throw new Error(`unresolvable token value: ${raw}`);
+}
+
+/** Extract the resolved default hex of a top-level custom property. */
+function tokenDefault(name: string): string {
+  return resolveValue(findDeclarationRaw(name));
+}
+
+function escapeSelector(selector: string): string {
+  return selector.replace(/[[\]()."]/g, "\\$&");
+}
+
+/** Raw declaration value of a custom property scoped to one attribute-selector block. */
+function selectorDeclarationRaw(selector: string, prop: string): string {
+  const selRe = new RegExp(`${escapeSelector(selector)}\\s*\\{([^}]*)\\}`);
+  const blockMatch = css.match(selRe);
+  if (!blockMatch) throw new Error(`selector ${selector} not found in tokens.css`);
+  const propMatch = blockMatch[1].match(new RegExp(`${prop}:\\s*([^;]+);`));
+  if (!propMatch) throw new Error(`${prop} not found in ${selector}`);
+  return propMatch[1].trim();
+}
+
+/** Resolved default hex of a `--variant-*` property under `[data-variant="<variant>"]`. */
+function variantToken(variant: string, prop: string): string {
+  return resolveValue(selectorDeclarationRaw(`[data-variant="${variant}"]`, prop));
 }
 
 function relativeLuminance(hex: string): number {
@@ -48,7 +92,6 @@ const palette = {
   primaryLight: tokenDefault("--primary-light"),
   secondary: tokenDefault("--secondary"),
   secondaryLight: tokenDefault("--secondary-light"),
-  alternativeLight: tokenDefault("--alternative-light"),
   background: tokenDefault("--white"),
   foreground: tokenDefault("--black"),
   grayLight: tokenDefault("--gray-light"),
@@ -82,34 +125,100 @@ const pairings: [string, string, string, number][] = [
     palette.secondaryLight,
     NORMAL,
   ],
-  ["badge-primary text (white on primary-light)", palette.background, palette.primaryLight, NORMAL],
-  [
-    "badge-alternative text (black on alternative-light)",
-    palette.foreground,
-    palette.alternativeLight,
-    NORMAL,
-  ],
-  ["badge-gray text (black on gray-light)", palette.foreground, palette.grayLight, NORMAL],
 ];
-
-// Hardcoded status colors in Badge.astro (white text on colored bg)
-const badgeCss = readFileSync(
-  join(__dirname, "../../src/@walle/components/elements/Badge.astro"),
-  "utf-8"
-);
-for (const status of ["success", "warning", "danger"]) {
-  const m = badgeCss.match(
-    new RegExp(`eos-label-${status} \\{\\s*background-color: (#[0-9a-fA-F]{6});`)
-  );
-  if (m)
-    pairings.push([`badge-${status} text (white on ${m[1]})`, palette.background, m[1], NORMAL]);
-}
+// Badge's filled state maps to --variant-fg on --variant-bg, already covered by
+// the "[data-variant] fg on bg" describe block below: no separate literal pairing needed.
+// Its status coloring maps to --status-*-contrast on --status-*, covered by the
+// "status tokens" describe block below.
 
 describe("default palette meets WCAG 2.2 AA", () => {
   for (const [name, fg, bg, threshold] of pairings) {
     it(`${name} >= ${threshold}:1`, () => {
       const ratio = contrastRatio(fg, bg);
       expect(ratio, `${fg} on ${bg} = ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(threshold);
+    });
+  }
+});
+
+// Variant model: brand variants plus their inverse rendering and status pairs.
+const VARIANTS = ["primary", "secondary", "alternative"] as const;
+const VARIANT_PROPS = [
+  "--variant-color",
+  "--variant-color-hover",
+  "--variant-bg",
+  "--variant-bg-hover",
+  "--variant-fg",
+];
+const STATUSES = ["success", "warning", "danger"] as const;
+
+describe("[data-variant] fg on bg meets WCAG 2.2 AA", () => {
+  for (const variant of VARIANTS) {
+    it(`${variant}: --variant-fg on --variant-bg >= ${NORMAL}:1`, () => {
+      const fg = variantToken(variant, "--variant-fg");
+      const bg = variantToken(variant, "--variant-bg");
+      const ratio = contrastRatio(fg, bg);
+      expect(ratio, `${fg} on ${bg} = ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(NORMAL);
+    });
+  }
+});
+
+// SectionWrapper's [data-filled] redefines --text/--text-muted/--heading/--link/
+// --link-hover to --variant-fg, always read against the wrapper's own --variant-bg: the
+// exact pairing the block above already covers, so no separate case is needed for those.
+// --surface-alt is the one token it redefines to something else (--variant-bg-hover, for
+// code's background), which needs its own pairing below.
+describe("[data-filled] code background (--variant-fg on --variant-bg-hover) meets WCAG 2.2 AA", () => {
+  for (const variant of VARIANTS) {
+    it(`${variant}: --variant-fg on --variant-bg-hover >= ${NORMAL}:1`, () => {
+      const fg = variantToken(variant, "--variant-fg");
+      const bg = variantToken(variant, "--variant-bg-hover");
+      const ratio = contrastRatio(fg, bg);
+      expect(ratio, `${fg} on ${bg} = ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(NORMAL);
+    });
+  }
+});
+
+// SectionWrapper's [data-muted] only redefines --surface-alt, to --surface (white):
+// code's background moves off the section's own gray, onto the same white/gray-dark pairing
+// "muted text on surface (p on body)" above already covers. --text/--text-muted/--heading/
+// link colors are untouched: --surface-alt (gray-light) is close enough to --surface that
+// "muted text on surface-alt (p in gray Section)" above already stands in for them too.
+
+// Inverse: a filled variant's own --variant-color rendered as text on a neutral surface
+// (the shape an outline/unfilled variant's text takes, e.g. Button's old `white` variant:
+// --surface background, --primary text).
+describe("[data-variant] inverse (--variant-color on --surface) meets WCAG 2.2 AA", () => {
+  const surface = tokenDefault("--surface");
+  for (const variant of VARIANTS) {
+    it(`${variant}: --variant-color on --surface >= ${NORMAL}:1`, () => {
+      const color = variantToken(variant, "--variant-color");
+      const ratio = contrastRatio(color, surface);
+      expect(ratio, `${color} on ${surface} = ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(
+        NORMAL
+      );
+    });
+  }
+});
+
+// site is defined identical to primary by construction; enforce it stays that way,
+// not just that the two happen to resolve to the same color today.
+describe('[data-variant="site"] matches [data-variant="primary"] line for line', () => {
+  for (const prop of VARIANT_PROPS) {
+    it(`${prop} is identical`, () => {
+      const primaryRaw = selectorDeclarationRaw('[data-variant="primary"]', prop);
+      const siteRaw = selectorDeclarationRaw('[data-variant="site"]', prop);
+      expect(siteRaw).toBe(primaryRaw);
+    });
+  }
+});
+
+describe("status tokens meet WCAG 2.2 AA", () => {
+  for (const status of STATUSES) {
+    it(`--status-${status}-contrast on --status-${status} >= ${NORMAL}:1`, () => {
+      const bg = tokenDefault(`--status-${status}`);
+      const fg = tokenDefault(`--status-${status}-contrast`);
+      const ratio = contrastRatio(fg, bg);
+      expect(ratio, `${fg} on ${bg} = ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(NORMAL);
     });
   }
 });

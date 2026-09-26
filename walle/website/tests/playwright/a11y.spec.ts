@@ -2,7 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { siteBase, storyRoutes } from "./storyRoutes";
 
-// Accessibility gate — axe-core against every Astrobook story preview page
+// Accessibility gate: axe-core against every Astrobook story preview page
 // (per-component fixtures, auto-discovered from the astrobook/ directory so a
 // new story is covered with no extra configuration) plus the built demo-site
 // pages (layout-level checks: skip link, landmarks, document structure that
@@ -12,7 +12,7 @@ import { siteBase, storyRoutes } from "./storyRoutes";
 // Fails on any serious or critical violation.
 
 // Demo-site pages (served by the same dev server under the configured base path).
-// No trailing slash — app.json sets trailingSlash "never", so `${siteBase}/`
+// No trailing slash: app.json sets trailingSlash "never", so `${siteBase}/`
 // would 404 (and axe would trivially pass on the 404 page). The home page is
 // `${siteBase}` exactly.
 const demoPages = [
@@ -28,12 +28,13 @@ const demoPages = [
   "/wiki/cli",
   "/privacy-policy",
   "/terms-and-conditions",
+  "/404",
 ].map((p) => `${siteBase}${p}` || "/");
 
 /** Guard against silent route drift: astrobook's 404 fallback renders `<pre>Path: …`. */
 async function expectNotFallback(page: Page) {
   const fallback = await page.locator("pre", { hasText: /^Path: \// }).count();
-  expect(fallback, "page is astrobook's not-found fallback — story route scheme changed").toBe(0);
+  expect(fallback, "page is astrobook's not-found fallback: story route scheme changed").toBe(0);
 }
 
 async function expectNoSeriousViolations(page: Page) {

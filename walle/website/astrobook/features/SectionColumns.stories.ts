@@ -22,12 +22,52 @@ export const FourColumns = {
   args: { title: "Four columns", columns: 4, items: 4 } satisfies SectionColumnsDemoProps,
 };
 
-export const GrayCentered = {
+export const MutedCentered = {
   args: {
-    title: "Gray centered",
+    title: "Muted centered",
     columns: 3,
     items: 3,
-    variant: "gray",
+    muted: true,
     centered: true,
+  } satisfies SectionColumnsDemoProps,
+};
+
+export const FilledPrimary = {
+  args: {
+    title: "Filled primary",
+    columns: 3,
+    items: 3,
+    variant: "primary",
+    filled: true,
+  } satisfies SectionColumnsDemoProps,
+};
+
+export const FilledSecondary = {
+  args: {
+    title: "Filled secondary",
+    columns: 3,
+    items: 3,
+    variant: "secondary",
+    filled: true,
+  } satisfies SectionColumnsDemoProps,
+};
+
+export const FilledAlternative = {
+  args: {
+    title: "Filled alternative",
+    columns: 3,
+    items: 3,
+    variant: "alternative",
+    filled: true,
+  } satisfies SectionColumnsDemoProps,
+};
+
+export const FilledSite = {
+  args: {
+    title: "Filled site",
+    columns: 3,
+    items: 3,
+    variant: "site",
+    filled: true,
   } satisfies SectionColumnsDemoProps,
 };

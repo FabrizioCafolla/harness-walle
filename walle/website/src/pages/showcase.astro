@@ -5,8 +5,10 @@ import {
   BasicCard,
   Breadcrumbs,
   Button,
+  CallToAction,
   Carousel,
   Link,
+  Map,
   Price,
   ProductCard,
   Section,
@@ -18,14 +20,16 @@ import { getCollection } from "astro:content";
 const img = (p: string) => resolveInternalUrl(p);
 
 // The wiki route only exists on the design-system showcase (repo `wiki/` present), never in a
-// seeded consumer — link to it only when there are pages to link.
+// seeded consumer: link to it only when there are pages to link.
 const hasWiki = (await getCollection("wiki")).length > 0;
 
 const groups = [
   { id: "elements", label: "Elements" },
   { id: "cards", label: "Cards" },
   { id: "layout", label: "Layout" },
+  { id: "sections", label: "Sections" },
   { id: "media", label: "Media" },
+  { id: "map", label: "Map" },
   { id: "catalog", label: "Catalog" },
 ];
 ---
@@ -43,8 +47,8 @@ const groups = [
       <p>
         A live tour of the Walle design system. Every element below is a real component from
         <code>@walle/components</code>: accessible, responsive, and driven by the same semantic
-        tokens your site inherits. Browse the interactive catalog with
-        <code>just astrobook</code> during development.
+        tokens your site inherits. Browse the interactive catalog with <code>just astrobook</code>
+        during development.
       </p>
       <nav class="showcase-nav" aria-label="Showcase sections">
         {groups.map((g) => <a href={`#${g.id}`}>{g.label}</a>)}
@@ -73,6 +77,10 @@ const groups = [
         <Button text="Small" variant="secondary" size="small" />
         <Button text="Disabled" variant="primary" disabled={true} />
       </div>
+      <div class="demo__row demo__row--swatch">
+        <Button text="Inverse" inverse={true} />
+        <Button text="Inverse outline" inverse={true} outline={true} />
+      </div>
     </div>
 
     <div class="demo">
@@ -81,10 +89,11 @@ const groups = [
         <Badge text="Primary" variant="primary" />
         <Badge text="Secondary" variant="secondary" />
         <Badge text="Alternative" variant="alternative" />
-        <Badge text="Success" variant="success" />
-        <Badge text="Warning" variant="warning" />
-        <Badge text="Danger" variant="danger" />
-        <Badge text="Gray" variant="gray" />
+        <Badge text="Success" status="success" />
+        <Badge text="Warning" status="warning" />
+        <Badge text="Danger" status="danger" />
+        <Badge text="Muted" muted />
+        <Badge text="Outline" variant="primary" outline={true} />
       </div>
     </div>
 
@@ -93,7 +102,8 @@ const groups = [
       <div class="demo__row demo__row--text">
         <Link href={resolveInternalUrl("/blog")} text="Internal link" />
         <Link href="https://astro.build" text="External link" target="_blank" />
-        <Link href={resolveInternalUrl("/")} text="Muted link" variant="muted" />
+        <Link href={resolveInternalUrl("/")} text="Muted link" muted />
+        <Link href={resolveInternalUrl("/")} text="Unstyled link" unstyled />
       </div>
     </div>
 
@@ -109,7 +119,7 @@ const groups = [
 
   <!-- CARDS -->
   <span id="cards" class="anchor"></span>
-  <Section title="Cards" variant="gray">
+  <Section title="Cards" muted={true}>
     <div class="card-grid">
       <BasicCard
         title="Designing an accessible component library"
@@ -151,6 +161,25 @@ const groups = [
     </div>
   </SectionColumns>
 
+  <!-- SECTIONS -->
+  <span id="sections" class="anchor"></span>
+  <Section title="Sections: filled and muted" filled={true} variant="secondary">
+    <p>
+      Every section shares one wrapper: the same <code>filled</code> and <code>muted</code>
+      modifiers restyle its background, whichever component sits on top. See the
+      <a href={resolveInternalUrl("/wiki/architecture/style")}>styling guide</a> for the full token list.
+    </p>
+  </Section>
+  <CallToAction
+    title="Ready to get started?"
+    subtitle="CallToAction is one of the new section components: boxed by default, filled here."
+    actions={[
+      { text: "Get started", href: resolveInternalUrl("/blog") },
+      { text: "Browse products", href: resolveInternalUrl("/products"), variant: "secondary" },
+    ]}
+    filled={true}
+  />
+
   <!-- MEDIA -->
   <span id="media" class="anchor"></span>
   <Section title="Media: image carousel">
@@ -187,9 +216,24 @@ const groups = [
     </Carousel>
   </Section>
 
+  <!-- MAP -->
+  <span id="map" class="anchor"></span>
+  <Section title="Map">
+    <p class="media-hint">
+      Server-rendered as a labelled region and a marker list: the only content without JavaScript.
+      Leaflet loads lazily once the map scrolls into view.
+    </p>
+    <Map
+      markers={[
+        { lat: 41.9028, lng: 12.4964, title: "Rome", description: "Headquarters", variant: "site" },
+        { lat: 45.4642, lng: 9.19, title: "Milan" },
+      ]}
+    />
+  </Section>
+
   <!-- CATALOG -->
   <span id="catalog" class="anchor"></span>
-  <Section title="Catalog & content" variant="gray" centered={true}>
+  <Section title="Catalog & content" muted={true} centered={true}>
     <p>
       Listing pages combine <code>BasicCard</code> with <code>CollectionFilters</code>: generic
       search and facets driven by your content collection. The demo blog wires it to post tags, and
@@ -287,6 +331,15 @@ const groups = [
   .demo__row--center {
     justify-content: center;
     margin-top: var(--space-lg);
+  }
+
+  /* Button's `inverse` modifier assumes a filled/colored background, unlike this page's own
+     surface. This swatch is that background, contextual demo chrome only. */
+  .demo__row--swatch {
+    margin-top: var(--space-md);
+    padding: var(--space-lg);
+    background: var(--primary);
+    border-radius: var(--radius-md);
   }
 
   .card-grid {

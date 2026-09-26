@@ -1,6 +1,7 @@
 import type { ComponentProps } from "astro/types";
 
 import BasicCard from "@walle/components/features/Card/BasicCard.astro";
+import { resolveInternalUrl } from "@walle/utils";
 
 type BasicCardProps = ComponentProps<typeof BasicCard>;
 
@@ -35,7 +36,7 @@ export const WithImage = {
     content:
       "A card with a cover image, truncated description text that runs a bit longer to exercise the 120 character clamp behaviour of the component.",
     href: "/blog/example",
-    image: { src: "/img/posts/default.svg", alt: "Post cover" },
+    image: { src: resolveInternalUrl("/img/posts/default.svg"), alt: "Post cover" },
   } satisfies BasicCardProps,
 };
 
@@ -45,5 +46,33 @@ export const ExternalLink = {
     content: "Opens in a new tab with rel noopener applied automatically.",
     href: "https://example.com",
     target: "_blank",
+  } satisfies BasicCardProps,
+};
+
+export const SecondaryVariant = {
+  args: {
+    title: "Secondary variant card",
+    content:
+      "The card's own variant drives its hover border and title color, independent of the badge variant.",
+    href: "/blog/example",
+    variant: "secondary",
+  } satisfies BasicCardProps,
+};
+
+export const AlternativeVariant = {
+  args: {
+    title: "Alternative variant card",
+    content: "Same hover border and title color mapping, using the alternative variant.",
+    href: "/blog/example",
+    variant: "alternative",
+  } satisfies BasicCardProps,
+};
+
+export const SiteVariant = {
+  args: {
+    title: "Site variant card",
+    content: "Same hover border and title color mapping, using the site variant.",
+    href: "/blog/example",
+    variant: "site",
   } satisfies BasicCardProps,
 };

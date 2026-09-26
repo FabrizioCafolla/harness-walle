@@ -3,10 +3,16 @@ import { defineWalleConfig } from "./src/@walle/config";
 
 // Repo-internal dev tooling. The Astrobook component catalog mounts only when
 // WALLE_ASTROBOOK=1 is set (via `just astrobook` / `yarn astrobook`). It is dev-only:
-// excluded from the normal site build and never seeded to consumers — stories live in
+// excluded from the normal site build and never seeded to consumers: stories live in
 // ./astrobook (outside src/@walle, which is the website module's managed zone).
 const astrobookIntegrations = process.env.WALLE_ASTROBOOK
-  ? [(await import("astrobook")).default({ directory: "astrobook", subpath: "/astrobook" })]
+  ? [
+      (await import("astrobook")).default({
+        directory: "astrobook",
+        subpath: "/astrobook",
+        head: "./astrobook/head.astro",
+      }),
+    ]
   : [];
 
 // Thin consumer-owned shell. All walle logic (SSR flag, default integrations,
@@ -19,4 +25,7 @@ const astrobookIntegrations = process.env.WALLE_ASTROBOOK
 export default defineWalleConfig({
   integrations: astrobookIntegrations,
   vite: { server: { watch: { ignored: ["**/tests/e2e/.sandbox/**"] } } },
+  // The dev toolbar's own look changes across Astro versions and isn't walle's UI, so it
+  // would churn every astrobook visual baseline on every Astro bump for no reason.
+  ...(process.env.WALLE_ASTROBOOK ? { devToolbar: { enabled: false } } : {}),
 });

@@ -9,6 +9,11 @@ scenario_seed_persistence() {
   # The website seed README must be present after init.
   assert_path_present "$dir/README.md" || return 1
 
+  # showcase.astro and checkout-demo.astro are website-only demo pages, excluded from
+  # seeding. A consumer never gets either.
+  assert_path_absent "$dir/src/pages/showcase.astro" || return 1
+  assert_path_absent "$dir/src/pages/checkout-demo.astro" || return 1
+
   # Consumer edits the seed.
   printf '\nCONSUMER EDIT %s\n' "$(date +%s)" >>"$dir/README.md"
   local before; before="$(sha256sum "$dir/README.md" | cut -d' ' -f1)"

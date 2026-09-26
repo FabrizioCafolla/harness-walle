@@ -28,6 +28,23 @@ jobs:
         with:
           working_dir: 'walle/website'
 
+      # Type check and unit tests: the contract tests (css-layers, css-tokens, schemas-sync,
+      # contrast, wiki-links) gate every PR here. Dependencies are already installed above.
+      - name: Type check
+        timeout-minutes: 3
+        working-directory: walle/website
+        run: yarn check
+
+      - name: Unit tests
+        timeout-minutes: 3
+        working-directory: walle/website
+        run: yarn test:unit
+
+      - name: Format
+        timeout-minutes: 3
+        working-directory: walle/website
+        run: yarn format
+
   a11y:
     name: Accessibility (axe-core)
     runs-on: ubuntu-22.04
@@ -36,7 +53,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v7
 
-      # Must run before setup-node's cache: yarn — see comment in the playwright job below.
+      # Must run before setup-node's cache: yarn, see comment in the playwright job below.
       - name: Enable Corepack
         run: corepack enable
 
@@ -45,7 +62,7 @@ jobs:
         with:
           node-version-file: walle/website/.nvmrc
           cache: yarn
-          # The lockfile lives in the website subdir, not the repo root — without
+          # The lockfile lives in the website subdir, not the repo root: without
           # this, setup-node's yarn cache fails with "lock file is not found".
           cache-dependency-path: walle/website/yarn.lock
 
@@ -89,10 +106,10 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v7
 
-      # Must run before setup-node's cache: yarn — that step shells out to `yarn` to resolve
-      # the cache dir, and the runner's global Yarn 1.x refuses once package.json pins
-      # packageManager: yarn@4.17.0. Enabling Corepack first makes `yarn` resolve to the
-      # pinned version via the Corepack shim.
+      # Must run before setup-node's cache: yarn. That step shells out to `yarn` to resolve
+      # the cache dir, and the runner's global Yarn 1.x refuses once package.json pins a specific
+      # version via packageManager. Enabling Corepack first makes `yarn` resolve to the pinned
+      # version via the Corepack shim.
       - name: Enable Corepack
         run: corepack enable
 
@@ -101,7 +118,7 @@ jobs:
         with:
           node-version-file: walle/website/.nvmrc
           cache: yarn
-          # The lockfile lives in the website subdir, not the repo root — without
+          # The lockfile lives in the website subdir, not the repo root: without
           # this, setup-node's yarn cache fails with "lock file is not found".
           cache-dependency-path: walle/website/yarn.lock
 
@@ -147,7 +164,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v7
 
-      # Must run before setup-node's cache: yarn — see comment in the playwright job above.
+      # Must run before setup-node's cache: yarn, see comment in the playwright job above.
       - name: Enable Corepack
         run: corepack enable
 
@@ -156,7 +173,7 @@ jobs:
         with:
           node-version-file: walle/website/.nvmrc
           cache: yarn
-          # The lockfile lives in the website subdir, not the repo root — without
+          # The lockfile lives in the website subdir, not the repo root: without
           # this, setup-node's yarn cache fails with "lock file is not found".
           cache-dependency-path: walle/website/yarn.lock
 

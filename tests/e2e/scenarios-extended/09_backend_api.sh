@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Scenario: the `backend` module seeds an API route that responds when SSR is enabled, and the
-# seeded route is consumer-owned (survives an update).
+# Scenario: the `backend` module seeds an API route that responds when the node adapter is
+# enabled, and the seeded route is consumer-owned (survives an update).
 
 scenario_backend_api() {
   local dir="${SANDBOX_DIR}/backend"
@@ -12,15 +12,15 @@ scenario_backend_api() {
   assert_path_present "$dir/src/pages/api/echo.ts" || return 1
   assert_path_present "$dir/src/middleware.ts" || return 1
 
-  # Enable SSR (API routes require server output).
-  node -e "const fs=require('fs');const p='$dir/src/configs/app.json';const j=JSON.parse(fs.readFileSync(p,'utf8'));j.astro.ssr={enabled:true,adapter:'node'};fs.writeFileSync(p,JSON.stringify(j,null,2)+'\n');" \
-    || fail "could not enable SSR in app.json" || return 1
+  # Enable the node adapter (API routes render on demand through it).
+  node -e "const fs=require('fs');const p='$dir/src/configs/app.json';const j=JSON.parse(fs.readFileSync(p,'utf8'));j.astro.adapter='node';fs.writeFileSync(p,JSON.stringify(j,null,2)+'\n');" \
+    || fail "could not set astro.adapter in app.json" || return 1
 
   sandbox_install "$dir" || fail "yarn install failed" || return 1
-  sandbox_build "$dir" || fail "SSR build failed" || return 1
+  sandbox_build "$dir" || fail "adapter build failed" || return 1
   assert_path_present "$dir/dist/server/entry.mjs" || return 1
 
-  # The API route responds 200 (SSR output is served by the node entry, not astro preview).
+  # The API route responds 200 (on-demand output is served by the node entry, not astro preview).
   http_expect_200 "http://127.0.0.1:4504/api/health" "$dir" env HOST=127.0.0.1 PORT=4504 node ./dist/server/entry.mjs || return 1
 
   # All backend seeds are consumer-owned: an update must not touch any of them.

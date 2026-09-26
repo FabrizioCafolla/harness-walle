@@ -1,7 +1,7 @@
 # Scaffold-check
 
 A manual, developer-facing smoke test that proves a **fresh consumer project created from
-the current working tree actually runs** — end to end, up to `just dev`.
+the current working tree actually runs**: end to end, up to `just dev`.
 
 ```bash
 bash tests/scaffold-check/run.sh

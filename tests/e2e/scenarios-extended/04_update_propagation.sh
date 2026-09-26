@@ -36,13 +36,13 @@ scenario_update_propagation() {
 
   # Build a mutated fixture source and mutate a @walle file + the marker block.
   make_source_subset "$src"
-  printf '\n/* WALLE-MUTATION-MARKER */\n' >>"$src/walle/website/src/@walle/styles/global.css"
+  printf '\n/* WALLE-MUTATION-MARKER */\n' >>"$src/walle/website/src/@walle/styles/tokens.css"
   printf '\nMutated-by-fixture line.\n' >>"$src/walle/ai/agents.block.md"
 
   cli update --source "$src" -p "$dir" >/dev/null || fail "cli update failed" || return 1
 
   # @walle mutation propagated.
-  assert_file_contains "$dir/src/@walle/styles/global.css" "WALLE-MUTATION-MARKER" || return 1
+  assert_file_contains "$dir/src/@walle/styles/tokens.css" "WALLE-MUTATION-MARKER" || return 1
   # Marker block updated; consumer notes outside markers preserved.
   assert_file_contains "$dir/AGENTS.md" "Mutated-by-fixture line." || return 1
   assert_file_contains "$dir/AGENTS.md" "Consumer-only notes (must survive)" || return 1

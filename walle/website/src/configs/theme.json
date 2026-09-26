@@ -1,0 +1,13 @@
+{
+  "$schema": "../../walle/schemas/theme.schema.json",
+  "typography": {
+    "fonts": [
+      {
+        "role": "body",
+        "name": "Inter",
+        "provider": "google",
+        "weights": [400, 600, 700]
+      }
+    ]
+  }
+}

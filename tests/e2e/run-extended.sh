@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Walle e2e harness — full suite (core + extended). Runs every scenario, including the
+# Walle e2e harness: full suite (core + extended). Runs every scenario, including the
 # deeper per-module behavioral checks (marker injection edge cases, migration paths,
 # schema enforcement, devcontainer sync details, seed persistence, etc.) that `just e2e`
 # skips for speed. Opt-in: run before merging a change that touches the CLI's sync/inject
@@ -21,12 +21,14 @@ mkdir -p "$SANDBOX_DIR"
 
 SCENARIOS=(
   "Init minimal (website) → static build + preview 200|scenario_init_minimal"
-  "Init maximal (website,ci,ai) + SSR → node server 200|scenario_init_ssr"
+  "Init maximal (website,ci,ai) + node adapter → node server 200|scenario_init_maximal"
   "Update idempotent (same source → empty diff)|scenario_update_idempotent"
   "Seed persistence (consumer-owned seed survives update/re-add)|scenario_seed_persistence"
   "CI starter (ci module seeds usable workflows wired to @walle actions)|scenario_ci_starter"
-  "Backend API route (SSR on → /api/health 200, seed survives update)|scenario_backend_api"
-  "Component variants (valid variant renders, invalid fails build)|scenario_component_variants"
+  "Backend API route (adapter on → /api/health 200, seed survives update)|scenario_backend_api"
+  "Adapter: on-demand API route + static content pages|scenario_adapter"
+  "Redirects: astro.redirects pass-through + sitemap exclusion|scenario_redirects"
+  "Component overrides (built-in name, site path, wrapping override, missing path and unknown name fail)|scenario_component_overrides"
   "Update propagation with fixture (consumer zones intact)|scenario_update_propagation"
   "CLI commands (dry-run, add, check)|scenario_cli_commands"
   "Update between real tags (active when ≥2 tags)|scenario_update_tags"
@@ -38,10 +40,14 @@ SCENARIOS=(
   "Manifest version schema (stable + prerelease + local walleVersion validate)|scenario_manifest_version_schema"
   "MDX content build (.mdx page builds → @astrojs/markdown-satteri/satteri engine resolves)|scenario_mdx_content_build"
   "Justfile smoke (injected justfile.project block, no walle.justfile, no import)|scenario_justfile_smoke"
-  "Forwarder legacy (deprecated scripts/@walle/cli.sh execs the real CLI)|scenario_forwarder_legacy"
   "Adopt existing directory (warn+confirm, non-destructive, rejects re-adoption)|scenario_adopt_existing"
   "Marker injection (create/append/rewrite, idempotent, bash+YAML stay valid)|scenario_marker_injection"
   "Justfile migration (old walle.justfile+import consumer migrates cleanly on update)|scenario_justfile_migration"
+  "PWA offline fallback (sw.js references /offline, sitemap excludes it, page is noindex)|scenario_pwa_offline"
+  "OG images (on by default for a fresh init, off after update opts out, custom template used)|scenario_og_images"
+  "Map (invalid coordinates filtered in a real consumer build, leaflet lands in its own lazy chunk)|scenario_map"
+  "RSS feeds (on by default for a fresh init, valid RSS with absolute links, alternate link present, sitemap-excluded, disabled means no route)|scenario_feeds"
+  "Site variant (consumer @layer site override reaches Button, Badge and a Section)|scenario_site_variant"
 )
 
 pass=0 failed=0 skipped=0

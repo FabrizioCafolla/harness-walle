@@ -1,0 +1,7 @@
+{
+  "extends": "../../../tsconfig.json",
+  "include": ["../../../.astro/types.d.ts", "consumer-layout-props.ts"],
+  "compilerOptions": {
+    "ignoreDeprecations": "6.0"
+  }
+}

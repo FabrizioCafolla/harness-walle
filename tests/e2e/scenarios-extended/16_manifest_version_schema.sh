@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Scenario: the manifest schema accepts every walleVersion the CLI actually writes — stable
+# Scenario: the manifest schema accepts every walleVersion the CLI actually writes: stable
 # tags, prerelease tags (the only releases walle ships today), and "local". Offline regression
 # guard: init/update write the resolved tag verbatim into .harness-walle/manifest.json, and `check`
 # validates that manifest against schemas/walle.config.schema.json. A pattern that rejected

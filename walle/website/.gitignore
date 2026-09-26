@@ -38,8 +38,12 @@ pnpm-debug.log*
 .DS_Store
 .idea/
 
+# CLI scripts this repo dogfoods against itself (walle.yml's managed map: walle/cli ->
+# scripts/@walle in a synced consumer); recreated on demand by `just validate-configs`
+scripts/@walle/
+
 # Playwright reports and test artifacts (generated; not committed)
 playwright-report/
 test-results/
-# NOTE: tests/playwright/snapshots/ is intentionally NOT ignored — baseline
+# NOTE: tests/playwright/snapshots/ is intentionally NOT ignored: baseline
 # screenshots must be committed so the visual regression check has a reference.

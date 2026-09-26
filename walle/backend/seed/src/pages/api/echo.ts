@@ -1,6 +1,7 @@
 // Consumer-owned example POST endpoint (walle SEED): created once, never overwritten by
-// `walle update`. Edit or replace it freely. Requires SSR — enable `astro.ssr` in
-// `src/configs/app.json`. Echoes the JSON request body back in the response.
+// `walle update`. Edit or replace it freely. Requires the node adapter: enable
+// `astro.adapter: "node"` in `src/configs/app.json`. Echoes the JSON request body back in
+// the response.
 import type { APIRoute } from "astro";
 
 export const prerender = false;

@@ -20,7 +20,14 @@ export const GET: APIRoute = async ({ site }) => {
         new Date(b.data.publishDate ?? 0).getTime() - new Date(a.data.publishDate ?? 0).getTime()
     );
 
-  const products = await getCollection("products");
+  // The showcase page is excluded from a seeded site: list it only where it exists.
+  const hasShowcase = Object.keys(import.meta.glob("./showcase.astro")).length > 0;
+
+  // Commerce off: no /products route, no products collection: same gate as the
+  // injected pages themselves.
+  const commerceOn =
+    config.app.commerce?.mode === "catalog" || config.app.commerce?.mode === "shop";
+  const products = commerceOn ? await getCollection("products") : [];
 
   const lines = [
     `# ${config.app.website.title}`,
@@ -30,9 +37,9 @@ export const GET: APIRoute = async ({ site }) => {
     "## Pages",
     "",
     `- [Home](${url("/")})`,
-    `- [Showcase](${url("/showcase")})`,
+    ...(hasShowcase ? [`- [Showcase](${url("/showcase")})`] : []),
     `- [Blog](${url("/blog")})`,
-    `- [Products](${url("/products")})`,
+    ...(commerceOn ? [`- [Products](${url("/products")})`] : []),
     "",
     "## Blog posts",
     "",
@@ -41,13 +48,17 @@ export const GET: APIRoute = async ({ site }) => {
       return `- [${post.data.title}](${url(`/blog/${post.id}`)})${desc}`;
     }),
     "",
-    "## Products",
-    "",
-    ...products.map((p) => {
-      const desc = p.data.seo.description ? `: ${p.data.seo.description}` : "";
-      return `- [${p.data.title}](${url(`/products/${p.data.handle}`)})${desc}`;
-    }),
-    "",
+    ...(commerceOn
+      ? [
+          "## Products",
+          "",
+          ...products.map((p) => {
+            const desc = p.data.seo.description ? `: ${p.data.seo.description}` : "";
+            return `- [${p.data.title}](${url(`/products/${p.data.handle}`)})${desc}`;
+          }),
+          "",
+        ]
+      : []),
   ];
 
   return new Response(lines.join("\n"), {

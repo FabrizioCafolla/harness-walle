@@ -1,6 +1,7 @@
 import type { ComponentProps } from "astro/types";
 
 import ProductCard from "@walle/components/features/Card/ProductCard.astro";
+import { resolveInternalUrl } from "@walle/utils";
 import StoryWrapper from "../StoryWrapper.astro";
 
 type ProductCardProps = ComponentProps<typeof ProductCard>;
@@ -10,7 +11,7 @@ export default {
   decorators: [{ component: StoryWrapper }],
 };
 
-const image = { src: "/harness-walle/img/posts/default.svg", alt: "Product photo" };
+const image = { src: resolveInternalUrl("/img/posts/default.svg"), alt: "Product photo" };
 
 export const Default = {
   args: {
@@ -59,5 +60,41 @@ export const Preorder = {
       badge: { text: "New" },
       href: "/products/preorder",
     },
+  } satisfies ProductCardProps,
+};
+
+export const SecondaryVariant = {
+  args: {
+    product: {
+      name: "Secondary variant product",
+      image,
+      price: { amount: 59.9, currency: "EUR" },
+      href: "/products/secondary-variant",
+    },
+    variant: "secondary",
+  } satisfies ProductCardProps,
+};
+
+export const AlternativeVariant = {
+  args: {
+    product: {
+      name: "Alternative variant product",
+      image,
+      price: { amount: 69.9, currency: "EUR" },
+      href: "/products/alternative-variant",
+    },
+    variant: "alternative",
+  } satisfies ProductCardProps,
+};
+
+export const SiteVariant = {
+  args: {
+    product: {
+      name: "Site variant product",
+      image,
+      price: { amount: 79.9, currency: "EUR" },
+      href: "/products/site-variant",
+    },
+    variant: "site",
   } satisfies ProductCardProps,
 };

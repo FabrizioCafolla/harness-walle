@@ -2,7 +2,7 @@ name: Update visual snapshots
 
 # Manually-triggered maintenance job. Astrobook visual baselines are rendered by the
 # browser + font stack, so they must be regenerated on the same runner the visual suite
-# uses (ubuntu-22.04) — a contributor on a different OS cannot produce matching PNGs.
+# uses (ubuntu-22.04): a contributor on a different OS cannot produce matching PNGs.
 # Run this from the Actions tab against the branch whose baselines you want to refresh
 # (e.g. after an intentional component or fixture change); it commits the updated
 # snapshots back to that branch.
@@ -51,7 +51,7 @@ jobs:
         run: |
           snapshots="walle/website/tests/playwright/snapshots"
           if [ -z "$(git status --porcelain "$snapshots")" ]; then
-            echo "No snapshot changes — baselines already current."
+            echo "No snapshot changes: baselines already current."
             exit 0
           fi
           git config user.name "github-actions[bot]"

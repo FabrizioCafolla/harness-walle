@@ -2,14 +2,9 @@
 import { getCollection } from "astro:content";
 import { BaseLayout } from "@walle/layouts";
 import { resolveInternalUrl } from "@walle/utils";
+import { groupPages } from "./_wiki";
 
-// Title from the doc's first H1, falling back to the slug.
-const titleOf = (entry: { body?: string; id: string }) =>
-  (entry.body?.match(/^#\s+(.+)$/m)?.[1] ?? entry.id).trim();
-
-const pages = (await getCollection("wiki"))
-  .map((e) => ({ slug: e.id, title: titleOf(e) }))
-  .sort((a, b) => a.title.localeCompare(b.title));
+const sections = groupPages(await getCollection("wiki"));
 ---
 
 <BaseLayout
@@ -17,16 +12,23 @@ const pages = (await getCollection("wiki"))
   headerDescription="The Walle design-system documentation, rendered from the repo wiki at build time."
 >
   {
-    pages.length === 0 ? (
+    sections.length === 0 ? (
       <p>No wiki pages found.</p>
     ) : (
-      <ul class="wiki-index">
-        {pages.map((p) => (
-          <li>
-            <a href={resolveInternalUrl(`/wiki/${p.slug}`)}>{p.title}</a>
-          </li>
+      <div class="wiki-index">
+        {sections.map((section) => (
+          <section aria-labelledby={`wiki-${section.id}`}>
+            <h2 id={`wiki-${section.id}`}>{section.title}</h2>
+            <ul>
+              {section.pages.map((p) => (
+                <li>
+                  <a href={resolveInternalUrl(`/wiki/${p.id}`)}>{p.title}</a>
+                </li>
+              ))}
+            </ul>
+          </section>
         ))}
-      </ul>
+      </div>
     )
   }
 </BaseLayout>
@@ -36,7 +38,12 @@ const pages = (await getCollection("wiki"))
     max-width: 48rem;
     margin: 0 auto;
     padding: 0 1rem;
+    display: grid;
+    gap: 2rem;
+  }
+  .wiki-index ul {
     list-style: none;
+    padding: 0;
     display: grid;
     gap: 0.5rem;
   }

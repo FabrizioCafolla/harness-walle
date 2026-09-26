@@ -12,13 +12,33 @@
     "baseUrl": "https://fabriziocafolla.github.io",
     "basePath": "/harness-walle",
     "trailingSlash": "never",
-    "analyticsScriptContent": ""
+    "analyticsScriptContent": "",
+    "redirects": {
+      "/products/example": "/products/aurora-merino-overshirt",
+      "/products/example-2": "/products/cirrus-packable-jacket"
+    }
   },
   "commerce": {
-    "showBuyButton": true,
+    "mode": "shop",
     "cartInNavbar": true,
-    "locale": "en-US",
-    "addToCartLabel": "Add to cart",
     "showAddToCartOnCards": true
+  },
+  "seo": {
+    "ogImage": {
+      "enabled": true,
+      "collections": ["posts"]
+    },
+    "feeds": {
+      "enabled": true,
+      "items": [
+        {
+          "collection": "posts",
+          "path": "/rss.xml",
+          "fields": { "date": "publishDate", "categories": "tags" },
+          "link": "/blog/{id}",
+          "excludeDrafts": true
+        }
+      ]
+    }
   }
 }

@@ -1,7 +1,13 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
-    directory: "/"
+    # "/" alone only scans .github/workflows; the managed composite actions and the seed
+    # workflows are what consumers receive, so they are listed explicitly.
+    directories:
+      - "/"
+      - "/walle/ci/managed/website-tests"
+      - "/walle/ci/managed/deploy-github-pages"
+      - "/walle/ci/seed"
     schedule:
       interval: "weekly"
     labels:

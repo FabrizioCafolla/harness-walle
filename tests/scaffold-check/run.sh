@@ -113,5 +113,5 @@ log_pass "just dev served 200 at ${DEV_URL}"
 
 echo
 echo "═══════════════════════════════════════════════"
-echo " scaffold-check: OK — the created project runs."
+echo " scaffold-check: OK: the created project runs."
 echo "═══════════════════════════════════════════════"

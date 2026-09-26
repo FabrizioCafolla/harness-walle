@@ -1,6 +1,6 @@
 // Consumer-owned example API route (walle SEED): created once, never overwritten by `walle update`.
-// Edit or replace it freely. Requires SSR — enable `astro.ssr` in `src/configs/app.json`
-// (output: server). `prerender = false` keeps this endpoint server-rendered.
+// Edit or replace it freely. Requires the node adapter: enable `astro.adapter: "node"` in
+// `src/configs/app.json`. `prerender = false` keeps this endpoint server-rendered.
 import type { APIRoute } from "astro";
 
 export const prerender = false;

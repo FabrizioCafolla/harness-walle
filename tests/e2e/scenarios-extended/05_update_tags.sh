@@ -1,25 +1,28 @@
 #!/usr/bin/env bash
 # Scenario: update between real release tags, via CLI v2 against the published GitHub repo.
-# Active-conditioned: runs only when >=2 tags exist; otherwise auto-skips (sentinel 42) with a
-# message — never a hard skip nor a failure.
+# Active-conditioned: runs only when the pinned oldest tag below and a newer tag both exist on
+# the remote; otherwise auto-skips (sentinel 42) with a message, never a hard skip nor a failure.
+#
+# Oldest tag pinned to v0.4.0: older tags' seeded package.json lacks dependencies the current
+# website needs (update never touches package.json), so their build fails without
+# `walle deps --apply`.
+MIN_OLDEST_TAG="v0.4.0"
 
 scenario_update_tags() {
   local repo="https://github.com/FabrizioCafolla/harness-walle"
-  local tags count
+  local tags newest
   # Match the same tag shape resolve_latest_tag accepts (incl. prerelease suffixes like
   # -beta), so this exercises the real-tag path walle actually ships today, not just GA tags.
   tags="$(git ls-remote --tags --refs "$repo" 2>/dev/null |
     sed -n 's#.*refs/tags/\(v[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*[-a-zA-Z0-9.]*\)$#\1#p' | sort -V)"
-  count="$(printf '%s\n' "$tags" | grep -c '^v' || true)"
+  newest="$(printf '%s\n' "$tags" | tail -1)"
 
-  if [ "${count:-0}" -lt 2 ]; then
-    log_skip "update between real tags — requires >=2 published tags (found ${count:-0})"
+  if ! printf '%s\n' "$tags" | grep -qx "$MIN_OLDEST_TAG" || [ "$MIN_OLDEST_TAG" = "$newest" ]; then
+    log_skip "update between real tags, requires ${MIN_OLDEST_TAG} and a newer tag published (newest found: ${newest:-none})"
     return 42
   fi
 
-  local oldest newest dir="${SANDBOX_DIR}/tags"
-  oldest="$(printf '%s\n' "$tags" | head -1)"
-  newest="$(printf '%s\n' "$tags" | tail -1)"
+  local oldest="$MIN_OLDEST_TAG" dir="${SANDBOX_DIR}/tags"
 
   cli init --walle-version "$oldest" -n tags -m website -d "$SANDBOX_DIR" >/dev/null ||
     { fail "init from ${oldest} failed"; return 1; }

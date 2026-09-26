@@ -64,47 +64,58 @@ just help
 
 ## Project-specific context
 
-Walle is a **copy-based Astro design system**. It isn't published as an npm package — its `cli.sh`
-copies the design-system source into a consumer project under `@walle/` namespaces, which the
-consumer then updates by re-running the CLI. This repo is both the product and its own demo site.
+Walle is a **copy-based Astro design system**. It is not published as an npm package: its `cli.sh`
+copies the design-system source into a consumer project under `@walle/` paths, and the consumer
+updates by re-running the CLI. This repo is both the product and its own demo site.
 
 **Two zones, and which one you're in decides everything:**
 
-- `walle/` — **the product**, everything shipped to consumers: `website/` (managed `src/@walle/`
-  source + the demo site), per-module dirs (`ci/`, `ai/`, `backend/`,
-  `harness-coding/`), `cli/cli.sh` (the sync engine), and `walle.yml` (the managed/seed/inject map).
-- everything else — dev tooling and repo meta, never shipped: `tests/e2e/`, `wiki/`, `.github/`.
+- `walle/`: **the product**, everything shipped to consumers: `website/` (the managed
+  `src/@walle/` engine plus the demo site), the module directories (`ci/`, `ai/`, `backend/`,
+  `harness-coding/`), `cli/cli.sh` (the sync engine) and `walle.yml` (the managed, seed and inject
+  map).
+- everything else: dev tooling and repo meta, never shipped (`tests/e2e/`, `wiki/`, `.github/`).
 
-**The rules that matter:**
+**Engine conventions** (`walle/website/src/@walle/`):
 
-- Changing what consumers receive (a component, schema, CLI behavior, seed file, CI action) means
-  working in `walle/`. **Test it with `just e2e`** — it scaffolds a real consumer from your working
-  tree via `--source`. Run it before anything else.
-- Don't hand-edit anything under a `@walle/` namespace in a *consumer* — that read-only contract is
-  the whole point. Editing the walle *source* here is exactly the job.
-- `cli.sh` change → add/update an e2e scenario under `tests/e2e/scenarios/`, don't test by hand.
-- `init` runs harness-coding's CLI first to establish the base (`justfile`, `.devcontainer/`), then
-  seeds and injects walle on top. Override the harness-coding source offline with
+- **Cascade layers.** All walle CSS lives in `@layer walle.base`, `walle.components` or
+  `walle.utilities`; consumers write `@layer site`, which always wins. The order is declared once
+  (`styles/layers.ts`) and rendered first in `<head>`. `tests/unit/css-layers.test.ts` fails on any
+  unlayered walle rule.
+- **Tokens are the only styling interface.** Components reference tokens from `styles/tokens.css`,
+  each bridged to a `--walle-*` value a consumer sets in `theme.json`. No literal color, radius,
+  shadow or px font size in a component (`tests/unit/css-tokens.test.ts`). Contrast pairs are
+  enforced by `tests/unit/contrast.test.ts`.
+- **One component model.** Variants (`primary`, `secondary`, `alternative`, `site`) are data
+  attributes mapped to shared variant tokens; modifiers are boolean props (`outline`, `inverse`,
+  `filled`, `muted`); every component publishes `--<component>-*` custom properties, keeps
+  internals as `--_<component>-*`, and forwards `class`, `id` and other attributes to its root.
+  Shared types and helpers live in `components/shared/`.
+- **Overrides.** Embedded components (navbar, footer, card, breadcrumbs, page header, toc) are
+  resolved through `virtual:walle-components` from `app.json` `components`; a walle original never
+  imports that module.
+- **Config single source of truth.** `config/schema.ts` (zod) defines every config file; types are
+  inferred from it, `schemas/*.schema.json` is generated (`just schemas`), and the build stops on an
+  invalid key with the file and key path.
+- **Feature routes are injected, not seeded.** Products, the offline page, OG images and RSS feeds
+  are routes walle injects when their `app.json` feature is on; a feature that is off adds nothing
+  to the build.
+- **Accessibility is a gate.** `tests/playwright/a11y.spec.ts` runs axe over every page and story
+  at desktop and 320px; serious and critical findings fail.
+- **Comments state constraints, not history.** Keep one or two sentences on a constraint the code
+  relies on; rationale goes in the wiki, history in the CHANGELOG. No em or en dashes.
+
+**Tests to run:**
+
+- Every change: `yarn check` (types), `yarn test:unit`, `yarn lint`, `yarn build` in
+  `walle/website/`.
+- A change that only a browser can verify (layout, contrast, runtime behavior): the relevant
+  Playwright or a11y spec, filtered to the touched stories or pages.
+- A change to what consumers receive (CLI, seeds, managed files): the e2e scenario that covers it,
+  run on its own; `just e2e` and `just e2e-extended` before a release. Add or update a scenario for
+  every `cli.sh` change.
+- `init` runs harness-coding's CLI first; override its source offline with
   `WALLE_HARNESS_CODING_CLI=<path-to-cli.sh>`.
 
-**Website design system conventions** (`walle/website/src/@walle/`):
-
-- **Tokens are the only styling interface.** Colors, spacing and radii are CSS variables in
-  `styles/global.css` (`--primary`, `--space-*`, `--radius-*`), each bridged to a `--walle-*`
-  override that a consumer `theme.json` can set. Never hardcode a hex or px radius in a component;
-  reference a token. Default look: flat fills (no gradients), restrained radii, an editorial
-  navy/teal/gold palette. Contrast pairings are enforced by `tests/unit/contrast.test.ts` — if you
-  change a brand color, that test keeps white-on-brand at AA.
-- **Accessibility is a gate, not a guideline.** `tests/playwright/a11y.spec.ts` runs axe over every
-  page and story at desktop and 320px; serious/critical failures fail the build (and scrollable
-  regions are made keyboard-focusable by a small script in `AbstractLayout`). Blog markdown images
-  use relative, co-located paths (`![](./img.jpg)`) so `astro:assets` optimizes them and emits
-  correct base-path URLs — root-absolute `/img/...` would 404 under the base path.
-- **Commerce (Shopify headless).** Products are a build-time content collection sourced from the
-  Storefront API, with a bundled fixture fallback so the demo builds with no credentials. Static
-  catalog, client-side cart, hosted Shopify checkout, no SSR. `commerce.showBuyButton` in `app.json`
-  toggles vetrina (catalog only) vs shop (cart). Full model and the do/don't list:
-  [wiki/commerce.md](wiki/commerce.md).
-
-Full detail: [CONTRIBUTING.md](CONTRIBUTING.md), [wiki/repo-guide.md](wiki/repo-guide.md), and the
-per-topic refs in [wiki/README.md](wiki/README.md).
+Full detail: [CONTRIBUTING.md](CONTRIBUTING.md) and the [wiki](wiki/README.md), in particular
+[Develop](wiki/develop/index.md) and [Architecture](wiki/architecture/index.md).

@@ -1,0 +1,28 @@
+---
+import { BaseLayout } from "@walle/layouts";
+import { label } from "@walle/utils";
+
+const title = label("notFound.title");
+const message = label("notFound.message");
+---
+
+<BaseLayout headerTitle={title} headerRobots="noindex, follow">
+  <div class="not-found">
+    <h1>{title}</h1>
+    <p>{message}</p>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Seeded, consumer-owned: belongs in @layer site, not walle.components, so a site
+     editing its own 404 page's rules land above walle's rather than inside walle's layer. */
+  @layer site {
+    .not-found {
+      max-width: 60ch;
+      margin: 0 auto;
+      padding: var(--space-4xl) var(--space-xl);
+      text-align: center;
+      color: var(--text-muted);
+    }
+  }
+</style>

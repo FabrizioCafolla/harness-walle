@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Scenario: harness-coding scaffold is seeded by default at init and respects --no-harness-coding.
-# init runs harness-coding's own CLI (update --force) to establish the base, then injects walle's
-# reduced-form blocks into setup-devcontainer.project.sh/docker-compose.project.yml and seeds
-# justfile.project + .husky/ (see wiki/modules.md). Walle vendors no base devcontainer file itself.
+# init runs harness-coding's own CLI (update --force) to establish the base, then walle injects
+# its marker block into setup-devcontainer.project.sh (the only inject in this module) and seeds
+# justfile.project, .husky/ and docker-compose.project.yml once, write-once, never touched by
+# `update` again (see wiki/develop/managed-vs-seed.md). Walle vendors no base devcontainer file itself.
 # The default case reaches the network to fetch harness-coding; set WALLE_HARNESS_CODING_CLI to a
 # local cli.sh to run it offline (the env var inherits into the cli() subshell).
 
@@ -43,7 +44,7 @@ scenario_devcontainer_seed() {
     }
   " || fail "manifest should record devcontainer.enabled=false" || return 1
 
-  # update must not touch an existing seed (.husky/pre-commit) — it's write-once.
+  # update must not touch an existing seed (.husky/pre-commit): it's write-once.
   local orig
   orig=$(cat "$dir_default/.husky/pre-commit")
   cli update --source "$REPO_ROOT" -p "$dir_default" >/dev/null \

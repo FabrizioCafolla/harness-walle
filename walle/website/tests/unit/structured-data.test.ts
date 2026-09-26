@@ -49,7 +49,7 @@ describe("productJsonLd", () => {
   });
 });
 
-// Mirrors the escaping in StructuredData.astro — a "</script>" in untrusted data
+// Mirrors the escaping in StructuredData.astro: a "</script>" in untrusted data
 // must not be able to close the element.
 function escapeJsonLd(payload: unknown): string {
   return JSON.stringify(payload)

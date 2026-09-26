@@ -2,7 +2,207 @@
 
 All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
-[Semantic Versioning](wiki/versioning.md).
+[Semantic Versioning](wiki/develop/versioning.md).
+
+## [0.7.0] - Unreleased
+
+An extensible design system: cascade layers, one variant and modifier vocabulary, public custom
+properties, embedded component overrides, a config validated at build time, and optional features
+that walle provides as routes. **Migration guide:
+[wiki/get-started/updating.md](wiki/get-started/updating.md#migrating-to-070).**
+
+### BREAKING
+
+- **Cascade layers.** All walle CSS lives in `@layer walle.base`, `walle.components` and
+  `walle.utilities`, declared first in `<head>` in that order followed by `site`. Site CSS goes in
+  `@layer site`, which beats walle without specificity tricks; repeated selectors and `!important`
+  workarounds are no longer needed and may now lose.
+- **One variant vocabulary.** Every component takes `variant: "primary" | "secondary" |
+  "alternative" | "site"` and boolean modifiers (`outline`, `inverse`, `filled`, `muted`).
+  Old values are renamed (tables below).
+- **Variants are data attributes and custom properties.** Styling hooks are the public
+  `--<component>-*` properties on the component root; internal class names are not an interface.
+- **Removed** spacing utilities, `visible-xs`/`visible-sm`, `container-centered`,
+  `text-centered`, global `ul.meta-info`/`ul.tags` and `section` styling, the Button entrance
+  animation and `effects`, and the tokens `--box-shadow`, `--box-shadow-hover`, `--gray-gradient`,
+  `--transition-smooth`, `palette.accent`, `palette.muted`.
+- **`.prose` is a global class.** `styles/prose.css` styles every element with the class `prose`
+  (font size, line height, colors, `p`, headings, lists, code), not only the blog post body. A
+  site's own element named `prose` picks those rules up; rename the site's class (for example
+  `page-text`) or restyle it in `@layer site`.
+- **One locale source.** `website.language` drives every date, price and number; walle's interface
+  strings come from `app.json` `labels`. `commerce.locale` and `commerce.addToCartLabel` are removed.
+- **`astro.ssr.enabled` is replaced by `astro.adapter: "node"`.** The site stays static; only routes
+  with `prerender = false` render on demand.
+- **Commerce is off by default**, selected with `commerce.mode: "off" | "catalog" | "shop"`
+  (replaces `commerce.showBuyButton`). Walle injects `/products` and `/products/[handle]`; the
+  seeded product pages from 0.6.x collide with them and must be deleted or moved to
+  `commerce.pages.*`.
+- **Config is validated at build time.** An unknown key, a wrong type or a removed key stops the
+  build with the file name and key path.
+
+### Added
+
+- `SectionWrapper`, shared by every section, with `filled`/`muted`, a `background` slot and
+  title, subtitle and tagline as props or slots; new `Hero` and `CallToAction` sections.
+- `Map` component on Leaflet: server-rendered marker list, lazy map, `map` defaults in `app.json`.
+- Embedded component overrides: `app.json` `components` (`navbar`, `footer`, `card`,
+  `breadcrumbs`, `pageHeader`, `toc`) takes a built-in name or a `./src/...` file.
+- Typed layout `Props` along the layout chain; `badgesAlign` on `DetailLayout`.
+- `theme.json`: `*-contrast`, `heading`, `neutral`, `shadow`, wired `typography.scale`, and
+  `typography.fonts` self-hosted through the Astro Fonts API with preload.
+- `labels` for every walle interface string, including navigation, footer and blog landmarks.
+- `astro.redirects` (sources excluded from the sitemap), `astro.prefetch` (hover by default).
+- `pwa.offline`: an offline page precached with a navigation fallback.
+- `seo.ogImage`: Open Graph images rendered at build time, per-collection templates.
+- `seo.feeds`: RSS feeds from content collections, with alternate links in `<head>`.
+- `walleCollections()` from `@walle/content`; `@walle/og` exports `renderOgImage` and `ogImageUrl`.
+- A seeded 404 page; a seeded `global.css` with an empty `@layer site` block.
+- Tests: Astro Container unit tests per component, CSS layer and token checks, config schema and
+  schema sync tests, a Playwright cascade contract, a visual baseline per Astrobook story, and e2e
+  scenarios for component overrides, commerce off, config validation, adapter, PWA offline,
+  redirects, OG images, site variant, feeds and map. `yarn check` runs `astro check`.
+
+### Changed
+
+- Default palette: `--alternative` `#c99a3f` -> `#8a6423`, `--alternative-dark` `#a97f2c` ->
+  `#73531d`, `--alternative-contrast` `--black` -> `--white`, `--status-success` `#1f874b` ->
+  `#1b7a43`, so these clear WCAG AA as text and as fill. Visible on sites without their own
+  `theme.json` palette.
+- Blog post tags use the theme radius instead of a pill (`--blog-tag-radius: 2rem` restores it).
+- Section content has a 16px gutter at 640px and below, was 24px (`--wrapper-gutter: var(--space-lg)`
+  on `.section-wrapper` inside `@media (max-width: 640px)` restores it).
+- Dates follow `website.language`: `en-US` shows "Jul 31, 2025", `en-GB` keeps "31 Jul 2025".
+- Fonts from the `google` provider can have different metrics than Google's CSS API; use
+  `fontsource` for a family that must match its previous rendering.
+- `Head` emits an RSS alternate link only for enabled `seo.feeds` items, not an unconditional
+  `rss.xml` link.
+- New sites start without commerce or demo redirects, with OG images and a `posts` feed enabled.
+- The `ai` module's `AGENTS.md` block and skills describe the customization ladder; `walle-update`
+  adds a workaround cleanup pass.
+- The wiki is reorganized into Get Started, Develop, Architecture and AI, and `.harness-walle/docs/`
+  now holds those four sections instead of four flat pages.
+- A filled `Button` derives its hover background from `--button-bg` (30% toward `--black`) instead
+  of the variant's `*-dark` token, so one `--button-bg` override moves every state. Default hover
+  shades are slightly lighter than before. A light variant with a dark `-contrast` should also set
+  `--button-bg-hover`.
+- RSS feeds keep the 50 newest entries when `limit` is not set.
+- The seeded `posts` collection requires `publishDate`, which the seeded feed orders and dates
+  entries by.
+- Body text uses `--text` (was `--gray-darker`), so overriding `--text` restyles it.
+
+### Fixed
+
+- `just walle-setup` never set `core.hooksPath` in a git submodule or worktree, where `.git` is a
+  file: it tested `[ -d .git ]` and now asks git (`git rev-parse --is-inside-work-tree`). The
+  injected recipe is re-synced by `update`.
+- `BlogTableOfContents` and `BlogArticleNavigation` named `Ronzino-Bold` and `Ronzino-Medium`, fonts
+  no walle version defines, so their labels fell back to a generic sans-serif. They use
+  `--font-heading` now.
+- `BlogPostLayout` renders its header `muted` (the light band it had in 0.6) instead of a solid
+  brand fill, and a centered `HeaderStandard` centers its subtitle.
+- `HeaderStandard` `imageRight` had no effect and the image always rendered after the text. It now
+  follows the documented default (image first); a site that relied on the old behavior adds
+  `imageRight`.
+- `Map` markers after the first missed their variant and popup, and markers had no accessible name.
+- Content in filled sections (`p`, `a`, `code`) kept the base text color and could fail contrast;
+  inline links in filled sections are underlined.
+- `CollectionFilters` search input overflowed its container at 320px.
+- `sitemapExclude` did nothing on sites with a non-root base path.
+- The layer order is declared on Astrobook pages too, so story styles match the site.
+- A fresh `walle init` site no longer links `/showcase` or `/products` from the navbar, the home
+  page or `llms.txt`.
+- Generated Open Graph images ignored `theme.json` (palette and fonts) and always used the default
+  theme.
+- Interface strings that were still hardcoded now come from `labels`: card link names, post dates,
+  table of contents names and announcements, scrollable regions, logo alt text and the products
+  pages (new `labels.products.*`, `labels.card`, `labels.scrollableRegion`, `labels.logo`).
+- The managed product pages no longer show demo copy on real sites.
+- The JSON schemas rejected nothing for removed keys (`astro.ssr`, `commerce.showBuyButton`,
+  `commerce.locale`, `commerce.addToCartLabel`); `validate-configs` now reports them.
+- A malformed `theme.json` stops the build with an error instead of silently using the defaults.
+- `walle add backend` checks `astro.adapter: "node"` (it still looked for the removed `astro.ssr`).
+- The generated post OG image is used only when `posts` is in `seo.ogImage.collections`, and a
+  post's own `image` wins over it.
+
+### Performance
+
+CSS per page on the demo site, linked stylesheets plus inline styles, against 0.6.1:
+
+| Build | Pages compared | Average CSS per page | Change |
+|---|---|---|---|
+| 0.6.1 | 11 | 74.2 kB | |
+| 0.7.0, commerce in shop mode (the demo default) | 11 | 76.4 kB | +2.9% |
+| 0.7.0, commerce off | 8 | 69.6 kB | -2.8% |
+
+The unused utilities are gone, cart styles ship only in shop mode, and Leaflet's stylesheet loads
+only when a map initializes. The remaining shop-mode growth is the new tokens, public custom
+properties and section components.
+
+### Removed
+
+- `tests/e2e/scenarios-extended/20_forwarder_legacy.sh`: it tested a `scripts/@walle/cli.sh`
+  forwarder that was never shipped and was permanently skipped.
+- `11_component_variants.sh`, replaced by `11_component_overrides.sh`.
+
+### Dependencies
+
+- `astro` 7.3, `@astrojs/mdx` 8 (major), `@astrojs/node`, `@astrojs/sitemap`, `astro-icon`,
+  `astrobook`, `nanostores` 1.5, `vitest` 5 (major), `@playwright/test`, `@axe-core/playwright`,
+  `eslint` 10.11, `@typescript-eslint/*` 8.70, `prettier` 3.9.9, `yarn` 4.18.0.
+- New: `leaflet`, `satori`, `@resvg/resvg-js`, `@astrojs/check` (plus `@emnapi/core` and
+  `@emnapi/runtime`, required peers of its WebAssembly runtime).
+- Node 24 is required (`engines`); a site's `.nvmrc` and CI `node-version` are seed files that
+  `update` leaves alone, so set them to 24 by hand.
+- The repository is prettier-clean and CI runs `yarn format`, so `src/@walle` no longer fails a
+  consumer's `prettier --check` or the seeded pre-commit hook. The seeded `.prettierignore` now
+  lists the paths the CLI generates or copies (`.harness-walle`, `.harness-coding`,
+  `.claude/skills/@walle`, `AGENTS.md`, `.vscode/*.json`); existing sites add those lines
+  themselves, `update` never touches the file.
+- The seeded `.husky/pre-commit` now blocks the commit on a lint or format error (the old
+  `cmd || (fix; exit 1)` exited only its subshell) and `.husky/pre-push` chains with `&&`; existing
+  sites fix those two seed files themselves. A fresh `init` is prettier-clean: the JSON the CLI
+  writes into `app.json` and `navbar.json` keeps prettier's layout, and `test-results` and
+  `playwright-report` are not seeded.
+- GitHub Actions: `softprops/action-gh-release` v3; `actions/checkout` v7 in the CI seed.
+- Kept: `typescript` on 6.0.x (`@typescript-eslint` and `@astrojs/check` do not accept 7 yet),
+  `prettier-plugin-astro` on 0.14.x (1.0.1 is not idempotent on walle sources), Node 24 (active
+  LTS). `@vite-pwa/astro` 1.2.0, the latest release, does not declare Astro 7 in its peer range.
+
+### Migration summary
+
+Components:
+
+| Component | Before | After |
+|---|---|---|
+| Button | `variant="white"` | `inverse` |
+| Button | `variant="white"` with `outline` | `inverse outline` |
+| Button | `effects` | removed |
+| Badge | `variant="gray"` | `muted` |
+| Badge | `variant="success" / "warning" / "danger"` | `status="success" / "warning" / "danger"` |
+| Link | `variant="default"` | no prop |
+| Link | `variant="muted" / "unstyled"` | `muted` / `unstyled` |
+| Section, SectionFlow, SectionColumns | `variant="gray"` | `muted` |
+| Section, SectionFlow, SectionColumns | `variant="primary"` | `filled` |
+| HeaderStandard | `variant="white"` | no prop |
+| HeaderStandard | `variant="primary"` | `filled` |
+| HeaderStandard | `variant="secondary"` (the light band) | `muted` |
+
+Tokens and config:
+
+| Before | After |
+|---|---|
+| `--box-shadow` | `--shadow-md` |
+| `--box-shadow-hover` | `--shadow-lg` |
+| `--transition-smooth` | `--transition` / `--transition-normal` |
+| `--gray-gradient`, `palette.accent`, `palette.muted` | removed |
+| `astro.ssr.enabled` | `astro.adapter: "node"` |
+| `commerce.showBuyButton` | `commerce.mode` |
+| `commerce.locale` | `website.language` |
+| `commerce.addToCartLabel` | `labels.cart.add` |
+
+The full guide, with the CSS pattern replacements and the feature migrations, is in
+[wiki/get-started/updating.md](wiki/get-started/updating.md#migrating-to-070).
 
 ## [0.6.1] - 2026-09-10
 
@@ -81,7 +281,7 @@ All notable changes to Walle are documented here. Format follows
   already declares (title, description, language, theme palette, base path). Astro-side knobs are
   overridden natively via `defineWalleConfig({ pwa: … })`, and `runtimeCaching` merges instead of
   replacing (consumer rules first). Off by default: no integration mounted, nothing added to any
-  page. See [wiki/pwa.md](wiki/pwa.md). This replaces the pattern of hand-patching manifest links
+  page. See [wiki/pwa.md](wiki/architecture/pwa.md). This replaces the pattern of hand-patching manifest links
   and a registration script into `Head.astro`, a MANAGED file, where the next `update` wiped them
   without `check` noticing.
 
@@ -227,7 +427,7 @@ Walle's `package.json` is a **seed** file — created once at `init` and owned b
 afterwards — so `walle update` deliberately never rewrites it (it would clobber the deps a
 consumer added). That means dependency bumps do **not** propagate automatically; each release lists
 its dependency changes here so a consumer can apply them with `yarn up <pkg>@<range>`. See
-[wiki/versioning.md](wiki/versioning.md#keeping-dependencies-current).
+[wiki/versioning.md](wiki/develop/versioning.md).
 
 Walle-owned dependencies validated for this release (bump these; leave your own deps alone):
 
@@ -245,8 +445,8 @@ CI actions (managed, so these **do** update on `walle update`): `actions/setup-n
 New **`walle deps`** command closes the loop: it compares your `package.json` against the release's
 seed and reports Walle-owned drift (run automatically after `update`, disable with
 `--no-deps-check`); `walle deps --apply` bumps just those entries, leaving your own dependencies
-untouched. See [wiki/cli.md](wiki/cli.md#deps) and
-[wiki/versioning.md](wiki/versioning.md#keeping-dependencies-current).
+untouched. See [wiki/cli.md](wiki/develop/cli.md) and
+[wiki/versioning.md](wiki/develop/versioning.md).
 
 **Fixed — CLI command dispatch:** the launcher scanned every argument for a command keyword, so a
 flag value equal to a command name (e.g. `init -n deps`, or a project literally named `check`) was
@@ -301,7 +501,7 @@ through verbatim.
   (Website · CI/CD · Harness coding), the how-it-works flow, quick-start, and a showcase CTA.
   Reframed around the website, GitHub Actions CI/CD and the AI-ready harness-coding base
   (infrastructure references removed).
-- **Shopify headless commerce module** (`src/@walle/commerce/`, [wiki/commerce.md](wiki/commerce.md)):
+- **Shopify headless commerce module** (`src/@walle/commerce/`, [wiki/commerce.md](wiki/architecture/ecommerce.md)):
   a `products` content collection sourced from the Storefront API at build time (with a bundled
   fixture fallback so the demo builds with no credentials), static `/products` listing and
   `/products/[handle]` detail pages (zoomable gallery, `descriptionHtml` body, `RELATED` upsell,
@@ -352,7 +552,7 @@ through verbatim.
 - **Commerce refinements**: listing cards drop the quantity stepper, keeping an icon+label add-to-cart
   (customizable text); the cart drawer shows the selected variant/size per line and uses the same
   grouped, bordered quantity stepper as the picker (fixed: its CSS was scoped and never matched the
-  JS-built lines — now `:global`). [wiki/commerce.md](wiki/commerce.md) has a full step-by-step Shopify
+  JS-built lines — now `:global`). [wiki/commerce.md](wiki/architecture/ecommerce.md) has a full step-by-step Shopify
   setup guide
   (Headless channel, public token, publishing, env vars, webhooks/build hook) and a "managing the
   store" table.
@@ -380,7 +580,7 @@ through verbatim.
   stops. Fixes a CI axe failure that only reproduced where fonts made a code block overflow.
 
 - **BREAKING — unified component prop vocabulary.** Every `@walle` component now uses the shared
-  API convention documented in [wiki/components.md](wiki/components.md#api-conventions). Consumer
+  API convention documented in [wiki/components.md](wiki/architecture/components.md). Consumer
   usages of `@walle` components need the following mechanical renames (find/replace):
 
   | Component        | Old prop                | New prop               |

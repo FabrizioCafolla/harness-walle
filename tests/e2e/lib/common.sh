@@ -7,7 +7,7 @@ SANDBOX_DIR="${REPO_ROOT}/tests/e2e/.sandbox"
 CLI="${REPO_ROOT}/walle/cli/cli.sh"
 
 # init runs harness-coding's CLI to establish the base. Point it at an offline stub so the
-# suite never reaches the network — it creates the minimal base files walle injects into.
+# suite never reaches the network: it creates the minimal base files walle injects into.
 _HC_STUB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.hc-stub.sh"
 cat >"$_HC_STUB" <<'STUB'
 #!/usr/bin/env bash
@@ -62,6 +62,12 @@ make_source_subset() {
     [ -d "${REPO_ROOT}/walle/$mod" ] && cp -a "${REPO_ROOT}/walle/$mod" "$dest/walle/$mod"
   done
 
+  # walle.yml lives at walle/ root, not inside any module dir above, but cli.sh reads it
+  # from ${SOURCE_DIR}/walle/walle.yml first. Without it here, config_section() falls back to
+  # the copy "beside cli.sh" (only true in a consumer's scripts/@walle/, not in this repo's own
+  # walle/cli/cli.sh) and silently returns nothing for every managed/seed/inject section.
+  [ -f "${REPO_ROOT}/walle/walle.yml" ] && cp -a "${REPO_ROOT}/walle/walle.yml" "$dest/walle/walle.yml"
+
   [ -d "${REPO_ROOT}/src/@walle" ] && cp -a "${REPO_ROOT}/src/@walle" "$dest/src/@walle"
   [ -f "${REPO_ROOT}/LICENSE" ] && cp -a "${REPO_ROOT}/LICENSE" "$dest/LICENSE"
   [ -d "${REPO_ROOT}/docs" ] && cp -a "${REPO_ROOT}/docs" "$dest/docs"
@@ -79,7 +85,7 @@ assert_manifest_valid() {
   local manifest="$1"
 
   # ajv/ajv-formats are declared devDependencies of walle/website, so a repo with
-  # the site deps installed already has them — no network needed. Only fall back
+  # the site deps installed already has them: no network needed. Only fall back
   # to a repo-root install if neither location resolves (e.g. a bare checkout).
   if [ ! -d "${REPO_ROOT}/node_modules/ajv" ] &&
     [ ! -d "${REPO_ROOT}/walle/website/node_modules/ajv" ]; then
@@ -157,16 +163,34 @@ http_expect_200() {
   export HTTP_LAST_BODY=""
   ( cd "$workdir" && exec "$@" ) >"$logf" 2>&1 &
   local pid=$!
-  local code="000" i died=0
+  local code="000" i died=0 wrapper_rc
   for i in $(seq 1 60); do
     if ! kill -0 "$pid" 2>/dev/null; then died=1; break; fi
     code="$(curl -s -o /dev/null -w '%{http_code}' "$url" 2>/dev/null || true)"
     [ "$code" = "200" ] && break
     sleep 0.5
   done
+  if [ "$died" = "1" ] && [ "$code" != "200" ]; then
+    # astro dev/preview backgrounds itself: the wrapper process we spawned exits (code 0)
+    # once it confirms the real, detached server is ready, so its exit alone is not a
+    # failure signal, only a crash (nonzero exit) is. Give the now-detached server the
+    # same polling window before deciding.
+    wait "$pid" 2>/dev/null; wrapper_rc=$?
+    if [ "$wrapper_rc" = "0" ]; then
+      for i in $(seq 1 60); do
+        code="$(curl -s -o /dev/null -w '%{http_code}' "$url" 2>/dev/null || true)"
+        [ "$code" = "200" ] && break
+        sleep 0.5
+      done
+    fi
+  fi
   [ "$code" = "200" ] && HTTP_LAST_BODY="$(curl -s "$url" 2>/dev/null || true)"
   kill "$pid" 2>/dev/null || true
   wait "$pid" 2>/dev/null || true
+  # astro dev/preview's actual server is a detached grandchild of $pid once backgrounded
+  # (see above), so killing $pid alone leaves it running across scenarios/runs. Its
+  # module path is unique per sandbox (workdir), so this only ever targets this server.
+  pkill -f "${workdir}/node_modules/astro/bin/astro.mjs" 2>/dev/null || true
   [ "$code" = "200" ] && return 0
   if [ "$died" = "1" ]; then
     fail "server for ${url} exited before responding 200"
