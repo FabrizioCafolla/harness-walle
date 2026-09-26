@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { join, relative } from "node:path";
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 
 // Every rule under @walle must sit inside a `walle.*` (or `site`) layer, so a consumer's
 // unlayered `@layer site` rule always wins regardless of load order. The one exception is a
@@ -9,11 +9,6 @@ import { join, relative } from "node:path";
 // would otherwise cid-scope selectors that leaflet creates at runtime and can never match.
 
 const walleRoot = join(__dirname, "../../src/@walle");
-
-// Components not yet migrated to the layered style structure. This list may only shrink: each
-// component migration removes its own entry as part of its verification. Never add a file
-// created after this list existed, those are born layered.
-const PENDING_MIGRATION: string[] = [];
 
 function collectFiles(dir: string, exts: string[]): string[] {
   const out: string[] = [];
@@ -134,23 +129,9 @@ describe("css-layers: every walle rule sits inside a walle.* layer", () => {
     const source = readFileSync(file, "utf-8");
     const blocks = styleBlocks(source);
     if (blocks.length === 0) continue;
-    const pending = PENDING_MIGRATION.includes(relative(walleRoot, file));
     it(`${file.replace(walleRoot, "@walle")} <style> block(s) have no unlayered rule`, () => {
       const violations = blocks.flatMap((b) => check(file, b.content, source, b.offset));
-      if (pending) {
-        expect(
-          violations.length,
-          `remove from PENDING_MIGRATION, it is clean now: ${file}`
-        ).toBeGreaterThan(0);
-      } else {
-        expect(violations).toEqual([]);
-      }
-    });
-  }
-
-  for (const entry of PENDING_MIGRATION) {
-    it(`PENDING_MIGRATION entry exists: ${entry}`, () => {
-      expect(existsSync(join(walleRoot, entry))).toBe(true);
+      expect(violations).toEqual([]);
     });
   }
 });

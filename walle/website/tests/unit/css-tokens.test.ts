@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
 // Tokens are the only styling interface (repo-guide.md): a literal color, radius, shadow or
@@ -8,11 +8,6 @@ import { join, relative } from "node:path";
 
 const walleRoot = join(__dirname, "../../src/@walle");
 const tokensFile = join(walleRoot, "styles/tokens.css");
-
-// Components not yet migrated to token-only styling. This list may
-// only shrink: each component migration removes its own entry as part of its verification.
-// Never add a file created after this list existed, those are born token-only.
-const PENDING_MIGRATION: string[] = [];
 
 function collectFiles(dir: string, exts: string[]): string[] {
   const out: string[] = [];
@@ -103,24 +98,10 @@ describe("css-tokens: no literal color/radius/shadow/px font-size outside tokens
   ].filter((f) => f !== tokensFile);
 
   for (const file of files) {
-    const pending = PENDING_MIGRATION.includes(relative(walleRoot, file));
     it(`${relative(walleRoot, file)} has no literal color/radius/shadow/px font-size`, () => {
       const source = readFileSync(file, "utf-8");
       const violations = findViolations(file, source);
-      if (pending) {
-        expect(
-          violations.length,
-          `remove from PENDING_MIGRATION, it is clean now: ${file}`
-        ).toBeGreaterThan(0);
-      } else {
-        expect(violations).toEqual([]);
-      }
-    });
-  }
-
-  for (const entry of PENDING_MIGRATION) {
-    it(`PENDING_MIGRATION entry exists: ${entry}`, () => {
-      expect(existsSync(join(walleRoot, entry))).toBe(true);
+      expect(violations).toEqual([]);
     });
   }
 });
