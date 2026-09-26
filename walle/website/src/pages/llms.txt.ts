@@ -20,6 +20,9 @@ export const GET: APIRoute = async ({ site }) => {
         new Date(b.data.publishDate ?? 0).getTime() - new Date(a.data.publishDate ?? 0).getTime()
     );
 
+  // The showcase page is excluded from a seeded site: list it only where it exists.
+  const hasShowcase = Object.keys(import.meta.glob("./showcase.astro")).length > 0;
+
   // Commerce off: no /products route, no products collection: same gate as the
   // injected pages themselves.
   const commerceOn = config.app.commerce?.mode === "catalog" || config.app.commerce?.mode === "shop";
@@ -33,7 +36,7 @@ export const GET: APIRoute = async ({ site }) => {
     "## Pages",
     "",
     `- [Home](${url("/")})`,
-    `- [Showcase](${url("/showcase")})`,
+    ...(hasShowcase ? [`- [Showcase](${url("/showcase")})`] : []),
     `- [Blog](${url("/blog")})`,
     ...(commerceOn ? [`- [Products](${url("/products")})`] : []),
     "",

@@ -432,6 +432,18 @@ EOF
       fs.writeFileSync(p, JSON.stringify(c, null, 2) + "\n");
     '
   fi
+
+  # navbar.json links the demo-only /showcase page (excluded from the seed) and /products
+  # (commerce is off on a fresh site): drop both so a new site starts with no dead links.
+  local nav="${tgt_dir}/src/configs/navbar.json"
+  if [ "$had_app" = "0" ] && [ "$DRY_RUN" != "1" ] && [ -f "$nav" ]; then
+    NAV_JSON="$nav" node -e '
+      const fs = require("fs"), p = process.env.NAV_JSON;
+      const c = JSON.parse(fs.readFileSync(p, "utf8"));
+      c.items = (c.items || []).filter((i) => i.url !== "/showcase" && i.url !== "/products");
+      fs.writeFileSync(p, JSON.stringify(c, null, 2) + "\n");
+    '
+  fi
 }
 
 # harness-coding module: inject walle's blocks into files harness-coding already created,

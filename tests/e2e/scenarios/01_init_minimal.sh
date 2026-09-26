@@ -46,6 +46,13 @@ scenario_init_minimal() {
   sandbox_build "$dir" || fail "just build did not exit 0" || return 1
   assert_path_present "$dir/dist/index.html" || return 1
 
+  # No dead links to demo-only pages: /showcase is excluded from the seed and /products needs
+  # commerce, so neither the seeded navbar, the built pages nor llms.txt may point at them.
+  local dead
+  dead="$(grep -rlE '/(showcase|products)' "$dir/src/configs/navbar.json" "$dir/dist/llms.txt" 2>/dev/null;
+    grep -rlE 'href="[^"]*/(showcase|products)' "$dir/dist" --include='*.html' 2>/dev/null)"
+  [ -z "$dead" ] || { fail "fresh init links a page it does not ship: ${dead}"; return 1; }
+
   # Component markup, not just a 200: the template page renders Navbar, and its config-driven
   # title/heading text: a broken component or config load would leave these absent even on
   # a 200 response.

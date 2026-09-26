@@ -3,6 +3,9 @@ import { BaseLayout } from "@walle/layouts";
 import { Button, Section, SectionFlow } from "@walle/components";
 import { resolveInternalUrl } from "@walle/utils";
 
+// The showcase page is excluded from a seeded site: link to it only where it exists.
+const hasShowcase = Object.keys(import.meta.glob("./showcase.astro")).length > 0;
+
 const modules = [
   {
     tag: "Website",
@@ -75,12 +78,16 @@ const howItWorksSteps = [
           your code.
         </p>
         <div class="hero__actions">
-          <Button
-            text="Explore the showcase"
-            href={resolveInternalUrl("/showcase")}
-            variant="primary"
-            size="large"
-          />
+          {
+            hasShowcase && (
+              <Button
+                text="Explore the showcase"
+                href={resolveInternalUrl("/showcase")}
+                variant="primary"
+                size="large"
+              />
+            )
+          }
           <Button
             text="View on GitHub"
             href="https://github.com/FabrizioCafolla/harness-walle"
@@ -157,15 +164,20 @@ const howItWorksSteps = [
     <div class="cta__inner">
       <h2>See every component in action</h2>
       <p>
-        Browse the live showcase, then read the demo blog to see the content pipeline end to end.
+        {hasShowcase && "Browse the live showcase, then "}
+        {hasShowcase ? "read" : "Read"} the demo blog to see the content pipeline end to end.
       </p>
       <div class="cta__actions">
-        <Button
-          text="Open the showcase"
-          href={resolveInternalUrl("/showcase")}
-          inverse={true}
-          size="large"
-        />
+        {
+          hasShowcase && (
+            <Button
+              text="Open the showcase"
+              href={resolveInternalUrl("/showcase")}
+              inverse={true}
+              size="large"
+            />
+          )
+        }
         <Button
           text="Read the blog"
           href={resolveInternalUrl("/blog")}
