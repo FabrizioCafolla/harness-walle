@@ -161,7 +161,7 @@ bash <(curl -fsSL https://raw.githubusercontent.com/FabrizioCafolla/harness-wall
   init --project-name my-site --modules website,ci,ai
 ```
 
-This scaffolds the site, a VS Code **devcontainer** (harness-coding), CI, and: via the `ai` module : 
+This scaffolds the site, a VS Code **devcontainer** (harness-coding), CI, and, via the `ai` module,
 an `AGENTS.md` block plus two skills the agent then uses:
 
 - **`walle-customize`**: change theme, navigation, pages, content, and commerce through the consumer

@@ -54,8 +54,7 @@ const products = defineCollection({
  * dependency of content.config.ts), and importing `@walle/config` there drags in
  * vite-plugin-pwa via `defineWalleConfig` and breaks the build: see the note on this
  * restriction in commerce/shopify.ts's `formatMoney`.
- */
-/**
+ *
  * Return type claims `products` is always present: an optional or unioned shape here breaks
  * `ContentConfig['collections']['products']`'s schema inference for every caller of
  * `getCollection("products")` (Astro's generated `content.d.ts` indexes it with `Required<>`,

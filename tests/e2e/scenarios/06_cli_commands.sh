@@ -14,6 +14,16 @@ scenario_cli_commands() {
   after="$(tree_checksum "$dir")"
   [ "$before" = "$after" ] || { fail "dry-run modified files"; return 1; }
 
+  # (a2) a flat docs page from the old layout is planned for removal by --dry-run (file kept),
+  # and removed by the real update.
+  echo old >"$dir/.harness-walle/docs/cli.md"
+  local plan
+  plan="$(cli update --source "$REPO_ROOT" -p "$dir" --dry-run 2>&1)" || { fail "dry-run update failed"; return 1; }
+  echo "$plan" | grep -qF ".harness-walle/docs/cli.md" || { fail "dry-run does not plan removing the legacy docs page"; return 1; }
+  assert_path_present "$dir/.harness-walle/docs/cli.md" || return 1
+  cli update --source "$REPO_ROOT" -p "$dir" >/dev/null || { fail "update failed"; return 1; }
+  assert_path_absent "$dir/.harness-walle/docs/cli.md" || return 1
+
   # (b) add ci syncs the module's paths and records it in the manifest.
   cli add ci --source "$REPO_ROOT" -p "$dir" >/dev/null || { fail "add ci failed"; return 1; }
   assert_path_present "$dir/.github/workflows/actions/@walle" || return 1

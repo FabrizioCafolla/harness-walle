@@ -3,7 +3,7 @@
  * suffix, regardless of file size: Astro's own `astro/client.d.ts` declares `*.woff` (the
  * default URL-import form) but not this query variant. Used by `og/fonts.ts` to embed the
  * bundled fallback font's bytes directly into its own JS chunk: a plain `import.meta.url`
- * relative path breaks once that code is bundled into a different output location (D13).
+ * relative path breaks once that code is bundled into a different output location.
  */
 declare module "*.woff?inline" {
   const dataUri: string;
@@ -26,7 +26,7 @@ declare module "virtual:walle-pwa" {
 }
 
 /**
- * Commerce UI gated at the module-graph level (D10): `null` when `commerce.mode !== "shop"`,
+ * Commerce UI gated at the module-graph level: `null` when `commerce.mode !== "shop"`,
  * so a site with commerce off never emits a chunk for the cart components.
  */
 declare module "virtual:walle-features" {
@@ -35,7 +35,7 @@ declare module "virtual:walle-features" {
 }
 
 /**
- * One entry per configured `typography.fonts` (D11): what Head.astro needs to render one
+ * One entry per configured `typography.fonts`: what Head.astro needs to render one
  * `<Font cssVariable preload />` per font: everything else (name, provider, weights...) is
  * only relevant to Astro's own build-time `fonts` config, resolved in define-config.ts.
  */
@@ -58,7 +58,7 @@ declare module "virtual:walle-theme-data" {
 }
 
 /**
- * One export per embeddable component (D6), each typed against its own "standard" walle
+ * One export per embeddable component, each typed against its own "standard" walle
  * implementation. A site override must accept the same props and slots to be a valid
  * replacement, so this is the contract a `components.<key>` path is held to.
  */

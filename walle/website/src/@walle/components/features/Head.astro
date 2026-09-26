@@ -1,7 +1,7 @@
 ---
 import config from "@walle/config";
 import { resolveInternalUrl, truncateAtWord } from "@walle/utils";
-import { ogImageUrl as siteOgImageUrl } from "@walle/og";
+import { ogImageUrl as siteOgImageUrl } from "@walle/og/url";
 import pwa from "virtual:walle-pwa";
 import { WALLE_LAYER_DECLARATION } from "@walle/styles/layers";
 import "@walle/styles/global.css";
@@ -56,7 +56,8 @@ const descriptionSeo = descriptionMaxLength
 // A root-relative path (ogImageUrl()'s own output, or a plain image/ogImage config value)
 // resolves against the origin regardless of the current page's path; an already-absolute
 // URL passes through unchanged.
-const toAbsolute = (value: string) => (/^https?:\/\//.test(value) ? value : new URL(value, Astro.url).toString());
+const toAbsolute = (value: string) =>
+  /^https?:\/\//.test(value) ? value : new URL(value, Astro.url).toString();
 
 // Fallback chain: an explicit override, then the layout's own per-entry image, then the
 // site-wide OG default (only when enabled, otherwise there is no /og route to point at),

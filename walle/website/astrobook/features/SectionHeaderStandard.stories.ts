@@ -11,7 +11,7 @@ export default {
   decorators: [{ component: StoryWrapper }],
 };
 
-export const White = {
+export const Default = {
   args: {
     title: "Minimal header",
     subtitle: "Transparent background for content-first pages.",

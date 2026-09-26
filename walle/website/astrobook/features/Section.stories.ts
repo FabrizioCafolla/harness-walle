@@ -36,8 +36,8 @@ export const Site = {
   args: { title: "Site section", variant: "site", filled: true } satisfies SectionProps,
 };
 
-export const Gray = {
-  args: { title: "Gray section", muted: true } satisfies SectionProps,
+export const Muted = {
+  args: { title: "Muted section", muted: true } satisfies SectionProps,
 };
 
 export const Centered = {

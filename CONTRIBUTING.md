@@ -92,7 +92,7 @@ just playwright-test-navbar  # navbar functional suite (explicit config, see pla
 `just e2e` is the one that matters most: it scaffolds a real consumer from your working tree and
 exercises the CLI the same way a user would. Run it before opening a PR.
 
-If you add or change a component, ship a story (`astrobook/`) and a visual regression baseline : 
+If you add or change a component, ship a story (`astrobook/`) and a visual regression baseline:
 see [wiki/develop/astrobook.md](wiki/develop/astrobook.md). If you touch `cli.sh`, add or update an e2e scenario
 under `tests/e2e/scenarios/` rather than testing by hand.
 
@@ -107,7 +107,7 @@ above before a PR that touches components, layouts, or navbar/footer behavior.
 - Don't hand-edit anything under a `@walle/` namespace in a _consumer_ project (that's the
   read-only contract this whole project exists to enforce): but editing the walle _source_
   itself, in this repo, is exactly what you're here to do.
-- Keep `walle/` (the product) and everything else (dev tooling, demo site) cleanly separated : 
+- Keep `walle/` (the product) and everything else (dev tooling, demo site) cleanly separated:
   see [wiki/develop/repo-guide.md](wiki/develop/repo-guide.md) for the boundary.
 
 ## Opening a PR

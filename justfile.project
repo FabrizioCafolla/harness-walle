@@ -19,7 +19,7 @@ validate-configs:
     node --preserve-symlinks --preserve-symlinks-main ./scripts/@walle/validate-configs.mjs
 
 # Regenerate walle/website/schemas/*.schema.json from the zod schemas in
-# walle/website/src/@walle/config/schema.ts (the single source of truth, D7)
+# walle/website/src/@walle/config/schema.ts (the single source of truth)
 [group('walle')]
 schemas:
     node {{justfile_directory()}}/walle/cli/generate-schemas.mjs
@@ -44,7 +44,7 @@ e2e:
     bash {{justfile_directory()}}/tests/e2e/run.sh
 
 # Run the full e2e suite (core + scenarios-extended/: marker injection edge cases,
-# migration paths, schema enforcement, devcontainer sync details, etc.). Slower — run
+# migration paths, schema enforcement, devcontainer sync details, etc.). Slower: run
 # before merging a change that touches the CLI's sync/inject logic, or in pre-release CI.
 [group('walle')]
 e2e-extended:
@@ -66,7 +66,7 @@ astrobook:
 playwright-setup:
     yarn playwright install --with-deps chromium chromium-headless-shell
 
-# Run the navbar functional Playwright suite (explicit config — see playwright.config.ts
+# Run the navbar functional Playwright suite (explicit config, see playwright.config.ts
 # testIgnore for why this must not fall back to the default `playwright test` invocation)
 [group('walle')]
 playwright-test-navbar:
@@ -97,7 +97,7 @@ release version:
     #!/usr/bin/env bash
     set -euo pipefail
     if [ -n "$(git status --porcelain)" ]; then
-      echo "[ERROR] working tree is not clean — commit or stash pending changes first." >&2
+      echo "[ERROR] working tree is not clean: commit or stash pending changes first." >&2
       exit 1
     fi
     changelog="{{justfile_directory()}}/CHANGELOG.md"
@@ -109,7 +109,7 @@ release version:
       found { print }
     ' "$changelog")"
     if [ -z "$(echo "$notes" | tr -d '[:space:]')" ]; then
-      echo "[ERROR] CHANGELOG.md has no (or an empty) section for ${tag} — add one before releasing." >&2
+      echo "[ERROR] CHANGELOG.md has no (or an empty) section for ${tag}: add one before releasing." >&2
       exit 1
     fi
     pkg="{{justfile_directory()}}/walle/website/package.json"

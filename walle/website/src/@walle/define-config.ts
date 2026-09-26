@@ -790,7 +790,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
   // destination / next to no real content: same exclusion mechanism, two sources.
   const redirectSources = Object.keys(astro.redirects ?? {});
   const offlineExclude = pwa.enabled === true && pwa.offline ? ["/offline"] : [];
-  // A feed is a machine-readable alternate of a listing page, never content of its own : 
+  // A feed is a machine-readable alternate of a listing page, never content of its own:
   // same exclusion reasoning as the offline fallback.
   const feedsExclude = seo.feeds?.enabled === true ? (seo.feeds.items ?? []).map((i) => i.path) : [];
   const sitemapExclude = [

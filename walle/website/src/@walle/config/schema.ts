@@ -416,7 +416,7 @@ const seoSchema = z
   .strict();
 
 // Map. Absent means walle's own defaults: standard OpenStreetMap tiles, "google"
-// directions (what the three reference sites use).
+// directions.
 const mapTilesSchema = z
   .object({
     url: z.string(),

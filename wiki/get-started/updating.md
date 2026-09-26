@@ -59,10 +59,11 @@ footer, blog, products and reading time. Anything missing stays in English.
 
 Commerce pages and collections are now provided by walle:
 
-- Delete the seeded `src/pages/products/index.astro` and `src/pages/products/[handle].astro` from
-  0.6.x: walle injects `/products` and `/products/[handle]` when `commerce.mode` is `catalog` or
-  `shop`, and a local file on the same path collides with it. To keep a customized page, move it
-  outside `src/pages/` and point `commerce.pages.list` or `commerce.pages.detail` at it.
+- Delete the seeded `src/pages/products/index.astro`, `src/pages/products/[handle].astro` and any
+  `src/pages/products/example*.astro` demo pages from 0.6.x: walle injects `/products` and
+  `/products/[handle]` when `commerce.mode` is `catalog` or `shop`, and a local file on the same
+  path collides with it. To keep a customized page, move it outside `src/pages/` and point
+  `commerce.pages.list` or `commerce.pages.detail` at it.
 - In `src/content.config.ts`, replace your own products collection (and its `shopifyLoader`
   import) with walle's:
 
