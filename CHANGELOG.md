@@ -4,6 +4,28 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/develop/versioning.md).
 
+## [0.7.2] - Unreleased
+
+### Fixed
+
+- **Outline buttons rendered filled with an invisible label.** `.button[data-outline]` never
+  reset `--button-bg`, so it kept inheriting the base rule's solid variant fill and rendered
+  `--button-fg` text the same color as its own background, since a variant's `--variant-color`
+  and `--variant-bg` are the same color by design. `outline` now sets `--button-bg: transparent`
+  and a hover background/border matching the pre-0.7 outline hover look (the variant's own dark
+  shade, via `--variant-bg-hover`), instead of the base rule's `color-mix(transparent, black
+  30%)` near-black wash.
+- **`Button`'s `position: relative` was dropped in 0.7.0.** Restored on the base `.button` rule.
+  A site decorating a `Button` with a positioned `::before`/`::after` (e.g. an `inset: 0` mask)
+  relied on this undocumented behavior; without it, the decoration escapes to the nearest
+  positioned ancestor instead of sizing to the button.
+- **`Link` ignored the semantic `--link`/`--link-hover` tokens.** An implicit-variant `Link` (no
+  `variant` prop passed) always emitted `data-variant="primary"` and used
+  `--variant-color`/`--variant-color-hover`, so a site setting `--link` independently of
+  `--primary` for its own AA contrast got non-AA links after migrating off 0.6.1's removed
+  `variant="default"`. `Link` with no explicit `variant` now reads `--link`/`--link-hover`
+  directly; an explicit `variant` still uses that variant's own color pair.
+
 ## [0.7.1] - 2026-09-28
 
 ### Added

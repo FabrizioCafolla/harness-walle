@@ -38,6 +38,23 @@ Sites below 0.6 apply the intermediate CHANGELOG entries first, then update to 0
 `just walle-deps --apply`: 0.7.0 adds `leaflet`, `satori` and `@resvg/resvg-js` and moves several
 dependencies to new majors.
 
+One of those majors is `vitest` 4 to 5, a walle-owned dependency: if your site has no
+`vitest.config.ts`, vitest falls back to its own default include glob (`**/*.{test,spec}.*`),
+which also matches any Playwright `*.spec.ts` file and fails `yarn test:unit` with something
+like `test.describe() not expected here`. Add a `vitest.config.ts` scoped to your real unit
+specs, the same convention walle's own website uses:
+
+```ts
+import { getViteConfig } from "astro/config";
+
+export default getViteConfig({
+  test: {
+    include: ["src/**/*.test.ts"],
+    environment: "node",
+  },
+});
+```
+
 Set the site's Node version to 24, which the 0.7.0 `engines` field requires: `.nvmrc`, plus any
 `node-version` in your own workflows (the walle test action reads `.nvmrc`). `update` never
 touches `.nvmrc`, a seed file, so change it yourself.

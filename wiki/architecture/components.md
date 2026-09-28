@@ -50,6 +50,14 @@ the component's public properties, not the variant itself. `site` is a variant l
 left empty by default so a consumer defines it once and every component picks it up. See
 [style](style.md#the-variant-model) for the token mechanics.
 
+**`Link` is the one exception**: its `variant` prop has no default, and `data-variant` is
+emitted only when a caller passes one. With no `variant` prop, a `Link` reads the semantic
+`--link`/`--link-hover` tokens (0.7.2), not the primary variant's colors, so a site that
+overrides `--link` independently of `--primary` (e.g. for AA contrast on body-text links,
+which don't sit on a filled surface the way a `Button` does) reaches every unvaried `Link`.
+Passing an explicit `variant` still switches to that variant's own `--variant-color`/
+`--variant-color-hover` pair.
+
 | Component | Variant | Modifiers |
 |---|---|---|
 | `Badge` | ✓ | `outline`, `muted` |
@@ -85,7 +93,7 @@ for how to set these.
 | `Badge` | `--badge-bg`, `--badge-fg`, `--badge-border`, `--badge-radius`, `--badge-padding` |
 | `Button` | `--button-bg`, `--button-bg-hover`, `--button-fg`, `--button-border`, `--button-radius`, `--button-padding-x`, `--button-padding-y`, `--button-shadow`, `--button-font-weight` |
 | `Image` | `--image-radius` |
-| `Link` | `--link-color`, `--link-color-hover`, `--link-decoration` |
+| `Link` | `--link-color` (default `--link`, or `--variant-color` when `variant` is set), `--link-color-hover` (default `--link-hover`, or `--variant-color-hover`), `--link-decoration` |
 | `Price` | `--price-color`, `--price-compare-color` |
 
 **Features** (`@walle/components/features/`)
