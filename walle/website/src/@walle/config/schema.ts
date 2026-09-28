@@ -469,6 +469,14 @@ const fontEntrySchema = z
     // if a site needs it).
     src: z.array(z.string()).optional(),
     preload: z.boolean().optional(),
+    // The generic family Astro falls back to while the real font loads (and permanently if
+    // it fails). Astro only generates a metric-matched fallback @font-face (eliminating the
+    // layout shift on swap) for a fixed set of generics it has system-font metrics for; the
+    // others (cursive, fantasy, ...) are CSS-valid but silently skip that optimization, so
+    // this enum only lists the ones that actually get it. Default "sans-serif" matches
+    // Astro's own default, but a serif or monospace font should set this explicitly: the
+    // wrong generic still shifts layout, just by less than falling all the way to Arial.
+    fallback: z.enum(["serif", "sans-serif", "monospace", "system-ui"]).optional(),
   })
   .strict();
 

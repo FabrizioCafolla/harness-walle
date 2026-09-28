@@ -26,6 +26,37 @@ describe("config schemas parse the demo configs", () => {
   });
 });
 
+describe("theme schema: typography.fonts[].fallback", () => {
+  const fontEntry = (fallback?: unknown) => ({
+    role: "body",
+    name: "Lora",
+    provider: "google",
+    ...(fallback === undefined ? {} : { fallback }),
+  });
+
+  it("accepts each generic family Astro can generate a metric-matched fallback for", () => {
+    for (const fallback of ["serif", "sans-serif", "monospace", "system-ui"]) {
+      expect(() =>
+        themeSchema.parse({ typography: { fonts: [fontEntry(fallback)] } })
+      ).not.toThrow();
+    }
+  });
+
+  it("accepts an entry with no fallback at all", () => {
+    expect(() => themeSchema.parse({ typography: { fonts: [fontEntry()] } })).not.toThrow();
+  });
+
+  it("rejects a generic family Astro has no fallback metrics for", () => {
+    expect(() => themeSchema.parse({ typography: { fonts: [fontEntry("cursive")] } })).toThrow();
+  });
+
+  it("rejects an unknown value", () => {
+    expect(() =>
+      themeSchema.parse({ typography: { fonts: [fontEntry("not-a-real-generic")] } })
+    ).toThrow();
+  });
+});
+
 describe("removed keys are rejected with guidance", () => {
   it("rejects astro.ssr, pointing to astro.adapter", () => {
     const result = appSchema.safeParse({

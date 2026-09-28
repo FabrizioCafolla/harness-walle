@@ -74,6 +74,10 @@
               },
               "preload": {
                 "type": "boolean"
+              },
+              "fallback": {
+                "type": "string",
+                "enum": ["serif", "sans-serif", "monospace", "system-ui"]
               }
             },
             "required": ["role", "name", "provider"],

@@ -48,7 +48,7 @@ Optional. Every key falls back to walle's own default when absent.
 | `neutral` | Gray scale → semantic tokens |
 | `shadow`, `radii` | Elevation and corner-radius tokens |
 | `typography.fontFamilyBase/-Heading/-Mono`, `.scale` | Font stacks and a type scale |
-| `typography.fonts[]` | Self-hosted font entries (`role`, `name`, `provider`, `weights`, `src`); resolved to an Astro Fonts API entry with `cssVariable: "--walle-font-<role>"` |
+| `typography.fonts[]` | Self-hosted font entries (`role`, `name`, `provider`, `weights`, `src`, `fallback`); resolved to an Astro Fonts API entry with `cssVariable: "--walle-font-<role>"` and a metric-matched fallback for `fallback`'s generic family (default `sans-serif`) |
 | `spacing` | Spacing scale tokens |
 
 See [style](style.md) for how these become CSS.

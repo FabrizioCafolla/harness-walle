@@ -38,6 +38,13 @@ a font host. The `google` provider can serve different metrics than Google's own
 may set a little wider or narrower; the `fontsource` provider is the alternative when a family
 must match its previous rendering.
 
+Each font entry also takes a `fallback`: the generic family (`"serif"`, `"sans-serif"`,
+`"monospace"`, or `"system-ui"`) shown while the real font loads. Set it to match the font's own
+shape (`"serif"` for a serif body font, `"monospace"` for a mono font); Astro then generates a
+metric-matched placeholder for that generic, so text does not visibly reflow once the real font
+swaps in. Leaving it out defaults to `"sans-serif"`, which still avoids a layout shift for a
+sans-serif font but can cause one for a serif or monospace font.
+
 ## 2. Site-wide component custom properties
 
 Every visual component publishes custom properties named `--<component>-<property>` on its root
