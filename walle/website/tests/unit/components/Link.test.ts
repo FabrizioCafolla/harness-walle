@@ -3,10 +3,6 @@ import { describe, expect, it } from "vitest";
 import Link from "../../../src/@walle/components/elements/Link.astro";
 
 describe("Link", () => {
-  // No default here (unlike Button/Badge, both fixed at "primary"): an implicit-variant Link
-  // must fall back to the --link/--link-hover tokens, not the primary variant's own colors, so
-  // a site that sets --link independently of --primary keeps that override (0.7.2 fix - see
-  // Link.astro's style block. Before the fix this always emitted data-variant="primary").
   it("emits no data-variant when variant is not passed", async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(Link, {

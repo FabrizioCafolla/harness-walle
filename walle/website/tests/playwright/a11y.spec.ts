@@ -75,13 +75,8 @@ test.describe("axe: demo site pages", () => {
   }
 });
 
-// Regression guard for the outline-button invisible-label bug (fixed in 0.7.2:
-// .button[data-outline] never reset --button-bg, so it kept the base rule's solid fill and
-// rendered text the same color as its own background). Verified directly against axe: this
-// exact case (background and text both resolving to the same rgb) lands in axe's `incomplete`
-// results, not `violations`, so the "axe: astrobook stories" gate above never failed on it.
-// This asserts the concrete, deterministic invariant the fix restores instead of relying on
-// axe's classification of an inconclusive check.
+// axe-core puts a same-color background/text case in `results.incomplete`, not
+// `results.violations`; the "axe: astrobook stories" gate above filters only violations.
 test.describe("outline background is never the same as its own text color", () => {
   const outlineStories = storyRoutes().filter((r) => /outline/.test(r.id));
 
