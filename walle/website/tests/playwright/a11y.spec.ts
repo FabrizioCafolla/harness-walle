@@ -75,6 +75,32 @@ test.describe("axe: demo site pages", () => {
   }
 });
 
+// Regression guard for the outline-button invisible-label bug (fixed in 0.7.2:
+// .button[data-outline] never reset --button-bg, so it kept the base rule's solid fill and
+// rendered text the same color as its own background). Verified directly against axe: this
+// exact case (background and text both resolving to the same rgb) lands in axe's `incomplete`
+// results, not `violations`, so the "axe: astrobook stories" gate above never failed on it.
+// This asserts the concrete, deterministic invariant the fix restores instead of relying on
+// axe's classification of an inconclusive check.
+test.describe("outline background is never the same as its own text color", () => {
+  const outlineStories = storyRoutes().filter((r) => /outline/.test(r.id));
+
+  for (const route of outlineStories) {
+    test(route.id, async ({ page }) => {
+      await page.goto(route.path);
+      await page.waitForLoadState("networkidle");
+      const { bg, fg } = await page.evaluate(() => {
+        const el = document.querySelector("[data-outline]") as HTMLElement | null;
+        if (!el) return { bg: null, fg: null };
+        const cs = getComputedStyle(el);
+        return { bg: cs.backgroundColor, fg: cs.color };
+      });
+      expect(bg, `no [data-outline] element found on ${route.path}`).not.toBeNull();
+      expect(bg, `background (${bg}) resolves to the same color as text (${fg})`).not.toBe(fg);
+    });
+  }
+});
+
 // Responsive floor: no page-level horizontal overflow at 320px (WCAG 1.4.10 reflow).
 test.describe("320px: no horizontal overflow", () => {
   test.use({ viewport: { width: 320, height: 800 } });
