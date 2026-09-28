@@ -6,6 +6,13 @@ All notable changes to Walle are documented here. Format follows
 
 ## [0.7.2] - Unreleased
 
+### Added
+
+- **`seo.alternates`.** Renders a `<link rel="alternate">` for a feed a site serves itself
+  (`href`, `type`: `application/rss+xml` | `application/atom+xml` | `application/feed+json`,
+  optional `title`), alongside the existing `seo.feeds` links. No route is injected: the site
+  provides `href` itself.
+
 ### Fixed
 
 - **Outline buttons rendered filled with an invisible label.** `.button[data-outline]` never
@@ -15,10 +22,11 @@ All notable changes to Walle are documented here. Format follows
   and a hover background/border matching the pre-0.7 outline hover look (the variant's own dark
   shade, via `--variant-bg-hover`), instead of the base rule's `color-mix(transparent, black
   30%)` near-black wash.
-- **`Button`'s `position: relative` was dropped in 0.7.0.** Restored on the base `.button` rule.
-  A site decorating a `Button` with a positioned `::before`/`::after` (e.g. an `inset: 0` mask)
-  relied on this undocumented behavior; without it, the decoration escapes to the nearest
-  positioned ancestor instead of sizing to the button.
+- **`Button`'s `position: relative` and `overflow: hidden` were dropped in 0.7.0.** Both
+  restored on the base `.button` rule. A site decorating a `Button` with a positioned
+  `::before`/`::after` (e.g. an `inset: 0` mask) relied on `position: relative` for the
+  decoration to size to the button instead of escaping to the nearest positioned ancestor, and
+  on `overflow: hidden` for the decoration to clip to the button's own border-radius.
 - **`Link` ignored the semantic `--link`/`--link-hover` tokens.** An implicit-variant `Link` (no
   `variant` prop passed) always emitted `data-variant="primary"` and used
   `--variant-color`/`--variant-color-hover`, so a site setting `--link` independently of

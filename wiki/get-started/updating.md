@@ -247,6 +247,7 @@ Replace site code that walle now provides:
 | an Open Graph image endpoint | `seo.ogImage`, with a custom template per collection if needed |
 | a local leaflet map component | `Map` |
 | a collection-based RSS endpoint | `seo.feeds` (keep your own if it filters entries, emits other formats, or reads a nested field: `fields` maps top-level entry fields only) |
+| your own feed endpoint (custom filtering/shaping `seo.feeds` can't express) | keep the route, add it to `seo.alternates` so `Head` still emits its `<link rel="alternate">` |
 | a Google Fonts import or `@font-face` rules | `theme.json` `typography.fonts` |
 | a local hero or call-to-action section | compare with `Hero` and `CallToAction` |
 

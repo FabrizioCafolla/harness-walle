@@ -667,6 +667,26 @@
             }
           },
           "additionalProperties": false
+        },
+        "alternates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "href": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["application/rss+xml", "application/atom+xml", "application/feed+json"]
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": ["href", "type"],
+            "additionalProperties": false
+          }
         }
       },
       "additionalProperties": false
