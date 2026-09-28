@@ -1,7 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
 import type { BaseProps, Variant } from "../shared/types";
-import { linkAttrs, splitProps, variantAttrs } from "../shared/attrs";
+import { linkAttrs, splitProps } from "../shared/attrs";
 
 export interface Props extends BaseProps {
   /**
@@ -59,7 +59,8 @@ const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const {
   href,
   target,
-  variant = "primary",
+  // No default: data-variant is emitted only when a caller passes variant.
+  variant,
   muted = false,
   unstyled = false,
   externalIcon = true,
@@ -87,7 +88,8 @@ const classes = ["link", className ?? ""].filter(Boolean).join(" ");
   target={resolvedTarget}
   rel={rel}
   class={classes}
-  {...variantAttrs({ variant, muted })}
+  data-variant={variant}
+  data-muted={muted ? "true" : undefined}
   data-unstyled={unstyled ? "true" : undefined}
   data-component="Link"
   {...rest}
@@ -102,9 +104,9 @@ const classes = ["link", className ?? ""].filter(Boolean).join(" ");
 <style>
   @layer walle.components {
     .link {
-      /* Public properties */
-      --link-color: var(--variant-color);
-      --link-color-hover: var(--variant-color-hover);
+      /* Public properties. [data-variant] below overrides these to that variant's own pair. */
+      --link-color: var(--link);
+      --link-color-hover: var(--link-hover);
       --link-decoration: underline;
 
       color: var(--link-color);
@@ -114,6 +116,11 @@ const classes = ["link", className ?? ""].filter(Boolean).join(" ");
 
     .link:hover {
       color: var(--link-color-hover);
+    }
+
+    .link[data-variant] {
+      --link-color: var(--variant-color);
+      --link-color-hover: var(--variant-color-hover);
     }
 
     .link[data-muted] {

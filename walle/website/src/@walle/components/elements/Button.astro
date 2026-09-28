@@ -138,6 +138,8 @@ const tagAttrs = isLink
       --button-font-weight: 600;
 
       /* Structure */
+      position: relative;
+      overflow: hidden;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -171,6 +173,8 @@ const tagAttrs = isLink
            [data-inverse][data-outline] rule handles the combined case (a button on a filled,
            colored background that is also outlined). */
     .button[data-outline] {
+      --button-bg: transparent;
+      --button-bg-hover: var(--variant-bg-hover);
       --button-fg: var(--variant-color);
       --button-border: var(--variant-color);
       --button-shadow: none;

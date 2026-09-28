@@ -21,9 +21,9 @@ test.describe("Astrobook visual regression", () => {
         await page.locator("pre", { hasText: /^Path: \// }).count(),
         "page is astrobook's not-found fallback: story route scheme changed"
       ).toBe(0);
-      await expect(page.locator("body")).toHaveScreenshot(`${route.id.replace(/\//g, "-")}.png`, {
-        maxDiffPixelRatio: 0.02,
-      });
+      // Threshold lives in playwright.astrobook.config.ts (expect.toHaveScreenshot):
+      // an absolute pixel count, not this story's own share of the page.
+      await expect(page.locator("body")).toHaveScreenshot(`${route.id.replace(/\//g, "-")}.png`);
     });
   }
 });

@@ -75,6 +75,27 @@ test.describe("axe: demo site pages", () => {
   }
 });
 
+// axe-core puts a same-color background/text case in `results.incomplete`, not
+// `results.violations`; the "axe: astrobook stories" gate above filters only violations.
+test.describe("outline background is never the same as its own text color", () => {
+  const outlineStories = storyRoutes().filter((r) => /outline/.test(r.id));
+
+  for (const route of outlineStories) {
+    test(route.id, async ({ page }) => {
+      await page.goto(route.path);
+      await page.waitForLoadState("networkidle");
+      const { bg, fg } = await page.evaluate(() => {
+        const el = document.querySelector("[data-outline]") as HTMLElement | null;
+        if (!el) return { bg: null, fg: null };
+        const cs = getComputedStyle(el);
+        return { bg: cs.backgroundColor, fg: cs.color };
+      });
+      expect(bg, `no [data-outline] element found on ${route.path}`).not.toBeNull();
+      expect(bg, `background (${bg}) resolves to the same color as text (${fg})`).not.toBe(fg);
+    });
+  }
+});
+
 // Responsive floor: no page-level horizontal overflow at 320px (WCAG 1.4.10 reflow).
 test.describe("320px: no horizontal overflow", () => {
   test.use({ viewport: { width: 320, height: 800 } });

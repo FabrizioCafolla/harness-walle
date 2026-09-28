@@ -106,3 +106,12 @@ Drafts are excluded when `excludeDrafts` is set, entries sort by date descending
 the result (50 when unset), and a missing mapped field on a kept entry fails the build naming the feed,
 collection, and field. `Head.astro` emits one `<link rel="alternate" type="application/rss+xml">`
 per enabled feed item; disabled means no route and no link at all.
+
+## Alternate feed discovery
+
+`seo.alternates[]` renders a `<link rel="alternate">` for a feed the site serves itself (a route
+`seo.feeds` can't express, e.g. custom filtering or shaping logic beyond a collection dump). Each
+entry is `{ href, type, title? }`, `type` one of `application/rss+xml`, `application/atom+xml`,
+`application/feed+json`. No route is injected: `href` must already resolve to a route the site
+provides. `title` falls back to `website.title`. Renders alongside, not instead of, the
+`seo.feeds` links above.

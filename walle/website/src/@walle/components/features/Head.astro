@@ -75,6 +75,8 @@ const publishedIso = publishedTime ? new Date(publishedTime).toISOString() : nul
 
 // One alternate link per enabled feed item; no link at all when feeds are disabled.
 const feeds = config.app.seo?.feeds?.enabled ? (config.app.seo.feeds.items ?? []) : [];
+// One alternate link per seo.alternates entry. No route is injected for these.
+const alternates = config.app.seo?.alternates ?? [];
 ---
 
 <style is:inline set:html={WALLE_LAYER_DECLARATION}></style>
@@ -90,6 +92,16 @@ const feeds = config.app.seo?.feeds?.enabled ? (config.app.seo.feeds.items ?? []
       type="application/rss+xml"
       title={feed.title ?? config.app.website.title}
       href={toAbsolute(resolveInternalUrl(feed.path))}
+    />
+  ))
+}
+{
+  alternates.map((alternate) => (
+    <link
+      rel="alternate"
+      type={alternate.type}
+      title={alternate.title ?? config.app.website.title}
+      href={toAbsolute(resolveInternalUrl(alternate.href))}
     />
   ))
 }

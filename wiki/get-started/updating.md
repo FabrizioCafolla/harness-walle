@@ -38,6 +38,23 @@ Sites below 0.6 apply the intermediate CHANGELOG entries first, then update to 0
 `just walle-deps --apply`: 0.7.0 adds `leaflet`, `satori` and `@resvg/resvg-js` and moves several
 dependencies to new majors.
 
+One of those majors is `vitest` 4 to 5, a walle-owned dependency: if your site has no
+`vitest.config.ts`, vitest falls back to its own default include glob (`**/*.{test,spec}.*`),
+which also matches any Playwright `*.spec.ts` file and fails `yarn test:unit` with something
+like `test.describe() not expected here`. Add a `vitest.config.ts` scoped to your real unit
+specs, the same convention walle's own website uses:
+
+```ts
+import { getViteConfig } from "astro/config";
+
+export default getViteConfig({
+  test: {
+    include: ["src/**/*.test.ts"],
+    environment: "node",
+  },
+});
+```
+
 Set the site's Node version to 24, which the 0.7.0 `engines` field requires: `.nvmrc`, plus any
 `node-version` in your own workflows (the walle test action reads `.nvmrc`). `update` never
 touches `.nvmrc`, a seed file, so change it yourself.
@@ -230,6 +247,7 @@ Replace site code that walle now provides:
 | an Open Graph image endpoint | `seo.ogImage`, with a custom template per collection if needed |
 | a local leaflet map component | `Map` |
 | a collection-based RSS endpoint | `seo.feeds` (keep your own if it filters entries, emits other formats, or reads a nested field: `fields` maps top-level entry fields only) |
+| your own feed endpoint (custom filtering/shaping `seo.feeds` can't express) | keep the route, add it to `seo.alternates` so `Head` still emits its `<link rel="alternate">` |
 | a Google Fonts import or `@font-face` rules | `theme.json` `typography.fonts` |
 | a local hero or call-to-action section | compare with `Hero` and `CallToAction` |
 

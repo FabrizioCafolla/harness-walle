@@ -410,10 +410,20 @@ const feedsSchema = z
   })
   .strict();
 
+// Renders a <link rel="alternate"> for a feed the site serves itself. No route is injected.
+const alternateSchema = z
+  .object({
+    href: z.string(),
+    type: z.enum(["application/rss+xml", "application/atom+xml", "application/feed+json"]),
+    title: z.string().optional(),
+  })
+  .strict();
+
 const seoSchema = z
   .object({
     ogImage: ogImageSchema.optional(),
     feeds: feedsSchema.optional(),
+    alternates: z.array(alternateSchema).optional(),
   })
   .strict();
 

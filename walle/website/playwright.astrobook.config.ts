@@ -18,6 +18,13 @@ export default defineConfig({
   use: {
     baseURL: "http://localhost:4321",
   },
+  // Absolute pixel count, not a ratio of the whole page: most story pages are mostly white
+  // canvas around a small component, so a ratio-based threshold understates a small
+  // component's own change relative to the page. Does not catch a same-size color-only
+  // change on anti-aliased text; see a11y.spec.ts for that guard.
+  expect: {
+    toHaveScreenshot: { maxDiffPixels: 200 },
+  },
   webServer: {
     // env -u CLAUDECODE …: astro 7 auto-daemonizes `astro dev` when it detects an
     // AI-agent environment, which makes Playwright's webServer see the process

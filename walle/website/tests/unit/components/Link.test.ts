@@ -3,12 +3,20 @@ import { describe, expect, it } from "vitest";
 import Link from "../../../src/@walle/components/elements/Link.astro";
 
 describe("Link", () => {
-  it("defaults to variant primary", async () => {
+  it("emits no data-variant when variant is not passed", async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(Link, {
       props: { href: "/blog", text: "Internal" },
     });
-    expect(html).toContain('data-variant="primary"');
+    expect(html).not.toContain("data-variant");
+  });
+
+  it("emits data-variant with the explicit value when variant is passed", async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(Link, {
+      props: { href: "/blog", text: "Internal", variant: "secondary" },
+    });
+    expect(html).toContain('data-variant="secondary"');
   });
 
   // astro/container's experimental_AstroContainer never wires a `site` into the manifest it
