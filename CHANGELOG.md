@@ -4,6 +4,23 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/develop/versioning.md).
 
+## [0.7.1] - Unreleased
+
+### Added
+
+- **`typography.fonts[].display`.** Sets CSS `font-display` for a font entry (`auto`, `block`,
+  `fallback`, `optional`, `swap`); left out, Astro's own default (`swap`) applies unchanged.
+  `optional` removes the font-swap layout shift entirely by letting the browser skip the swap on
+  a slow connection, at the cost of possibly showing only the fallback font on first load.
+
+### Fixed
+
+- **Layout shift when a web font swaps in.** Every `typography.fonts` entry now gets a
+  metric-matched fallback font (Astro's `optimizedFallbacks`), instead of always falling back to
+  a generic sans-serif regardless of the real font's shape. Set the new `fallback` field (`serif`,
+  `sans-serif`, `monospace`, or `system-ui`) to match the configured font; default is
+  `sans-serif`.
+
 ## [0.7.0] - 2026-09-26
 
 An extensible design system: cascade layers, one variant and modifier vocabulary, public custom

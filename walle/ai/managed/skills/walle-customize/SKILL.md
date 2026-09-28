@@ -16,6 +16,13 @@ goes in a consumer zone, using the first rung of the ladder below that does the 
 1. **`src/configs/theme.json`**: palette (`primary`, `-light`, `-dark`, `-contrast`, same for
    `secondary`, `alternative`, plus `heading`), `neutral`, `shadow`, `radii`, `spacing`,
    `typography.scale`, `typography.fonts`. Set a `*-contrast` whenever you change a variant color.
+   On each `typography.fonts` entry, set `fallback` to the font's own generic family (`"serif"`,
+   `"sans-serif"`, `"monospace"`, `"system-ui"`; default `"sans-serif"`) so Astro's
+   metric-matched placeholder shrinks the layout shift when the real font swaps in (it reduces
+   it, does not eliminate it). Set `display` (`"auto"`, `"block"`, `"fallback"`, `"optional"`,
+   `"swap"`; default Astro's own `"swap"`) to trade the swap itself away: `"optional"` removes
+   the layout shift entirely but may show only the fallback font on a first visit over a slow
+   connection; keep `"swap"` when the font must always eventually show.
 2. **Site-wide custom properties** in `src/styles/global.css`, inside `@layer site`, on the
    component root class: `.button { --button-radius: 999px; }`,
    `.site-header { --navbar-bg: var(--surface); }`, `.card { --card-radius: var(--radius-lg); }`.

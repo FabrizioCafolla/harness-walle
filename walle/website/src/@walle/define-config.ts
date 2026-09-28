@@ -704,6 +704,8 @@ type WalleFontEntry = {
   styles?: ("normal" | "italic" | "oblique")[];
   src?: string[];
   preload?: boolean;
+  fallback?: "serif" | "sans-serif" | "monospace" | "system-ui";
+  display?: "auto" | "block" | "fallback" | "optional" | "swap";
 };
 
 /**
@@ -729,6 +731,15 @@ function resolveWalleFonts(
           : fontProviders.local(),
     name: entry.name,
     cssVariable: `--walle-font-${entry.role}`,
+    // Astro already defaults this to ["sans-serif"], which is why optimizedFallbacks (on by
+    // default) was already running; the CLS this fixes came from the wrong generic, not a
+    // missing one, e.g. a serif body font swapping in over an Arial-metric placeholder. Every
+    // font gets an explicit, metric-appropriate fallback instead of silently inheriting Astro's
+    // sans-serif default.
+    fallbacks: [entry.fallback ?? "sans-serif"],
+    // Absent means "don't touch it": Astro's own default ("swap") applies unchanged. Only an
+    // explicit display gets passed through, same opt-in shape as weights/styles below.
+    ...(entry.display ? { display: entry.display } : {}),
     ...(entry.weights?.length ? { weights: entry.weights } : {}),
     ...(entry.styles?.length ? { styles: entry.styles } : {}),
     ...(entry.provider === "local"

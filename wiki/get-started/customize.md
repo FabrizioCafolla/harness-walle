@@ -38,6 +38,26 @@ a font host. The `google` provider can serve different metrics than Google's own
 may set a little wider or narrower; the `fontsource` provider is the alternative when a family
 must match its previous rendering.
 
+Each font entry also takes a `fallback`: the generic family (`"serif"`, `"sans-serif"`,
+`"monospace"`, or `"system-ui"`) shown while the real font loads. Set it to match the font's own
+shape (`"serif"` for a serif body font, `"monospace"` for a mono font); Astro then generates a
+metric-matched placeholder for that generic, so text does not visibly reflow once the real font
+swaps in. Leaving it out defaults to `"sans-serif"`, which still avoids a layout shift for a
+sans-serif font but can cause one for a serif or monospace font. Even matched to the closest
+generic, the placeholder is an approximation (Astro's own metrics table only has one system font
+per generic, e.g. Times New Roman for `"serif"`): expect the swap to shrink, not eliminate, the
+shift.
+
+A `display` on the same entry controls what the browser shows while the font is still
+downloading (CSS `font-display`; one of `"auto"`, `"block"`, `"fallback"`, `"optional"`, or
+`"swap"`; leaving it out keeps Astro's own default, `"swap"`). `"swap"` shows the fallback
+immediately and always swaps to the real font once it arrives, which is when the reflow above
+happens. `"optional"` gives the browser permission to skip that swap outright on a slow
+connection, so a first visit on a bad connection may render entirely in the fallback font: no
+shift, but not always the intended typeface either. Use `"optional"` when the shift matters more
+than always showing the exact font; keep `"swap"` (the default) when the font is close to core
+brand identity and should always eventually show, reflow or not.
+
 ## 2. Site-wide component custom properties
 
 Every visual component publishes custom properties named `--<component>-<property>` on its root

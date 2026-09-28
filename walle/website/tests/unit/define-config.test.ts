@@ -198,6 +198,56 @@ describe("defineWalleConfig", () => {
   });
 });
 
+describe("resolveWalleFonts (typography.fonts -> Astro's fonts config)", () => {
+  beforeEach(() => {
+    appConfigMock = structuredClone(baseAppConfig);
+  });
+
+  function fontsConfig(entries: unknown[]) {
+    fsExists = true;
+    fsContent = JSON.stringify({ typography: { fonts: entries } });
+    const config = defineWalleConfig();
+    return config.fonts as unknown as Array<{
+      name: string;
+      fallbacks: string[];
+      display?: string;
+    }>;
+  }
+
+  it("defaults an entry with no fallback to Astro's own sans-serif default", () => {
+    const [font] = fontsConfig([{ role: "body", name: "Inter", provider: "google" }]);
+    expect(font.fallbacks).toEqual(["sans-serif"]);
+  });
+
+  it("uses the configured fallback instead of the default", () => {
+    const [font] = fontsConfig([
+      { role: "body", name: "Lora", provider: "google", fallback: "serif" },
+    ]);
+    expect(font.fallbacks).toEqual(["serif"]);
+  });
+
+  it("resolves each entry's own fallback independently", () => {
+    const [body, mono] = fontsConfig([
+      { role: "body", name: "Lora", provider: "google", fallback: "serif" },
+      { role: "mono", name: "NectoMono", provider: "local", fallback: "monospace" },
+    ]);
+    expect(body.fallbacks).toEqual(["serif"]);
+    expect(mono.fallbacks).toEqual(["monospace"]);
+  });
+
+  it("leaves display unset when absent, letting Astro's own default apply", () => {
+    const [font] = fontsConfig([{ role: "body", name: "Inter", provider: "google" }]);
+    expect(font.display).toBeUndefined();
+  });
+
+  it("passes an explicit display through", () => {
+    const [font] = fontsConfig([
+      { role: "body", name: "Lora", provider: "google", display: "optional" },
+    ]);
+    expect(font.display).toBe("optional");
+  });
+});
+
 describe("isSitemapExcluded", () => {
   it("matches an exact path with no base configured", () => {
     expect(isSitemapExcluded("/old-page", ["/old-page"])).toBe(true);

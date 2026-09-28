@@ -74,6 +74,14 @@
               },
               "preload": {
                 "type": "boolean"
+              },
+              "fallback": {
+                "type": "string",
+                "enum": ["serif", "sans-serif", "monospace", "system-ui"]
+              },
+              "display": {
+                "type": "string",
+                "enum": ["auto", "block", "fallback", "optional", "swap"]
               }
             },
             "required": ["role", "name", "provider"],
