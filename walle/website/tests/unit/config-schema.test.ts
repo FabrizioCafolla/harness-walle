@@ -57,6 +57,33 @@ describe("theme schema: typography.fonts[].fallback", () => {
   });
 });
 
+describe("theme schema: typography.fonts[].display", () => {
+  const fontEntry = (display?: unknown) => ({
+    role: "body",
+    name: "Lora",
+    provider: "google",
+    ...(display === undefined ? {} : { display }),
+  });
+
+  it("accepts every value CSS font-display supports", () => {
+    for (const display of ["auto", "block", "fallback", "optional", "swap"]) {
+      expect(() =>
+        themeSchema.parse({ typography: { fonts: [fontEntry(display)] } })
+      ).not.toThrow();
+    }
+  });
+
+  it("accepts an entry with no display at all", () => {
+    expect(() => themeSchema.parse({ typography: { fonts: [fontEntry()] } })).not.toThrow();
+  });
+
+  it("rejects an unknown value", () => {
+    expect(() =>
+      themeSchema.parse({ typography: { fonts: [fontEntry("not-a-real-value")] } })
+    ).toThrow();
+  });
+});
+
 describe("removed keys are rejected with guidance", () => {
   it("rejects astro.ssr, pointing to astro.adapter", () => {
     const result = appSchema.safeParse({

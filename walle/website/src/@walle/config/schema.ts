@@ -477,6 +477,13 @@ const fontEntrySchema = z
     // Astro's own default, but a serif or monospace font should set this explicitly: the
     // wrong generic still shifts layout, just by less than falling all the way to Arial.
     fallback: z.enum(["serif", "sans-serif", "monospace", "system-ui"]).optional(),
+    // CSS font-display: how the browser paints text while this font is still downloading.
+    // Astro defaults to "swap" (fallback text visible immediately, swaps to the real font,
+    // reflowing if its metrics differ from the fallback's). "optional" gives the browser leave
+    // to skip the swap on a slow connection or a later paint, trading the reflow for a chance
+    // the fallback is what the visitor sees on first load. Left absent, walle passes nothing
+    // through and Astro's own default applies unchanged.
+    display: z.enum(["auto", "block", "fallback", "optional", "swap"]).optional(),
   })
   .strict();
 

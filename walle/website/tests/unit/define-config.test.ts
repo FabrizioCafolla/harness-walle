@@ -207,7 +207,11 @@ describe("resolveWalleFonts (typography.fonts -> Astro's fonts config)", () => {
     fsExists = true;
     fsContent = JSON.stringify({ typography: { fonts: entries } });
     const config = defineWalleConfig();
-    return config.fonts as unknown as Array<{ name: string; fallbacks: string[] }>;
+    return config.fonts as unknown as Array<{
+      name: string;
+      fallbacks: string[];
+      display?: string;
+    }>;
   }
 
   it("defaults an entry with no fallback to Astro's own sans-serif default", () => {
@@ -229,6 +233,18 @@ describe("resolveWalleFonts (typography.fonts -> Astro's fonts config)", () => {
     ]);
     expect(body.fallbacks).toEqual(["serif"]);
     expect(mono.fallbacks).toEqual(["monospace"]);
+  });
+
+  it("leaves display unset when absent, letting Astro's own default apply", () => {
+    const [font] = fontsConfig([{ role: "body", name: "Inter", provider: "google" }]);
+    expect(font.display).toBeUndefined();
+  });
+
+  it("passes an explicit display through", () => {
+    const [font] = fontsConfig([
+      { role: "body", name: "Lora", provider: "google", display: "optional" },
+    ]);
+    expect(font.display).toBe("optional");
   });
 });
 

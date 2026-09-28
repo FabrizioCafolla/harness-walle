@@ -6,6 +6,13 @@ All notable changes to Walle are documented here. Format follows
 
 ## [0.7.1] - Unreleased
 
+### Added
+
+- **`typography.fonts[].display`.** Sets CSS `font-display` for a font entry (`auto`, `block`,
+  `fallback`, `optional`, `swap`); left out, Astro's own default (`swap`) applies unchanged.
+  `optional` removes the font-swap layout shift entirely by letting the browser skip the swap on
+  a slow connection, at the cost of possibly showing only the fallback font on first load.
+
 ### Fixed
 
 - **Layout shift when a web font swaps in.** Every `typography.fonts` entry now gets a
