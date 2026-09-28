@@ -1,7 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
 import type { BaseProps, Variant } from "../shared/types";
-import { linkAttrs, splitProps, variantAttrs } from "../shared/attrs";
+import { linkAttrs, splitProps } from "../shared/attrs";
 
 export interface Props extends BaseProps {
   /**
@@ -59,7 +59,10 @@ const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const {
   href,
   target,
-  variant = "primary",
+  // No default here (unlike Button/Badge): whether `variant` was passed at all changes which
+  // CSS custom properties the link uses (see the style block below), so that has to survive
+  // as `undefined`, not get defaulted away before the template can see it.
+  variant,
   muted = false,
   unstyled = false,
   externalIcon = true,
@@ -87,7 +90,8 @@ const classes = ["link", className ?? ""].filter(Boolean).join(" ");
   target={resolvedTarget}
   rel={rel}
   class={classes}
-  {...variantAttrs({ variant, muted })}
+  data-variant={variant}
+  data-muted={muted ? "true" : undefined}
   data-unstyled={unstyled ? "true" : undefined}
   data-component="Link"
   {...rest}
@@ -102,9 +106,13 @@ const classes = ["link", className ?? ""].filter(Boolean).join(" ");
 <style>
   @layer walle.components {
     .link {
-      /* Public properties */
-      --link-color: var(--variant-color);
-      --link-color-hover: var(--variant-color-hover);
+      /* Public properties. Default to the semantic --link/--link-hover tokens, not a variant:
+           a site can set --link independently of --primary (e.g. for its own AA contrast
+           on body-text links, which don't sit on a filled surface the way a Button does), and
+           an implicit-variant Link (no `variant` prop passed) needs to see that override.
+           [data-variant] below switches an explicit-variant Link to that variant's own pair. */
+      --link-color: var(--link);
+      --link-color-hover: var(--link-hover);
       --link-decoration: underline;
 
       color: var(--link-color);
@@ -114,6 +122,11 @@ const classes = ["link", className ?? ""].filter(Boolean).join(" ");
 
     .link:hover {
       color: var(--link-color-hover);
+    }
+
+    .link[data-variant] {
+      --link-color: var(--variant-color);
+      --link-color-hover: var(--variant-color-hover);
     }
 
     .link[data-muted] {
