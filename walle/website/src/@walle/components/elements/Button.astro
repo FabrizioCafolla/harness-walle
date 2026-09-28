@@ -139,6 +139,7 @@ const tagAttrs = isLink
 
       /* Structure */
       position: relative;
+      overflow: hidden;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -170,12 +171,7 @@ const tagAttrs = isLink
 
     /* Modifiers map --variant-* tokens to the public properties above; a higher-specificity
            [data-inverse][data-outline] rule handles the combined case (a button on a filled,
-           colored background that is also outlined). --button-bg must be reset here: left
-           unset it keeps inheriting the base rule's --variant-bg (a solid fill), so the button
-           rendered fully filled with --button-fg text the same color as that fill - an
-           invisible label (fixed in 0.7.2). --button-bg-hover is reset too, to the variant's
-           own dark shade rather than the base rule's color-mix(transparent, black 30%), so
-           hover keeps the pre-0.7 filled-on-hover look instead of a near-black wash. */
+           colored background that is also outlined). */
     .button[data-outline] {
       --button-bg: transparent;
       --button-bg-hover: var(--variant-bg-hover);
