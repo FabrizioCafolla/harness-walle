@@ -20,6 +20,14 @@ All notable changes to Walle are documented here. Format follows
 - **`BlogTableOfContents` reached the PWA precache on every site, blog or not.** It is a
   scroll-position enhancement script, never needed to render the offline shell; excluded from
   the default precache glob regardless of commerce mode or whether the site uses blog posts.
+- **An outline `Button` or `Badge` on a light brand color rendered with a low-contrast label.**
+  `[data-outline]` read `--variant-color` (the raw brand color) as its text/border, sitting
+  on the page's own surface rather than on the variant's own fill; a light brand color (a
+  pale gold, for example) fails AA there even though it is exactly the color the variant is
+  meant to show. `generateThemeCss()` now picks, per variant, whichever of the dark shade or
+  the contrast token clears AA against the resolved surface color, and `[data-outline]` uses
+  that instead. Falls back to the dark shade (the previous behavior) when there is no
+  theme.json to compute against, which already clears AA for walle's own default palette.
 - **A muted section rendered with a white background instead of the muted gray band.**
   `.section-wrapper[data-muted]` redefined `--surface-alt` in the same rule that reads it into
   `--wrapper-bg`, so `--wrapper-bg` resolved against the rule's own new value instead of the
