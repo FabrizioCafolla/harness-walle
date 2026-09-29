@@ -44,4 +44,18 @@ test.describe("cascade layers", () => {
       .evaluate((el) => getComputedStyle(el).backgroundColor);
     expect(bg).toBe("rgb(0, 102, 102)");
   });
+
+  test("a muted section keeps its own --surface-alt background, not the descendant override for code", async ({
+    page,
+  }) => {
+    await page.goto(storyPath("features/section/muted"));
+    const bg = await page
+      .locator(".section-wrapper[data-muted]")
+      .evaluate((el) => getComputedStyle(el).backgroundColor);
+    // --surface-alt's default (#f4f5f7); would resolve to --surface's default (#fefefe) if
+    // .section-wrapper[data-muted] redefined --surface-alt on itself instead of on a
+    // descendant, since --wrapper-bg and --surface-alt would then read the same rule's own
+    // new value instead of the ambient one.
+    expect(bg).toBe("rgb(244, 245, 247)");
+  });
 });
