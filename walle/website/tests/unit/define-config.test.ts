@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  dedupePrecacheManifest,
   defineWalleConfig,
   isSitemapExcluded,
   resolvePwaOptions,
@@ -390,9 +391,9 @@ describe("resolvePwaOptions", () => {
     );
   });
 
-  it("has no globIgnores when commerce is in shop mode", () => {
+  it("ignores only the BlogTableOfContents chunk when commerce is in shop mode", () => {
     const options = resolvePwaOptions({ pwa: { enabled: true }, commerce: { mode: "shop" } })!;
-    expect(options.workbox.globIgnores).toEqual([]);
+    expect(options.workbox.globIgnores).toEqual(["**/_astro/BlogTableOfContents*"]);
   });
 
   it("ignores commerce chunk patterns as a safety net when commerce is not shop", () => {
@@ -406,11 +407,58 @@ describe("resolvePwaOptions", () => {
     expect(noCommerce.workbox.globIgnores.length).toBeGreaterThan(0);
   });
 
+  it("ignores the BlogTableOfContents chunk regardless of commerce mode", () => {
+    for (const mode of ["off", "catalog", "shop", undefined]) {
+      const options = resolvePwaOptions({ pwa: { enabled: true }, commerce: { mode } })!;
+      expect(options.workbox.globIgnores).toContain("**/_astro/BlogTableOfContents*");
+    }
+  });
+
   it("merges a consumer globIgnores onto walle's own instead of replacing it", () => {
     const options = resolvePwaOptions(
       { pwa: { enabled: true }, commerce: { mode: "shop" } },
       { workbox: { globIgnores: ["**/consumer-ignored/*"] } }
     )!;
-    expect(options.workbox.globIgnores).toEqual(["**/consumer-ignored/*"]);
+    expect(options.workbox.globIgnores).toEqual([
+      "**/_astro/BlogTableOfContents*",
+      "**/consumer-ignored/*",
+    ]);
+  });
+});
+
+describe("dedupePrecacheManifest", () => {
+  const sw = (entries: string) =>
+    `define(["./workbox-abc"],function(e){e.precacheAndRoute([${entries}],{directoryIndex:"index.html"}),e.cleanupOutdatedCaches()});`;
+
+  it("keeps the first entry and drops later duplicates of the same URL", () => {
+    const entries =
+      '{url:"_astro/a.js",revision:null},' +
+      '{url:"manifest.webmanifest",revision:"abc123"},' +
+      '{url:"manifest.webmanifest",revision:"abc123"},' +
+      '{url:"manifest.webmanifest",revision:"abc123"}';
+    const result = dedupePrecacheManifest(sw(entries));
+    expect(result.match(/manifest\.webmanifest/g)).toHaveLength(1);
+    expect(result).toContain('{url:"_astro/a.js",revision:null}');
+    expect(result).not.toMatch(/,,|\[,|,\]/);
+  });
+
+  it("removes a duplicate in the middle without leaving a stray comma", () => {
+    const entries =
+      '{url:"a",revision:null},{url:"b",revision:null},{url:"a",revision:null},{url:"c",revision:null}';
+    const result = dedupePrecacheManifest(sw(entries));
+    expect(result).toContain(
+      '[{url:"a",revision:null},{url:"b",revision:null},{url:"c",revision:null}]'
+    );
+  });
+
+  it("returns the input unchanged when there is nothing to dedupe", () => {
+    const entries = '{url:"a",revision:null},{url:"b",revision:null}';
+    const source = sw(entries);
+    expect(dedupePrecacheManifest(source)).toBe(source);
+  });
+
+  it("returns the input unchanged when there is no precacheAndRoute call", () => {
+    const source = "self.addEventListener('install', () => {});";
+    expect(dedupePrecacheManifest(source)).toBe(source);
   });
 });

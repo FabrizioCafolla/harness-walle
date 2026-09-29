@@ -8,7 +8,7 @@ import sitemap from "@astrojs/sitemap";
 import { defineConfig, fontProviders } from "astro/config";
 import type { AstroIntegration, AstroUserConfig, HookParameters } from "astro";
 import icon from "astro-icon";
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -404,6 +404,11 @@ export function resolvePwaOptions(
       ? ["**/_astro/Cart*", "**/_astro/VariantPicker*", "**/_astro/ProductBuyCard*"]
       : [];
 
+  // BlogTableOfContents is a scroll-position enhancement script: the page is fully readable
+  // and navigable without it. Excluded from every site's precache by default, whether or not
+  // the site uses blog posts, since it is never needed to render the offline shell.
+  const enhancementChunkGlobIgnores = ["**/_astro/BlogTableOfContents*"];
+
   const defaults = {
     registerType: "autoUpdate" as const,
     injectRegister: "script-defer" as const,
@@ -427,7 +432,7 @@ export function resolvePwaOptions(
       // Self-hosted fonts are build output like any other asset, so
       // they precache alongside the JS/CSS they're never worth loading a page without.
       globPatterns: ["_astro/**/*.{js,css}", "_astro/fonts/**/*.woff2"],
-      globIgnores: commerceChunkGlobIgnores,
+      globIgnores: [...commerceChunkGlobIgnores, ...enhancementChunkGlobIgnores],
       // Explicitly off. vite-plugin-pwa defaults this to "/", which emits a NavigationRoute
       // bound to a URL that is not in the precache above: it throws `non-precached-url` at
       // module evaluation, before any runtimeCaching rule is registered, and the worker
@@ -500,7 +505,59 @@ function wallePwaIntegration(
   overrides: Record<string, any> = {}
 ) {
   const options = resolvePwaOptions(app, overrides);
-  return options ? [AstroPWA(options as Parameters<typeof AstroPWA>[0])] : [];
+  return options
+    ? [AstroPWA(options as Parameters<typeof AstroPWA>[0]), walleDedupePrecacheIntegration()]
+    : [];
+}
+
+/**
+ * Removes a duplicate `{url, revision}` precache entry for the same URL from a built `sw.js`
+ * source string, keeping the first occurrence; returns the input unchanged when there is
+ * nothing to remove or the file has no `precacheAndRoute([...])` call. Pure and exported so a
+ * unit test can run it on a fixture string without a real build.
+ */
+export function dedupePrecacheManifest(source: string): string {
+  // Precache entries never contain nested arrays, so the first "]" after
+  // "precacheAndRoute([" always closes this array.
+  const arrayMatch = source.match(/precacheAndRoute\((\[.*?\])/);
+  if (!arrayMatch) return source;
+  const [, arrayText] = arrayMatch;
+  const entryPattern = /\{url:"((?:[^"\\]|\\.)*)",revision:(?:null|"[0-9a-fA-F]*")\}/g;
+  const seen = new Set<string>();
+  const dedupedArray = arrayText
+    .replace(entryPattern, (entry, url) => {
+      if (seen.has(url)) return "";
+      seen.add(url);
+      return entry;
+    })
+    .replace(/,+/g, ",")
+    .replace(/\[,/g, "[")
+    .replace(/,\]/g, "]");
+  if (dedupedArray === arrayText) return source;
+  return source.replace(arrayText, dedupedArray);
+}
+
+/**
+ * `@vite-pwa/astro` calls its own manifest-entry step once per Vite build environment; each
+ * call appends a `manifest.webmanifest` entry to the same options object without checking
+ * for one already present, so the written `sw.js` ends up with one identical entry per call
+ * (observed as 5 in one build). This integration is registered after AstroPWA in the
+ * integrations array; every `astro:build:done` hook runs after Vite's build (and so after
+ * AstroPWA's own `sw.js` write) finishes, so `dir` here always points at the final file.
+ */
+function walleDedupePrecacheIntegration(): AstroIntegration {
+  return {
+    name: "walle-pwa-dedupe-precache",
+    hooks: {
+      "astro:build:done": ({ dir }: HookParameters<"astro:build:done">) => {
+        const swPath = fileURLToPath(new URL("sw.js", dir));
+        if (!existsSync(swPath)) return;
+        const original = readFileSync(swPath, "utf8");
+        const deduped = dedupePrecacheManifest(original);
+        if (deduped !== original) writeFileSync(swPath, deduped);
+      },
+    },
+  };
 }
 
 /**
@@ -596,7 +653,7 @@ function wallePwaHeadPlugin(head: Record<string, unknown>) {
 
 /**
  * Exposes the resolved font list to components at runtime: Head.astro needs to know
- * every configured font's `cssVariable` and `preload` flag to render one `<Font>` per entry,
+ * every configured font's `cssVariable` and `preload` filter to render one `<Font>` per entry,
  * but it can't read theme.json itself (only ever parsed at build time, here). Same
  * resolveId/load pattern as `wallePwaHeadPlugin`.
  */
@@ -605,7 +662,7 @@ function walleFontsPlugin(entries: WalleFontEntry[] | undefined) {
   const resolvedId = "\0" + virtualId;
   const fonts = (entries ?? []).map((entry) => ({
     cssVariable: `--walle-font-${entry.role}`,
-    preload: entry.preload !== false,
+    preload: entry.preload ?? true,
   }));
   return {
     name: "walle-fonts",
@@ -703,7 +760,7 @@ type WalleFontEntry = {
   weights?: (string | number)[];
   styles?: ("normal" | "italic" | "oblique")[];
   src?: string[];
-  preload?: boolean;
+  preload?: boolean | Array<{ weight?: string | number; style?: string; subset?: string }>;
   fallback?: "serif" | "sans-serif" | "monospace" | "system-ui";
   display?: "auto" | "block" | "fallback" | "optional" | "swap";
 };
