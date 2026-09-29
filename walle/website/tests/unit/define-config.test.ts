@@ -3,9 +3,11 @@ import {
   dedupePrecacheManifest,
   defineWalleConfig,
   isSitemapExcluded,
+  resolveOutlineFgOverrides,
   resolvePwaOptions,
   withBase,
 } from "../../src/@walle/define-config";
+import { contrastRatio } from "../../src/@walle/utils/contrast";
 
 // defineWalleConfig() always sets vite.plugins to a plain array of walle's own plugin objects
 // (never a Promise/false/nested array as Vite's wider PluginOption allows), so this narrows the
@@ -460,5 +462,53 @@ describe("dedupePrecacheManifest", () => {
   it("returns the input unchanged when there is no precacheAndRoute call", () => {
     const source = "self.addEventListener('install', () => {});";
     expect(dedupePrecacheManifest(source)).toBe(source);
+  });
+});
+
+describe("resolveOutlineFgOverrides (outline/badge text color on the page surface)", () => {
+  // A real site palette (a pale gold "secondary"/"alternative"): its own dark shade still
+  // fails AA on a white surface, while its contrast token (chosen to read against the pale
+  // gold fill) is a dark navy that also reads against a white surface.
+  const paleGoldPalette = {
+    secondary: "#FFC000",
+    "secondary-dark": "#D9A200",
+    "secondary-contrast": "#16324F",
+  };
+
+  it("picks the dark shade alone would fail AA against the surface for a pale brand color", () => {
+    const ratio = contrastRatio(paleGoldPalette["secondary-dark"], "#fefefe");
+    expect(ratio).toBeLessThan(4.5);
+  });
+
+  it("resolves to a color that clears AA against the surface", () => {
+    const [line] = resolveOutlineFgOverrides(paleGoldPalette);
+    const [, hex] = line.match(/:\s*(#[0-9a-fA-F]+);/) ?? [];
+    expect(contrastRatio(hex!, "#fefefe")).toBeGreaterThanOrEqual(4.5);
+    expect(hex).toBe("#16324F");
+  });
+
+  it("picks the dark shade when it already clears AA on its own (a typical dark brand color)", () => {
+    const darkBluePalette = {
+      primary: "#0b3d91",
+      "primary-dark": "#062a66",
+      "primary-contrast": "#ffffff",
+    };
+    const [line] = resolveOutlineFgOverrides(darkBluePalette);
+    expect(line).toContain("#062a66");
+  });
+
+  it("skips a variant missing its dark shade or contrast token", () => {
+    expect(resolveOutlineFgOverrides({ secondary: "#FFC000" })).toEqual([]);
+  });
+
+  it("uses the resolved surface (palette.background) instead of assuming white", () => {
+    const darkSurfacePalette = {
+      ...paleGoldPalette,
+      background: "#111111",
+    };
+    // Against a near-black surface the pale gold's own dark shade (#D9A200) reads better
+    // than the navy contrast token (#16324F), the opposite winner from the white-surface case.
+    const [line] = resolveOutlineFgOverrides(darkSurfacePalette);
+    expect(line).toContain("#D9A200");
   });
 });

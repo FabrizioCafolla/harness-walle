@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { contrastRatio } from "../../src/@walle/utils/contrast";
 
 /**
  * WCAG 2.2 AA contrast check for the default walle palette.
@@ -61,29 +62,6 @@ function selectorDeclarationRaw(selector: string, prop: string): string {
 /** Resolved default hex of a `--variant-*` property under `[data-variant="<variant>"]`. */
 function variantToken(variant: string, prop: string): string {
   return resolveValue(selectorDeclarationRaw(`[data-variant="${variant}"]`, prop));
-}
-
-function relativeLuminance(hex: string): number {
-  const h = hex.replace("#", "");
-  const full =
-    h.length === 3
-      ? h
-          .split("")
-          .map((c) => c + c)
-          .join("")
-      : h;
-  const [r, g, b] = [0, 2, 4].map((i) => {
-    const c = parseInt(full.slice(i, i + 2), 16) / 255;
-    return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-  });
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-}
-
-export function contrastRatio(fg: string, bg: string): number {
-  const l1 = relativeLuminance(fg);
-  const l2 = relativeLuminance(bg);
-  const [hi, lo] = l1 > l2 ? [l1, l2] : [l2, l1];
-  return (hi + 0.05) / (lo + 0.05);
 }
 
 const palette = {

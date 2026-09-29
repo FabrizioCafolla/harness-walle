@@ -19,6 +19,7 @@ import navbarConfigJson from "../configs/navbar.json";
 import { appSchema, footerSchema, navbarSchema, parseConfig, themeSchema } from "./config/schema";
 import { resolveSitePath } from "./utils/site-path";
 import { stripBase, withBase } from "./utils/base-path";
+import { contrastRatio } from "./utils/contrast";
 
 export { withBase };
 
@@ -198,7 +199,30 @@ function readThemeJson(): Record<string, any> {
   }
 }
 
-function generateThemeCss(): string {
+/**
+ * For each brand variant customized in theme.json, picks whichever of its dark shade or its
+ * contrast token clears WCAG AA (4.5:1) against the resolved surface color, for use as an
+ * outline element's text/border color (read against the surface, not against the variant's
+ * own fill). Skipped for a variant missing either value: walle's own default palette is
+ * already audited and tokens.css falls back to the dark shade in that case. Exported so a
+ * unit test can check the resolved value without a real build.
+ */
+export function resolveOutlineFgOverrides(palette: Record<string, unknown>): string[] {
+  const surface = typeof palette.background === "string" ? palette.background : "#fefefe";
+  const lines: string[] = [];
+  for (const variant of ["primary", "secondary", "alternative"] as const) {
+    const dark = palette[`${variant}-dark`];
+    const contrast = palette[`${variant}-contrast`];
+    if (typeof dark !== "string" || typeof contrast !== "string") continue;
+    const winner =
+      contrastRatio(dark, surface) >= contrastRatio(contrast, surface) ? dark : contrast;
+    lines.push(`  --walle-outline-fg-${variant}: ${winner};`);
+  }
+  return lines;
+}
+
+/** Exported so a unit test can check its output against a real theme.json without a build. */
+export function generateThemeCss(): string {
   const themeUrl = new URL("../configs/theme.json", import.meta.url);
   if (!existsSync(fileURLToPath(themeUrl))) return "";
 
@@ -227,6 +251,7 @@ function generateThemeCss(): string {
     if (typeof value === "string" && value.length > 0)
       lines.push(`  --walle-color-${name}: ${value};`);
   }
+  lines.push(...resolveOutlineFgOverrides(theme?.palette ?? {}));
 
   const typo = theme?.typography;
   if (typo?.fontFamilyBase) lines.push(`  --walle-font-body: ${typo.fontFamilyBase};`);

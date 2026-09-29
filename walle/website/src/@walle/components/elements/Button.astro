@@ -175,8 +175,12 @@ const tagAttrs = isLink
     .button[data-outline] {
       --button-bg: transparent;
       --button-bg-hover: var(--variant-bg-hover);
-      --button-fg: var(--variant-color);
-      --button-border: var(--variant-color);
+      /* --variant-outline-fg (not --variant-color): the raw brand color is read against the
+         page's own surface here, not against the variant's own fill, and a light brand
+         color fails AA as text on a light surface. --variant-outline-fg is whichever of the
+         variant's dark shade or its contrast token clears AA against the surface. */
+      --button-fg: var(--variant-outline-fg);
+      --button-border: var(--variant-outline-fg);
       --button-shadow: none;
     }
 

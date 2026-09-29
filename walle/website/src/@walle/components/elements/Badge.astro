@@ -161,8 +161,11 @@ const hrefAttrs = href ? { href, target, rel: linkAttrs({ target }).rel } : {};
            using its own tokens rather than the palette. */
     .badge[data-outline] {
       --badge-bg: transparent;
-      --badge-fg: var(--variant-color);
-      --badge-border: var(--variant-color);
+      /* --variant-outline-fg (not --variant-color): read against the page's own surface
+         here, not against the variant's own fill; see Button.astro's [data-outline] rule
+         for why the raw brand color fails AA for a light variant. */
+      --badge-fg: var(--variant-outline-fg);
+      --badge-border: var(--variant-outline-fg);
     }
 
     .badge[data-muted] {

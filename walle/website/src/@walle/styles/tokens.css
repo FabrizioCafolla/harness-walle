@@ -113,6 +113,13 @@
     --variant-bg: var(--primary);
     --variant-bg-hover: var(--primary-dark);
     --variant-fg: var(--primary-contrast);
+    /* Text/border color for a variant rendered on the page's own surface, not on the
+       variant's own fill (an outline button, before it fills on hover). --walle-outline-fg-*
+       is set by generateThemeCss() to whichever of the dark shade or the contrast token
+       clears WCAG AA against the resolved background; the fallback here is only reached
+       when there is no theme.json to compute against, so it matches walle's own
+       pre-audited default palette. */
+    --variant-outline-fg: var(--walle-outline-fg-primary, var(--primary-dark));
   }
 
   [data-variant="secondary"] {
@@ -121,6 +128,7 @@
     --variant-bg: var(--secondary);
     --variant-bg-hover: var(--secondary-dark);
     --variant-fg: var(--secondary-contrast);
+    --variant-outline-fg: var(--walle-outline-fg-secondary, var(--secondary-dark));
   }
 
   [data-variant="alternative"] {
@@ -129,14 +137,17 @@
     --variant-bg: var(--alternative);
     --variant-bg-hover: var(--alternative-dark);
     --variant-fg: var(--alternative-contrast);
+    --variant-outline-fg: var(--walle-outline-fg-alternative, var(--alternative-dark));
   }
 
-  /* site is identical to primary until a consumer redefines it in @layer site. */
+  /* site is identical to primary until a consumer redefines it in @layer site; a consumer
+     doing that for a light custom color also sets --variant-outline-fg directly. */
   [data-variant="site"] {
     --variant-color: var(--primary);
     --variant-color-hover: var(--primary-dark);
     --variant-bg: var(--primary);
     --variant-bg-hover: var(--primary-dark);
     --variant-fg: var(--primary-contrast);
+    --variant-outline-fg: var(--walle-outline-fg-primary, var(--primary-dark));
   }
 }
