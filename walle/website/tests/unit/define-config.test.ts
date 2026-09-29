@@ -1,10 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  dedupePrecacheManifest,
   defineWalleConfig,
   isSitemapExcluded,
+  resolveOutlineFgOverrides,
   resolvePwaOptions,
   withBase,
 } from "../../src/@walle/define-config";
+import { contrastRatio } from "../../src/@walle/utils/contrast";
 
 // defineWalleConfig() always sets vite.plugins to a plain array of walle's own plugin objects
 // (never a Promise/false/nested array as Vite's wider PluginOption allows), so this narrows the
@@ -390,9 +393,9 @@ describe("resolvePwaOptions", () => {
     );
   });
 
-  it("has no globIgnores when commerce is in shop mode", () => {
+  it("ignores only the BlogTableOfContents chunk when commerce is in shop mode", () => {
     const options = resolvePwaOptions({ pwa: { enabled: true }, commerce: { mode: "shop" } })!;
-    expect(options.workbox.globIgnores).toEqual([]);
+    expect(options.workbox.globIgnores).toEqual(["**/_astro/BlogTableOfContents*"]);
   });
 
   it("ignores commerce chunk patterns as a safety net when commerce is not shop", () => {
@@ -406,11 +409,104 @@ describe("resolvePwaOptions", () => {
     expect(noCommerce.workbox.globIgnores.length).toBeGreaterThan(0);
   });
 
+  it("ignores the BlogTableOfContents chunk regardless of commerce mode", () => {
+    for (const mode of ["off", "catalog", "shop", undefined]) {
+      const options = resolvePwaOptions({ pwa: { enabled: true }, commerce: { mode } })!;
+      expect(options.workbox.globIgnores).toContain("**/_astro/BlogTableOfContents*");
+    }
+  });
+
   it("merges a consumer globIgnores onto walle's own instead of replacing it", () => {
     const options = resolvePwaOptions(
       { pwa: { enabled: true }, commerce: { mode: "shop" } },
       { workbox: { globIgnores: ["**/consumer-ignored/*"] } }
     )!;
-    expect(options.workbox.globIgnores).toEqual(["**/consumer-ignored/*"]);
+    expect(options.workbox.globIgnores).toEqual([
+      "**/_astro/BlogTableOfContents*",
+      "**/consumer-ignored/*",
+    ]);
+  });
+});
+
+describe("dedupePrecacheManifest", () => {
+  const sw = (entries: string) =>
+    `define(["./workbox-abc"],function(e){e.precacheAndRoute([${entries}],{directoryIndex:"index.html"}),e.cleanupOutdatedCaches()});`;
+
+  it("keeps the first entry and drops later duplicates of the same URL", () => {
+    const entries =
+      '{url:"_astro/a.js",revision:null},' +
+      '{url:"manifest.webmanifest",revision:"abc123"},' +
+      '{url:"manifest.webmanifest",revision:"abc123"},' +
+      '{url:"manifest.webmanifest",revision:"abc123"}';
+    const result = dedupePrecacheManifest(sw(entries));
+    expect(result.match(/manifest\.webmanifest/g)).toHaveLength(1);
+    expect(result).toContain('{url:"_astro/a.js",revision:null}');
+    expect(result).not.toMatch(/,,|\[,|,\]/);
+  });
+
+  it("removes a duplicate in the middle without leaving a stray comma", () => {
+    const entries =
+      '{url:"a",revision:null},{url:"b",revision:null},{url:"a",revision:null},{url:"c",revision:null}';
+    const result = dedupePrecacheManifest(sw(entries));
+    expect(result).toContain(
+      '[{url:"a",revision:null},{url:"b",revision:null},{url:"c",revision:null}]'
+    );
+  });
+
+  it("returns the input unchanged when there is nothing to dedupe", () => {
+    const entries = '{url:"a",revision:null},{url:"b",revision:null}';
+    const source = sw(entries);
+    expect(dedupePrecacheManifest(source)).toBe(source);
+  });
+
+  it("returns the input unchanged when there is no precacheAndRoute call", () => {
+    const source = "self.addEventListener('install', () => {});";
+    expect(dedupePrecacheManifest(source)).toBe(source);
+  });
+});
+
+describe("resolveOutlineFgOverrides (outline/badge text color on the page surface)", () => {
+  // A real site palette (a pale gold "secondary"/"alternative"): its own dark shade still
+  // fails AA on a white surface, while its contrast token (chosen to read against the pale
+  // gold fill) is a dark navy that also reads against a white surface.
+  const paleGoldPalette = {
+    secondary: "#FFC000",
+    "secondary-dark": "#D9A200",
+    "secondary-contrast": "#16324F",
+  };
+
+  it("picks the dark shade alone would fail AA against the surface for a pale brand color", () => {
+    const ratio = contrastRatio(paleGoldPalette["secondary-dark"], "#fefefe");
+    expect(ratio).toBeLessThan(4.5);
+  });
+
+  it("resolves to a color that clears AA against the surface", () => {
+    const [line] = resolveOutlineFgOverrides(paleGoldPalette);
+    const [, hex] = line.match(/:\s*(#[0-9a-fA-F]+);/) ?? [];
+    expect(contrastRatio(hex!, "#fefefe")).toBeGreaterThanOrEqual(4.5);
+    expect(hex).toBe("#16324F");
+  });
+
+  it("picks the dark shade when it already clears AA on its own (a typical dark brand color)", () => {
+    const darkBluePalette = {
+      primary: "#0b3d91",
+      "primary-dark": "#062a66",
+      "primary-contrast": "#ffffff",
+    };
+    const [line] = resolveOutlineFgOverrides(darkBluePalette);
+    expect(line).toContain("#062a66");
+  });
+
+  it("skips a variant missing its dark shade or contrast token", () => {
+    expect(resolveOutlineFgOverrides({ secondary: "#FFC000" })).toEqual([]);
+  });
+
+  it("uses the resolved surface (palette.background) instead of assuming white", () => {
+    const darkSurfacePalette = {
+      ...paleGoldPalette,
+      background: "#111111",
+    };
+    const [line] = resolveOutlineFgOverrides(darkSurfacePalette);
+    expect(line).toContain("#D9A200");
   });
 });

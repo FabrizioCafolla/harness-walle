@@ -4,6 +4,43 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/develop/versioning.md).
 
+## [0.7.3] - Unreleased
+
+### Fixed
+
+- **`CollectionFilters` shifted the listing below it once JavaScript initialized.** The filter
+  bar was rendered with the `hidden` attribute and only revealed by the script, so it took no
+  layout space on first paint and then pushed content down once the script ran. It now renders
+  visible from first paint; a `<noscript>` rule hides it when JavaScript is unavailable, since
+  none of its controls do anything without the script.
+- **PWA precache duplicated `manifest.webmanifest`.** `@vite-pwa/astro` appends a
+  `manifest.webmanifest` precache entry once per Vite build environment without checking for
+  one already present, producing up to 5 identical entries in one build. A walle integration
+  now runs after AstroPWA and rewrites the built `sw.js` to keep the first entry for each URL.
+- **`BlogTableOfContents` reached the PWA precache on every site, blog or not.** It is a
+  scroll-position enhancement script, never needed to render the offline shell; excluded from
+  the default precache glob regardless of commerce mode or whether the site uses blog posts.
+- **An outline `Button` or `Badge` on a light brand color rendered with a low-contrast label.**
+  `[data-outline]` read `--variant-color` (the raw brand color) as its text/border, sitting
+  on the page's own surface rather than on the variant's own fill; a light brand color (a
+  pale gold, for example) fails AA there even though it is exactly the color the variant is
+  meant to show. `generateThemeCss()` now picks, per variant, whichever of the dark shade or
+  the contrast token clears AA against the resolved surface color, and `[data-outline]` uses
+  that instead. Falls back to the dark shade (the previous behavior) when there is no
+  theme.json to compute against, which already clears AA for walle's own default palette.
+- **A muted section rendered with a white background instead of the muted gray band.**
+  `.section-wrapper[data-muted]` redefined `--surface-alt` in the same rule that reads it into
+  `--wrapper-bg`, so `--wrapper-bg` resolved against the rule's own new value instead of the
+  ambient one. The `--surface-alt` redefinition (which keeps `code`'s background from blending
+  into the band) now lives on the section's inner wrapper, a descendant, so it no longer
+  affects the section's own background.
+
+### Added
+
+- **`typography.fonts[].preload`** now also accepts an array of `{ weight, style, subset }`
+  filters, passed straight through to Astro's own `<Font preload>` filter, instead of only a
+  boolean that preloaded every configured weight and style on every page.
+
 ## [0.7.2] - 2026-09-28
 
 ### Added

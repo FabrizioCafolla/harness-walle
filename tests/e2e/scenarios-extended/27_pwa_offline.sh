@@ -40,4 +40,15 @@ scenario_pwa_offline() {
     return 1
   fi
   assert_file_contains "$sitemap" "<loc>" || return 1
+
+  # manifest.webmanifest appears once in the precache list, not once per build environment.
+  local manifest_count
+  manifest_count=$(grep -o "manifest.webmanifest" "$sw" | wc -l)
+  [ "$manifest_count" -eq 1 ] || fail "expected 1 manifest.webmanifest entry in sw.js, found $manifest_count" || return 1
+
+  # BlogTableOfContents is a scroll enhancement, never needed offline; excluded by default.
+  if grep -q "BlogTableOfContents" "$sw"; then
+    fail "BlogTableOfContents should not be in the default precache"
+    return 1
+  fi
 }

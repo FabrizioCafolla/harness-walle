@@ -29,6 +29,11 @@ scenario_update_tags() {
   sandbox_install "$dir" || { fail "install failed"; return 1; }
   cli update --walle-version "$newest" --yes -p "$dir" >/dev/null ||
     { fail "update ${oldest} -> ${newest} failed"; return 1; }
+  # update never touches package.json either: a dependency added between oldest and newest
+  # (e.g. satori, added in 0.7.0) is missing until deps --apply runs again and reinstalls.
+  cli deps --apply --source "$REPO_ROOT" -p "$dir" >/dev/null 2>&1 ||
+    { fail "deps --apply after tag update failed"; return 1; }
+  sandbox_install "$dir" || { fail "install after tag update failed"; return 1; }
   sandbox_build "$dir" || { fail "build after tag update failed"; return 1; }
   assert_path_present "$dir/dist/index.html"
 }
