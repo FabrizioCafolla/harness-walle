@@ -164,12 +164,8 @@ const hasSubtitle = Boolean(subtitleHtml) || Boolean(subtitle);
       --wrapper-bg: var(--surface-alt);
     }
 
-    /* Redefined on the inner wrapper, not on .section-wrapper[data-muted] itself: a custom
-       property redefined in the same rule that also reads it resolves against its own new
-       value, not the ambient one, which would make --wrapper-bg above resolve to --surface
-       too. Scoping it to a descendant keeps --wrapper-bg reading the undisturbed value while
-       code's own background (which defaults to --surface-alt) still moves off it so it does
-       not blend into the now-same-colored section. */
+    /* Set on the inner wrapper: .section-wrapper[data-muted] reads --surface-alt into
+       --wrapper-bg. */
     .section-wrapper[data-muted] .section-wrapper__inner {
       --surface-alt: var(--surface);
     }

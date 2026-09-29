@@ -424,9 +424,7 @@ export function resolvePwaOptions(
       ? ["**/_astro/Cart*", "**/_astro/VariantPicker*", "**/_astro/ProductBuyCard*"]
       : [];
 
-  // BlogTableOfContents is a scroll-position enhancement script: the page is fully readable
-  // and navigable without it. Excluded from every site's precache by default, whether or not
-  // the site uses blog posts, since it is never needed to render the offline shell.
+  // Chunks not needed to render the offline shell, excluded from every site's precache.
   const enhancementChunkGlobIgnores = ["**/_astro/BlogTableOfContents*"];
 
   const defaults = {
@@ -533,8 +531,7 @@ function wallePwaIntegration(
 /**
  * Removes a duplicate `{url, revision}` precache entry for the same URL from a built `sw.js`
  * source string, keeping the first occurrence; returns the input unchanged when there is
- * nothing to remove or the file has no `precacheAndRoute([...])` call. Pure and exported so a
- * unit test can run it on a fixture string without a real build.
+ * nothing to remove or the file has no `precacheAndRoute([...])` call.
  */
 export function dedupePrecacheManifest(source: string): string {
   // Precache entries never contain nested arrays, so the first "]" after
@@ -558,12 +555,8 @@ export function dedupePrecacheManifest(source: string): string {
 }
 
 /**
- * `@vite-pwa/astro` calls its own manifest-entry step once per Vite build environment; each
- * call appends a `manifest.webmanifest` entry to the same options object without checking
- * for one already present, so the written `sw.js` ends up with one identical entry per call
- * (observed as 5 in one build). This integration is registered after AstroPWA in the
- * integrations array; every `astro:build:done` hook runs after Vite's build (and so after
- * AstroPWA's own `sw.js` write) finishes, so `dir` here always points at the final file.
+ * Rewrites the built `sw.js` with `dedupePrecacheManifest`. `@vite-pwa/astro` adds one
+ * `manifest.webmanifest` entry per Vite build environment. Registered after AstroPWA.
  */
 function walleDedupePrecacheIntegration(): AstroIntegration {
   return {
