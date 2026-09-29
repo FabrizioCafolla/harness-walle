@@ -200,12 +200,8 @@ function readThemeJson(): Record<string, any> {
 }
 
 /**
- * For each brand variant customized in theme.json, picks whichever of its dark shade or its
- * contrast token clears WCAG AA (4.5:1) against the resolved surface color, for use as an
- * outline element's text/border color (read against the surface, not against the variant's
- * own fill). Skipped for a variant missing either value: walle's own default palette is
- * already audited and tokens.css falls back to the dark shade in that case. Exported so a
- * unit test can check the resolved value without a real build.
+ * Per variant, returns the dark shade or the contrast token, whichever has the higher
+ * contrast ratio against palette.background.
  */
 export function resolveOutlineFgOverrides(palette: Record<string, unknown>): string[] {
   const surface = typeof palette.background === "string" ? palette.background : "#fefefe";
@@ -221,7 +217,6 @@ export function resolveOutlineFgOverrides(palette: Record<string, unknown>): str
   return lines;
 }
 
-/** Exported so a unit test can check its output against a real theme.json without a build. */
 export function generateThemeCss(): string {
   const themeUrl = new URL("../configs/theme.json", import.meta.url);
   if (!existsSync(fileURLToPath(themeUrl))) return "";

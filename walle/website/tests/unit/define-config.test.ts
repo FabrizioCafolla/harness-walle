@@ -506,8 +506,6 @@ describe("resolveOutlineFgOverrides (outline/badge text color on the page surfac
       ...paleGoldPalette,
       background: "#111111",
     };
-    // Against a near-black surface the pale gold's own dark shade (#D9A200) reads better
-    // than the navy contrast token (#16324F), the opposite winner from the white-surface case.
     const [line] = resolveOutlineFgOverrides(darkSurfacePalette);
     expect(line).toContain("#D9A200");
   });
