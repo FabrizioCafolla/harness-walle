@@ -6895,10 +6895,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanostores@npm:^1.5.3":
-  version: 1.5.3
-  resolution: "nanostores@npm:1.5.3"
-  checksum: 10c0/c364320b2fb2534c92d46866b7beb988a8f699d8056d29f4f7136894bf966bf91f430381d46182c90189dfd937b4ac4b0afa955a65331aadcb75ba2704378e2a
+"nanostores@npm:^1.5.4":
+  version: 1.5.4
+  resolution: "nanostores@npm:1.5.4"
+  checksum: 10c0/942ddb0c28611e366e94ede8baf4b1619dc5942b7e1062d294ca0b05899f2cb1134a20826c2c6c1360b6889fe693289b7cc6cb7689c152704eb846b8fa8ce1a8
   languageName: node
   linkType: hard
 
@@ -9494,7 +9494,7 @@ __metadata:
     eslint-plugin-markdown: "npm:^5.1.0"
     husky: "npm:^9.1.7"
     leaflet: "npm:^1.9.4"
-    nanostores: "npm:^1.5.3"
+    nanostores: "npm:^1.5.4"
     prettier: "npm:^3.9.9"
     prettier-plugin-astro: "npm:^0.14.1"
     satori: "npm:^0.33.5"
