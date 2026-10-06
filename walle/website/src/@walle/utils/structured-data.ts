@@ -71,7 +71,7 @@ export function breadcrumbJsonLd(
       return {
         "@type": "ListItem",
         position: i + 1,
-        name: it.label,
+        name: it.label.trim(),
         ...(item ? { item } : {}),
       };
     }),

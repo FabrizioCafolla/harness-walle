@@ -101,6 +101,12 @@ describe("breadcrumbJsonLd", () => {
     expect("item" in list[1]).toBe(false);
   });
 
+  it("trims surrounding whitespace in names", () => {
+    const list = breadcrumbJsonLd([{ label: "Open Lab " }], "https://example.com/x", site)
+      .itemListElement as { name: string }[];
+    expect(list[0].name).toBe("Open Lab");
+  });
+
   it("keeps special characters in names verbatim", () => {
     const list = breadcrumbJsonLd([{ label: 'A & B "</script>"' }], "https://example.com/x", site)
       .itemListElement as { name: string }[];
