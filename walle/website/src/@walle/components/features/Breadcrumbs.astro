@@ -3,6 +3,8 @@ import { Icon } from "astro-icon/components";
 import type { BaseProps } from "../shared/types";
 import { splitProps } from "../shared/attrs";
 import { label } from "@walle/utils";
+import { breadcrumbJsonLd } from "@walle/utils/structured-data";
+import StructuredData from "./StructuredData.astro";
 
 export interface BreadcrumbItem {
   /**
@@ -31,13 +33,21 @@ export interface Props extends BaseProps<"nav"> {
    * Custom separator (default: chevron-right)
    */
   separator?: string;
+
+  /**
+   * Emit a schema.org BreadcrumbList next to the nav (default: true). The last item points
+   * at the current page URL.
+   */
+  jsonLd?: boolean;
 }
 
-const OWN_KEYS = ["items", "separator", "class"] as const;
+const OWN_KEYS = ["items", "separator", "class", "jsonLd"] as const;
 const { own, rest } = splitProps(Astro.props, OWN_KEYS);
-const { items = [], class: className } = own;
+const { items = [], class: className, jsonLd = true } = own;
+const ld = jsonLd && items.length ? breadcrumbJsonLd(items, Astro.url, Astro.site ?? Astro.url) : null;
 ---
 
+{ld && <StructuredData data={ld} />}
 <nav aria-label={label("breadcrumbs.nav")} class:list={["breadcrumbs", className]} {...rest}>
   <ol>
     {

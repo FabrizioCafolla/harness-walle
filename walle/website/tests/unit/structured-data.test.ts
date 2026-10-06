@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { productJsonLd } from "../../src/@walle/utils/structured-data";
+import { breadcrumbJsonLd, productJsonLd } from "../../src/@walle/utils/structured-data";
 
 // productJsonLd is pure; the <script> escaping is asserted at the string level
 // below since it lives in the .astro component.
@@ -66,5 +66,44 @@ describe("JSON-LD script escaping", () => {
     expect(out).not.toContain("<");
     // still parses back to the original once unescaped by the JSON reader
     expect(JSON.parse(out).name).toBe("</script><img src=x onerror=alert(1)>");
+  });
+});
+
+describe("breadcrumbJsonLd", () => {
+  const site = "https://example.com";
+  const items = [
+    { label: "Home", href: "/" },
+    { label: "Rassegne", href: "/news/rassegna" },
+    { label: "2026" },
+  ];
+
+  it("numbers positions from 1 and resolves hrefs against the site", () => {
+    const ld = breadcrumbJsonLd(items, "https://example.com/news/rassegna/2026", site);
+    expect(ld["@type"]).toBe("BreadcrumbList");
+    const list = ld.itemListElement as { position: number; name: string; item?: string }[];
+    expect(list.map((l) => l.position)).toEqual([1, 2, 3]);
+    expect(list[0].item).toBe("https://example.com/");
+    expect(list[1].item).toBe("https://example.com/news/rassegna");
+  });
+
+  it("points the last item at the page URL, even without an href", () => {
+    const list = breadcrumbJsonLd(items, "https://example.com/news/rassegna/2026", site)
+      .itemListElement as { item?: string }[];
+    expect(list[2].item).toBe("https://example.com/news/rassegna/2026");
+  });
+
+  it("omits item on a middle entry without a link", () => {
+    const list = breadcrumbJsonLd(
+      [{ label: "Home", href: "/" }, { label: "Mid" }, { label: "End" }],
+      "https://example.com/end",
+      site
+    ).itemListElement as Record<string, unknown>[];
+    expect("item" in list[1]).toBe(false);
+  });
+
+  it("keeps special characters in names verbatim", () => {
+    const list = breadcrumbJsonLd([{ label: 'A & B "</script>"' }], "https://example.com/x", site)
+      .itemListElement as { name: string }[];
+    expect(list[0].name).toBe('A & B "</script>"');
   });
 });

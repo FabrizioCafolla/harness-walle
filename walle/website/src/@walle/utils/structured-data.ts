@@ -54,6 +54,30 @@ export function articleJsonLd(article: {
   };
 }
 
+/**
+ * BreadcrumbList from the same items the visible trail renders. `href`s resolve against `site`;
+ * the last item always points at `pageUrl`. A middle item without `href` gets no `item`.
+ */
+export function breadcrumbJsonLd(
+  items: { label: string; href?: string }[],
+  pageUrl: string | URL,
+  site: string | URL
+): JsonLd {
+  const last = items.length - 1;
+  return {
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((it, i) => {
+      const item = i === last ? String(pageUrl) : it.href ? new URL(it.href, site).href : undefined;
+      return {
+        "@type": "ListItem",
+        position: i + 1,
+        name: it.label,
+        ...(item ? { item } : {}),
+      };
+    }),
+  };
+}
+
 const SCHEMA_AVAILABILITY: Record<NonNullable<ProductData["availability"]>, string> = {
   in_stock: "https://schema.org/InStock",
   out_of_stock: "https://schema.org/OutOfStock",
