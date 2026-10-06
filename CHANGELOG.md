@@ -4,6 +4,15 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/develop/versioning.md).
 
+## [0.8.0] - 2026-10-06
+
+### Added
+
+- **`Breadcrumbs` emits a schema.org `BreadcrumbList`.** Built from the same `items` as the
+  visible trail by the new `breadcrumbJsonLd()` in `@walle/utils/structured-data`; the last
+  item points at the current page URL. On by default, `jsonLd={false}` turns it off. A site
+  that writes its own `BreadcrumbList` should set that to avoid a duplicate.
+
 ## [0.7.3] - 2026-09-29
 
 ### Fixed

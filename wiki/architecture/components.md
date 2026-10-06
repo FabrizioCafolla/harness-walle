@@ -192,6 +192,13 @@ On a two-item trail (`Home / Current`, the shape of a top-level page), `Home` is
 first visible crumb once hidden, so a trail only loses its last crumb when something is left to
 show after it.
 
+Next to the `<nav>` it emits a schema.org `BreadcrumbList` (via `StructuredData`) built from
+the same `items`, so the visible trail and the markup cannot diverge. Hrefs resolve against
+`Astro.site`; the last item always points at the current page URL (`Astro.url`), and a middle
+item without `href` has no `item`. The block is on by default; pass `jsonLd={false}` to
+suppress it, for example when a site already writes its own. Because it reads `items`, not the
+DOM, the last crumb is present even where CSS hides it on narrow screens.
+
 ## Map
 
 Server HTML is a labelled region wrapping a sized mount container plus an ordered list of

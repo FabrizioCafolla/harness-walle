@@ -38,4 +38,34 @@ describe("Breadcrumbs", () => {
     });
     expect(html).toContain('data-testid="my-breadcrumbs"');
   });
+
+  const items = [{ label: "Home", href: "/" }, { label: "Blog", href: "/blog" }, { label: "Post" }];
+  const render = async (props: Record<string, unknown>) =>
+    (await AstroContainer.create()).renderToString(Breadcrumbs, {
+      props: { items, ...props },
+      request: new Request("https://example.com/blog/post"),
+    });
+  const ldOf = (html: string) =>
+    JSON.parse(html.match(/<script type="application\/ld\+json"[^>]*>(.*?)<\/script>/s)![1]);
+
+  it("emits a BreadcrumbList matching the visible items and order", async () => {
+    const ld = ldOf(await render({}));
+    expect(ld["@type"]).toBe("BreadcrumbList");
+    expect(ld.itemListElement.map((i: { name: string }) => i.name)).toEqual(["Home", "Blog", "Post"]);
+    expect(ld.itemListElement[2].item).toBe("https://example.com/blog/post");
+  });
+
+  it("emits no JSON-LD with jsonLd={false}", async () => {
+    expect(await render({ jsonLd: false })).not.toContain("application/ld+json");
+  });
+
+  it("escapes </script> in labels", async () => {
+    const html = await render({ items: [{ label: "</script><b>" }] });
+    expect(html.match(/<\/script>/g)).toHaveLength(1);
+  });
+
+  it("leaves the visible markup unchanged", async () => {
+    const strip = (h: string) => h.slice(h.indexOf("<nav"));
+    expect(strip(await render({}))).toBe(strip(await render({ jsonLd: false })));
+  });
 });
