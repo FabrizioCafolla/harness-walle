@@ -44,7 +44,8 @@ export interface Props extends BaseProps<"nav"> {
 const OWN_KEYS = ["items", "separator", "class", "jsonLd"] as const;
 const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const { items = [], class: className, jsonLd = true } = own;
-const ld = jsonLd && items.length ? breadcrumbJsonLd(items, Astro.url, Astro.site ?? Astro.url) : null;
+const ld =
+  jsonLd && items.length ? breadcrumbJsonLd(items, Astro.url, Astro.site ?? Astro.url) : null;
 ---
 
 {ld && <StructuredData data={ld} />}
