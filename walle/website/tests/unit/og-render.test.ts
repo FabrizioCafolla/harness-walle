@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { renderOgImage } from "../../src/@walle/og/render";
+import { renderOgElement, renderOgImage } from "../../src/@walle/og/render";
 import { resolveOgFonts } from "../../src/@walle/og/fonts";
 import defaultTemplate, { truncateTitle } from "../../src/@walle/og/templates/default";
 import type { OgTheme } from "../../src/@walle/og/theme";
@@ -46,6 +46,42 @@ describe("renderOgImage", () => {
       expect(pngDimensions(png)).toEqual({ width: 1200, height: 630 });
     } finally {
       globalThis.fetch = originalFetch;
+    }
+  });
+});
+
+describe("renderOgElement", () => {
+  const element = {
+    type: "div",
+    props: {
+      style: { width: "100%", height: "100%", display: "flex", backgroundColor: "#243b6b" },
+      children: "Custom endpoint",
+    },
+  };
+
+  it("rasterizes a site-built tree with the given fonts", async () => {
+    const png = await renderOgElement(element, theme.fonts);
+    expect(png.subarray(0, 8)).toEqual(PNG_SIGNATURE);
+    expect(pngDimensions(png)).toEqual({ width: 1200, height: 630 });
+  });
+
+  it("honours a custom canvas size", async () => {
+    const png = await renderOgElement(element, theme.fonts, { width: 600, height: 315 });
+    expect(pngDimensions(png)).toEqual({ width: 600, height: 315 });
+  });
+
+  it("renders several images concurrently without blocking the event loop", async () => {
+    let ticks = 0;
+    const timer = setInterval(() => ticks++, 1);
+    try {
+      const pngs = await Promise.all(
+        Array.from({ length: 4 }, () => renderOgElement(element, theme.fonts))
+      );
+      expect(pngs).toHaveLength(4);
+      // The sync rasterizer would hold the loop for the whole batch and leave this at 0.
+      expect(ticks).toBeGreaterThan(0);
+    } finally {
+      clearInterval(timer);
     }
   });
 });
