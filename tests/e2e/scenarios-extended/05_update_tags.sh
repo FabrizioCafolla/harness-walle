@@ -26,6 +26,14 @@ scenario_update_tags() {
 
   cli init --walle-version "$oldest" -n tags -m website -d "$SANDBOX_DIR" >/dev/null ||
     { fail "init from ${oldest} failed"; return 1; }
+  # An old tag's seeded package.json predates the rolldown pin (rolldown 1.2.13 fails every
+  # consumer build) and update never rewrites package.json: pin it the way a consumer would.
+  node -e "
+    const fs = require('fs'); const f = '$dir/package.json';
+    const p = JSON.parse(fs.readFileSync(f, 'utf8'));
+    p.resolutions = { ...(p.resolutions || {}), rolldown: '1.2.12' };
+    fs.writeFileSync(f, JSON.stringify(p, null, 2) + '\\n');
+  " || { fail "could not pin rolldown in the consumer"; return 1; }
   sandbox_install "$dir" || { fail "install failed"; return 1; }
   cli update --walle-version "$newest" --yes -p "$dir" >/dev/null ||
     { fail "update ${oldest} -> ${newest} failed"; return 1; }
