@@ -1,4 +1,4 @@
-export { renderOgImage } from "./render";
+export { renderOgElement, renderOgImage } from "./render";
 export type { OgEntry, OgTemplate, SatoriElement } from "./render";
 export { resolveOgTheme } from "./theme";
 export type { OgTheme } from "./theme";

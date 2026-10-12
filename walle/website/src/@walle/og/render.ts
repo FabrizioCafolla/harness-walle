@@ -1,3 +1,4 @@
+import type { OgFont } from "./fonts";
 import type { OgTheme } from "./theme";
 
 export type OgEntry = { title: string; subtitle?: string; data: Record<string, unknown> };
@@ -23,29 +24,29 @@ const WIDTH = 1200;
 const HEIGHT = 630;
 
 /**
- * Renders one OG image: satori lays the element tree out to SVG, resvg rasterizes it to a PNG
- * buffer. Both are imported dynamically so a site that never enables `seo.ogImage` never pulls
- * satori/resvg's native binary into its build graph at all.
+ * Lays an element tree out with satori and rasterizes it with resvg's async API, which runs on
+ * the libuv threadpool: the sync `Resvg#render` blocks the event loop, so a build with
+ * `build.concurrency` above 1 would still rasterize one image at a time. Both libraries are
+ * imported dynamically so a site that never enables `seo.ogImage` never pulls satori/resvg's
+ * native binary into its build graph. Exported for a site endpoint that composes its own tree.
  */
-export async function renderOgImage(
-  entry: OgEntry,
-  options: { template: OgTemplate; theme: OgTheme }
+export async function renderOgElement(
+  element: SatoriElement,
+  fonts: OgFont[],
+  size: { width: number; height: number } = { width: WIDTH, height: HEIGHT }
 ): Promise<Buffer> {
-  const { template, theme } = options;
-  const [{ default: satori }, { Resvg }] = await Promise.all([
+  const [{ default: satori }, { renderAsync }] = await Promise.all([
     import("satori"),
     import("@resvg/resvg-js"),
   ]);
 
-  const element = template(entry, theme);
   // Both casts land on the one boundary where our own narrower types (SatoriElement, OgFont)
   // meet satori's: it needs `react`'s ReactNode type for `element` (never installed; satori
   // itself only needs the plain object shape) and a fixed Weight union for `fonts[].weight`
   // (walle's own config leaves this a plain number, validated loosely by design).
   const svg = await satori(element as unknown as Parameters<typeof satori>[0], {
-    width: WIDTH,
-    height: HEIGHT,
-    fonts: theme.fonts.map((font) => ({
+    ...size,
+    fonts: fonts.map((font) => ({
       name: font.name,
       data: font.data,
       weight: font.weight ?? 400,
@@ -53,5 +54,14 @@ export async function renderOgImage(
     })) as unknown as Parameters<typeof satori>[1]["fonts"],
   });
 
-  return new Resvg(svg).render().asPng();
+  return (await renderAsync(svg)).asPng();
+}
+
+/** Renders one OG image: the template's element tree through {@link renderOgElement}. */
+export async function renderOgImage(
+  entry: OgEntry,
+  options: { template: OgTemplate; theme: OgTheme }
+): Promise<Buffer> {
+  const { template, theme } = options;
+  return renderOgElement(template(entry, theme), theme.fonts);
 }

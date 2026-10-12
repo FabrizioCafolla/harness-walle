@@ -84,9 +84,17 @@ same convention as every other walle path, and get the site's base path prefixed
 Rendering (`src/@walle/og/render.ts`) uses [satori](https://github.com/vercel/satori) to lay out
 a plain-object element tree to SVG, then [`@resvg/resvg-js`](https://github.com/thx/resvg-js) to
 rasterize it to PNG; both are dynamically imported, so a site that never enables `seo.ogImage`
-never pulls either native binary into its build graph. Template precedence is
+never pulls either native binary into its build graph. Rasterization uses resvg's async
+`renderAsync` (libuv threadpool): the sync `render()` holds the event loop, so Astro's
+`build.concurrency` would never rasterize two images at once. Template precedence is
 `seo.ogImage.templates[collection] ?? templates.default ?? walle's own default template`, each
 resolved and cached once per absolute path per build.
+
+A site endpoint for data that is not a content collection builds its own element tree and
+passes it to `renderOgElement(element, fonts, size?)` from `@walle/og`: the same satori +
+resvg pipeline and the same non-blocking rasterization as the collection images, so the site
+carries no renderer of its own. Resolve `fonts` with `resolveOgFonts`, or pass site-loaded
+font files directly.
 
 Fonts (`og/fonts.ts`) resolve in order: `seo.ogImage.fonts` (explicit for OG rendering), then the
 site's `typography.fonts` local sources in a format satori accepts (`ttf`, `otf`, `woff`, never

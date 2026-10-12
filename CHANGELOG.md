@@ -4,6 +4,28 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/develop/versioning.md).
 
+## [0.9.0] - 2026-10-12
+
+### Added
+
+- **`renderOgElement(element, fonts, size?)` is exported from `@walle/og`.** The satori + resvg
+  pipeline `renderOgImage` already used, for a site endpoint that composes its own element tree
+  (a roundup, a banner, computed data) and no longer needs a renderer of its own.
+
+### Changed
+
+- **OG images are rasterized with resvg's async API.** `Resvg#render()` is synchronous and held
+  the event loop for the whole image, so `build.concurrency` above 1 never rendered two images at
+  once. `renderAsync` runs on the libuv threadpool. Output is unchanged.
+
+### Fixed
+
+- **A fresh install resolved `rolldown` 1.2.13, whose build fails on every consumer.** The bundle
+  breaks with `[PARSE_ERROR] Unterminated string` at `serverIslandPlaceholderMap`; 1.2.12 and
+  earlier build fine. The seeded `package.json` now pins `resolutions.rolldown` to `1.2.12`
+  (vite 8.3.4 accepts `~1.2.12`). Existing consumers keep their own lockfile; drop the pin once
+  a rolldown release fixes it.
+
 ## [0.8.0] - 2026-10-06
 
 ### Added
