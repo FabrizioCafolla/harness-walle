@@ -18,6 +18,14 @@ All notable changes to Walle are documented here. Format follows
   the event loop for the whole image, so `build.concurrency` above 1 never rendered two images at
   once. `renderAsync` runs on the libuv threadpool. Output is unchanged.
 
+### Fixed
+
+- **A fresh install resolved `rolldown` 1.2.13, whose build fails on every consumer.** The bundle
+  breaks with `[PARSE_ERROR] Unterminated string` at `serverIslandPlaceholderMap`; 1.2.12 and
+  earlier build fine. The seeded `package.json` now pins `resolutions.rolldown` to `1.2.12`
+  (vite 8.3.4 accepts `~1.2.12`). Existing consumers keep their own lockfile; drop the pin once
+  a rolldown release fixes it.
+
 ## [0.8.0] - 2026-10-06
 
 ### Added
