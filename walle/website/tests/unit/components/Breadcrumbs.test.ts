@@ -51,7 +51,11 @@ describe("Breadcrumbs", () => {
   it("emits a BreadcrumbList matching the visible items and order", async () => {
     const ld = ldOf(await render({}));
     expect(ld["@type"]).toBe("BreadcrumbList");
-    expect(ld.itemListElement.map((i: { name: string }) => i.name)).toEqual(["Home", "Blog", "Post"]);
+    expect(ld.itemListElement.map((i: { name: string }) => i.name)).toEqual([
+      "Home",
+      "Blog",
+      "Post",
+    ]);
     expect(ld.itemListElement[2].item).toBe("https://example.com/blog/post");
   });
 
