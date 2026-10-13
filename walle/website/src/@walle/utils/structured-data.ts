@@ -13,6 +13,19 @@ interface SiteInfo {
   description: string;
   url: string;
   image?: string;
+  /** Absolute URLs of the organization's other profiles (social networks...). */
+  sameAs?: string[];
+}
+
+/**
+ * Lays a site's own entries over a generated node: a key in `override` replaces the generated
+ * one, a new key is added, and `null` removes it. Shallow on purpose: to change one field of a
+ * nested object, give the whole object.
+ */
+export function mergeJsonLd(base: JsonLd, override?: Record<string, unknown>): JsonLd {
+  const merged: JsonLd = { ...base, ...override };
+  for (const key of Object.keys(merged)) if (merged[key] === null) delete merged[key];
+  return merged;
 }
 
 export function websiteJsonLd(site: SiteInfo): JsonLd {
@@ -30,6 +43,7 @@ export function organizationJsonLd(site: SiteInfo): JsonLd {
     name: site.title,
     url: site.url,
     ...(site.image ? { logo: site.image } : {}),
+    ...(site.sameAs?.length ? { sameAs: site.sameAs } : {}),
   };
 }
 

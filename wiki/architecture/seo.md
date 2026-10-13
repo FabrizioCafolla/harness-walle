@@ -44,7 +44,9 @@ passing `ogImageUrl("posts", id)`), then the site-wide generated default (only w
 `StructuredData.astro` renders one `<script type="application/ld+json">` from a plain object or
 array (`@context` added automatically). `@walle/utils/structured-data` exports builders for the
 common shapes: `websiteJsonLd`, `organizationJsonLd`, `articleJsonLd`, `productJsonLd`.
-`AbstractLayout` emits `WebSite` + `Organization` from config on every page; `BlogPostLayout`
+`AbstractLayout` emits `WebSite` + `Organization` from config on every page (the footer's icon
+links become the Organization's `sameAs`; `website.structuredData` in `app.json` adds, replaces or
+removes keys on either node through `mergeJsonLd`, shallow, `null` removes); `BlogPostLayout`
 emits `Article`; `DetailLayout` emits `Product`/`Offer` when given a product, so a page only
 ever adds its own extra shapes on top. The payload's `<`, `>` and `&` are escaped to their JSON
 unicode forms before being embedded: a plain JSON payload can only break out of the `<script>`

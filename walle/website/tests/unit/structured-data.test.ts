@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { breadcrumbJsonLd, productJsonLd } from "../../src/@walle/utils/structured-data";
+import {
+  breadcrumbJsonLd,
+  mergeJsonLd,
+  organizationJsonLd,
+  productJsonLd,
+} from "../../src/@walle/utils/structured-data";
 
 // productJsonLd is pure; the <script> escaping is asserted at the string level
 // below since it lives in the .astro component.
@@ -111,5 +116,38 @@ describe("breadcrumbJsonLd", () => {
     const list = breadcrumbJsonLd([{ label: 'A & B "</script>"' }], "https://example.com/x", site)
       .itemListElement as { name: string }[];
     expect(list[0].name).toBe('A & B "</script>"');
+  });
+});
+
+describe("organizationJsonLd", () => {
+  const site = { title: "Acme", description: "d", url: "https://acme.test/" };
+
+  it("emits sameAs only when there are profiles", () => {
+    expect(organizationJsonLd(site)).not.toHaveProperty("sameAs");
+    expect(organizationJsonLd({ ...site, sameAs: [] })).not.toHaveProperty("sameAs");
+    expect(organizationJsonLd({ ...site, sameAs: ["https://x.test/acme"] }).sameAs).toEqual([
+      "https://x.test/acme",
+    ]);
+  });
+});
+
+describe("mergeJsonLd", () => {
+  const base = { "@type": "Organization", name: "Acme", url: "https://acme.test/", sameAs: ["a"] };
+
+  it("returns the generated node when there is no override", () => {
+    expect(mergeJsonLd(base)).toEqual(base);
+  });
+
+  it("replaces a key, adds a new one and keeps the rest", () => {
+    expect(mergeJsonLd(base, { name: "Acme Srl", description: "About" })).toEqual({
+      ...base,
+      name: "Acme Srl",
+      description: "About",
+    });
+  });
+
+  it("removes a key set to null and does not mutate the base", () => {
+    expect(mergeJsonLd(base, { sameAs: null })).not.toHaveProperty("sameAs");
+    expect(base.sameAs).toEqual(["a"]);
   });
 });

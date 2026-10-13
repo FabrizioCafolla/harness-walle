@@ -96,6 +96,17 @@ const websiteSchema = z
     language: z.string().optional(),
     titleMaxLength: z.number().int().min(20).optional(),
     descriptionMaxLength: z.number().int().min(50).optional(),
+    // Entries laid over the `WebSite` / `Organization` JSON-LD nodes every page emits: a key
+    // replaces the generated one, a new key is added, `null` removes it (shallow merge).
+    // Without it the nodes carry name, url, logo and, for Organization, `sameAs` from the
+    // footer's icon links.
+    structuredData: z
+      .object({
+        website: z.record(z.string(), z.unknown()).optional(),
+        organization: z.record(z.string(), z.unknown()).optional(),
+      })
+      .strict()
+      .optional(),
   })
   .strict();
 

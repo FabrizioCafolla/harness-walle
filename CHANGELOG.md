@@ -4,6 +4,20 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/develop/versioning.md).
 
+## [0.9.1] - 2026-10-13
+
+### Added
+
+- **`Organization` JSON-LD carries `sameAs` from the footer.** The footer items that have an
+  `icon` are the site's social profiles; `AbstractLayout` now lists the ones with an absolute
+  `http(s)` URL as `sameAs` on the `Organization` node, so they are written down once.
+- **`website.structuredData` in `app.json` lays entries over the generated `WebSite` and
+  `Organization` nodes.** `{ "organization": { "description": "...", "contactPoint": {...} } }`
+  adds or replaces keys (an own `sameAs` replaces the automatic one), and a key set to `null`
+  removes it. The merge is shallow. `mergeJsonLd()` in `@walle/utils/structured-data` is the
+  helper behind it. No change is needed in existing sites: without the key, the only difference
+  is the new `sameAs` on sites whose footer already has icon links.
+
 ## [0.9.0] - 2026-10-12
 
 ### Added
