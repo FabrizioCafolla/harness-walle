@@ -3,7 +3,7 @@ import Analytics from "@walle/components/features/Analytics.astro";
 import Head from "@walle/components/features/Head.astro";
 import StructuredData from "@walle/components/features/StructuredData.astro";
 import config from "@walle/config";
-import { organizationJsonLd, websiteJsonLd } from "@walle/utils/structured-data";
+import { mergeJsonLd, organizationJsonLd, websiteJsonLd } from "@walle/utils/structured-data";
 import { label } from "@walle/utils";
 import "@walle/styles/global.css";
 // Generated theme tokens (overrides walle defaults, overridden by consumer global.css).
@@ -24,12 +24,21 @@ const {
   skipLinkLabel,
 } = Astro.props;
 
+// The footer's icon links are the site's social profiles: the Organization node lists them as
+// `sameAs`, so the footer stays the one place they are written down.
+const footerItems = Array.isArray(config.footer?.items) ? config.footer.items : [];
+const sameAs = footerItems
+  .filter((item) => item.icon && /^https?:\/\//.test(item.url))
+  .map((item) => item.url);
+
 const siteInfo = {
   title: config.app.website.title,
   description: config.app.website.description,
   url: Astro.site ? new URL(config.app.astro.basePath || "/", Astro.site).href : "",
   image: headerImage ? new URL(headerImage, Astro.site).href : undefined,
+  sameAs,
 };
+const structuredData = config.app.website.structuredData;
 ---
 
 <!doctype html>
@@ -44,7 +53,12 @@ const siteInfo = {
       robots={headerRobots}
       publishedTime={headerPublishedTime}
     />
-    <StructuredData data={[websiteJsonLd(siteInfo), organizationJsonLd(siteInfo)]} />
+    <StructuredData
+      data={[
+        mergeJsonLd(websiteJsonLd(siteInfo), structuredData?.website),
+        mergeJsonLd(organizationJsonLd(siteInfo), structuredData?.organization),
+      ]}
+    />
     <slot name="head" />
   </head>
   <body data-label-scrollable={label("scrollableRegion")}>

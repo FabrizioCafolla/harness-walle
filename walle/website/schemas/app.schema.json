@@ -37,6 +37,26 @@
           "type": "integer",
           "minimum": 50,
           "maximum": 9007199254740991
+        },
+        "structuredData": {
+          "type": "object",
+          "properties": {
+            "website": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {}
+            },
+            "organization": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {}
+            }
+          },
+          "additionalProperties": false
         }
       },
       "required": ["title", "description"],
