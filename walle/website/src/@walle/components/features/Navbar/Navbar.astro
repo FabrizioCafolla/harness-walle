@@ -182,11 +182,9 @@ const shouldShowBrand = hasLogo || hasTitle;
       align-items: center;
       text-decoration: none;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      outline: none;
     }
 
     .brand-link:focus {
-      outline: none;
       box-shadow: none;
     }
 
@@ -258,12 +256,10 @@ const shouldShowBrand = hasLogo || hasTitle;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       letter-spacing: -0.01em;
-      outline: none;
     }
 
     .nav-link:focus,
     .nav-link:active {
-      outline: none;
       box-shadow: none;
       border: none;
     }
@@ -360,15 +356,21 @@ const shouldShowBrand = hasLogo || hasTitle;
       border-radius: var(--radius-md);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       letter-spacing: -0.01em;
-      outline: none;
     }
 
     .dropdown-link:hover,
     .dropdown-link:focus {
       color: var(--navbar-link-color-hover);
       transform: translateX(4px);
-      outline: none;
       box-shadow: none;
+    }
+
+    /* Keyboard focus stays visible on every navbar link. */
+    .brand-link:focus-visible,
+    .nav-link:focus-visible,
+    .dropdown-link:focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
     }
 
     .hamburger {

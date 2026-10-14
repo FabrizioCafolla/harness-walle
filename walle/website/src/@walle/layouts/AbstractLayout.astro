@@ -35,7 +35,9 @@ const siteInfo = {
   title: config.app.website.title,
   description: config.app.website.description,
   url: Astro.site ? new URL(config.app.astro.basePath || "/", Astro.site).href : "",
-  image: headerImage ? new URL(headerImage, Astro.site).href : undefined,
+  // The Organization logo is the site's own image, not the page's: a post with its own image must
+  // not turn into the organization's logo.
+  image: config.app.website.image ? new URL(config.app.website.image, Astro.site).href : undefined,
   sameAs,
 };
 const structuredData = config.app.website.structuredData;
