@@ -19,11 +19,8 @@ describe("Link", () => {
     expect(html).toContain('data-variant="secondary"');
   });
 
-  // astro/container's experimental_AstroContainer never wires a `site` into the manifest it
-  // builds (verified against astro@7.1.3's source), so Astro.site is always undefined here:
-  // an absolute URL can therefore never be exercised as "same host as site" under this harness.
-  // That only affects the host-comparison half of Link's external check; the scheme-detection
-  // half (any absolute URL vs. a relative one) is real production behavior and is covered below.
+  // experimental_AstroContainer never sets `site` (astro@7.1.3), so Astro.site is undefined
+  // here: only scheme detection (absolute vs. relative URL) is testable, not same-host.
   it("external link (absolute URL) gets rel=noopener noreferrer and target=_blank", async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(Link, {

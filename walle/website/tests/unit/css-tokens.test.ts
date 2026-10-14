@@ -21,17 +21,14 @@ function collectFiles(dir: string, exts: string[]): string[] {
 
 const COLOR_RE = /#[0-9a-fA-F]{3,8}\b|(?:rgba?|hsla?)\([^)]*\)/g;
 const RADIUS_RE = /border-radius\s*:\s*([^;]+);/g;
-// Custom properties named `*-radius` (e.g. --toc-radius) are the public/internal radius
-// interface components expose; their value must resolve to a scale token, 0, or a percentage
-// (a genuinely circular element, not a themeable scale radius). The scale tokens themselves
-// (--radius-sm/md/lg/xl) end in "sm"/"md"/"lg"/"xl", not literally in "radius", so this pattern
-// does not match them.
+// `*-radius` custom properties (e.g. --toc-radius) must resolve to a scale token, 0, or a
+// percentage. Scale tokens (--radius-sm/md/lg/xl) do not end in "radius" and are not matched.
 const CUSTOM_RADIUS_PROP_RE = /--[\w-]*radius\s*:\s*([^;]+);/g;
 const SHADOW_RE = /box-shadow\s*:\s*([^;]+);/g;
 const PX_FONT_SIZE_RE = /font-size\s*:\s*[0-9.]+px/g;
 const PERCENT_RE = /^-?[0-9.]+%$/;
 
-/** Line-by-line so a violation can name its exact line, matching this codebase's one-rule-per-line style. */
+/** Line-by-line so a violation can name its exact line. */
 function findViolations(file: string, source: string): string[] {
   const violations: string[] = [];
   const lines = source.split("\n");
@@ -87,8 +84,7 @@ describe("css-tokens: no literal color/radius/shadow/px font-size outside tokens
 
   it("tokens.css itself is exempt (this is where the literal defaults live)", () => {
     const withLiteral = ":root {\n  --primary: var(--walle-color-primary, #243b6b);\n}\n";
-    // tokens.css is only exempted by the caller skipping it below; the matcher itself would
-    // still flag it, which is exactly why the loop excludes it by path.
+    // The matcher flags tokens.css too: the loop below excludes it by path.
     expect(findViolations("tokens.css", withLiteral).length).toBeGreaterThan(0);
   });
 

@@ -4,8 +4,7 @@
     height: 100%;
   }
 
-  /* Reduced motion: disable non-essential animation library-wide (WCAG 2.3.3).
-     Component-local rules may add finer-grained handling on top. */
+  /* Reduced motion: disable non-essential animation library-wide (WCAG 2.3.3). */
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;

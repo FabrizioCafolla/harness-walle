@@ -1,13 +1,3 @@
-/**
- * TableOfContentsManager
- *
- * Manages the interactive table of contents functionality for blog posts.
- * Handles navigation, active section tracking, mobile interactions, and accessibility.
- *
- * @class TableOfContentsManager
- * @version 2.0.0
- */
-
 export interface TocItem {
   id: string;
   text: string;
@@ -27,8 +17,7 @@ export interface TableOfContentsOptions {
   skipContainerAttribute?: string;
   /** Optional text patterns; if heading text matches any pattern it will be excluded */
   excludeTextPatterns?: RegExp[];
-  /** Screen-reader announcements on mobile expand/collapse. Callers always resolve these
-   * through label() before constructing the manager, so no default lives here. */
+  /** Screen-reader labels. No defaults here: callers resolve them through label(). */
   labels?: {
     expanded?: string | null;
     collapsed?: string | null;
@@ -66,9 +55,6 @@ export class TableOfContentsManager {
     this.updateDeviceType();
   }
 
-  /**
-   * Initialize the table of contents
-   */
   public init(): void {
     this.generateTOC();
     this.initNavigationHandlers();
@@ -76,16 +62,10 @@ export class TableOfContentsManager {
     this.bindEvents();
   }
 
-  /**
-   * Update device type (mobile vs desktop)
-   */
   private updateDeviceType(): void {
     this.isMobile = window.innerWidth <= 1024;
   }
 
-  /**
-   * Generate TOC from article headings
-   */
   private generateTOC(): void {
     if (!this.articleContent || !this.tocNav || !this.tocContainer) return;
     const headings = this.articleContent.querySelectorAll(this.options.headingSelector || "h2, h3");
@@ -102,7 +82,7 @@ export class TableOfContentsManager {
 
     headings.forEach((heading, index) => {
       const headingElement = heading as HTMLElement;
-      if (this.shouldExcludeHeading(headingElement)) return; // skip excluded headings without incrementing index positions in TOC
+      if (this.shouldExcludeHeading(headingElement)) return;
       let id = headingElement.id;
 
       if (!id) {
@@ -127,7 +107,6 @@ export class TableOfContentsManager {
     this.setupMobileInteraction();
   }
 
-  /** Decide if a heading should be excluded from TOC based on options */
   private shouldExcludeHeading(el: HTMLElement): boolean {
     const {
       skipAttribute,
@@ -137,26 +116,19 @@ export class TableOfContentsManager {
       excludeTextPatterns = [],
     } = this.options;
 
-    // Direct attribute/class skip
     if (skipAttribute && el.hasAttribute(skipAttribute)) return true;
     if (skipClass && el.classList.contains(skipClass)) return true;
 
-    // Ancestor container skip
     if (skipContainerAttribute && el.closest(`[${skipContainerAttribute}]`)) return true;
 
-    // Selector-based exclusion
     if (excludeSelectors.some((sel) => el.matches(sel))) return true;
 
-    // Text pattern exclusion
     const text = (el.textContent || "").trim();
     if (excludeTextPatterns.some((re) => re.test(text))) return true;
 
     return false;
   }
 
-  /**
-   * Generate unique ID for heading
-   */
   private generateHeadingId(element: HTMLElement, index: number): string {
     const text = element.textContent || "";
     const level = element.tagName.toLowerCase();
@@ -169,9 +141,6 @@ export class TableOfContentsManager {
       .substring(0, 50)}`;
   }
 
-  /**
-   * Create TOC link element
-   */
   private createTocLink(tocItem: TocItem, index: number, tagName: string): HTMLAnchorElement {
     const link = document.createElement("a");
     link.href = `#${tocItem.id}`;
@@ -182,7 +151,6 @@ export class TableOfContentsManager {
     if (navigateTo) link.setAttribute("aria-label", navigateTo.replace("{title}", tocItem.text));
     link.setAttribute("role", "link");
 
-    // Add indentation for h3
     if (tagName === "H3") {
       link.style.paddingLeft = "2.5rem";
       link.style.fontSize = "0.85rem";
@@ -191,33 +159,25 @@ export class TableOfContentsManager {
     return link;
   }
 
-  /**
-   * Setup mobile interaction (collapsible header)
-   */
   private setupMobileInteraction(): void {
     if (!this.tocContainer) return;
 
     const tocHeader = this.tocContainer.querySelector("h3");
     if (!tocHeader) return;
 
-    // Clean slate: remove existing listeners by replacing element
+    // Replacing the element drops listeners attached by a previous call.
     const newHeader = tocHeader.cloneNode(true) as HTMLElement;
     tocHeader.parentNode?.replaceChild(newHeader, tocHeader);
 
     if (this.isMobile) {
-      // Setup toggle functionality
       this.setupHeaderToggle(newHeader);
 
-      // Auto-collapse on initial load for better mobile UX
       if (this.tocItems.length > 6 || window.innerWidth <= 768) {
         this.tocContainer.classList.add("collapsed");
       }
     }
   }
 
-  /**
-   * Setup header toggle for mobile
-   */
   private setupHeaderToggle(header: HTMLElement): void {
     let touchStartY = 0;
     let touchStartX = 0;
@@ -229,15 +189,12 @@ export class TableOfContentsManager {
       const isCollapsed = this.tocContainer.classList.contains("collapsed");
       this.tocContainer.classList.toggle("collapsed");
 
-      // Update ARIA attribute
       header.setAttribute("aria-expanded", isCollapsed.toString());
 
-      // Haptic feedback (if supported)
       if ("vibrate" in navigator) {
         navigator.vibrate(30);
       }
 
-      // Announce to screen readers
       const announcement = isCollapsed
         ? this.options.labels?.expanded || "Table of contents expanded"
         : this.options.labels?.collapsed || "Table of contents collapsed";
@@ -255,7 +212,6 @@ export class TableOfContentsManager {
       const deltaY = Math.abs(e.touches[0].clientY - touchStartY);
       const deltaX = Math.abs(e.touches[0].clientX - touchStartX);
 
-      // If user moved more than 10px, it's not a tap
       if (deltaY > 10 || deltaX > 10) {
         isTap = false;
       }
@@ -268,19 +224,16 @@ export class TableOfContentsManager {
       }
     };
 
-    // Touch events for mobile
     header.addEventListener("touchstart", handleTouchStart, { passive: true });
     header.addEventListener("touchmove", handleTouchMove, { passive: true });
     header.addEventListener("touchend", handleTouchEnd, { passive: false });
 
-    // Click event for desktop (if user resizes window)
     header.addEventListener("click", (e) => {
       if (!this.isMobile) return;
       e.preventDefault();
       toggleCollapse();
     });
 
-    // Accessibility setup
     header.style.cursor = "pointer";
     header.setAttribute("role", "button");
     header.setAttribute("tabindex", "0");
@@ -289,7 +242,6 @@ export class TableOfContentsManager {
     const toggle = this.options.labels?.toggle;
     if (toggle) header.setAttribute("aria-label", toggle);
 
-    // Keyboard support
     header.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
@@ -297,7 +249,6 @@ export class TableOfContentsManager {
       }
     });
 
-    // Monitor collapse state changes
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.type === "attributes" && mutation.attributeName === "class") {
@@ -312,19 +263,14 @@ export class TableOfContentsManager {
     }
   }
 
-  /**
-   * Initialize navigation handlers
-   */
   private initNavigationHandlers(): void {
     if (!this.tocNav) return;
 
-    // Use event delegation for better performance
     this.tocNav.addEventListener(
       "click",
       (e) => {
         const target = e.target as HTMLElement;
 
-        // Check if clicked element is a TOC link
         if (target.tagName === "A" && target.getAttribute("href")?.startsWith("#")) {
           e.preventDefault();
           e.stopPropagation();
@@ -333,18 +279,16 @@ export class TableOfContentsManager {
           const targetElement = document.getElementById(targetId || "");
 
           if (targetElement) {
-            // Add visual feedback
             target.classList.add("navigating");
 
             if (this.isMobile && this.tocContainer) {
               this.tocContainer.classList.add("collapsed");
 
-              // Wait a tiny bit for menu animation, then scroll
+              // Let the collapse animation start before scrolling.
               setTimeout(() => {
                 this.scrollToElement(targetElement, target);
               }, 150);
             } else {
-              // Desktop: just scroll
               this.scrollToElement(targetElement, target);
             }
           }
@@ -354,11 +298,7 @@ export class TableOfContentsManager {
     );
   }
 
-  /**
-   * Scroll to element with proper timing
-   */
   private scrollToElement(element: HTMLElement, link: HTMLElement): void {
-    // Reset stuck scrolling flag if too much time has passed (3 seconds)
     const now = Date.now();
     if (this.isScrolling && now - this.lastScrollTimestamp > 3000) this.isScrolling = false;
     if (this.isScrolling) return;
@@ -366,17 +306,14 @@ export class TableOfContentsManager {
     this.isScrolling = true;
     this.lastScrollTimestamp = now;
 
-    // Safety timeout: reset isScrolling after max 3 seconds
     setTimeout(() => {
       if (this.isScrolling) this.isScrolling = false;
     }, 3000);
     const offset = this.getDynamicOffset();
 
-    // Mobile: prefer native anchor behavior + offset correction
+    // Mobile: scrollIntoView, then correct for the sticky header offset.
     if (this.isMobile) {
-      // Use scrollIntoView first for better compatibility (Safari/iOS)
       element.scrollIntoView({ behavior: "smooth", block: "start" });
-      // After initial positioning, adjust for sticky header offset
       setTimeout(() => {
         window.scrollBy(0, -offset);
         this.onScrollComplete(link);
@@ -389,24 +326,19 @@ export class TableOfContentsManager {
     const elementTop = rect.top + scrollTop;
     const targetPosition = elementTop - offset;
 
-    // Visual feedback during scroll
     link.classList.add("navigating");
 
-    // Perform scroll
     if ("scrollBehavior" in document.documentElement.style) {
       window.scrollTo({ top: targetPosition, behavior: "smooth" });
 
-      // Desktop fallback: verify movement and force complete if needed
       setTimeout(() => {
         const currentPos = window.scrollY;
         if (Math.abs(currentPos - targetPosition) < 4) {
-          // If not moved significantly, jump instantly
           window.scrollTo({ top: targetPosition, behavior: "auto" });
           this.onScrollComplete(link);
         }
       }, 240);
 
-      // Use scrollend event if available (modern browsers)
       if ("onscrollend" in window) {
         const handleScrollEnd = () => {
           window.removeEventListener("scrollend", handleScrollEnd);
@@ -419,15 +351,12 @@ export class TableOfContentsManager {
         });
       }
     } else {
-      // Legacy browsers without smooth scroll: jump directly
       window.scrollTo(0, targetPosition);
       this.onScrollComplete(link);
     }
   }
 
-  /**
-   * Wait for scroll to end (fallback for browsers without scrollend event)
-   */
+  /** Fallback for browsers without the scrollend event. */
   private waitForScrollEnd(callback: () => void): void {
     let lastScrollTop = window.pageYOffset;
     let scrollCheckCount = 0;
@@ -437,14 +366,12 @@ export class TableOfContentsManager {
       const currentScrollTop = window.pageYOffset;
       scrollCheckCount++;
 
-      // Check if scroll has stopped (same position for 2 checks)
       if (Math.abs(currentScrollTop - lastScrollTop) < 1) {
         callback();
       } else if (scrollCheckCount < maxChecks) {
         lastScrollTop = currentScrollTop;
         setTimeout(checkScroll, 50);
       } else {
-        // Timeout: call callback anyway
         callback();
       }
     };
@@ -452,14 +379,11 @@ export class TableOfContentsManager {
     setTimeout(checkScroll, 50);
   }
 
-  /**
-   * Handle scroll completion
-   */
   private onScrollComplete(link: HTMLElement): void {
     this.isScrolling = false;
     link.classList.remove("navigating");
     if (this.isMobile) this.announceToScreenReader(this.options.labels?.navigated || "");
-    // Force active state for the clicked target (helps when threshold logic hasn't run yet)
+    // Mark the clicked target active without waiting for the scroll handler.
     const targetId = link.getAttribute("href")?.substring(1);
     if (targetId) {
       const idx = this.tocItems.findIndex((i) => i.id === targetId);
@@ -470,14 +394,7 @@ export class TableOfContentsManager {
     }
   }
 
-  /**
-   * Smooth scroll polyfill for older browsers
-   */
-  // Removed legacy smooth scroll polyfill and scroll container detection for simplicity.
-
-  /**
-   * Dynamic offset based on heading scroll-margin-top or fallback values.
-   */
+  /** Mobile: the first heading's scroll-margin-top, else fixed fallbacks. */
   private getDynamicOffset(): number {
     if (!this.isMobile) return 120;
     const first = this.tocItems[0]?.element;
@@ -485,12 +402,9 @@ export class TableOfContentsManager {
       const sm = parseInt(getComputedStyle(first).scrollMarginTop || "0", 10);
       if (!isNaN(sm) && sm > 0) return sm;
     }
-    return 100; // mobile fallback
+    return 100;
   }
 
-  /**
-   * Update active TOC item based on scroll position
-   */
   private updateActiveTOC(): void {
     if (this.tocItems.length === 0 || this.isScrolling) return;
 
@@ -498,7 +412,6 @@ export class TableOfContentsManager {
     const offset = this.getDynamicOffset();
     let activeIndex = -1;
 
-    // Find the current active section
     for (let i = 0; i < this.tocItems.length; i++) {
       const element = this.tocItems[i].element;
       const elementTop = element.getBoundingClientRect().top + scrollTop;
@@ -508,16 +421,12 @@ export class TableOfContentsManager {
       }
     }
 
-    // Update active state if changed
     if (activeIndex !== this.currentActiveIndex) {
       this.updateActiveLinks(activeIndex);
       this.currentActiveIndex = activeIndex;
     }
   }
 
-  /**
-   * Update active link styling
-   */
   private updateActiveLinks(activeIndex: number): void {
     const tocLinks = this.tocNav?.querySelectorAll("a");
     if (!tocLinks) return;
@@ -528,27 +437,17 @@ export class TableOfContentsManager {
       link.setAttribute("aria-current", isActive ? "location" : "false");
     });
 
-    // Scroll active link into view within TOC
     if (activeIndex >= 0 && tocLinks[activeIndex] && this.tocNav) {
       const activeLink = tocLinks[activeIndex] as HTMLElement;
       const navRect = this.tocNav.getBoundingClientRect();
       const linkRect = activeLink.getBoundingClientRect();
 
-      // Check if link is outside visible area
       if (linkRect.top < navRect.top || linkRect.bottom > navRect.bottom) {
         activeLink.scrollIntoView({ block: "nearest", behavior: "smooth" });
       }
     }
   }
 
-  /**
-   * Update reading progress indicators
-   */
-  // Removed internal TOC progress bar logic; external reading progress component handles it.
-
-  /**
-   * Throttle function execution
-   */
   private throttle(func: Function, limit: number): Function {
     let inThrottle: boolean;
     return function (this: any, ...args: any[]) {
@@ -560,9 +459,6 @@ export class TableOfContentsManager {
     };
   }
 
-  /**
-   * Debounce function execution
-   */
   private debounce(func: Function, wait: number): Function {
     let timeout: number | null = null;
     return function (this: any, ...args: any[]) {
@@ -573,9 +469,6 @@ export class TableOfContentsManager {
     };
   }
 
-  /**
-   * Announce message to screen readers
-   */
   private announceToScreenReader(message: string): void {
     const announcement = document.createElement("div");
     announcement.setAttribute("role", "status");
@@ -591,9 +484,6 @@ export class TableOfContentsManager {
     }, 1000);
   }
 
-  /**
-   * Bind all event listeners
-   */
   private bindEvents(): void {
     const throttledScroll = this.throttle(() => {
       this.updateActiveTOC();
@@ -604,13 +494,10 @@ export class TableOfContentsManager {
       this.setupMobileInteraction();
     }, 250) as EventListener;
 
-    // Scroll events with passive listener for performance
     window.addEventListener("scroll", throttledScroll, { passive: true });
 
-    // Resize events
     window.addEventListener("resize", debouncedResize, { passive: true });
 
-    // Orientation change for mobile devices
     window.addEventListener("orientationchange", () => {
       setTimeout(() => {
         this.updateDeviceType();
@@ -618,9 +505,7 @@ export class TableOfContentsManager {
       }, 100);
     });
 
-    // Keyboard shortcuts
     document.addEventListener("keydown", (event) => {
-      // ESC key to collapse TOC on mobile
       if (event.key === "Escape" && this.isMobile && this.tocContainer) {
         this.tocContainer.classList.add("collapsed");
         this.announceToScreenReader(
@@ -629,7 +514,7 @@ export class TableOfContentsManager {
       }
     });
 
-    // Prevent accidental zoom on mobile
+    // Block double-tap zoom on TOC links.
     let lastTouchEnd = 0;
     document.addEventListener(
       "touchend",
@@ -648,7 +533,6 @@ export class TableOfContentsManager {
   }
 }
 
-// Add screen reader only CSS class to document if not exists
 const style = document.createElement("style");
 style.textContent = `
   .sr-only {

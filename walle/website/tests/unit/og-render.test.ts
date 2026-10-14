@@ -10,9 +10,8 @@ function pngDimensions(png: Buffer): { width: number; height: number } {
   return { width: png.readUInt32BE(16), height: png.readUInt32BE(20) };
 }
 
-// No app.json/theme.json involved: fonts.ts falls back to the bundled font with no config at
-// all, so the theme is a plain literal here rather than going through resolveOgTheme (which is
-// theme.ts's own concern: config-parsing coverage, not render.ts's).
+// No app.json/theme.json: fonts.ts falls back to the bundled font, and the theme is a literal
+// (resolveOgTheme is covered by theme.ts tests).
 const theme: OgTheme = {
   siteTitle: "Test Site",
   logo: { url: "/" },
@@ -25,10 +24,8 @@ const theme: OgTheme = {
 describe("renderOgImage", () => {
   it("produces a 1200x630 PNG entirely offline", async () => {
     const originalFetch = globalThis.fetch;
-    // Fails loudly instead of silently passing if anything in the pipeline ever tries to
-    // reach the network (fonts/rendering must work with zero connectivity). satori's own
-    // yoga-layout WASM loader calls `fetch()` on a local `data:` URI to decode its embedded
-    // binary, not a real network request, so only a real http(s) URL trips this.
+    // Rendering must work offline. satori's yoga-layout WASM loader calls `fetch()` on a
+    // `data:` URI, so only an http(s) URL fails.
     globalThis.fetch = ((input: RequestInfo | URL, ...rest: unknown[]) => {
       const url = typeof input === "string" ? input : input.toString();
       if (url.startsWith("http:") || url.startsWith("https:")) {

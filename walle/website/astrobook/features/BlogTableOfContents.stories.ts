@@ -11,8 +11,7 @@ export default {
   decorators: [{ component: StoryWrapper }],
 };
 
-// TableOfContentsManager scans the page for headings; with none present on this isolated
-// story page it renders the empty shell (header + nav frame): covers structural/CSS regressions.
+// No headings on the story page: TableOfContentsManager renders the empty shell.
 export const Default = {
   args: {} satisfies BlogTableOfContentsProps,
 };

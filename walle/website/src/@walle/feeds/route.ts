@@ -7,10 +7,9 @@ import { resolveInternalUrl } from "@walle/utils";
 import { stripBase } from "../utils/base-path";
 
 /**
- * One entrypoint file is injected once per configured feed item (define-config.ts);
- * whichever `path` it was registered under is how a request finds its own item back out of
- * `config.app.seo.feeds.items` at request time: `injectRoute` has no way to pass distinct
- * props per pattern for a plain API route the way `getStaticPaths` does for pages.
+ * This entrypoint is injected once per configured feed item (define-config.ts); a request
+ * finds its item in `config.app.seo.feeds.items` by path, since `injectRoute` passes no
+ * per-pattern props to an API route.
  */
 
 type FeedsConfig = NonNullable<AppConfig["seo"]>["feeds"];
@@ -50,8 +49,7 @@ function requiredField(
 /**
  * Drops excluded drafts, maps each entry's fields per `item.fields` (default: identity;
  * "date" reads `data.date` unless overridden), sorts by date descending and applies the
- * configured limit (50 when unset). Pure and side-effect free so a unit test can exercise every case (mapping,
- * draft exclusion, sort, limit, the missing-field error) without astro:content or a real build.
+ * configured limit (50 when unset).
  */
 export function buildFeedItems(
   entries: FeedEntry[],

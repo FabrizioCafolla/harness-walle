@@ -1,9 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { siteBase } from "./storyRoutes";
 
-// The site mounts under app.json's base path: navigate there, not to origin
-// root. No trailing slash: app.json sets trailingSlash "never", so the home
-// page is `/<base>` exactly (a trailing slash 404s).
+// The home page is `/<base>` exactly: app.json sets trailingSlash "never".
 const home = siteBase || "/";
 
 test.describe("Navbar - Desktop (1280x800)", () => {
@@ -49,8 +47,7 @@ test.describe("Navbar - Desktop (1280x800)", () => {
 
   test("text nav link's accessible name matches its visible label", async ({ page }) => {
     await page.goto(home);
-    // Regression guard: a hardcoded "Go to <href>" aria-label would override the visible
-    // text on every link, breaking voice control (WCAG 2.5.3 Label in Name).
+    // An aria-label like "Go to <href>" would override the visible text (WCAG 2.5.3).
     await expect(page.getByRole("link", { name: "Home", exact: true })).toBeVisible();
   });
 

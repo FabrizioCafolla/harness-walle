@@ -1,9 +1,8 @@
 import type { ProductData } from "@walle/components/features/Card/ProductCard.astro";
 
 /**
- * schema.org JSON-LD builders. Rendered via <StructuredData data={...} />.
- * One source of truth: the same objects that feed visible components
- * (e.g. ProductData) produce the structured data.
+ * schema.org JSON-LD builders. Rendered via <StructuredData data={...} />, from the same
+ * objects that feed visible components (e.g. ProductData).
  */
 
 export type JsonLd = Record<string, unknown>;
@@ -19,8 +18,8 @@ interface SiteInfo {
 
 /**
  * Lays a site's own entries over a generated node: a key in `override` replaces the generated
- * one, a new key is added, and `null` removes it. Shallow on purpose: to change one field of a
- * nested object, give the whole object.
+ * one, a new key is added, and `null` removes it. Shallow: to change one field of a nested
+ * object, give the whole object.
  */
 export function mergeJsonLd(base: JsonLd, override?: Record<string, unknown>): JsonLd {
   const merged: JsonLd = { ...base, ...override };
@@ -99,8 +98,7 @@ const SCHEMA_AVAILABILITY: Record<NonNullable<ProductData["availability"]>, stri
 };
 
 export function productJsonLd(product: ProductData, url: string): JsonLd {
-  // Local ImageMetadata carries its built path on `.src`; remote sources are
-  // already a URL string. Either way the image belongs in the structured data.
+  // Local ImageMetadata carries its built path on `.src`; remote sources are a URL string.
   const image = typeof product.image.src === "string" ? product.image.src : product.image.src.src;
   return {
     "@type": "Product",

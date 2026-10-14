@@ -50,8 +50,8 @@ const DEFAULTS = {
   "toc.toggle": "Toggle table of contents",
   "toc.navigateTo": "Navigate to: {title}",
   "toc.navigated": "Navigated to section",
-  // `{duration}` is filled by the caller with a fully localized `Intl.NumberFormat` unit
-  // string (e.g. "5 minutes" / "5 minuti"), so the pluralization is never English-only.
+  // `{duration}` is filled by the caller with a localized `Intl.NumberFormat` unit string
+  // (e.g. "5 minutes" / "5 minuti").
   readingTime: "{duration} read",
   "nav.main": "Main navigation",
   "nav.toggle": "Toggle navigation menu",
@@ -100,7 +100,7 @@ export function label(path: LabelPath, override?: string): string {
   return typeof site === "string" ? site : DEFAULTS[path];
 }
 
-/** The site's locale for every date/number/currency formatter: the one fallback lives here. */
+/** The site's locale for every date/number/currency formatter. */
 export function locale(): string {
   return config.app.website.language || "en-US";
 }

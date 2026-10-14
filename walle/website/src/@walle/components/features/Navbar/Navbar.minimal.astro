@@ -45,9 +45,8 @@ const title = config.logo?.title || t("breadcrumbs.home");
 <style>
   @layer walle.components {
     .navbar-minimal {
-      /* Public properties. `--navbar-fg` defaults to `inherit` (as the original unthemed
-                 color did) rather than a fixed token, so pages that set their own text color on
-                 an ancestor keep working unchanged. */
+      /* Public properties. `--navbar-fg` defaults to `inherit` so a text color set on an
+         ancestor still applies. */
       --navbar-bg: transparent;
       --navbar-fg: inherit;
       --navbar-border: var(--gray);

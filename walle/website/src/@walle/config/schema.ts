@@ -4,15 +4,12 @@
 // (runtime) both parse with them and throw on a mismatch.
 import { z } from "astro/zod";
 
-// Re-exported so walle/cli/generate-schemas.mjs (outside this package's node_modules
-// resolution scope) can reach `z.toJSONSchema`/`z.prettifyError` through this file's own
-// import instead of importing "astro/zod" directly from a location where it wouldn't resolve.
+// Re-exported for walle/cli/generate-schemas.mjs, where "astro/zod" does not resolve.
 export { z };
 
 /**
- * Declares a removed key. The key stays a known property
- * (so `.strict()` reports the guidance message below instead of a generic "unrecognized
- * key" error) but only ever validates when absent.
+ * Declares a removed key: it stays a known property (so `.strict()` reports the guidance
+ * message instead of "unrecognized key") but only validates when absent.
  */
 function removedKey(guidance: string) {
   const message = `This key has been removed. Use "${guidance}" instead.`;
@@ -69,7 +66,6 @@ const navigationLinkSchema = z
   })
   .strict();
 
-// Footer links don't support a dropdown (matches today's footer.schema.json definitions.navigationLink).
 const footerLinkSchema = z
   .object({
     name: z.string().optional(),
@@ -126,9 +122,8 @@ const astroSchema = z
     trailingSlash: z.enum(["always", "never", "ignore"]).optional(),
     analyticsScriptContent: z.string().optional(),
     sitemapExclude: z.array(z.string()).optional(),
-    // Passed straight through to Astro's native `redirects` config; its own static-output
-    // redirect page already emits refresh/noindex/canonical, so walle only adds the sitemap
-    // exclusion: the redirect source is never listed alongside the destination.
+    // Passed through to Astro's `redirects`, whose static redirect page emits
+    // refresh/noindex/canonical; walle also excludes each redirect source from the sitemap.
     redirects: z
       .record(
         z.string(),
@@ -143,14 +138,12 @@ const astroSchema = z
         ])
       )
       .optional(),
-    // Replaces the old `astro.ssr` shape: a single string toggle rather than a nested
-    // { enabled, adapter } object. Adds the node adapter with `output` left at Astro's
-    // default ("static"), so only routes that declare `prerender = false` render on demand.
+    // Adds the node adapter with `output` left at Astro's default ("static"): only routes
+    // that declare `prerender = false` render on demand.
     adapter: z.enum(["node"]).optional(),
     ssr: removedKey("astro.adapter"),
-    // Astro's own `prefetch` is opt-in and off by default; walle defaults it ON with the
-    // hover strategy: `false` opts a site out entirely. `strategy`/`all` are walle's
-    // own friendlier names for Astro's `defaultStrategy`/`prefetchAll`.
+    // Astro's `prefetch` is off by default; walle defaults it on with the hover strategy and
+    // `false` opts out. `strategy`/`all` map to Astro's `defaultStrategy`/`prefetchAll`.
     prefetch: z
       .union([
         z.literal(false),
@@ -188,10 +181,8 @@ const pwaSchema = z
     scope: z.string().optional(),
     icons: z.array(pwaIconSchema).optional(),
     appleTouchIcon: z.string().optional(),
-    // Offline fallback route: `true` uses walle's managed page, a `./`-prefixed string
-    // swaps in a site file: same "built-in default or site path" contract as `commerce.pages.*`.
-    // Only takes effect when `enabled` is also true (there is no service worker to fall back
-    // through otherwise).
+    // Offline fallback route: `true` uses walle's managed page, a `./`-prefixed string swaps
+    // in a site file (same contract as `commerce.pages.*`). Requires `enabled: true`.
     offline: z.union([z.literal(true), z.string()]).optional(),
   })
   .strict();
@@ -212,11 +203,8 @@ const commerceSchema = z
       })
       .strict()
       .optional(),
-    // Replaced by `commerce.mode === "shop"`.
     showBuyButton: removedKey("commerce.mode"),
-    // Replaced by `website.language`: one locale for the whole site, not a commerce-only one.
     locale: removedKey("website.language"),
-    // Replaced by the `labels` config.
     addToCartLabel: removedKey("labels"),
   })
   .strict();
@@ -373,9 +361,8 @@ const labelsSchema = z
   })
   .strict();
 
-// OG images. `enabled` defaults to false (existing sites unchanged on update); the seeded
-// app.json turns it on. `templates`/`fonts` are entirely optional: absent means walle's own
-// managed default template and bundled fallback font.
+// OG images. `enabled` defaults to false; the seeded app.json turns it on. Absent
+// `templates`/`fonts` mean walle's managed default template and bundled fallback font.
 const ogImageFontSchema = z
   .object({
     name: z.string(),
@@ -396,9 +383,8 @@ const ogImageSchema = z
   })
   .strict();
 
-// RSS feeds. `fields` maps a feed's own vocabulary (title/description/date/categories)
-// to the collection's actual schema keys, so a collection with e.g. `publishDate` instead of
-// `date` doesn't need to be renamed just to feed one.
+// RSS feeds. `fields` maps the feed's title/description/date/categories to the collection's
+// schema keys (e.g. `date` -> `publishDate`).
 const feedFieldsSchema = z
   .object({
     title: z.string().optional(),
@@ -482,10 +468,8 @@ export const appSchema = z
 const themePaletteSchema = z.record(z.string(), z.string()).optional();
 const themeScaleSchema = z.record(z.string(), z.string()).optional();
 
-// One entry per self-hosted/managed font family:
-// mapped to an Astro `fonts` config entry with `cssVariable: "--walle-font-<role>"` by
-// define-config.ts, and exposed to components at runtime through the `virtual:walle-fonts`
-// module (Head.astro can't read theme.json itself: it's only ever parsed at build time).
+// One entry per font family: mapped by define-config.ts to an Astro `fonts` entry with
+// `cssVariable: "--walle-font-<role>"` and exposed at runtime through `virtual:walle-fonts`.
 const fontEntrySchema = z
   .object({
     role: z.enum(["body", "heading", "mono"]),
@@ -493,10 +477,8 @@ const fontEntrySchema = z
     provider: z.enum(["local", "google", "fontsource"]),
     weights: z.array(z.union([z.string(), z.number()])).optional(),
     styles: z.array(z.enum(["normal", "italic", "oblique"])).optional(),
-    // Local-only: relative font file path(s) for a single @font-face variant (a variable font
-    // covering the whole `weights` range in one file is the expected case; per-weight static
-    // files are a real Astro feature this schema doesn't expose: add a `variants` array here
-    // if a site needs it).
+    // Local-only: relative font file path(s) for a single @font-face variant covering the
+    // whole `weights` range (a variable font). Per-weight static files are not supported.
     src: z.array(z.string()).optional(),
     // true preloads every weight/style/subset combination Astro generated for this family;
     // false preloads none; an array preloads only the listed weight/style/subset
@@ -515,20 +497,10 @@ const fontEntrySchema = z
         ),
       ])
       .optional(),
-    // The generic family Astro falls back to while the real font loads (and permanently if
-    // it fails). Astro only generates a metric-matched fallback @font-face (eliminating the
-    // layout shift on swap) for a fixed set of generics it has system-font metrics for; the
-    // others (cursive, fantasy, ...) are CSS-valid but silently skip that optimization, so
-    // this enum only lists the ones that actually get it. Default "sans-serif" matches
-    // Astro's own default, but a serif or monospace font should set this explicitly: the
-    // wrong generic still shifts layout, just by less than falling all the way to Arial.
+    // Generic family used while the font loads or if it fails. Astro generates a
+    // metric-matched fallback @font-face only for these generics. Default "sans-serif".
     fallback: z.enum(["serif", "sans-serif", "monospace", "system-ui"]).optional(),
-    // CSS font-display: how the browser paints text while this font is still downloading.
-    // Astro defaults to "swap" (fallback text visible immediately, swaps to the real font,
-    // reflowing if its metrics differ from the fallback's). "optional" gives the browser leave
-    // to skip the swap on a slow connection or a later paint, trading the reflow for a chance
-    // the fallback is what the visitor sees on first load. Left absent, walle passes nothing
-    // through and Astro's own default applies unchanged.
+    // CSS font-display. Absent: Astro's default ("swap") applies.
     display: z.enum(["auto", "block", "fallback", "optional", "swap"]).optional(),
   })
   .strict();
