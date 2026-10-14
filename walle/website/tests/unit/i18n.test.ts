@@ -1,9 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
-// One mocked config per file (vi.mock's file-scoped hoisting means every test in a file shares
-// it; see VariantPicker.locale-default.test.ts). This file's config has a language and a
-// partial `labels` block, so it can exercise both "site label present" and "falls back to the
-// default because this key was never overridden" in the same run.
+// vi.mock is file-scoped: this config has a language and a partial `labels` block, covering
+// both a site label and the default fallback.
 vi.mock("@walle/config", () => ({
   default: {
     app: {

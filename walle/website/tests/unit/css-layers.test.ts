@@ -135,12 +135,9 @@ describe("css-layers: every walle rule sits inside a walle.* layer", () => {
   }
 });
 
-// The layer order is declared in exactly one place, the inline statement Head.astro
-// renders as the first <head> child (astrobook.astro.head mirrors it for story pages), with
-// tokens.css's own copy as the fallback for any page that never renders Head.astro. A component
-// re-declaring the order itself only works by luck of module load order (whichever file's
-// bare `@layer a, b, c;` statement is first on the page wins, and Vite's dev-mode injection
-// order is not guaranteed), so it must never come back once removed.
+// The layer order is declared by Head.astro's first <head> child (mirrored by
+// astrobook.astro.head) and by tokens.css as fallback. The first `@layer a, b, c;` on the page
+// wins, and Vite's dev-mode injection order is not guaranteed, so components must not declare it.
 const LAYER_ORDER_RE = /@layer\s+[\w.]+(?:\s*,\s*[\w.]+)+\s*;/;
 
 describe("css-layers: no component re-declares the layer order", () => {

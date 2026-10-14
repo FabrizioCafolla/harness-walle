@@ -11,14 +11,11 @@ import { Icon } from "astro-icon/components";
 import { label as t } from "@walle/utils";
 
 /**
- * Generic detail page: header (title + badges slot) over a two-column
- * main/aside grid with breadcrumbs and an optional back link. Generalises
- * the project-detail pattern; also serves as a product detail page when
- * composed with ProductData content.
+ * Detail page: header over a two-column main/aside grid with breadcrumbs and an
+ * optional back link.
  *
  * Slots: `badges` (inside the header), default (main column), `aside`, and `below`
- * (full-width, under the main/aside grid, e.g. a product description + recommendations
- * that should read full-width and, on mobile, sit after the aside rather than before it).
+ * (full-width, under the main/aside grid; on mobile it follows the aside).
  */
 export type { DetailLayoutProps as Props } from "./types";
 
@@ -147,7 +144,6 @@ const {
       display: none;
     }
 
-    /* Full-width row under the main/aside grid (e.g. product description + upsell). */
     .detail-below {
       margin-top: var(--space-2xl);
     }
@@ -156,7 +152,6 @@ const {
       display: none;
     }
 
-    /* Tablet: aside moves below the main column, two cards per row */
     @media (max-width: 900px) {
       .detail-container {
         grid-template-columns: 1fr;
@@ -173,7 +168,6 @@ const {
       }
     }
 
-    /* Mobile: single column */
     @media (max-width: 580px) {
       .detail-section {
         padding: var(--space-lg) 0 var(--space-3xl);

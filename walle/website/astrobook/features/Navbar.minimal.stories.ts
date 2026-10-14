@@ -4,7 +4,6 @@ import NavbarMinimal from "@walle/components/features/Navbar/Navbar.minimal.astr
 
 type NavbarMinimalProps = ComponentProps<typeof NavbarMinimal>;
 
-// `minimal` variant from the AVAILABLE_VARIANTS registry (navbar -> minimal).
 const config = {
   logo: { title: "Walle", url: "/" },
   items: [

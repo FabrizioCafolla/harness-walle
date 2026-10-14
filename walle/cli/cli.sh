@@ -2,21 +2,16 @@
 #
 # Walle CLI. Scaffolds/updates a consumer: seeds the starter site from walle/website/ and
 # syncs the declared modules' @walle paths. What is managed/seed/inject is declared in
-# walle/walle.yml. Supports --dry-run, `add <module>`, and `walle check`.
+# walle/walle.yml.
 
 set -Ee
 set -u
 set -o pipefail
 set -o functrace
 
-# =============================================================================
-# 1. GLOBAL STATE & CONFIGURATIONS
-# =============================================================================
-
 GITHUB_WALLE_REPO="https://github.com/FabrizioCafolla/harness-walle"
 HARNESS_CODING_CLI_URL="https://raw.githubusercontent.com/FabrizioCafolla/harness-coding/main/cli.sh"
 
-# Markers
 WALLE_START="<!-- [walle:START] -->"
 WALLE_END="<!-- [walle:END] -->"
 WALLE_START_SH="# [walle:START]"
@@ -24,13 +19,11 @@ WALLE_END_SH="# [walle:END]"
 WALLE_START_JS="// [walle:START]"
 WALLE_END_JS="// [walle:END]"
 
-# JSON the CLI writes into consumer-owned files must already match prettier's output, or the
-# consumer's `prettier --check .` fails on a fresh init. Prettier's JSON printer differs from
-# JSON.stringify(v, null, 2) in two ways that matter here: an array of primitives that fits in
-# 100 columns stays on one line, and an object stays on one line when the source had its first
-# key on the `{` line and it fits. `readPretty(text)` parses and remembers which objects were
-# inline; `pretty(value)` writes them back the same way (prepended to a `node -e` script).
-# package.json is not written with it: prettier formats that file like JSON.stringify.
+# JSON written into consumer files must match prettier's output, or `prettier --check .` fails
+# on a fresh init. Unlike JSON.stringify(v, null, 2), prettier keeps on one line an array of
+# primitives that fits in 100 columns, and an object whose first key was on the `{` line.
+# `readPretty` records which objects were inline; `pretty` prints them back that way.
+# Not used for package.json: prettier formats that file like JSON.stringify.
 PRETTY_JSON_JS='
 const inlineObjects = new Map();
 const readPretty = (text) => {
@@ -82,7 +75,6 @@ const pretty = (v, ind = "", room = 0) => {
 };
 '
 
-# Execution State
 INTENTIONAL_EXIT=0
 DRY_RUN=0
 ASSUME_YES=0
@@ -93,7 +85,6 @@ AGENTS_MODULES=""
 TEMP_DIR=""
 FILES_LOG=""
 
-# Error Handling Trap
 trap 'catch_error $? $LINENO ${BASH_SOURCE[0]}' EXIT
 catch_error() {
   local exit_code=$1
@@ -115,10 +106,6 @@ record_file() {
   [ -n "${FILES_LOG:-}" ] || return 0
   printf '%s\t%s\t%s\n' "$1" "$2" "$3" >>"$FILES_LOG"
 }
-
-# =============================================================================
-# 2. LOGGING & UTILITIES
-# =============================================================================
 
 print_info()  { echo -e " [INFO] ${*}"; }
 print_warn()  { echo -e " [WARN] ${*}"; }
@@ -154,10 +141,6 @@ Common options:
 EOF
 }
 
-# =============================================================================
-# 3. DOMAIN: MODULES & CONTRACTS
-# =============================================================================
-
 validate_module() {
   case "$1" in
     website|ci|ai|backend|harness-coding|devcontainer) : ;;
@@ -169,9 +152,8 @@ node_adapter_enabled() {
   node -e "try{const a=require('$1/src/configs/app.json');process.exit(a&&a.astro&&a.astro.adapter==='node'?0:1)}catch(e){process.exit(1)}" 2>/dev/null
 }
 
-# --- Config-driven paths (walle/walle.yml is the single source of truth) -------------
-# The config is real YAML but every entry is pipe-delimited, so awk alone parses it: no
-# YAML runtime dep (the CLI must run as `curl | bash`).
+# walle/walle.yml entries are pipe-delimited, so awk parses them: no YAML runtime dep
+# (the CLI must run as `curl | bash`).
 # ponytail: purpose-built reader for our flat schema, not a general YAML parser.
 
 # Config location: the source tree during init/update, or the copy shipped beside cli.sh
@@ -184,8 +166,7 @@ walle_config() {
   fi
 }
 
-# Print a section's entries as TAB-separated columns (pipe fields, trimmed).
-# No-op when the config isn't reachable (e.g. `check` with no resolved source).
+# Print a section's entries as TAB-separated columns. No-op when the config isn't reachable.
 config_section() {
   local cfg; cfg="$(walle_config)"
   [ -f "$cfg" ] || return 0
@@ -223,10 +204,6 @@ module_purpose() {
     *) echo "walle module" ;;
   esac
 }
-
-# =============================================================================
-# 4. RESOLUTION: VERSIONS & SOURCE
-# =============================================================================
 
 resolve_latest_tag() {
   local tags
@@ -287,10 +264,6 @@ resolve_source() {
     SOURCE_REF=""
   fi
 }
-
-# =============================================================================
-# 5. FILE SYNC & MANIPULATION PRIMITIVES
-# =============================================================================
 
 sync_path() {
   local src="$1" dst="$2"
@@ -434,10 +407,6 @@ ensure_json_array_markers() {
   '
 }
 
-# =============================================================================
-# 6. DOMAIN SYNCING LOGIC
-# =============================================================================
-
 # Seed the starter site straight from walle/website/ (the source of truth), minus the
 # paths in `website-seed-exclude` (managed zones, dev tooling) and build artifacts. Each
 # file is written once (seed_path skips anything already present).
@@ -469,11 +438,8 @@ EOF
     -not -path '*/node_modules/*' -not -path '*/.astro/*' \
     -not -path '*/.yarn/*' -not -name 'yarn.lock')
 
-  # app.json in website/ carries Walle's own GH-Pages deployment identity AND its own demo-only
-  # content (commerce.mode: "shop", redirects to demo product handles): reset/strip it to
-  # neutral defaults for a fresh consumer (only when we just created the file, never on a
-  # re-seed). seo.ogImage/seo.feeds are left as the demo has them (both enabled), and every
-  # other key that isn't demo-specific.
+  # website/app.json holds Walle's own GH-Pages identity and demo-only content (commerce,
+  # redirects to demo products): reset to neutral defaults, only on a freshly seeded file.
   local app="${tgt_dir}/src/configs/app.json"
   if [ "$had_app" = "0" ] && [ "$DRY_RUN" != "1" ] && [ -f "$app" ]; then
     APP_JSON="$app" node -e "$PRETTY_JSON_JS"'
@@ -504,9 +470,8 @@ EOF
   fi
 }
 
-# harness-coding module: inject walle's blocks into files harness-coding already created,
-# and seed its once-only files (justfile.project stub, .husky/ hooks). Injects/seeds run in
-# update too; both are idempotent (marker-bounded / seed-once).
+# Inject walle's blocks into files harness-coding already created and seed its once-only
+# files (justfile.project stub, .husky/ hooks). Idempotent, runs on update too.
 sync_harness_coding() {
   local src_dir="$1" tgt_dir="$2"
   [ "$HARNESS_CODING_ENABLED" = "1" ] || return 0
@@ -567,7 +532,7 @@ sync_agents_marker() {
   rm -f "$block_file"
 }
 
-# MANAGED: overwrite each of a module's src→dest mappings from the config.
+# MANAGED: overwrite each of a module's src→dest mappings.
 sync_managed_map() {
   local src_dir="$1" tgt_dir="$2" module="$3" mod src dest
   while IFS=$'\t' read -r mod src dest; do
@@ -598,7 +563,7 @@ seed_module_files() {
   done < <(config_section seed)
 }
 
-# One-time migration: older consumers had a separate walle.justfile + import line.
+# Removes walle.justfile and its `import 'walle.justfile'` line from justfile.project.
 migrate_legacy_justfile() {
   local tgt_dir="$1"
   local tgt="${tgt_dir}/justfile.project" old="${tgt_dir}/walle.justfile"
@@ -658,12 +623,9 @@ sync_module() {
   [ "$DRY_RUN" = "1" ] || print_info "Module '${mod}' synced."
 }
 
-# Establish the harness-coding base (real justfile with markers, justfile.tooling,
-# .devcontainer/*, .pre-commit-config.yaml, AGENTS.md base block) BEFORE walle seeds and
-# injects. Walle owns none of these; it only injects its own blocks into files harness-coding
-# already created. Runs harness-coding's own CLI so the base is always current, not a stale
-# copy vendored here. Override the source with WALLE_HARNESS_CODING_CLI (path to a local
-# cli.sh) for offline/e2e runs; defaults to fetching main over the network.
+# Runs harness-coding's CLI (justfile, justfile.tooling, .devcontainer/, .pre-commit-config.yaml,
+# AGENTS.md base) before walle seeds and injects into those files. WALLE_HARNESS_CODING_CLI
+# (path to a local cli.sh) replaces fetching main over the network.
 establish_harness_coding_base() {
   local tgt_dir="$1"
   [ "$HARNESS_CODING_ENABLED" = "1" ] || return 0
@@ -696,14 +658,8 @@ run_init_sync() {
   sync_harness_coding "$src_dir" "$tgt_dir"
 }
 
-# =============================================================================
-# 7. MANIFEST & CONFIGURATIONS
-# =============================================================================
-
-# Writes .harness-walle/manifest.json. The `files` map records every path walle wrote, grouped by
-# class (managed | seed | inject) → module, same idea as harness-coding's manifest. Node
-# assembles the JSON from the FILES_LOG the sync functions accumulate (single parser: awk
-# reads the config, node only groups what was recorded).
+# Writes .harness-walle/manifest.json. `files` groups every path recorded in FILES_LOG by
+# class (managed | seed | inject) → module.
 write_manifest() {
   local tgt_dir="$1" name="$2"; shift 2
   local mods=("$@")
@@ -721,15 +677,14 @@ write_manifest() {
     const CATS = ["managed", "seed", "inject"];
     // files shape: { <category>: { <module>: [<dest>, ...] } } (schemaVersion 3).
     const files = { managed: {}, seed: {}, inject: {} };
-    // Preload from an existing manifest so `add` (which only re-syncs one module) keeps the
-    // other modules files entries; update re-syncs everything, so it self-heals.
+    // Preloaded from the existing manifest: `add` re-syncs one module only.
     try {
       const prev = JSON.parse(fs.readFileSync(process.env.WM_OUT, "utf8")).files || {};
       for (const c of CATS)
         for (const [mod, dests] of Object.entries(prev[c] || {}))
           files[c][mod] = Array.isArray(dests) ? [...dests] : [];
     } catch (_) {}
-    // A module re-synced now fully replaces its own dest list; other modules stay preloaded.
+    // A re-synced module replaces its own dest list.
     const logged = { managed: {}, seed: {}, inject: {} };
     const log = process.env.WM_FILES;
     if (log && fs.existsSync(log)) {
@@ -763,9 +718,8 @@ write_lock() {
   printf '%s\n' "${SOURCE_REF:-$WALLE_VERSION}" >"${1}/.harness-walle/lock"
 }
 
-# Human-readable consumer config. Lists the enabled modules explicitly (mirrors the manifest,
-# which stays authoritative for `update`) plus the editable `docs` toggle. Refreshed on
-# init/update; a `docs:` value the user changed is preserved.
+# Human-readable consumer config: modules (the manifest stays authoritative) and the `docs`
+# toggle, whose user-set value is preserved.
 write_walle_config_yml() {
   local tgt_dir="$1"; shift
   local mods=("$@") tgt="${tgt_dir}/.harness-walle/config.yml"
@@ -804,16 +758,12 @@ sync_walle_docs() {
   done
 }
 
-# Migrate a consumer's Walle state to the current layout, idempotently. Three legacy shapes
-# self-heal here so every command sees the current one: (1) the root `.walle.config.json`
-# file, (2) the old `.walle/` state dir → `.harness-walle/`, (3) a schemaVersion-2 files map
-# (path→module) → v3 (module→[paths]). Runs before every read_manifest; a no-op on a
-# already-current consumer.
+# Idempotently migrates (1) root `.walle.config.json`, (2) `.walle/` → `.harness-walle/`,
+# (3) schemaVersion-2 files map (path→module) → v3 (module→[paths]). Runs before read_manifest.
 migrate_state() {
   local dir="$1"
   local newd="${dir}/.harness-walle" legacy="${dir}/.walle.config.json" oldd="${dir}/.walle"
 
-  # 1. legacy root file → new dir manifest
   if [ -f "$legacy" ]; then
     if [ "$DRY_RUN" = "1" ]; then
       print_plan "~ ${newd}/manifest.json (migrated from .walle.config.json)"
@@ -824,7 +774,6 @@ migrate_state() {
     fi
   fi
 
-  # 2. old `.walle/` state dir → `.harness-walle/`
   if [ -d "$oldd" ]; then
     if [ "$DRY_RUN" = "1" ]; then
       print_plan "~ rename ${oldd}/ -> ${newd}/"
@@ -835,14 +784,12 @@ migrate_state() {
     fi
   fi
 
-  # 3. reshape a schemaVersion-2 files map (path→module) to v3 (module→[paths])
   local manifest="${newd}/manifest.json"
   { [ "$DRY_RUN" = "1" ] || [ ! -f "$manifest" ]; } && return 0
   MS_FILE="$manifest" node -e '
     const fs = require("fs"), p = process.env.MS_FILE;
     const m = JSON.parse(fs.readFileSync(p, "utf8"));
-    // Only the known previous format (v2) is auto-reshaped. Anything else (no version, a
-    // future version, a corrupt one) is left for read_manifest to accept or reject.
+    // Any other schemaVersion is left for read_manifest to accept or reject.
     if (m.schemaVersion !== 2) process.exit(0);
     const CATS = ["managed", "seed", "inject"], out = { managed: {}, seed: {}, inject: {} }, old = m.files || {};
     for (const c of CATS)
@@ -875,10 +822,6 @@ read_manifest() {
   [ -n "$MF_MODULES" ] || print_error "manifest declares no modules"
   MF_HARNESS_CODING_ENABLED="$(node -e "try{const m=require('$manifest');process.stdout.write(m.devcontainer?.enabled!==false?'1':'0')}catch(e){process.stdout.write('1')}" 2>/dev/null || echo "1")"
 }
-
-# =============================================================================
-# 8. CLI COMMAND HANDLERS
-# =============================================================================
 
 cmd_init() {
   local PROJ_NAME="" DIR_PATH MODULES_CSV="website,ai,ci" SRC_PATH="" VER=""
@@ -1005,8 +948,7 @@ cmd_update() {
   write_lock "$PROJ_PATH"
   print_info "Project updated."
 
-  # package.json is seed-owned, so it wasn't synced above. Surface any dependency drift so
-  # the consumer can align it (disable with --no-deps-check).
+  # package.json is seed-owned and never synced: report dependency drift instead.
   if [ "$DEPS_CHECK" = "1" ]; then
     run_deps "${SOURCE_DIR}/walle/website/package.json" "${PROJ_PATH}/package.json" check || true
   fi
@@ -1098,7 +1040,6 @@ cmd_check() {
     *) print_error "walleVersion '${MF_VERSION}' invalid" ;;
   esac
 
-  # Version Check
   if [ "$MF_VERSION" != "local" ]; then
     local _lat; _lat="$(resolve_latest_tag 2>/dev/null || true)"
     if [ -n "$_lat" ] && [ "$_lat" != "$MF_VERSION" ]; then
@@ -1108,7 +1049,6 @@ cmd_check() {
     fi
   fi
 
-  # Manifest Validation
   if [ -d "${PROJ_PATH}/node_modules/ajv" ]; then
     node -e "
       const Ajv=require('${PROJ_PATH}/node_modules/ajv').default||require('${PROJ_PATH}/node_modules/ajv');
@@ -1122,7 +1062,6 @@ cmd_check() {
     print_warn "skipping schema validation (missing ajv)"
   fi
 
-  # SEED & Missing Checks
   for _m in $MF_MODULES; do
     for _r in $(module_seed_paths "$_m"); do
       [ -e "${PROJ_PATH}/${_r}" ] && print_info "· seed present: ${_r}" || print_info "· seed absent: ${_r}"
@@ -1138,18 +1077,10 @@ cmd_check() {
   print_info "check passed."
 }
 
-# =============================================================================
-# 8b. DEPENDENCY DRIFT
-# =============================================================================
-# package.json is a SEED file (consumer-owned), so `update` never rewrites it: that would
-# clobber the deps a consumer added. Instead we treat the source seed
-# (walle/website/package.json) as the reference for Walle-OWNED deps and compare the
-# consumer's versions against it. Consumer-added deps (not in the seed) are never touched.
-# `check` reports drift; `apply` bumps behind deps in place AND adds missing runtime
-# `dependencies` (Walle code the consumer synced hard-imports them, e.g. commerce/cart.ts
-# needs nanostores, so an absent one is a build breaker, not an opt-out). Missing
-# `devDependencies` (optional tooling) are only reported, never forced. Always exits 0
-# (informational) so it never fails an update.
+# Compares the consumer's package.json against walle/website/package.json for Walle-owned deps;
+# consumer-added deps are never touched. `check` reports drift; `apply` bumps behind deps and
+# adds missing runtime `dependencies` (synced Walle code imports them, e.g. commerce/cart.ts →
+# nanostores). Missing `devDependencies` are only reported. Always exits 0.
 run_deps() {
   local seed="$1" consumer="$2" mode="$3" # mode: check | apply
   if [ ! -f "$seed" ] || [ ! -f "$consumer" ]; then
@@ -1178,10 +1109,6 @@ for (const sec of SECTIONS)
   for (const [name, wr] of Object.entries(seed[sec] || {})) {
     const cr = consRange(name);
     if (cr == null) {
-      // A missing runtime `dependency` is a build breaker: Walle code the consumer
-      // synced (e.g. commerce/cart.ts) hard-imports it, so it must be present. A
-      // missing `devDependency` is optional tooling (vitest, playwright, astrobook)
-      // the consumer may deliberately skip: warn only, never force.
       missing.push({ name, walle: wr, runtime: sec === "dependencies" });
       continue;
     }
@@ -1215,7 +1142,6 @@ if (mode === "apply") {
   process.exit(0);
 }
 
-// check mode
 if (!behind.length && !missingRuntime.length) {
   console.log(" [INFO] ✓ Walle dependencies are up to date.");
   if (missingDev.length)
@@ -1282,14 +1208,8 @@ cmd_deps() {
   run_deps "${SOURCE_DIR}/walle/website/package.json" "${PROJ_PATH}/package.json" "$MODE"
 }
 
-# =============================================================================
-# 9. ENTRY POINT
-# =============================================================================
-
 main() {
-  # The command is the FIRST argument; everything after is passed to the subcommand
-  # verbatim. (Scanning all args for a command keyword would mistake a flag value that
-  # happens to equal a command name, e.g. `init -n deps`, for the command itself.)
+  # Only the first argument is the command: a flag value like `init -n deps` is not one.
   [ $# -gt 0 ] || { usage; print_error "no command given"; }
   local cmd="$1"; shift
   case "$cmd" in

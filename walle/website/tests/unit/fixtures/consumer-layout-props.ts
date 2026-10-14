@@ -1,7 +1,5 @@
-// Type-only fixture: a consumer's own layout extends walle's BaseLayout Props,
-// which in turn extends AbstractLayout's, so every header/skip-link knob stays available all
-// the way up the chain without the consumer having to redeclare any of it. Also exercises a
-// real violation, to prove this check actually fails when the types are wrong.
+// Type-only fixture: a consumer layout extending BaseLayout Props (which extends
+// AbstractLayout's) gets every header/skip-link prop. Includes one expected type error.
 //
 // Run with: yarn tsc --noEmit -p tests/unit/fixtures/tsconfig.type-test.json
 

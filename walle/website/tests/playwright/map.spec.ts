@@ -1,11 +1,10 @@
 import { expect, test } from "@playwright/test";
 import { storyRoutes } from "./storyRoutes";
 
-// The map currently mounts only in the astrobook stories, not yet on the demo site, so
-// this runs against the astrobook webServer (playwright.astrobook.config.ts), same as a11y.spec.ts.
+// The map mounts only in astrobook stories: runs against the astrobook webServer
+// (playwright.astrobook.config.ts).
 
-// A 1x1 transparent PNG. Routed in for every OSM tile request so the spec never depends on the
-// real tile server being reachable.
+// 1x1 transparent PNG served for every OSM tile request.
 const ONE_PX_PNG = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
   "base64"
@@ -31,14 +30,9 @@ test.describe("Map", () => {
       (r) => r.fulfill({ status: 200, contentType: "image/png", body: ONE_PX_PNG })
     );
 
-    // Pushes the whole page down so the map's container starts well outside the viewport
-    // (plus the client's 200px IntersectionObserver rootMargin) at load: otherwise a normal
-    // 1280x720 viewport would already have the map (near the top of a short story page) in
-    // view, and this test couldn't tell "before scroll" from "after scroll" apart.
-    // document.documentElement doesn't exist yet when an addInitScript body runs (it fires
-    // before the parser creates the <html> node), so the style has to wait for
-    // DOMContentLoaded: registered here first, it still runs before Map's own
-    // DOMContentLoaded listener that sets up the IntersectionObserver.
+    // Pushes the map below the viewport plus the 200px IntersectionObserver rootMargin.
+    // document.documentElement does not exist yet when an addInitScript body runs, so this
+    // waits for DOMContentLoaded; registered first, it runs before Map's own listener.
     await page.addInitScript(() => {
       document.addEventListener("DOMContentLoaded", () => {
         const style = document.createElement("style");

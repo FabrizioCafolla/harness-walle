@@ -18,9 +18,8 @@ for (const p of fixtureProducts) {
   }
 }
 
-// lineId === variantId in the mock (one line per variant). Persisted to localStorage
-// so the mock cart survives page navigation, mirroring the real cart (which persists
-// its cartId). Degrades to in-memory when localStorage is unavailable (private mode).
+// lineId === variantId in the mock (one line per variant). Persisted to localStorage;
+// in-memory only when localStorage is unavailable (private mode).
 const STORAGE_KEY = "walle:mock-cart";
 
 function load(): Map<string, number> {

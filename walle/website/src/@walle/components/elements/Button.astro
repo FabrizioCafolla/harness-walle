@@ -137,7 +137,6 @@ const tagAttrs = isLink
       --button-shadow: var(--shadow-md);
       --button-font-weight: 600;
 
-      /* Structure */
       position: relative;
       overflow: hidden;
       display: inline-flex;
@@ -169,9 +168,6 @@ const tagAttrs = isLink
       transform: translateY(0);
     }
 
-    /* Modifiers map --variant-* tokens to the public properties above; a higher-specificity
-           [data-inverse][data-outline] rule handles the combined case (a button on a filled,
-           colored background that is also outlined). */
     .button[data-outline] {
       --button-bg: transparent;
       --button-bg-hover: var(--variant-bg-hover);
@@ -210,7 +206,6 @@ const tagAttrs = isLink
       border-color: var(--surface);
     }
 
-    /* Sizes */
     .button[data-size="small"] {
       --button-padding-x: var(--space-lg);
       --button-padding-y: var(--space-sm);

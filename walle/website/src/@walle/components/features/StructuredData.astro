@@ -17,15 +17,10 @@ const payload = Array.isArray(data)
   ? data.map((d) => ({ "@context": "https://schema.org", ...d }))
   : { "@context": "https://schema.org", ...data };
 
-// The payload is JSON (not JS), so the only way an untrusted value (e.g. a product
-// name/description from an external source) could break out of the element is a
-// literal "</script>". Escaping <, > and & to their JSON unicode escapes neutralizes
-// that while keeping the JSON valid.
-//
-// Plain-string replaceAll, not a /</>/&/g regex: astro-language-server's frontmatter/template
-// boundary scanner mis-tokenizes literal `<`/`>` characters inside a regex literal here, which
-// breaks `astro check` on this file with cascading "expected `---`" parse errors even though
-// both the Go and Rust @astrojs/compiler parse it cleanly (this is the tool's bug, not the code's).
+// Escaping <, > and & as JSON unicode escapes stops an untrusted value from closing the
+// element with a literal "</script>" and keeps the JSON valid.
+// Plain-string replaceAll, not a regex: astro-language-server mis-tokenizes `<`/`>` inside a
+// regex literal in frontmatter and `astro check` fails with "expected `---`".
 const json = JSON.stringify(payload)
   .replaceAll("<", "\\u003c")
   .replaceAll(">", "\\u003e")

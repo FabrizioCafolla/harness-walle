@@ -84,7 +84,6 @@ const classes = ["carousel", className].filter(Boolean).join(" ");
 const heightStyle = height ? `--carousel-height: ${height};` : undefined;
 const rootStyle = [heightStyle, styleProp].filter(Boolean).join(" ") || undefined;
 
-// Consistent inline stroke icons (no icon-font dependency).
 const chevronLeft =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>';
 const chevronRight =
@@ -202,7 +201,6 @@ const closeIcon =
       min-width: 0;
     }
 
-    /* Image sizing modes */
     .carousel[data-fit="uniform"] .carousel-track :global(img) {
       display: block;
       width: 100%;
@@ -230,7 +228,6 @@ const closeIcon =
       }
     }
 
-    /* Overlay side arrows */
     .carousel-arrow {
       --carousel-arrow-radius: 50%;
 
@@ -279,7 +276,6 @@ const closeIcon =
       height: 1.15rem;
     }
 
-    /* Position counter */
     .carousel-counter {
       margin: var(--space-sm) 0 0;
       text-align: center;
@@ -288,7 +284,6 @@ const closeIcon =
       font-variant-numeric: tabular-nums;
     }
 
-    /* Zoom affordance on image slides */
     .carousel :global(.carousel-zoom) {
       position: absolute;
       top: var(--space-sm);
@@ -322,7 +317,6 @@ const closeIcon =
       height: 1.1rem;
     }
 
-    /* Lightbox */
     .carousel-lightbox {
       border: none;
       padding: 0;
@@ -348,7 +342,6 @@ const closeIcon =
       box-shadow: var(--carousel-lightbox-img-shadow);
     }
 
-    /* Fixed to the viewport corner so it never overflows off-screen */
     .carousel-lightbox__close {
       --carousel-lightbox-close-radius: 50%;
       --carousel-lightbox-close-bg: color-mix(in srgb, var(--white) 16%, transparent);
@@ -418,12 +411,10 @@ const closeIcon =
         (slides[0]?.getBoundingClientRect().width || track.clientWidth) +
         (parseFloat(getComputedStyle(track).columnGap) || 0);
 
-      // Position counter
       const currentEl = root.querySelector<HTMLElement>("[data-carousel-current]");
       const totalEl = root.querySelector<HTMLElement>("[data-carousel-total]");
       if (totalEl) totalEl.textContent = String(slides.length);
 
-      // Prev/next controls
       const prev = root.querySelector<HTMLButtonElement>(".carousel-prev");
       const next = root.querySelector<HTMLButtonElement>(".carousel-next");
 
@@ -440,9 +431,8 @@ const closeIcon =
       next?.addEventListener("click", () => track.scrollBy({ left: step() }));
 
       sync();
-      // `onscrollend` is a statically-declared HTMLElement property, so TS narrows this check
-      // to always-true and treats the fallback branch as unreachable; it still runs in
-      // browsers where scrollend support lags behind the type lib, so the runtime check stays.
+      // TS types `onscrollend` as always present; the fallback runs in browsers without
+      // scrollend support.
       if ("onscrollend" in track) {
         track.addEventListener("scrollend", sync);
       } else {
@@ -458,7 +448,6 @@ const closeIcon =
       }
       window.addEventListener("resize", sync, { passive: true });
 
-      // Click-to-zoom lightbox
       if (root.dataset.zoom === "true") {
         const dialog = root.querySelector<HTMLDialogElement>(".carousel-lightbox");
         const dialogImg = root.querySelector<HTMLImageElement>(".carousel-lightbox__img");

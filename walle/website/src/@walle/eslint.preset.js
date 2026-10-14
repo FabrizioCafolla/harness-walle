@@ -33,7 +33,6 @@ export const typescriptConfig = {
 
 export const generalRulesConfig = {
   rules: {
-    // Allow underscore-prefixed identifiers as intentional throwaways.
     "no-unused-vars": [
       "warn",
       { argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" },

@@ -155,9 +155,8 @@ const shouldShowBrand = hasLogo || hasTitle;
       color: var(--primary);
     }
 
-    /* Image logo default: sizes reliably for both raster and SVG (SVGs often lack
-           intrinsic dimensions, so we constrain by height and let width follow). Height
-           is a token knob; consumers extend/override via the logo `cssClasses`. */
+    /* Image logo: constrained by height (SVGs often lack intrinsic dimensions), width
+       follows; consumers override via the logo `cssClasses`. */
     .brand-link .brand-logo {
       display: block;
       height: var(--navbar-logo-height);
@@ -388,10 +387,8 @@ const shouldShowBrand = hasLogo || hasTitle;
         height: 64px;
       }
 
-      /* Right cluster on mobile: brand stays left; the cart + hamburger sit together on the
-                   right (cart immediately left of the hamburger). The nav overlay (.nav-container) is
-                   fixed/out-of-flow, and DOM order is already brand · cart · hamburger, so `margin-left:
-                   auto` pushes the pair right without CSS `order`, keeping tab order == visual order. */
+      /* Mobile: `margin-left: auto` pushes cart + hamburger right; DOM order already matches
+         visual order (brand · cart · hamburger), so no CSS `order` is needed. */
       .hamburger {
         display: flex;
         margin-left: 0.5rem;

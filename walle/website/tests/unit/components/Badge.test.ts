@@ -23,9 +23,7 @@ describe("Badge", () => {
     const html = await container.renderToString(Badge, {
       props: { text: "Label", variant: "secondary", status: "success" },
     });
-    // Both attributes are present: variant still identifies the badge's variant, but the
-    // CSS's [data-status] rule has higher specificity than the plain variant mapping, so
-    // status wins the coloring. This asserts the markup contract that makes that possible.
+    // [data-status] has higher specificity than the variant mapping, so status wins the coloring.
     expect(html).toContain('data-variant="secondary"');
     expect(html).toContain('data-status="success"');
   });

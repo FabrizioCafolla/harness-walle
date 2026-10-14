@@ -4,7 +4,6 @@ import Navbar from "@walle/components/features/Navbar/Navbar.astro";
 
 type NavbarProps = ComponentProps<typeof Navbar>;
 
-// `standard` variant from the AVAILABLE_VARIANTS registry (navbar -> standard).
 const config = {
   logo: { title: "Walle", url: "/" },
   items: [

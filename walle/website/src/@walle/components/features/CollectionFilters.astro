@@ -24,11 +24,8 @@ import { label as t } from "@walle/utils";
  * its (comma-separated) `data-<key>` values is selected, and the search text
  * matches `data-search` (falling back to the item's text content).
  *
- * Progressive enhancement: a `<noscript>` rule hides the filter bar when
- * JavaScript is unavailable, since none of its controls do anything without
- * the script; every item stays visible in that case. With JavaScript
- * available the bar renders visible from the first paint, so it never
- * shifts layout once the script attaches its listeners.
+ * Without JavaScript a `<noscript>` rule hides the filter bar and every item
+ * stays visible.
  */
 
 export interface FilterFacet {
@@ -444,7 +441,6 @@ const l = {
           });
         };
 
-        // Dropdown open/close with ARIA + Esc + click-outside
         facets.forEach((facet) => {
           const btn = facet.querySelector<HTMLButtonElement>(".filters__dropdown-btn");
           const content = facet.querySelector<HTMLElement>(".filters__dropdown-content");
@@ -456,7 +452,6 @@ const l = {
           };
           const toggle = () => {
             const isOpen = content.classList.contains("open");
-            // Close other facet dropdowns first
             root.querySelectorAll(".filters__dropdown-content.open").forEach((el) => {
               el.classList.remove("open");
               el.parentElement

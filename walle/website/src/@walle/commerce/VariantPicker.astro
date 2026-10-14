@@ -370,7 +370,6 @@ const initialSelected = Object.fromEntries(
       cursor: not-allowed;
     }
 
-    /* Compact (inside a product card) */
     .variant-picker--compact {
       gap: var(--space-sm);
     }
@@ -421,7 +420,6 @@ const initialSelected = Object.fromEntries(
       const addBtn = root.querySelector<HTMLButtonElement>("[data-vp-add]");
       const radios = Array.from(root.querySelectorAll<HTMLInputElement>('input[type="radio"]'));
 
-      // Quantity stepper
       const qtyValueEl = root.querySelector<HTMLElement>("[data-qty-value]");
       const setQty = (n: number) => {
         const q = Math.max(1, n);
