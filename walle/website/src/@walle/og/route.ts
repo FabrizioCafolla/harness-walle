@@ -24,10 +24,8 @@ function entryFromCollectionItem(id: string, data: Record<string, unknown>): OgE
 }
 
 /**
- * Template precedence, as a pure function decoupled from the filesystem/dynamic-import side
- * of actually loading one: this is what a unit test exercises directly. `undefined` means
- * "no override configured", leaving `resolveOgTemplate` to fall back to walle's own default
- * template.
+ * Template precedence. `undefined` means no override is configured and `resolveOgTemplate`
+ * uses walle's default template.
  */
 export function pickOgTemplatePath(
   collection: string | undefined,

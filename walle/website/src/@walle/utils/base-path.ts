@@ -1,13 +1,11 @@
 /**
- * Base-path helpers shared by build-time config (`define-config.ts`) and request-time
- * application code (`og/url.ts`, `feeds/route.ts`): kept dependency-free (no astro/config
- * imports), same reasoning and same pattern as `site-path.ts`.
+ * Base-path helpers shared by build-time config (`define-config.ts`) and request-time code
+ * (`og/url.ts`, `feeds/route.ts`): no astro/config imports.
  */
 
 /**
  * Strips `base` off the front of `pathname` at a path-segment boundary: "/harness-walle-docs/x"
- * must not lose "/harness-walle" just because it happens to start with the same characters.
- * Returns `pathname` unchanged when `base` is absent, `"/"`, or doesn't actually prefix it.
+ * does not lose "/harness-walle". Returns `pathname` unchanged when `base` is absent, `"/"`, or doesn't actually prefix it.
  */
 export function stripBase(pathname: string, base: string | undefined): string {
   const stripped = base && base !== "/" ? base.replace(/\/$/, "") : "";
@@ -18,12 +16,9 @@ export function stripBase(pathname: string, base: string | undefined): string {
 }
 
 /**
- * Prefixes `base` onto a root-relative destination. Astro's `redirects` config applies `base`
- * to the route's source pattern but passes the destination straight through, so an internal
- * target written the same bare way as every other walle path (e.g. `/products/x`, same
- * convention as `sitemapExclude`/`redirects` keys) would 404 once the site sits under a base
- * path. Leaves external (`http(s):`/`//`) destinations and one already written with the base
- * untouched (idempotent: a site that already wrote it with the base doesn't get it doubled).
+ * Prefixes `base` onto a root-relative destination: Astro's `redirects` applies `base` to the
+ * source pattern but not to the destination. Leaves external (`http(s):`/`//`) destinations
+ * and ones already starting with the base untouched (idempotent).
  */
 export function withBase(destination: string, base?: string): string {
   if (!base || base === "/") return destination;

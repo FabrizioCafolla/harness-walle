@@ -10,11 +10,9 @@ const source = readFileSync(
 );
 
 describe("SectionWrapper", () => {
-  // [data-filled] sets --link to --variant-fg, the same color as surrounding text, and
-  // base.css strips the underline (`a { text-decoration: none }`). Without this rule an
-  // inline link in filled-section prose would be distinguishable by nothing (WCAG 1.4.1).
-  // AstroContainer.renderToString does not bundle scoped <style> output, so the only way to
-  // guard the rule here is to assert it is present in the component's own source.
+  // [data-filled] sets --link to the text color and base.css removes underlines, so inline
+  // links need this rule (WCAG 1.4.1). AstroContainer does not bundle scoped <style> output,
+  // so this checks the component source.
   it("underlines unstyled links in filled sections (WCAG 1.4.1)", () => {
     expect(source).toMatch(
       /\.section-wrapper\[data-filled\]\s+a:not\(\[class\]\)\s*\{\s*text-decoration:\s*underline;\s*\}/

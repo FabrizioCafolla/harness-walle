@@ -27,8 +27,8 @@ export { withBase };
  * Components a site can replace, once, from `app.json`'s `components` block: each key's
  * built-in name → walle source file, resolved relative to this file's own directory. A value
  * can also be a `./`-prefixed path to a site component under `src/`. Absent keys default to
- * `"standard"`. The keys of each inner record are also the available built-in names for that
- * component, so this is the one place both are defined.
+ * `"standard"`. The keys of each inner record are the available built-in names for that
+ * component.
  */
 const WALLE_COMPONENT_PATHS: Record<string, Record<string, string>> = {
   navbar: {
@@ -386,10 +386,8 @@ type PwaConfigSection = {
 };
 
 /**
- * Pure resolver, exported so a unit test can inspect the resolved `workbox` config without
- * going through `AstroPWA` (which closes its options up inside the returned integration's
- * hooks: not introspectable from outside). Returns `null` when the PWA is disabled, the same
- * signal `wallePwaIntegration` uses to skip mounting the integration at all.
+ * Resolves the `AstroPWA` options (exported for unit tests: `AstroPWA` does not expose its
+ * options). Returns `null` when the PWA is disabled.
  */
 export function resolvePwaOptions(
   app: {
@@ -407,18 +405,14 @@ export function resolvePwaOptions(
   const base = app.astro?.basePath || "/";
   const name = pwa.name ?? app.website?.title ?? "";
 
-  // `${base}/offline`, collapsing the double slash a trailing-slash base would otherwise leave
-  // (base "/" + "/offline" => "//offline").
+  // Collapses the double slash of a trailing-slash base ("/" + "/offline" => "//offline").
   const offlineUrl = pwa.offline ? `${base}/offline`.replace(/\/{2,}/g, "/") : null;
   // /offline is not a hashed URL, so it needs a real revision (null means "already versioned"):
   // a per-build id makes returning visitors refetch it after every deploy.
   const offlineRevision = offlineUrl ? Date.now().toString(36) : null;
 
-  // Cart UI ships no chunk at all when off (virtual:walle-features nulls the module
-  // before Rollup ever sees it), so these normally match nothing. Listed anyway as a safety
-  // net: if that guarantee ever regresses, a stray cart-named chunk still never gets swept into
-  // the precache instead of silently shipping working "Add to cart" UI to an offline visitor
-  // of a site that turned commerce off.
+  // With commerce off virtual:walle-features emits no cart chunk; these ignores also keep any
+  // cart-named chunk out of the precache.
   const commerceChunkGlobIgnores =
     app.commerce?.mode !== "shop"
       ? ["**/_astro/Cart*", "**/_astro/VariantPicker*", "**/_astro/ProductBuyCard*"]
@@ -443,15 +437,12 @@ export function resolvePwaOptions(
       icons: pwa.icons ?? [],
     },
     workbox: {
-      // Only the hashed, immutable build output is precached; HTML is handled by the
-      // network-first rule below instead, so a page is never served from a stale cache
-      // while the network is available. The offline fallback is the one static HTML page
-      // that IS precached by URL (below), since it must be servable with no network at all.
-      // Self-hosted fonts are build output like any other asset, so
-      // they precache alongside the JS/CSS they're never worth loading a page without.
+      // Only hashed build output (JS, CSS, self-hosted fonts) is precached; HTML goes through
+      // the network-first rule below. The offline fallback is the one HTML page precached by
+      // URL (additionalManifestEntries), since it must be servable with no network.
       globPatterns: ["_astro/**/*.{js,css}", "_astro/fonts/**/*.woff2"],
       globIgnores: [...commerceChunkGlobIgnores, ...enhancementChunkGlobIgnores],
-      // Explicitly off. vite-plugin-pwa defaults this to "/", which emits a NavigationRoute
+      // vite-plugin-pwa defaults this to "/", which emits a NavigationRoute
       // bound to a URL that is not in the precache above: it throws `non-precached-url` at
       // module evaluation, before any runtimeCaching rule is registered, and the worker
       // silently caches nothing at all (vite-pwa/vite-plugin-pwa#731, #400).
@@ -502,9 +493,8 @@ export function resolvePwaOptions(
         ...defaults.workbox.additionalManifestEntries,
         ...((overrides.workbox?.additionalManifestEntries ?? []) as unknown[]),
       ],
-      // Consumer rules first, then walle's: Workbox takes the first route that matches,
-      // so a consumer can both add rules and override a default one without having to
-      // restate the defaults it still wants.
+      // Consumer rules first: Workbox takes the first route that matches, so a consumer rule
+      // overrides a default one for the same URLs.
       runtimeCaching: [
         ...((overrides.workbox?.runtimeCaching ?? []) as unknown[]),
         ...defaults.workbox.runtimeCaching,
@@ -576,8 +566,7 @@ function walleDedupePrecacheIntegration(): AstroIntegration {
 /**
  * Injects `/offline` when `pwa.enabled` and `pwa.offline` are both set: `true` uses the
  * managed default (`M/pwa/Offline.astro`), a `./`-prefixed string swaps in a site file, same
- * contract as `commerce.pages.*`. Nested under `pwa` because the route is meaningless without
- * the service worker it falls back through: `resolvePwaOptions` wires the matching
+ * contract as `commerce.pages.*`. `resolvePwaOptions` wires the matching
  * `additionalManifestEntries`/`handlerDidError` for the same flag.
  */
 function walleOfflineRouteIntegration(pwa: PwaConfigSection = {}, root: string): AstroIntegration {
@@ -601,9 +590,7 @@ function walleOfflineRouteIntegration(pwa: PwaConfigSection = {}, root: string):
  * Injects `/og/[...slug].png` when `seo.ogImage.enabled` is true: a single fixed
  * entrypoint (`M/og/route.ts`) whose own `getStaticPaths` enumerates "default" plus every
  * configured collection, and resolves each one's `seo.ogImage.templates` override itself
- * (a per-slug template needs a site-path resolved per param, which `injectRoute`'s one static
- * `entrypoint` per pattern can't express: unlike `commerce.pages.*`, which swaps the whole
- * page).
+ * (`injectRoute` takes one static `entrypoint` per pattern).
  */
 function walleOgRouteIntegration(seo: { ogImage?: { enabled?: boolean } } = {}): AstroIntegration {
   const enabled = seo.ogImage?.enabled === true;
@@ -644,11 +631,9 @@ function walleFeedsRouteIntegration(
 }
 
 /**
- * The three tags Head.astro emits for a PWA, resolved once here rather than re-derived at
- * render time: the manifest link, the browser-chrome color and the iOS icon. Head.astro reads
- * them from `virtual:walle-pwa`, so the theme palette stays a single source of truth (a
- * consumer's `src/configs/index.js` is seed-owned and may not expose `theme` at all) and a
- * disabled PWA is simply `{ enabled: false }`.
+ * The three tags Head.astro emits for a PWA (manifest link, browser-chrome color, iOS icon),
+ * exposed as `virtual:walle-pwa`. A consumer's `src/configs/index.js` is seed-owned and may not
+ * expose `theme`. A disabled PWA is `{ enabled: false }`.
  */
 function wallePwaHeadPlugin(head: Record<string, unknown>) {
   const virtualId = "virtual:walle-pwa";
@@ -667,8 +652,7 @@ function wallePwaHeadPlugin(head: Record<string, unknown>) {
 /**
  * Exposes the resolved font list to components at runtime: Head.astro needs to know
  * every configured font's `cssVariable` and `preload` filter to render one `<Font>` per entry,
- * but it can't read theme.json itself (only ever parsed at build time, here). Same
- * resolveId/load pattern as `wallePwaHeadPlugin`.
+ * and theme.json is only parsed at build time, here.
  */
 function walleFontsPlugin(entries: WalleFontEntry[] | undefined) {
   const virtualId = "virtual:walle-fonts";
@@ -735,7 +719,7 @@ type AstroConfigSection = {
   /** Path prefixes to keep out of sitemap.xml. For pages that exist as a routable URL but must
    * not be indexed (a `noindex` status page such as an offline fallback): listing one in the
    * sitemap while its own meta says `noindex` is the "Submitted URL marked noindex" conflict
-   * Search Console reports. Absent key = every page is listed, as before. */
+   * Search Console reports. Absent key = every page is listed. */
   sitemapExclude?: string[];
   /** Passed straight through to Astro's native `redirects` config. Astro's own static-output
    * redirect page already emits refresh/noindex/canonical; walle additionally excludes every
@@ -750,10 +734,7 @@ type AstroConfigSection = {
 /**
  * True when `pathname` (as `new URL(page).pathname` hands it: includes the site's base path)
  * falls under one of `excludes` (bare paths, written without the base, e.g. `"/old-page"`).
- * Strips `base` off the front and normalizes a trailing slash on both sides before comparing,
- * so a site with `astro.basePath` set (any GitHub Pages project site) and an exclude/redirect
- * entry written with or without a trailing slash both still match. Exported and pure so it's
- * unit-testable without going through the sitemap integration's own hook lifecycle.
+ * Strips `base` off the front and normalizes a trailing slash on both sides before comparing.
  */
 export function isSitemapExcluded(pathname: string, excludes: string[], base?: string): boolean {
   const normalize = (p: string) => (p.length > 1 ? p.replace(/\/$/, "") : p) || "/";
@@ -801,14 +782,10 @@ function resolveWalleFonts(
           : fontProviders.local(),
     name: entry.name,
     cssVariable: `--walle-font-${entry.role}`,
-    // Astro already defaults this to ["sans-serif"], which is why optimizedFallbacks (on by
-    // default) was already running; the CLS this fixes came from the wrong generic, not a
-    // missing one, e.g. a serif body font swapping in over an Arial-metric placeholder. Every
-    // font gets an explicit, metric-appropriate fallback instead of silently inheriting Astro's
-    // sans-serif default.
+    // optimizedFallbacks sizes the fallback from this generic: a serif font over the default
+    // "sans-serif" placeholder causes layout shift on swap.
     fallbacks: [entry.fallback ?? "sans-serif"],
-    // Absent means "don't touch it": Astro's own default ("swap") applies unchanged. Only an
-    // explicit display gets passed through, same opt-in shape as weights/styles below.
+    // Absent: Astro's default ("swap") applies.
     ...(entry.display ? { display: entry.display } : {}),
     ...(entry.weights?.length ? { weights: entry.weights } : {}),
     ...(entry.styles?.length ? { styles: entry.styles } : {}),
@@ -836,9 +813,7 @@ function resolveWalleFonts(
  * (mdx, sitemap, icon), never replaced.
  */
 export function defineWalleConfig(overrides: Record<string, any> = {}) {
-  // Single build-time gate for all four config files: a malformed or outdated config
-  // fails here, loudly, instead of surfacing later as a runtime import error or a silently
-  // wrong page.
+  // Build-time validation of all four config files.
   parseConfig(appSchema, appConfig, "app.json");
   parseConfig(navbarSchema, navbarConfigJson, "navbar.json");
   parseConfig(footerSchema, footerConfigJson, "footer.json");
@@ -859,16 +834,12 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
         };
       }
     ).seo ?? {};
-  // Fail fast, at config-build time, the same as the parseConfig calls above: an invalid
-  // override surfaces here, not as a missing component the first time a page renders.
+  // Throws at config-build time on an invalid `components` override.
   resolveEmbeddedComponents(components, process.cwd());
 
-  // Redirect sources and the offline fallback never belong in the sitemap alongside their own
-  // destination / next to no real content: same exclusion mechanism, two sources.
+  // Redirect sources, the offline fallback and feeds are kept out of the sitemap.
   const redirectSources = Object.keys(astro.redirects ?? {});
   const offlineExclude = pwa.enabled === true && pwa.offline ? ["/offline"] : [];
-  // A feed is a machine-readable alternate of a listing page, never content of its own:
-  // same exclusion reasoning as the offline fallback.
   const feedsExclude =
     seo.feeds?.enabled === true ? (seo.feeds.items ?? []).map((i) => i.path) : [];
   const sitemapExclude = [
@@ -878,8 +849,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
     ...feedsExclude,
   ];
 
-  // Destinations are written bare, same convention as every other walle path: prefix the
-  // base path here so a redirect still lands on a real route once the site has one.
+  // Destinations are written without the base path, which is prefixed here.
   const redirects = astro.redirects
     ? Object.fromEntries(
         Object.entries(astro.redirects).map(([source, target]) => [
@@ -935,14 +905,12 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
     site: astro.baseUrl,
     base: astro.basePath,
     trailingSlash: astro.trailingSlash,
-    // No adapter (default) => fully static, identical to today. `adapter: "node"` adds the
-    // node adapter without setting `output`, so it stays Astro's default ("static") and only
-    // `prerender = false` routes render on demand through the adapter.
+    // `output` stays Astro's default ("static"): with the node adapter only `prerender = false`
+    // routes render on demand.
     ...(astro.adapter === "node" ? { adapter: node({ mode: "standalone" }) } : {}),
     redirects,
     prefetch,
     ...(fonts.length > 0 ? { fonts } : {}),
-    // Consumer scalar keys override the walle-resolved values.
     ...consumerScalars,
     integrations: [...walleIntegrations, ...pwaIntegrations, ...consumerIntegrations],
     vite: {
@@ -961,10 +929,9 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
         ...consumerVite.build,
         rollupOptions: {
           ...consumerVite.build?.rollupOptions,
-          // Astro's opt-in rust compiler (experimental.rustCompiler, off by default)
-          // dynamically imports @astrojs/compiler-rs, which is intentionally not
-          // installed. Externalize it so the build doesn't try to bundle it. Still
-          // required on astro 6.4.x; safe to drop once astro externalizes it itself.
+          // Astro's opt-in rust compiler (experimental.rustCompiler) dynamically imports
+          // @astrojs/compiler-rs, which is not installed: externalized so the build does not
+          // try to bundle it (astro 6.4.x does not externalize it).
           external: [
             "@astrojs/compiler-rs",
             ...toExternalArray(consumerVite.build?.rollupOptions?.external),

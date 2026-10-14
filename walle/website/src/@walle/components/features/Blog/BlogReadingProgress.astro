@@ -9,7 +9,6 @@ export interface Props {
 const { targetSelector = "#article-content", viewportOffsetFactor = 0.25 } = Astro.props;
 ---
 
-<!-- Blog Reading Progress Bar -->
 <div
   class="blog-progress-bar"
   id="blog-progress-bar"
@@ -62,7 +61,7 @@ const { targetSelector = "#article-content", viewportOffsetFactor = 0.25 } = Ast
     const bar = document.getElementById("blog-progress-bar");
     if (!bar) return;
     const targetSelector = bar.getAttribute("data-target") || "#article-content";
-    const viewportOffsetFactor = parseFloat(bar.getAttribute("data-offset") || "0.25"); // kept for optional mode
+    const viewportOffsetFactor = parseFloat(bar.getAttribute("data-offset") || "0.25");
     const articleEl = document.querySelector(targetSelector);
     if (!(articleEl instanceof HTMLElement)) return;
 
@@ -85,17 +84,14 @@ const { targetSelector = "#article-content", viewportOffsetFactor = 0.25 } = Ast
     let ticking = false;
     let lastHeight = articleEl.scrollHeight;
 
-    // Sentinels for robust measurement (handles dynamic content / images loading)
+    // Recalculates when the article height changes (images, dynamic content).
     const endSentinel = document.createElement("div");
     endSentinel.style.cssText = "position:relative;height:1px;width:100%;margin:0;padding:0;";
     articleEl.appendChild(endSentinel);
 
-    // IntersectionObserver fallback influences recalculation
     const io = new IntersectionObserver(() => {
-      // If article height changed significantly, force update
       const currentH = articleEl.scrollHeight;
       if (Math.abs(currentH - lastHeight) > 32) {
-        // threshold
         lastHeight = currentH;
         update(true);
       }
@@ -115,13 +111,13 @@ const { targetSelector = "#article-content", viewportOffsetFactor = 0.25 } = Ast
     function computeProgress() {
       const scrollTop = getScrollTop();
       const viewport = getViewportHeight();
-      const articleTop = (articleEl as HTMLElement).offsetTop; // offset relative to document
+      const articleTop = (articleEl as HTMLElement).offsetTop;
       const articleHeight = (articleEl as HTMLElement).scrollHeight;
 
-      // If entire article fits in viewport: progress becomes proportion of scroll toward bottom
+      // Article shorter than the viewport: progress is 0 or 1.
       if (articleHeight <= viewport) {
         const bottomReached = scrollTop + viewport >= articleTop + articleHeight - 4;
-        return bottomReached ? 1 : 0; // keep it simple; optional: (scrollTop - articleTop)/(articleHeight) for gradual
+        return bottomReached ? 1 : 0;
       }
 
       const end = articleTop + articleHeight - viewport; // last position where top of viewport touches end
@@ -164,7 +160,6 @@ const { targetSelector = "#article-content", viewportOffsetFactor = 0.25 } = Ast
       scroller.addEventListener("scroll", onScroll, { passive: true });
     }
 
-    // Initial paint
     update(true);
   }
 

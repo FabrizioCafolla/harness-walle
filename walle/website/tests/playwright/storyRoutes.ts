@@ -2,19 +2,15 @@ import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-// Astrobook story-route discovery, mirroring @astrobook/core's virtual routes:
-// astrobook/<dir>/<Name>.stories.ts with `export const StoryName` becomes
+// Mirrors @astrobook/core's virtual routes: astrobook/<dir>/<Name>.stories.ts with
+// `export const StoryName` becomes
 //   /astrobook/stories/<dir>/<kebab(Name)>/<kebab(StoryName)>   (bare preview)
-// The preview page renders the story in isolation: the right fixture for
-// axe and visual snapshots. Discovery is filesystem-based so a new story is
-// covered with no extra configuration.
 
 const websiteRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const astrobookDir = join(websiteRoot, "astrobook");
 
-// Routes mount under Astro's `base` (src/configs/app.json → astro.basePath).
-// Unprefixed paths happen to answer 200 to curl's `Accept: */*` in dev, but a
-// browser's `Accept: text/html` gets a 404: always use the base-prefixed form.
+// Routes mount under astro.basePath. In dev, unprefixed paths answer 200 to `Accept: */*`
+// but 404 to a browser's `Accept: text/html`.
 export const siteBase: string = (() => {
   const app = JSON.parse(readFileSync(join(websiteRoot, "src/configs/app.json"), "utf-8"));
   const base = app?.astro?.basePath ?? "";

@@ -139,10 +139,8 @@ function resolveDirectionsUrl(
 
 <style>
   @layer walle.components {
-    /* --map-marker-bg/--map-marker-fg are deliberately left undeclared here: the structural
-       rule below falls back to the variant tokens (--variant-bg/--variant-fg), so a marker's
-       own data-variant already colors it, and a site only needs these two to force every
-       marker to one fixed color regardless of variant. */
+    /* --map-marker-bg/--map-marker-fg stay undeclared: the rule below falls back to
+       --variant-bg/--variant-fg, so a site sets them only to force one color on every marker. */
     .map {
       --map-height: 400px;
       --map-radius: var(--radius-md);

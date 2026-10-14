@@ -3,14 +3,11 @@ import FooterConfig from "./footer.json";
 import NavbarConfig from "./navbar.json";
 
 /**
- * Configuration data for the website.
- * Don't change the name and don't use directly but use `import config from "@walle/config";` instead.
- * This allows to use the `config` in the components without importing the file directly.
+ * Website configuration, imported as `import config from "@walle/config"`: keep this file name.
  */
 export default {
-  // Default configuration. Don't change or remove this.
+  // Read by @walle components: do not remove.
   app: AppConfig,
   footer: FooterConfig,
   navbar: NavbarConfig,
-  // Custom configuration
 };

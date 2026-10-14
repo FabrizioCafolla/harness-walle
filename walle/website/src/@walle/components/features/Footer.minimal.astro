@@ -1,5 +1,4 @@
 ---
-// Minimal footer variant: single centered row, navigation links + copyright, no social/brand block.
 // Selected via `components.footer = "minimal"` in app.json, resolved by virtual:walle-components.
 import type { FooterConfig, NavigationLink } from "@walle/config";
 import config from "@walle/config";
@@ -30,8 +29,6 @@ const label = footerConfig.logo?.title || footerConfig.logo?.license || "";
 <style>
   @layer walle.components {
     .footer-minimal {
-      /* `--footer-link-color` defaults to `inherit` rather than a fixed token, so nav links
-         keep matching the footer's own text color by default. */
       --footer-bg: var(--gray);
       --footer-fg: var(--text-muted);
       --footer-link-color: inherit;

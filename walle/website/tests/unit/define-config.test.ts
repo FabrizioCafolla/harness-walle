@@ -9,9 +9,8 @@ import {
 } from "../../src/@walle/define-config";
 import { contrastRatio } from "../../src/@walle/utils/contrast";
 
-// defineWalleConfig() always sets vite.plugins to a plain array of walle's own plugin objects
-// (never a Promise/false/nested array as Vite's wider PluginOption allows), so this narrows the
-// type once instead of asserting through it at every call site.
+// defineWalleConfig() always sets vite.plugins to a flat array of plugin objects, narrower than
+// Vite's PluginOption.
 type ThemePlugin = { name: string; load: (id: string) => string | null };
 
 function findThemePlugin(config: ReturnType<typeof defineWalleConfig>): ThemePlugin {
@@ -19,9 +18,8 @@ function findThemePlugin(config: ReturnType<typeof defineWalleConfig>): ThemePlu
   return plugins.find((p) => p.name === "walle-theme")!;
 }
 
-// define-config.ts reads appConfig.* and theme.json fresh on every defineWalleConfig() call
-// (no caching at module scope), so mutating these mocks between tests is enough: no need to
-// re-import the module per test.
+// define-config.ts reads appConfig.* and theme.json on every defineWalleConfig() call, so
+// mutating these mocks between tests needs no re-import.
 const baseAppConfig = {
   astro: { baseUrl: "https://example.com", basePath: "/", trailingSlash: "never" as const },
   website: {
@@ -53,8 +51,7 @@ vi.mock("node:fs", () => ({
   statSync: () => ({ isFile: () => fsIsFile }),
 }));
 
-// Every describe below reads theme.json through the fs mock, and a malformed one now throws:
-// reset it for all of them so no test inherits another's file state.
+// Every describe below reads theme.json through the fs mock, and a malformed one throws.
 beforeEach(() => {
   fsExists = false;
   fsContent = "";

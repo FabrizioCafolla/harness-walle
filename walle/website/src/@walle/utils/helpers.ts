@@ -40,22 +40,19 @@ export function calculateReadingTime(content: string): {
   const imageReadingTime = 12; // seconds per image
   const codeReadingTime = 25; // seconds per code block
 
-  // Remove HTML/Markdown and count words
   const cleanText = content
     .replace(/<[^>]*>/g, "") // Remove HTML
     .replace(/```[\s\S]*?```/g, "") // Remove code blocks
     .replace(/`[^`]*`/g, "") // Remove inline code
     .replace(/!\[.*?\]\(.*?\)/g, "") // Remove markdown images
-    .replace(/\[.*?\]\(.*?\)/g, "$1") // Convert links to text
+    .replace(/\[(.*?)\]\(.*?\)/g, "$1")
     .trim();
 
   const words = cleanText.split(/\s+/).filter((word) => word.length > 0).length;
 
-  // Count images and code blocks
   const images = (content.match(/!\[.*?\]\(.*?\)/g) || []).length;
   const codeBlocks = (content.match(/```[\s\S]*?```/g) || []).length;
 
-  // Calculate total time
   const totalMinutes = Math.ceil(
     words / wordsPerMinute + (images * imageReadingTime) / 60 + (codeBlocks * codeReadingTime) / 60
   );
@@ -112,11 +109,8 @@ export function normalizePath(path: string): string {
  * Meta-description budget. Returns `text` untouched when it fits, otherwise cuts it at the last
  * word boundary that fits and appends an ellipsis.
  *
- * The `cut > 0` guard is not defensive noise: `lastIndexOf(" ", n)` returns -1 for a string with
- * no space in its first n characters (a long unbroken token, a URL, an agglutinated title), and
- * `slice(0, -1)` would then drop exactly one character instead of truncating: producing an
- * almost-full-length string that silently defeats the whole function. In that case there is no
- * word boundary to respect, so the cut falls back to a hard one at the limit.
+ * `cut > 0` guards `lastIndexOf(" ", n)` returning -1 (no space in the first n characters, e.g.
+ * a URL), where `slice(0, -1)` would drop one character; the cut is then hard at the limit.
  */
 export function truncateAtWord(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;

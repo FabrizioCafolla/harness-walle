@@ -6,8 +6,7 @@ import { getCollection } from "astro:content";
  * /llms.txt (https://llmstxt.org): a build-time markdown index of the site for AI
  * crawlers. Lists the site identity and the page tree with descriptions from content.
  *
- * Seed file: owned by the consumer after scaffold. Extend the `lines` array with your
- * own page groups.
+ * Seed file: owned by the consumer after scaffold.
  */
 export const GET: APIRoute = async ({ site }) => {
   const base = (config.app.astro.basePath || "").replace(/\/$/, "");
@@ -23,8 +22,7 @@ export const GET: APIRoute = async ({ site }) => {
   // The showcase page is excluded from a seeded site: list it only where it exists.
   const hasShowcase = Object.keys(import.meta.glob("./showcase.astro")).length > 0;
 
-  // Commerce off: no /products route, no products collection: same gate as the
-  // injected pages themselves.
+  // Same gate as the injected /products pages: the products collection exists only with commerce on.
   const commerceOn =
     config.app.commerce?.mode === "catalog" || config.app.commerce?.mode === "shop";
   const products = commerceOn ? await getCollection("products") : [];

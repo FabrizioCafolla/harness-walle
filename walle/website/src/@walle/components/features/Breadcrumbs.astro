@@ -136,11 +136,8 @@ const ld =
       min-width: 0;
     }
 
-    /* Safety net, not a visual change: an over-long label is clipped here instead of pushing
-           the page wider than the viewport. `min-width: 0` on both the <li> and the flex parent
-           is required for the text to shrink at all: flex items default to min-width: auto and
-           refuse to go below their content width, so overflow/text-overflow alone would do
-           nothing without it. */
+    /* Flex items default to min-width: auto, so text-overflow has no effect unless
+           `min-width: 0` is set on both the <li> and the flex parent. */
     .breadcrumbs li {
       min-width: 0;
     }
@@ -169,20 +166,16 @@ const ld =
         font-size: 0.85rem;
       }
 
-      /* Hide Home (first item) on mobile, show immediate parent + current */
       .breadcrumbs li:first-child {
         display: none;
       }
 
-      /* Hide the leading separator on the item that becomes first visible */
       .breadcrumbs li:first-child + li .separator {
         display: none;
       }
 
-      /* Drop the current page too, same reasoning that already drops Home: it duplicates the
-                 page's own <h1>. `:not(:nth-child(2))` guards a two-item trail (Home / Current): with
-                 Home already hidden, the second child is the first crumb still visible, so hiding
-                 the current one too would leave an empty nav. */
+      /* `:not(:nth-child(2))`: in a two-item trail the current item is the only one
+                 visible once Home is hidden. */
       .breadcrumbs li.current:not(:nth-child(2)) {
         display: none;
       }

@@ -191,7 +191,6 @@ const howItWorksSteps = [
 </BaseLayout>
 
 <style>
-  /* ---- Hero ---- */
   .hero {
     background: var(--primary-dark);
     color: var(--white);
@@ -232,7 +231,7 @@ const howItWorksSteps = [
     margin-bottom: var(--space-xl);
   }
 
-  /* strong inherits the hero's light color instead of the global near-black */
+  /* The global strong color is near-black. */
   .hero__lead strong {
     color: var(--white);
   }
@@ -257,10 +256,8 @@ const howItWorksSteps = [
     color: rgba(255, 255, 255, 0.65);
   }
 
-  /* Terminal */
   .hero__terminal {
-    /* Grid items default to a content-based min-width, which lets the unwrapped
-                       command line below force this track (and the page) wider than the viewport. */
+    /* Grid items default to min-width: auto: the unwrapped command line would widen the page. */
     min-width: 0;
   }
 
@@ -321,7 +318,6 @@ const howItWorksSteps = [
     color: #4ade80;
   }
 
-  /* ---- Modules ---- */
   .modules {
     max-width: 1200px;
     margin: 0 auto;
@@ -409,7 +405,6 @@ const howItWorksSteps = [
     font-weight: 700;
   }
 
-  /* ---- Shared code blocks ---- */
   .code-block {
     max-width: 820px;
     margin: 1rem auto;
@@ -424,7 +419,6 @@ const howItWorksSteps = [
     line-height: 1.6;
   }
 
-  /* ---- CTA ---- */
   .cta {
     background: var(--primary);
     color: var(--white);
@@ -454,7 +448,6 @@ const howItWorksSteps = [
     flex-wrap: wrap;
   }
 
-  /* ---- Responsive ---- */
   @media (max-width: 900px) {
     .hero__inner {
       grid-template-columns: 1fr;

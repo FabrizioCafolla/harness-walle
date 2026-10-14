@@ -25,9 +25,8 @@ const {
   id,
 } = Astro.props;
 
-// This post's generated OG image exists only when the feature is on and `posts` is one of its
-// collections; otherwise `ogImageUrl` would point at a route that doesn't exist. A post's own
-// `image` is passed as the explicit OG image below, so it always wins over the generated one.
+// The generated OG route exists only when the feature is on and `posts` is one of its
+// collections.
 const ogImage = config.app.seo?.ogImage;
 const entryOgImage =
   id && ogImage?.enabled && ogImage.collections?.includes("posts")
@@ -125,7 +124,6 @@ const entryOgImage =
 
 <style>
   @layer walle.components {
-    /* Draft Message */
     .draft-message {
       text-align: center;
       padding: 64px 0;
@@ -133,7 +131,6 @@ const entryOgImage =
       font-size: var(--font-size-body);
     }
 
-    /* Article Container Layout */
     .article-container {
       max-width: 1200px;
       margin: 0 auto;
@@ -146,14 +143,12 @@ const entryOgImage =
       width: 100%;
     }
 
-    /* Article Styles */
     .article {
       background: var(--surface);
       position: relative;
       min-height: 100vh;
     }
 
-    /* Meta Information */
     .meta-wrapper {
       display: flex;
       flex-direction: column;
@@ -166,8 +161,7 @@ const entryOgImage =
       justify-content: center;
       gap: 1rem;
       font-size: 0.875rem;
-      /* Inherits the header's own foreground (SectionWrapper's --wrapper-fg): a fixed
-                     muted-gray here loses contrast once the header is filled with a variant color. */
+      /* Inherits SectionWrapper's --wrapper-fg: a fixed gray loses contrast on a filled header. */
       color: inherit;
       flex-wrap: wrap;
       list-style: none;
@@ -190,7 +184,6 @@ const entryOgImage =
       opacity: 0.5;
     }
 
-    /* Tags */
     .tags {
       display: flex;
       justify-content: center;
@@ -223,7 +216,6 @@ const entryOgImage =
       transform: translateY(-1px);
     }
 
-    /* Responsive - Tablet */
     @media (max-width: 1024px) {
       .article-container {
         grid-template-columns: 1fr;
@@ -232,7 +224,6 @@ const entryOgImage =
       }
     }
 
-    /* Responsive - Mobile */
     @media (max-width: 768px) {
       .draft-message {
         padding: 2rem 1.5rem;
@@ -264,7 +255,6 @@ const entryOgImage =
       }
     }
 
-    /* Responsive - Small Mobile */
     @media (max-width: 480px) {
       .draft-container {
         padding: 1.5rem 0.75rem;
@@ -301,7 +291,6 @@ const entryOgImage =
       }
     }
 
-    /* Responsive - Extra Small Mobile */
     @media (max-width: 375px) {
       .article-container {
         padding: 0 0.5rem;
@@ -310,7 +299,6 @@ const entryOgImage =
       }
     }
 
-    /* Print Styles */
     @media print {
       .article-container {
         grid-template-columns: 1fr;

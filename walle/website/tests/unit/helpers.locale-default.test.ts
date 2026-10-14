@@ -1,8 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 // Isolated in its own file: mocking @walle/config's website.language here would otherwise
-// leak into every other test in helpers.test.ts via vi.mock's file-scoped hoisting (same
-// reasoning as VariantPicker.locale-default.test.ts).
+// leak into every other test in helpers.test.ts via vi.mock's file-scoped hoisting.
 vi.mock("@walle/config", () => ({
   default: { app: { website: { language: "it-IT" } } },
 }));

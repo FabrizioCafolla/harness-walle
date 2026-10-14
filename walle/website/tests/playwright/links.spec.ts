@@ -1,10 +1,8 @@
 import { expect, test } from "@playwright/test";
 import { siteBase } from "./storyRoutes";
 
-// Link's external-host detection reads `Astro.site`, which astro/container's
-// experimental_AstroContainer never wires up (tests/unit/components/Link.test.ts documents
-// this), so that half of the contract can only be checked against a real render. The showcase
-// page already exercises both cases; this is that verification.
+// Link's external-host detection reads `Astro.site`, which experimental_AstroContainer never
+// sets: it is checked here against the rendered showcase page.
 const showcase = `${siteBase || ""}/showcase`;
 
 test.describe("Link external-host detection (build-level)", () => {
@@ -23,8 +21,7 @@ test.describe("Link external-host detection (build-level)", () => {
   });
 });
 
-// The real footer.json only ships 2 nav links; a consumer configuring 8 would rely on
-// `.footer-nav__list`'s wrap behavior to avoid pushing the page wider than the viewport.
+// footer.json ships 2 nav links; with 8, `.footer-nav__list` must wrap within the viewport.
 test.describe("Footer nav list wraps at 320px", () => {
   test.use({ viewport: { width: 320, height: 800 } });
 

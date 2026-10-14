@@ -19,9 +19,7 @@ const { title, subtitle, variant, filled = false, muted = false } = Astro.props;
 </SectionWrapper>
 
 <style>
-  /* Default slot content is arbitrary consumer markup: SectionWrapper only sets color on
-     its own tagline/title/subtitle. Sample text here follows the section's foreground
-     the same way a real consumer would, instead of the global prose default. */
+  /* SectionWrapper sets color only on its tagline/title/subtitle. */
   .demo-body {
     color: inherit;
   }

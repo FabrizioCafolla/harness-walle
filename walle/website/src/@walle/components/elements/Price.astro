@@ -66,8 +66,7 @@ const {
 const discountedLabel = t("price.discounted", discountedLabelProp);
 const originalLabel = t("price.original", originalLabelProp);
 
-// Intl wants BCP 47 (hyphens); tolerate a POSIX-style "it_IT" so a config typo
-// can't throw a RangeError at build.
+// Intl throws a RangeError on a POSIX-style "it_IT"; it requires BCP 47 hyphens.
 const bcp47 = locale.replace(/_/g, "-");
 const format = (amount: number) =>
   new Intl.NumberFormat(bcp47, { style: "currency", currency: price.currency }).format(amount);

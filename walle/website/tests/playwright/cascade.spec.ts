@@ -2,9 +2,8 @@ import { expect, test } from "@playwright/test";
 import { siteBase, storyRoutes } from "./storyRoutes";
 import { WALLE_LAYER_DECLARATION } from "../../src/@walle/styles/layers";
 
-// The cascade layer order must be declared before any other stylesheet reaches <head>,
-// so walle's own layers always lose to a `@layer site` rule (and any unlayered rule) that
-// arrives later in the document, regardless of actual load order.
+// The layer order must be declared before any other stylesheet in <head>, so walle's layers
+// lose to `@layer site` and unlayered rules regardless of load order.
 const home = siteBase || "/";
 
 const routes = storyRoutes();
@@ -52,10 +51,8 @@ test.describe("cascade layers", () => {
     const bg = await page
       .locator(".section-wrapper[data-muted]")
       .evaluate((el) => getComputedStyle(el).backgroundColor);
-    // --surface-alt's default (#f4f5f7); would resolve to --surface's default (#fefefe) if
-    // .section-wrapper[data-muted] redefined --surface-alt on itself instead of on a
-    // descendant, since --wrapper-bg and --surface-alt would then read the same rule's own
-    // new value instead of the ambient one.
+    // --surface-alt's default (#f4f5f7). It resolves to --surface's (#fefefe) if
+    // [data-muted] redefines --surface-alt on the wrapper itself instead of a descendant.
     expect(bg).toBe("rgb(244, 245, 247)");
   });
 });

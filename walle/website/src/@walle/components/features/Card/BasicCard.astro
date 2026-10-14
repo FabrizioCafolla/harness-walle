@@ -166,9 +166,8 @@ const truncatedContent =
     }
 
     .card__image {
-      /* Full-bleed to the card's top edges: cancel the wrapper padding so the image
-               reaches the border, with only the top corners rounded (the wrapper clips
-               them) and a square bottom. No inset, no double border. */
+      /* Full-bleed to the card's top edges: cancels the wrapper padding so the image reaches
+         the border; the wrapper clips the top corners. */
       aspect-ratio: 1;
       overflow: hidden;
       background: var(--surface-alt);
@@ -249,7 +248,6 @@ const truncatedContent =
       flex: 1;
     }
 
-    /* Responsive adjustments */
     @media (max-width: 640px) {
       .card {
         --card-padding: 16px;
@@ -308,7 +306,6 @@ const truncatedContent =
       }
     }
 
-    /* Accessibility */
     @media (prefers-reduced-motion: reduce) {
       .card,
       .card__wrapper,
@@ -342,7 +339,6 @@ const truncatedContent =
       }
     }
 
-    /* Focus visible for keyboard navigation */
     .card:focus-visible {
       outline: 2px solid var(--focus-ring);
       outline-offset: 2px;

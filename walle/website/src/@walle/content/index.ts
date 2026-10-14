@@ -47,22 +47,14 @@ const products = defineCollection({
 });
 
 /**
- * Collections gated by a walle feature: the products collection only exists when
- * commerce is on, mirroring `virtual:walle-features`'s "nothing shipped when off" contract at
- * the content layer instead of the module graph. `commerceMode` is passed in rather than read
- * from `@walle/config` here: this module loads inside Astro's content-layer graph (it's a
- * dependency of content.config.ts), and importing `@walle/config` there drags in
- * vite-plugin-pwa via `defineWalleConfig` and breaks the build: see the note on this
- * restriction in commerce/shopify.ts's `formatMoney`.
+ * Collections gated by a walle feature: `products` exists only when commerce is on.
+ * `commerceMode` is passed in because this module is in Astro's content-layer graph, where
+ * importing `@walle/config` pulls in vite-plugin-pwa via `defineWalleConfig` and breaks the build.
  *
- * Return type claims `products` is always present: an optional or unioned shape here breaks
- * `ContentConfig['collections']['products']`'s schema inference for every caller of
- * `getCollection("products")` (Astro's generated `content.d.ts` indexes it with `Required<>`,
- * which silently collapses to `unknown` across an optional/union key once `skipLibCheck` hides
- * the underlying error). This is safe because every caller that runs regardless of commerce
- * mode (a seed page, e.g. llms.txt.ts) must check the mode itself before calling
- * `getCollection("products")`: the two commerce pages that don't check are only ever rendered
- * when this returned `products`, since walle injects them for exactly the same condition.
+ * The return type declares `products` always present: an optional or union key makes
+ * Astro's generated `content.d.ts` (`Required<>`) infer `unknown` for `getCollection("products")`.
+ * A caller that runs regardless of commerce mode (e.g. llms.txt.ts) must check the mode before
+ * calling `getCollection("products")`; the injected commerce pages exist only when it is on.
  */
 export function walleCollections(commerceMode: string | undefined): { products: typeof products } {
   return (commerceMode === "catalog" || commerceMode === "shop" ? { products } : {}) as {
