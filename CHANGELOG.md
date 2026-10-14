@@ -21,6 +21,8 @@ Open fix branch: small fixes are added here until the release.
 
 ### Changed
 
+- **`wiki/architecture/style.md` places `prose.css` in `walle.components`**, the layer the file
+  declares, and lists what `utilities.css` really holds.
 - **Source comments state facts only.** Several hundred lines of history, narration and reasoning
   were removed from the component, config, CLI and test sources; no code changed.
 
