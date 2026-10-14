@@ -74,6 +74,10 @@ describe("calculateReadingTime", () => {
     expect(result.minutes).toBeGreaterThan(1);
     expect(result.text).toMatch(/minutes read$/);
   });
+  it("counts the text of a markdown link, not a placeholder", () => {
+    const withLink = calculateReadingTime("one [two three](https://example.com/x) four");
+    expect(withLink.words).toBe(4);
+  });
 });
 
 describe("resolveInternalUrl", () => {
@@ -126,9 +130,8 @@ describe("truncateAtWord", () => {
     expect(truncateAtWord("one two    three", 12)).toBe("one two…");
   });
 
-  // The regression this function exists for: lastIndexOf(" ", n) returns -1 when the first n
-  // characters hold no space, and slice(0, -1) would then drop a single character instead of
-  // truncating, returning a string almost as long as the original.
+  // lastIndexOf(" ", n) is -1 when the first n characters hold no space; slice(0, -1) would
+  // then drop a single character instead of truncating.
   it("still truncates when no space fits in the budget", () => {
     const out = truncateAtWord("a".repeat(200), 20);
     expect(out).toBe("a".repeat(19) + "…");

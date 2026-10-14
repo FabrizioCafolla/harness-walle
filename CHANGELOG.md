@@ -4,6 +4,26 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/develop/versioning.md).
 
+## [0.11.0] - Unreleased
+
+Open fix branch: small fixes are added here until the release.
+
+### Fixed
+
+- **Navbar links keep a visible keyboard focus ring.** `.brand-link`, `.nav-link` and
+  `.dropdown-link` removed their outline with no replacement, so keyboard users could not see
+  which link had focus. Each now draws `outline: 3px solid var(--focus-ring)` on `:focus-visible`.
+- **The `Organization` JSON-LD `logo` is the site image (`website.image`), not the page's own
+  image.** On a page that sets its own `headerImage` (a blog post) the logo used to become that
+  image. A site can still override it through `website.structuredData.organization.logo`.
+- **`calculateReadingTime` counts the text of a markdown link.** The link pattern had no capture
+  group, so every link counted as the literal `$1` instead of its words.
+
+### Changed
+
+- **Source comments state facts only.** Several hundred lines of history, narration and reasoning
+  were removed from the component, config, CLI and test sources; no code changed.
+
 ## [0.10.0] - 2026-10-17
 
 ### Added
