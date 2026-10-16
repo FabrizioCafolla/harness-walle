@@ -178,6 +178,9 @@ const props = Astro.props;
 customization than a full swap, and `BaseLayout` exposes `navbar`/`footer` slots that replace
 the resolved component outright for one page.
 
+`HeaderStandard` (`SectionHeaderStandard`) takes an optional `eyebrow` slot rendered above the
+title, for a badge or a short label; without it nothing is rendered.
+
 ## Breadcrumbs
 
 Each crumb is `white-space: nowrap` (an unbreakable box); `flex-wrap` on the list can only push
