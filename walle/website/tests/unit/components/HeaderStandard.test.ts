@@ -29,6 +29,20 @@ describe("HeaderStandard", () => {
     expect(html).not.toContain("<h2");
   });
 
+  it("the eyebrow slot renders above the h1 and is absent when not passed", async () => {
+    const container = await AstroContainer.create();
+    const html = await container.renderToString(HeaderStandard, {
+      props: { title: "Page title" },
+      slots: { eyebrow: "<span>Badge</span>" },
+    });
+    expect(html.indexOf("Badge")).toBeGreaterThan(-1);
+    expect(html.indexOf("Badge")).toBeLessThan(html.indexOf("<h1"));
+    const plain = await container.renderToString(HeaderStandard, {
+      props: { title: "Page title" },
+    });
+    expect(plain).not.toContain("Badge");
+  });
+
   it("renders the image when passed", async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(HeaderStandard, {

@@ -56,6 +56,7 @@ const hasSubtitle = Astro.slots.has("subtitle") || Boolean(subtitle);
     ]}
   >
     <div class="header-extra">
+      {Astro.slots.has("eyebrow") && <slot name="eyebrow" />}
       <h1 class="header-title">{Astro.slots.has("title") ? <slot name="title" /> : title}</h1>
       {
         hasSubtitle && (

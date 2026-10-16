@@ -15,6 +15,8 @@ All notable changes to Walle are documented here. Format follows
   and `--navbar-link-active-bg` style the link of the current page (defaults: same look as any
   other link); `--navbar-link-radius` sets the corner radius of the links (a pill for the
   current one); `--navbar-mobile-bg` sets the fill of the mobile panel.
+- **`eyebrow` slot on `SectionHeaderStandard`.** Content (a badge, a label) rendered above the
+  title. Without the slot nothing is rendered, so existing headers do not change.
 - **`--section-title-size` and `--section-title-gap` on `Section`.** The title size and the space
   below it, without a selector on `.section-title`. Markdown `h2`-`h4` inside the text now take
   `--wrapper-title-color` like the section title.
