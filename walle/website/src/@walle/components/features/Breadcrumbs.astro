@@ -86,6 +86,8 @@ const ld =
     .breadcrumbs {
       /* Public properties */
       --breadcrumbs-color: var(--primary);
+      --breadcrumbs-color-hover: var(--primary-dark);
+      --breadcrumbs-bg-hover: color-mix(in srgb, var(--primary) 5%, transparent);
       --breadcrumbs-current-color: var(--text-muted);
       --breadcrumbs-separator-color: color-mix(in srgb, var(--text-muted) 60%, transparent);
 
@@ -122,8 +124,8 @@ const ld =
     }
 
     .breadcrumbs a:hover {
-      background: color-mix(in srgb, var(--primary) 5%, transparent);
-      color: var(--primary-dark);
+      background: var(--breadcrumbs-bg-hover);
+      color: var(--breadcrumbs-color-hover);
     }
 
     .current-item {

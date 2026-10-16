@@ -32,16 +32,29 @@ const shouldShowBrand = hasLogo || hasTitle;
                 class="brand-link"
               >
                 {hasLogo ? (
-                  <img
-                    src={config.logo.src}
-                    alt={config.logo.alt || config.logo.title || t("logo")}
-                    aria-label={config.logo.alt || config.logo.title || t("logo")}
-                    width={config.logo.width || 50}
-                    height={config.logo.height || 50}
-                    loading="eager"
-                    class:list={["brand-logo", config.logo.cssClasses]}
-                    fetchpriority="high"
-                  />
+                  <>
+                    <img
+                      src={config.logo.src}
+                      alt={config.logo.alt || config.logo.title || t("logo")}
+                      aria-label={config.logo.alt || config.logo.title || t("logo")}
+                      width={config.logo.width || 50}
+                      height={config.logo.height || 50}
+                      loading="eager"
+                      class:list={["brand-logo", config.logo.cssClasses]}
+                      fetchpriority="high"
+                    />
+                    {config.logo.srcInverse && (
+                      <img
+                        src={config.logo.srcInverse}
+                        alt=""
+                        aria-hidden="true"
+                        width={config.logo.width || 50}
+                        height={config.logo.height || 50}
+                        loading="eager"
+                        class:list={["brand-logo", "brand-logo--inverse", config.logo.cssClasses]}
+                      />
+                    )}
+                  </>
                 ) : hasTitle ? (
                   <span class:list={["brand-title", config.logo.cssClasses]}>
                     {config.logo.title}
@@ -78,19 +91,51 @@ const shouldShowBrand = hasLogo || hasTitle;
 
 <style is:global>
   @layer walle.components {
+    /* On :root, not on the header: the element under a transparent menu pads its top with it. */
+    :root {
+      --navbar-height: 70px;
+    }
+
     .site-header {
       /* Public properties */
       --navbar-bg: color-mix(in srgb, var(--surface) 95%, transparent);
       --navbar-fg: var(--text);
       --navbar-border: color-mix(in srgb, var(--text) 8%, transparent);
       --navbar-shadow: var(--shadow-md);
-      --navbar-height: 70px;
       --navbar-logo-height: 40px;
       --navbar-logo-height-mobile: 34px;
       --navbar-link-color: var(--navbar-fg);
       --navbar-link-color-hover: var(--primary);
+      --navbar-link-active-color: var(--navbar-link-color);
+      --navbar-link-active-bg: transparent;
+      --navbar-link-radius: var(--radius-md);
+      /* Top state of a page that opts in with a `data-navbar-overlay` element (see below). */
+      --navbar-overlay-fg: var(--white);
+      --navbar-overlay-link-active-bg: color-mix(in srgb, var(--white) 16%, transparent);
+      --navbar-overlay-button-bg: var(--white);
+      --navbar-overlay-button-fg: var(--secondary);
+      --navbar-overlay-button-border: var(--navbar-overlay-button-bg);
+      --navbar-overlay-button-bg-hover: color-mix(
+        in srgb,
+        var(--navbar-overlay-button-bg) 88%,
+        var(--black)
+      );
+      --navbar-mobile-bg: var(--surface);
+      --navbar-mobile-divider: 1px solid var(--navbar-border);
+      --navbar-mobile-link-padding: 1.25rem 0.5rem;
+      --navbar-mobile-link-padding-narrow: 1.125rem 0.25rem;
+      --navbar-mobile-link-radius: 0;
+      --navbar-hamburger-bg-hover: color-mix(in srgb, var(--primary) 8%, transparent);
       --navbar-dropdown-bg: var(--surface);
       --navbar-dropdown-radius: var(--radius-lg);
+
+      /* Effective values of the link and control colors. Components read these; the overlay top
+         state swaps them, so a site's own `--navbar-*` (set in a later layer) cannot undo it. */
+      --_navbar-fg: var(--navbar-fg);
+      --_navbar-link-color: var(--navbar-link-color);
+      --_navbar-link-color-hover: var(--navbar-link-color-hover);
+      --_navbar-link-active-color: var(--navbar-link-active-color);
+      --_navbar-link-active-bg: var(--navbar-link-active-bg);
 
       position: sticky;
       top: 0;
@@ -201,7 +246,7 @@ const shouldShowBrand = hasLogo || hasTitle;
       align-items: center;
       gap: 0.5rem;
       padding: 0.75rem 1.25rem;
-      color: var(--navbar-link-color);
+      color: var(--_navbar-link-color);
       text-decoration: none;
       font-size: 0.95rem;
       font-weight: 500;
@@ -209,7 +254,7 @@ const shouldShowBrand = hasLogo || hasTitle;
       border: none;
       cursor: pointer;
       font-family: inherit;
-      border-radius: var(--radius-md);
+      border-radius: var(--navbar-link-radius);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       letter-spacing: -0.01em;
@@ -231,7 +276,7 @@ const shouldShowBrand = hasLogo || hasTitle;
         left: 50%;
         width: 0;
         height: 2px;
-        background: var(--navbar-link-color-hover);
+        background: var(--_navbar-link-color-hover);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         transform: translateX(-50%);
         border-radius: var(--radius-sm);
@@ -242,7 +287,7 @@ const shouldShowBrand = hasLogo || hasTitle;
       }
 
       .nav-link:hover {
-        color: var(--navbar-link-color-hover);
+        color: var(--_navbar-link-color-hover);
         transform: translateY(-1px);
       }
     }
@@ -343,14 +388,14 @@ const shouldShowBrand = hasLogo || hasTitle;
     }
 
     .hamburger:hover {
-      background-color: color-mix(in srgb, var(--primary) 8%, transparent);
+      background-color: var(--navbar-hamburger-bg-hover);
     }
 
     .hamburger-line {
       display: block;
       width: 24px;
       height: 2px;
-      background-color: var(--navbar-fg);
+      background-color: var(--_navbar-fg);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: absolute;
       border-radius: var(--radius-sm);
@@ -382,8 +427,8 @@ const shouldShowBrand = hasLogo || hasTitle;
         padding: 0 1rem;
       }
 
-      .main-nav {
-        height: 64px;
+      :root {
+        --navbar-height: 64px;
       }
 
       /* Right cluster on mobile: brand stays left; the cart + hamburger sit together on the
@@ -406,9 +451,9 @@ const shouldShowBrand = hasLogo || hasTitle;
         width: 100%;
         height: 100vh;
         height: 100dvh;
-        background: color-mix(in srgb, var(--surface) 98%, transparent);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
+        /* Opaque on purpose: the header above has its own `backdrop-filter`, which isolates
+           this fixed panel, so a translucent fill here lets the page text show through. */
+        background: var(--navbar-mobile-bg);
         visibility: hidden;
         opacity: 0;
         transform: scale(0.95);
@@ -442,7 +487,7 @@ const shouldShowBrand = hasLogo || hasTitle;
 
       .nav-item {
         width: 100%;
-        border-bottom: 1px solid var(--navbar-border);
+        border-bottom: var(--navbar-mobile-divider);
         box-sizing: border-box;
       }
 
@@ -450,11 +495,20 @@ const shouldShowBrand = hasLogo || hasTitle;
         border-bottom: none;
       }
 
+      .nav-item--button {
+        border-bottom: none;
+        padding: 1rem 0;
+      }
+
+      .nav-item--button .button {
+        width: 100%;
+      }
+
       .nav-link {
-        padding: 1.25rem 0.5rem;
+        padding: var(--navbar-mobile-link-padding);
         font-size: 1.1rem;
         font-weight: 400;
-        border-radius: 0;
+        border-radius: var(--navbar-mobile-link-radius);
         background: transparent;
         letter-spacing: -0.02em;
         display: flex;
@@ -566,7 +620,7 @@ const shouldShowBrand = hasLogo || hasTitle;
       }
 
       .nav-link {
-        padding: 1.125rem 0.25rem;
+        padding: var(--navbar-mobile-link-padding-narrow);
         font-size: 1.05rem;
       }
 
@@ -574,6 +628,60 @@ const shouldShowBrand = hasLogo || hasTitle;
         padding: 0.875rem 1.25rem;
         font-size: 0.95rem;
       }
+    }
+
+    /* Current page's link. Declared after the mobile block so its `.nav-link:hover` reset
+       (same specificity) cannot win. Defaults leave the link looking like any other. */
+    .nav-link.active {
+      color: var(--_navbar-link-active-color);
+      background: var(--_navbar-link-active-bg);
+    }
+
+    /* Logo for a transparent menu over a dark top: hidden until the overlay state. */
+    .brand-link .brand-logo--inverse {
+      display: none;
+    }
+
+    /* Overlay: a page that renders an element with `data-navbar-overlay` (its blue hero or
+       header band) lets the menu sit on top of it, transparent, with the light colors above.
+       The header slides over the next element by its own height, so that element draws
+       underneath and must pad its top by `--navbar-height` itself. Once the page scrolls
+       (`.scrolled`) or the mobile panel is open (`body.menu-open`), the menu is solid again. */
+    body:has([data-navbar-overlay]) .site-header {
+      margin-bottom: calc(-1 * var(--navbar-height) - 1px);
+    }
+
+    body:not(.menu-open):has([data-navbar-overlay]) .site-header:not(.scrolled) {
+      --_navbar-fg: var(--navbar-overlay-fg);
+      --_navbar-link-color: var(--navbar-overlay-fg);
+      --_navbar-link-color-hover: var(--navbar-overlay-fg);
+      --_navbar-link-active-color: var(--navbar-overlay-fg);
+      --_navbar-link-active-bg: var(--navbar-overlay-link-active-bg);
+
+      background: transparent;
+      border-bottom-color: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    body:not(.menu-open):has([data-navbar-overlay]) .site-header:not(.scrolled) .brand-logo {
+      display: none;
+    }
+
+    body:not(.menu-open):has([data-navbar-overlay])
+      .site-header:not(.scrolled)
+      .brand-logo--inverse {
+      display: block;
+    }
+
+    body:not(.menu-open):has([data-navbar-overlay])
+      .site-header:not(.scrolled)
+      .nav-item--button
+      .button {
+      --button-bg: var(--navbar-overlay-button-bg);
+      --button-bg-hover: var(--navbar-overlay-button-bg-hover);
+      --button-fg: var(--navbar-overlay-button-fg);
+      --button-border: var(--navbar-overlay-button-border);
     }
 
     @media (prefers-reduced-motion: reduce) {

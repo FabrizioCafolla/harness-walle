@@ -71,10 +71,15 @@ const {
       direction: ltr;
     }
 
-    .section-title {
-      margin: 0 0 var(--space-2xl);
+    .text-container :where(h2, h3, h4):not(.section-title) {
       color: var(--wrapper-title-color);
-      font-size: clamp(2rem, 4vw, 2.75rem);
+    }
+
+    .section-title {
+      /* Public properties: `--section-title-size`, `--section-title-gap`. */
+      margin: 0 0 var(--section-title-gap, var(--space-2xl));
+      color: var(--wrapper-title-color);
+      font-size: var(--section-title-size, clamp(2rem, 4vw, 2.75rem));
       font-weight: 700;
       line-height: 1.2;
     }

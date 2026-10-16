@@ -13,6 +13,9 @@
         "src": {
           "type": "string"
         },
+        "srcInverse": {
+          "type": "string"
+        },
         "title": {
           "type": "string"
         },

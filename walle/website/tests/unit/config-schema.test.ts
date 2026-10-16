@@ -26,6 +26,34 @@ describe("config schemas parse the demo configs", () => {
   });
 });
 
+describe("navbar schema: items rendered as a button", () => {
+  const nav = (item: object) => ({ logo: { url: "/" }, items: [item] });
+
+  it("accepts type and variant on an item", () => {
+    expect(() =>
+      navbarSchema.parse(
+        nav({ name: "Add", url: "/add", type: "button", variant: "alternative", outline: true })
+      )
+    ).not.toThrow();
+  });
+
+  it("rejects an unknown type or variant", () => {
+    expect(() => navbarSchema.parse(nav({ url: "/", type: "pill" }))).toThrow();
+    expect(() => navbarSchema.parse(nav({ url: "/", type: "button", variant: "red" }))).toThrow();
+  });
+});
+
+describe("navbar schema: logo.srcInverse", () => {
+  it("accepts a light logo for the transparent menu", () => {
+    expect(() =>
+      navbarSchema.parse({
+        logo: { url: "/", src: "/a.svg", srcInverse: "/a-light.svg" },
+        items: [],
+      })
+    ).not.toThrow();
+  });
+});
+
 describe("theme schema: typography.fonts[].fallback", () => {
   const fontEntry = (fallback?: unknown) => ({
     role: "body",

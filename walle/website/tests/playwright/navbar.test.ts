@@ -134,3 +134,81 @@ test.describe("Navbar - Tablet (768x1024)", () => {
     await expect(hamburger).toBeVisible();
   });
 });
+
+// A page opts in to the transparent menu by rendering an element with `data-navbar-overlay`
+// (its hero). The demo pages have none, so the tests add the marker and the two logos.
+test.describe("Navbar - overlay over a dark top", () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  const optIn = async (page: import("@playwright/test").Page) => {
+    await page.goto(home);
+    await page.evaluate(() => {
+      const marker = document.createElement("div");
+      marker.setAttribute("data-navbar-overlay", "");
+      marker.style.cssText = "height:2000px;background:#0b2a5b";
+      document.querySelector("main")?.prepend(marker);
+      const link = document.querySelector(".brand-link");
+      if (link) {
+        const svg = (c: string) =>
+          `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="${c}"/></svg>`)}`;
+        link.innerHTML = `<img class="brand-logo" alt="logo" src="${svg("black")}"><img class="brand-logo brand-logo--inverse" alt="" src="${svg("white")}">`;
+      }
+    });
+  };
+
+  test("at the top the menu is transparent with light links and the inverse logo", async ({
+    page,
+  }) => {
+    await optIn(page);
+    const header = page.locator(".site-header");
+    await expect(header).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await expect(page.locator(".nav-link").first()).toHaveCSS(
+      "color",
+      /rgb\(2(55|54), 2(55|54), 2(55|54)\)/
+    );
+    await expect(page.locator(".brand-logo--inverse")).toBeVisible();
+    await expect(page.locator(".brand-logo:not(.brand-logo--inverse)")).toBeHidden();
+  });
+
+  test("after scrolling the menu is solid again with the normal logo", async ({ page }) => {
+    await optIn(page);
+    await page.evaluate(() => window.scrollTo(0, 400));
+    await expect(page.locator(".site-header")).toHaveClass(/scrolled/);
+    await expect(page.locator(".site-header")).not.toHaveCSS(
+      "background-color",
+      "rgba(0, 0, 0, 0)"
+    );
+    await expect(page.locator(".brand-logo:not(.brand-logo--inverse)")).toBeVisible();
+    await expect(page.locator(".brand-logo--inverse")).toBeHidden();
+  });
+
+  test("a page without the marker keeps the solid menu", async ({ page }) => {
+    await page.goto(home);
+    await expect(page.locator(".site-header")).not.toHaveCSS(
+      "background-color",
+      "rgba(0, 0, 0, 0)"
+    );
+  });
+});
+
+test.describe("Navbar - overlay on mobile (375x667)", () => {
+  test.use({ viewport: { width: 375, height: 667 } });
+
+  test("the open panel is opaque and uses the normal logo", async ({ page }) => {
+    await page.goto(home);
+    await page.evaluate(() => {
+      const marker = document.createElement("div");
+      marker.setAttribute("data-navbar-overlay", "");
+      marker.style.cssText = "height:2000px;background:#0b2a5b";
+      document.querySelector("main")?.prepend(marker);
+    });
+    await page.locator("#mobile-menu-toggle").click();
+    await expect(page.locator(".nav-container")).toBeVisible();
+    await expect(page.locator(".nav-container")).not.toHaveCSS(
+      "background-color",
+      "rgba(0, 0, 0, 0)"
+    );
+    await expect(page.locator("body")).toHaveClass(/menu-open/);
+    await expect(page.locator(".nav-link").first()).not.toHaveCSS("color", "rgb(255, 255, 255)");
+  });
+});

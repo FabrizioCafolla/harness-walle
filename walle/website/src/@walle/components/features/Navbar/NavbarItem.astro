@@ -1,8 +1,10 @@
 ---
 import { Icon } from "astro-icon/components";
+import Button from "../../elements/Button.astro";
 import NavbarDropdown from "./NavbarDropdown.astro";
 import NavbarLink from "./NavbarLink.astro";
 import type { NavigationLink } from "@walle/config";
+import { resolveInternalUrl } from "@walle/utils";
 
 interface Props {
   item: NavigationLink;
@@ -10,10 +12,14 @@ interface Props {
 
 const { item } = Astro.props;
 const hasDropdown = item.dropdown && item.dropdown.length > 0;
+const isButton = item.type === "button" && !hasDropdown;
 const itemTarget = item.target ?? (item.url.startsWith("http") ? "_blank" : "_self");
 ---
 
-<li class:list={["nav-item", { "has-dropdown": hasDropdown }]} data-component="NavbarItem">
+<li
+  class:list={["nav-item", { "has-dropdown": hasDropdown, "nav-item--button": isButton }]}
+  data-component="NavbarItem"
+>
   {
     hasDropdown ? (
       <div class="dropdown-container">
@@ -24,6 +30,16 @@ const itemTarget = item.target ?? (item.url.startsWith("http") ? "_blank" : "_se
         </button>
         <NavbarDropdown items={item.dropdown!} />
       </div>
+    ) : isButton ? (
+      <Button
+        href={resolveInternalUrl(item.url)}
+        target={itemTarget}
+        text={item.name ?? item.url}
+        variant={item.variant}
+        outline={item.outline}
+        icon={item.icon}
+        size="medium"
+      />
     ) : (
       <NavbarLink href={item.url} target={itemTarget} class="nav-link" name={item.name}>
         {item.icon && <Icon name={item.icon} aria-hidden="true" size={20} />}
