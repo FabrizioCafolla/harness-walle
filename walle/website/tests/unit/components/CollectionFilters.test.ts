@@ -16,6 +16,19 @@ describe("CollectionFilters", () => {
     expect(html.match(/filters__facet/g)?.length).toBe(2);
   });
 
+  it("keeps the live status region and hides it visually with hideStatus", async () => {
+    const container = await AstroContainer.create();
+    const shown = await container.renderToString(CollectionFilters, { props: {} });
+    const hidden = await container.renderToString(CollectionFilters, {
+      props: { hideStatus: true },
+    });
+    const status = (html: string) => html.match(/<div[^>]*filters__status[^>]*>/)?.[0] ?? "";
+    expect(status(shown)).not.toContain("sr-only");
+    expect(status(hidden)).toContain("sr-only");
+    expect(status(hidden)).toContain('role="status"');
+    expect(status(hidden)).toContain('aria-live="polite"');
+  });
+
   it("renders the search input when search is true", async () => {
     const container = await AstroContainer.create();
     const html = await container.renderToString(CollectionFilters, {

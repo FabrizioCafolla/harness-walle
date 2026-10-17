@@ -4,6 +4,66 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/develop/versioning.md).
 
+## [Unreleased]
+
+### Added
+
+- **`navbar.json` items can render as a button.** `"type": "button"` draws the item with `Button`
+  (desktop and mobile panel) and `"variant"` picks its color and `"outline": true` draws it as an outline. Without `type`, items stay text
+  links, so existing sites do not change.
+- **Navbar properties for the current link and the mobile panel.** `--navbar-link-active-color`
+  and `--navbar-link-active-bg` style the link of the current page (defaults: same look as any
+  other link); `--navbar-link-radius` sets the corner radius of the links (a pill for the
+  current one); `--navbar-mobile-bg` sets the fill of the mobile panel.
+- **`eyebrow` slot on `SectionHeaderStandard`.** Content (a badge, a label) rendered above the
+  title. Without the slot nothing is rendered, so existing headers do not change.
+- **`--section-title-size` and `--section-title-gap` on `Section`.** The title size and the space
+  below it, without a selector on `.section-title`. Markdown `h2`-`h4` inside the text now take
+  `--wrapper-title-color` like the section title.
+
+- **Transparent menu over a dark top.** A page opts in by rendering an element with
+  `data-navbar-overlay` (its hero or header band). At the top of that page the menu has no
+  background and uses `--navbar-overlay-fg`, `--navbar-overlay-link-active-bg`,
+  `--navbar-overlay-button-bg`, `--navbar-overlay-button-fg`, `--navbar-overlay-button-border` and `--navbar-overlay-button-bg-hover`, and shows `logo.srcInverse` (new
+  optional key of `navbar.json`) instead of `logo.src`. After the page scrolls (`.scrolled`) and
+  while the mobile panel is open it is the solid menu again. The header slides over the next
+  element by its own height, so that element must pad its top by `--navbar-height`. Pages
+  without the marker, and sites that never add it, do not change.
+- **Footer properties for a dark footer.** `--footer-underline`, `--footer-icon-bg`,
+  `--footer-icon-fg`, `--footer-icon-bg-hover`, `--footer-icon-fg-hover` restyle the link
+  underline and the social icons, and `--footer-nav-grow` widens the link column (fewer rows of links), and `--footer-wave-height` draws a wave edge on top of the
+  footer in `--footer-bg` (default 0: straight edge, no change). The logo link now hovers in
+  `--footer-link-color-hover`.
+- **Breadcrumbs hover properties.** `--breadcrumbs-color-hover` and `--breadcrumbs-bg-hover`, for
+  breadcrumbs on a dark band.
+
+- **`CollectionFilters` public properties.** `--filters-bg`, `--filters-radius`, `--filters-shadow`,
+  `--filters-padding`, `--filters-border`, `--filters-row-border` (the panel); `--filters-control-radius`,
+  `--filters-control-border`, `--filters-control-bg` (dropdown buttons) and `--filters-menu-radius` (their menus);
+  `--filters-search-border`, `--filters-search-radius`, `--filters-search-bg`,
+  `--filters-search-padding`, `--filters-search-icon-left` (the search field);
+  `--filters-clear-border`, `--filters-clear-radius`, `--filters-clear-padding`,
+  `--filters-clear-color`, `--filters-clear-color-hover`, `--filters-clear-decoration` (reset, e.g. as
+  a text link). The defaults are today's look: nothing changes unless a site sets them.
+- **`top` slot on the standard `Footer`.** Content placed there sits at the top of the footer, inside
+  its background and under its wave edge (for example calls to action). Empty by default.
+
+- **Mobile menu properties.** `--navbar-mobile-divider` (the line between entries, `none` removes it),
+  `--navbar-mobile-link-padding` and `--navbar-mobile-link-padding-narrow` (up to 480 px),
+  `--navbar-mobile-link-radius` (a pill for the active entry) and `--navbar-hamburger-bg-hover`
+  (the square behind the menu button on hover). Defaults are today's look.
+- **`CollectionFilters` `hideStatus` prop.** Hides the visible result count but keeps the
+  `role="status"` live region for screen readers (it gets the `sr-only` class).
+
+### Fixed
+
+- **A mouse click on a link drew a focus ring.** The global `a:focus` rule is now `a:focus-visible`:
+  the ring shows for keyboard focus only.
+- **The mobile menu panel let the page show through.** The panel is `position: fixed` inside the
+  header, which has its own `backdrop-filter`: that isolates the panel, so its blur no longer
+  samples the page and the 98% fill did not cover the text behind. The panel is now opaque
+  (`--navbar-mobile-bg`, default `--surface`) and its useless `backdrop-filter` is gone.
+
 ## [0.9.1] - 2026-10-13
 
 ### Added

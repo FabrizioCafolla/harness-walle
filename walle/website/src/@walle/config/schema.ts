@@ -29,6 +29,9 @@ function removedKey(guidance: string) {
 const logoSchema = z
   .object({
     src: z.string().optional(),
+    // Navbar only: light version of `src`, shown instead of it over a transparent menu
+    // (`data-navbar-overlay`), before the page scrolls.
+    srcInverse: z.string().optional(),
     title: z.string().optional(),
     url: z.string(),
     width: z.number().optional(),
@@ -57,6 +60,12 @@ const navigationLinkSchema = z
     icon: z.string().optional(),
     target: navigationTarget.optional(),
     dropdown: z.array(dropdownLinkSchema).optional(),
+    // `button` renders the item as a `Button` (desktop and mobile panel) instead of a text link;
+    // `variant` picks its color and only applies to a button. Ignored when `dropdown` is set.
+    type: z.enum(["link", "button"]).optional(),
+    variant: z.enum(["primary", "secondary", "alternative", "site"]).optional(),
+    // Draws a button as an outline (border and text in the variant color).
+    outline: z.boolean().optional(),
   })
   .strict();
 

@@ -67,6 +67,13 @@ export interface Props extends BaseProps<"div"> {
   search?: boolean;
 
   /**
+   * Hide the visible result count ("12 items shown") but keep it in the live region for screen
+   * readers.
+   * @default false
+   */
+  hideStatus?: boolean;
+
+  /**
    * UI labels: English defaults, override for localization.
    * `{n}` in `status` is replaced with the visible-item count;
    * `{label}` / `{n}` in facet templates with the facet label / selection count.
@@ -81,12 +88,13 @@ export interface Props extends BaseProps<"div"> {
   };
 }
 
-const OWN_KEYS = ["facets", "itemSelector", "search", "labels", "class"] as const;
+const OWN_KEYS = ["facets", "itemSelector", "search", "hideStatus", "labels", "class"] as const;
 const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const {
   facets = [],
   itemSelector = "[data-filter-item]",
   search = true,
+  hideStatus = false,
   labels = {},
   class: className,
 } = own;
@@ -178,7 +186,13 @@ const l = {
     }
     <button type="button" class="filters__clear">{l.clear}</button>
   </div>
-  <div class="filters__status" role="status" aria-live="polite" aria-atomic="true"></div>
+  <div
+    class:list={["filters__status", { "sr-only": hideStatus }]}
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+  </div>
 </div>
 
 <noscript>
@@ -199,8 +213,38 @@ const l = {
       --chip-bg-active: var(--surface-alt);
       --chip-fg: var(--text);
       --chip-radius: var(--radius-sm);
+      /* The panel around the controls. Defaults: no panel, as before. */
+      --filters-bg: transparent;
+      --filters-radius: 0;
+      --filters-shadow: none;
+      --filters-padding: 0;
+      --filters-border: none;
+      --filters-row-border: 1px solid var(--border);
+      /* Dropdown buttons and their menus. */
+      --filters-control-radius: var(--radius-sm);
+      --filters-control-border: var(--border);
+      --filters-control-bg: var(--surface);
+      --filters-menu-radius: var(--radius-sm);
+      /* The search field: a bare line with the icon at the left edge by default. */
+      --filters-search-border: none;
+      --filters-search-radius: 0;
+      --filters-search-bg: transparent;
+      --filters-search-padding: 12px 0 12px 28px;
+      --filters-search-icon-left: 0;
+      /* "Reset": a bordered button by default; a text link with border none + underline. */
+      --filters-clear-border: 1px solid var(--border);
+      --filters-clear-radius: var(--radius-sm);
+      --filters-clear-padding: 10px 16px;
+      --filters-clear-color: var(--text-muted);
+      --filters-clear-color-hover: var(--text);
+      --filters-clear-decoration: none;
 
       margin-bottom: var(--space-2xl);
+      padding: var(--filters-padding);
+      border: var(--filters-border);
+      border-radius: var(--filters-radius);
+      background: var(--filters-bg);
+      box-shadow: var(--filters-shadow);
     }
 
     .filters__row {
@@ -209,7 +253,7 @@ const l = {
       gap: var(--space-lg);
       flex-wrap: wrap;
       padding-bottom: var(--space-sm);
-      border-bottom: 1px solid var(--border);
+      border-bottom: var(--filters-row-border);
     }
 
     .filters__search {
@@ -222,7 +266,7 @@ const l = {
 
     .filters__icon {
       position: absolute;
-      left: 0;
+      left: var(--filters-search-icon-left);
       top: 50%;
       transform: translateY(-50%);
       width: 18px;
@@ -234,11 +278,12 @@ const l = {
     .filters__input {
       width: 100%;
       box-sizing: border-box;
-      padding: 12px 0 12px 28px;
-      border: none;
+      padding: var(--filters-search-padding);
+      border: var(--filters-search-border);
+      border-radius: var(--filters-search-radius);
       font-size: var(--input-font-size-min); /* prevents zoom-on-focus on iOS */
       font-family: inherit;
-      background: transparent;
+      background: var(--filters-search-bg);
       color: var(--gray-darker);
       -webkit-appearance: none;
     }
@@ -270,9 +315,9 @@ const l = {
       justify-content: space-between;
       gap: var(--space-sm);
       padding: 12px 14px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--surface);
+      border: 1px solid var(--filters-control-border);
+      border-radius: var(--filters-control-radius);
+      background: var(--filters-control-bg);
       color: var(--text);
       font-size: 0.9rem;
       font-family: inherit;
@@ -304,7 +349,7 @@ const l = {
       overflow-y: auto;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
+      border-radius: var(--filters-menu-radius);
       box-shadow: var(--shadow-md);
       z-index: 50;
     }
@@ -345,11 +390,12 @@ const l = {
     }
 
     .filters__clear {
-      padding: 10px 16px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
+      padding: var(--filters-clear-padding);
+      border: var(--filters-clear-border);
+      border-radius: var(--filters-clear-radius);
       background: transparent;
-      color: var(--text-muted);
+      color: var(--filters-clear-color);
+      text-decoration: var(--filters-clear-decoration);
       font-size: 0.9rem;
       font-family: inherit;
       cursor: pointer;
@@ -357,7 +403,7 @@ const l = {
     }
 
     .filters__clear:hover {
-      color: var(--text);
+      color: var(--filters-clear-color-hover);
       border-color: var(--text-muted);
     }
 

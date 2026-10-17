@@ -17,6 +17,7 @@ const shouldShowBrand = hasLogo || hasTitle;
 ---
 
 <footer>
+  <slot name="top" />
   <div class="footer-container">
     <div class="footer-section footer-left">
       <div class="copyright">
@@ -90,7 +91,17 @@ const shouldShowBrand = hasLogo || hasTitle;
       --footer-link-color-hover: var(--primary);
       --footer-border: var(--gray);
       --footer-gap: 2rem;
+      /* Share of the row taken by the link column, against 1 for logo and icons. */
+      --footer-nav-grow: 1;
+      --footer-underline: var(--primary);
+      --footer-icon-bg: var(--surface-alt);
+      --footer-icon-fg: var(--text-muted);
+      --footer-icon-bg-hover: var(--primary);
+      --footer-icon-fg-hover: var(--white);
+      /* Wave edge on top of the footer, painted in `--footer-bg`; 0 = a straight edge. */
+      --footer-wave-height: 0rem;
 
+      position: relative;
       bottom: 0;
       margin-top: auto;
       padding: 1.75rem 2rem;
@@ -99,6 +110,18 @@ const shouldShowBrand = hasLogo || hasTitle;
       color: var(--footer-fg);
       font-size: 0.9rem;
       z-index: 10;
+    }
+
+    footer::before {
+      content: "";
+      position: absolute;
+      inset: auto 0 100% 0;
+      height: var(--footer-wave-height);
+      background: var(--footer-bg);
+      --footer-wave: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 48' preserveAspectRatio='none'><path d='M0 48 H1440 V24 C1320 4 1200 4 1080 24 C960 44 840 44 720 24 C600 4 480 4 360 24 C240 44 120 44 0 24 Z'/></svg>");
+      -webkit-mask: var(--footer-wave) center / 100% 100% no-repeat;
+      mask: var(--footer-wave) center / 100% 100% no-repeat;
+      pointer-events: none;
     }
 
     .footer-container {
@@ -119,6 +142,7 @@ const shouldShowBrand = hasLogo || hasTitle;
     }
 
     .footer-center {
+      flex-grow: var(--footer-nav-grow);
       text-align: center;
     }
 
@@ -143,7 +167,7 @@ const shouldShowBrand = hasLogo || hasTitle;
     }
 
     .brand-link:hover {
-      color: var(--primary);
+      color: var(--footer-link-color-hover);
       transform: translateY(-1px);
     }
 
@@ -189,7 +213,7 @@ const shouldShowBrand = hasLogo || hasTitle;
       height: 1px;
       bottom: -4px;
       left: 0;
-      background-color: var(--primary);
+      background-color: var(--footer-underline);
       transition: width 0.3s ease;
     }
 
@@ -220,14 +244,14 @@ const shouldShowBrand = hasLogo || hasTitle;
                the token-literal check sees a var() reference rather than a bare percentage. */
       --social-icon-radius: 50%;
       border-radius: var(--social-icon-radius);
-      background-color: var(--surface-alt);
-      color: var(--text-muted);
+      background-color: var(--footer-icon-bg);
+      color: var(--footer-icon-fg);
       transition: all 0.2s ease;
     }
 
     .social-links a:hover {
-      background-color: var(--primary);
-      color: var(--white);
+      background-color: var(--footer-icon-bg-hover);
+      color: var(--footer-icon-fg-hover);
       transform: translateY(-2px);
     }
 

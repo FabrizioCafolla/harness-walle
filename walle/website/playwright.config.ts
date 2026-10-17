@@ -7,7 +7,7 @@ export default defineConfig({
   // navigates to an astrobook story) have their own config/webServer
   // (playwright.astrobook.config.ts): exclude them here so they don't run
   // against a server that doesn't mount the astrobook routes.
-  testMatch: ["**/navbar.test.ts", "**/links.spec.ts", "**/fonts.spec.ts"],
+  testMatch: ["**/navbar.test.ts", "**/links.spec.ts", "**/fonts.spec.ts", "**/filters.test.ts"],
   use: {
     // Root origin; tests navigate to `${siteBase}/...` (base path from app.json).
     baseURL: "http://localhost:4321",

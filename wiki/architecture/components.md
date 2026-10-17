@@ -103,16 +103,17 @@ for how to set these.
 | `BasicCard` | `--card-bg`, `--card-border`, `--card-radius`, `--card-padding`, `--card-shadow`, `--card-shadow-hover`, `--card-title-color`, `--card-title-color-hover` |
 | `ProductCard` | `--product-card-bg`, `--product-card-border`, `--product-card-radius`, `--product-card-padding`, `--product-card-shadow`, `--product-card-shadow-hover`, `--product-card-title-color`, `--product-card-title-color-hover` |
 | `Carousel` | `--carousel-control-bg`, `--carousel-control-fg`, `--carousel-radius`, `--carousel-gap`, `--carousel-height`, `--carousel-arrow-radius`, `--carousel-lightbox-img-shadow`, `--carousel-lightbox-close-radius`, `--carousel-lightbox-close-bg`, `--carousel-lightbox-close-bg-hover` |
-| `CollectionFilters` | `--chip-bg`, `--chip-bg-active`, `--chip-fg`, `--chip-radius` |
-| `Footer` (standard) | `--footer-bg`, `--footer-fg`, `--footer-link-color`, `--footer-link-color-hover`, `--footer-border`, `--footer-gap`, `--social-icon-radius` |
+| `CollectionFilters` | `--chip-bg`, `--chip-bg-active`, `--chip-fg`, `--chip-radius`, `--filters-bg`, `--filters-radius`, `--filters-shadow`, `--filters-padding`, `--filters-border`, `--filters-row-border`, `--filters-control-radius`, `--filters-control-border`, `--filters-control-bg`, `--filters-menu-radius`, `--filters-search-border`, `--filters-search-radius`, `--filters-search-bg`, `--filters-search-padding`, `--filters-search-icon-left`, `--filters-clear-border`, `--filters-clear-radius`, `--filters-clear-padding`, `--filters-clear-color`, `--filters-clear-color-hover`, `--filters-clear-decoration` |
+| `Footer` (standard) | `--footer-bg`, `--footer-fg`, `--footer-link-color`, `--footer-link-color-hover`, `--footer-border`, `--footer-gap`, `--social-icon-radius`, `--footer-underline`, `--footer-icon-bg`, `--footer-icon-fg`, `--footer-icon-bg-hover`, `--footer-icon-fg-hover`, `--footer-nav-grow`, `--footer-wave-height` |
 | `Footer` (minimal) | `--footer-bg`, `--footer-fg`, `--footer-link-color`, `--footer-link-color-hover`, `--footer-border`, `--footer-gap` |
-| `Navbar` (standard) | `--navbar-bg`, `--navbar-fg`, `--navbar-border`, `--navbar-shadow`, `--navbar-height`, `--navbar-logo-height`, `--navbar-logo-height-mobile`, `--navbar-link-color`, `--navbar-link-color-hover`, `--navbar-dropdown-bg`, `--navbar-dropdown-radius` |
+| `Navbar` (standard) | `--navbar-bg`, `--navbar-fg`, `--navbar-border`, `--navbar-shadow`, `--navbar-height`, `--navbar-logo-height`, `--navbar-logo-height-mobile`, `--navbar-link-color`, `--navbar-link-color-hover`, `--navbar-link-active-color`, `--navbar-link-active-bg`, `--navbar-link-radius`, `--navbar-mobile-bg`, `--navbar-mobile-divider`, `--navbar-mobile-link-padding`, `--navbar-mobile-link-padding-narrow`, `--navbar-mobile-link-radius`, `--navbar-hamburger-bg-hover`, `--navbar-overlay-fg`, `--navbar-overlay-link-active-bg`, `--navbar-overlay-button-bg`, `--navbar-overlay-button-fg`, `--navbar-overlay-button-border`, `--navbar-overlay-button-bg-hover`, `--navbar-dropdown-bg`, `--navbar-dropdown-radius` |
 | `Navbar` (minimal) | `--navbar-bg`, `--navbar-fg`, `--navbar-border`, `--navbar-link-color`, `--navbar-link-color-hover` |
-| `Breadcrumbs` | `--breadcrumbs-color`, `--breadcrumbs-current-color`, `--breadcrumbs-separator-color` |
+| `Breadcrumbs` | `--breadcrumbs-color`, `--breadcrumbs-current-color`, `--breadcrumbs-separator-color`, `--breadcrumbs-color-hover`, `--breadcrumbs-bg-hover` |
 | `BlogArticleNavigation` | `--article-nav-bg`, `--article-nav-border`, `--article-nav-radius`, `--article-nav-link-color`, `--article-nav-link-color-hover` |
 | `BlogReadingProgress` | `--progress-color` |
 | `BlogTableOfContents` | `--toc-bg`, `--toc-border`, `--toc-radius`, `--toc-link-hover-bg`, `--toc-link-active-bg`, `--toc-link-navigating-bg` |
 | `Map` | `--map-height`, `--map-radius`, `--map-border`, `--map-marker-size`, `--map-marker-bg`, `--map-marker-fg`, `--map-marker-radius`, `--map-popup-bg`, `--map-popup-fg`, `--map-popup-radius`, `--map-control-bg`, `--map-control-fg`, `--map-control-radius` |
+| `Section` | `--section-title-size`, `--section-title-gap` |
 | `SectionWrapper` (and every section built on it: `Section`, `Hero`, `CallToAction`) | `--wrapper-bg`, `--wrapper-fg`, `--wrapper-title-color`, `--wrapper-padding-y`, `--wrapper-max-width`, `--wrapper-gutter` |
 | `SectionFlow` | `--section-flow-step-bg`, `--section-flow-step-fg` (plus `SectionWrapper`'s own) |
 | `SectionColumns` | `--section-columns-gap` (plus `SectionWrapper`'s own) |
@@ -173,9 +174,12 @@ const props = Astro.props;
 </div>
 ```
 
-`Navbar` and `Footer` also expose slots (`brand`, `actions` on `Navbar`) for a smaller
+`Navbar` and `Footer` also expose slots (`brand`, `actions` on `Navbar`; `top` on `Footer`) for a smaller
 customization than a full swap, and `BaseLayout` exposes `navbar`/`footer` slots that replace
 the resolved component outright for one page.
+
+`HeaderStandard` (`SectionHeaderStandard`) takes an optional `eyebrow` slot rendered above the
+title, for a badge or a short label; without it nothing is rendered.
 
 ## Breadcrumbs
 
