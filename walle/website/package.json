@@ -39,7 +39,7 @@
     "astro": "^7.3.4",
     "astro-icon": "^1.2.0",
     "leaflet": "^1.9.4",
-    "nanostores": "^1.5.3",
+    "nanostores": "^1.5.4",
     "satori": "^0.33.5"
   },
   "devDependencies": {
