@@ -19,6 +19,12 @@ All notable changes to Walle are documented here. Format follows
   `import { defineWalleConfig } from "./src/@walle/config"`: no consumer change is needed. This
   is the failure 0.9.0 attributed to rolldown 1.2.13.
 
+### Changed
+
+- **The `rolldown` 1.2.12 pin is gone from the seeded `package.json`.** It held rolldown below the
+  `^1.2.13` range `astro` 7.4.0 declares. A consumer that copied `resolutions.rolldown` can drop it
+  after updating to 0.11.1.
+
 ## [0.11.0] - 2026-10-19
 
 ### Added
