@@ -35,6 +35,9 @@ Open fix branch: small fixes are added here until the release.
 
 ### Changed
 
+- **Dependencies:** `astro` 7.3.5, `nanostores` 1.5.4, `@typescript-eslint/*` 8.71.0 and
+  `prettier-plugin-astro` 1.1.0 (it formats `.astro` files differently: the sources are reformatted,
+  nothing else changes). `typescript` stays on 6: `typescript-eslint` does not support TypeScript 7 yet.
 - **`wiki/architecture/style.md` places `prose.css` in `walle.components`**, the layer the file
   declares, and lists what `utilities.css` really holds.
 - **Source comments state facts only.** Several hundred lines of history, narration and reasoning
