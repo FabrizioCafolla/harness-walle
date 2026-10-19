@@ -92,11 +92,10 @@ const classes = ["link", className ?? ""].filter(Boolean).join(" ");
   data-component="Link"
   {...rest}
 >
-  <slot>{text}</slot>{
-    isExternal && externalIcon && (
-      <Icon name="mdi:open-in-new" class="link-external-icon" aria-hidden="true" />
-    )
-  }
+  <slot>{text}</slot>
+  {isExternal && externalIcon && (
+    <Icon name="mdi:open-in-new" class="link-external-icon" aria-hidden="true" />
+  )}
 </a>
 
 <style>

@@ -28,15 +28,13 @@ const title = config.logo?.title || t("breadcrumbs.home");
     </a>
     <nav class="navbar-minimal__nav" aria-label={t("nav.main")}>
       <ul>
-        {
-          items.map((item: NavigationLink) => (
-            <li>
-              <a href={resolveInternalUrl(item.url)} target={item.target || "_self"}>
-                {item.name}
-              </a>
-            </li>
-          ))
-        }
+        {items.map((item: NavigationLink) => (
+          <li>
+            <a href={resolveInternalUrl(item.url)} target={item.target || "_self"}>
+              {item.name}
+            </a>
+          </li>
+        ))}
       </ul>
     </nav>
   </div>

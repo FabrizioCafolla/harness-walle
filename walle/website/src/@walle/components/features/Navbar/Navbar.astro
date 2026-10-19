@@ -23,57 +23,53 @@ const shouldShowBrand = hasLogo || hasTitle;
   <div class="container">
     <nav class="main-nav" aria-label={t("nav.main")} data-component="Navbar" data-nav-root="true">
       <slot name="brand">
-        {
-          shouldShowBrand && (
-            <div class="brand-container">
-              <a
-                href={resolveInternalUrl(config.logo?.url || "/")}
-                title={config.logo?.title || t("breadcrumbs.home")}
-                class="brand-link"
-              >
-                {hasLogo ? (
-                  <>
+        {shouldShowBrand && (
+          <div class="brand-container">
+            <a
+              href={resolveInternalUrl(config.logo?.url || "/")}
+              title={config.logo?.title || t("breadcrumbs.home")}
+              class="brand-link"
+            >
+              {hasLogo ? (
+                <>
+                  <img
+                    src={config.logo.src}
+                    alt={config.logo.alt || config.logo.title || t("logo")}
+                    aria-label={config.logo.alt || config.logo.title || t("logo")}
+                    width={config.logo.width || 50}
+                    height={config.logo.height || 50}
+                    loading="eager"
+                    class:list={["brand-logo", config.logo.cssClasses]}
+                    fetchpriority="high"
+                  />
+                  {config.logo.srcInverse && (
                     <img
-                      src={config.logo.src}
-                      alt={config.logo.alt || config.logo.title || t("logo")}
-                      aria-label={config.logo.alt || config.logo.title || t("logo")}
+                      src={config.logo.srcInverse}
+                      alt=""
+                      aria-hidden="true"
                       width={config.logo.width || 50}
                       height={config.logo.height || 50}
                       loading="eager"
-                      class:list={["brand-logo", config.logo.cssClasses]}
-                      fetchpriority="high"
+                      class:list={["brand-logo", "brand-logo--inverse", config.logo.cssClasses]}
                     />
-                    {config.logo.srcInverse && (
-                      <img
-                        src={config.logo.srcInverse}
-                        alt=""
-                        aria-hidden="true"
-                        width={config.logo.width || 50}
-                        height={config.logo.height || 50}
-                        loading="eager"
-                        class:list={["brand-logo", "brand-logo--inverse", config.logo.cssClasses]}
-                      />
-                    )}
-                  </>
-                ) : hasTitle ? (
-                  <span class:list={["brand-title", config.logo.cssClasses]}>
-                    {config.logo.title}
-                  </span>
-                ) : null}
-              </a>
-            </div>
-          )
-        }
+                  )}
+                </>
+              ) : hasTitle ? (
+                <span class:list={["brand-title", config.logo.cssClasses]}>
+                  {config.logo.title}
+                </span>
+              ) : null}
+            </a>
+          </div>
+        )}
       </slot>
 
       <NavbarMenu items={config.items || []} navId={navId} />
 
       <slot name="actions" />
 
-      {
-        /* Last in the DOM so on mobile the reading/focus order matches the visual order
-          (brand · cart · hamburger) without CSS `order` reshuffling the tab sequence. */
-      }
+      {/* Last in the DOM so on mobile the reading/focus order matches the visual order
+          (brand · cart · hamburger) without CSS `order` reshuffling the tab sequence. */}
       <button
         id="mobile-menu-toggle"
         class="hamburger"

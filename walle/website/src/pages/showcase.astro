@@ -50,15 +50,15 @@ const groups = [
         during development.
       </p>
       <nav class="showcase-nav" aria-label="Showcase sections">
-        {groups.map((g) => <a href={`#${g.id}`}>{g.label}</a>)}
+        {groups.map((g) => (
+          <a href={`#${g.id}`}>{g.label}</a>
+        ))}
       </nav>
-      {
-        hasWiki && (
-          <p>
-            <Link href={resolveInternalUrl("/wiki")}>Read the design-system wiki →</Link>
-          </p>
-        )
-      }
+      {hasWiki && (
+        <p>
+          <Link href={resolveInternalUrl("/wiki")}>Read the design-system wiki →</Link>
+        </p>
+      )}
     </div>
   </section>
 
@@ -162,7 +162,8 @@ const groups = [
     <p>
       Every section shares one wrapper: the same <code>filled</code> and <code>muted</code>
       modifiers restyle its background, whichever component sits on top. See the
-      <a href={resolveInternalUrl("/wiki/architecture/style")}>styling guide</a> for the full token list.
+      <a href={resolveInternalUrl("/wiki/architecture/style")}>styling guide</a> for the full token
+      list.
     </p>
   </Section>
   <CallToAction

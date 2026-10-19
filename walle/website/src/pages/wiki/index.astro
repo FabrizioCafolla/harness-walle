@@ -11,26 +11,24 @@ const sections = groupPages(await getCollection("wiki"));
   headerTitle="Wiki"
   headerDescription="The Walle design-system documentation, rendered from the repo wiki at build time."
 >
-  {
-    sections.length === 0 ? (
-      <p>No wiki pages found.</p>
-    ) : (
-      <div class="wiki-index">
-        {sections.map((section) => (
-          <section aria-labelledby={`wiki-${section.id}`}>
-            <h2 id={`wiki-${section.id}`}>{section.title}</h2>
-            <ul>
-              {section.pages.map((p) => (
-                <li>
-                  <a href={resolveInternalUrl(`/wiki/${p.id}`)}>{p.title}</a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
-      </div>
-    )
-  }
+  {sections.length === 0 ? (
+    <p>No wiki pages found.</p>
+  ) : (
+    <div class="wiki-index">
+      {sections.map((section) => (
+        <section aria-labelledby={`wiki-${section.id}`}>
+          <h2 id={`wiki-${section.id}`}>{section.title}</h2>
+          <ul>
+            {section.pages.map((p) => (
+              <li>
+                <a href={resolveInternalUrl(`/wiki/${p.id}`)}>{p.title}</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  )}
 </BaseLayout>
 
 <style>

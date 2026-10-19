@@ -32,30 +32,28 @@ const sampleImages = [
 ];
 ---
 
-{
-  images ? (
-    <Carousel
-      label={label}
-      perView={perView}
-      controls={controls}
-      counter={counter}
-      zoom={zoom}
-      fit={fit}
-    >
-      {sampleImages.map((src, i) => (
-        <div class="demo-image">
-          <img src={src} alt={`Sample slide ${i + 1}`} width="1200" height="800" loading="lazy" />
-        </div>
-      ))}
-    </Carousel>
-  ) : (
-    <Carousel label={label} perView={perView} controls={controls} counter={counter}>
-      {Array.from({ length: slides }, (_, i) => (
-        <div class="demo-slide">Slide {i + 1}</div>
-      ))}
-    </Carousel>
-  )
-}
+{images ? (
+  <Carousel
+    label={label}
+    perView={perView}
+    controls={controls}
+    counter={counter}
+    zoom={zoom}
+    fit={fit}
+  >
+    {sampleImages.map((src, i) => (
+      <div class="demo-image">
+        <img src={src} alt={`Sample slide ${i + 1}`} width="1200" height="800" loading="lazy" />
+      </div>
+    ))}
+  </Carousel>
+) : (
+  <Carousel label={label} perView={perView} controls={controls} counter={counter}>
+    {Array.from({ length: slides }, (_, i) => (
+      <div class="demo-slide">Slide {i + 1}</div>
+    ))}
+  </Carousel>
+)}
 
 <style>
   .demo-slide {

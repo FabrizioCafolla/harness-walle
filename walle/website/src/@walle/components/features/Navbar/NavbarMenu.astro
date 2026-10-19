@@ -12,6 +12,8 @@ const { items, navId } = Astro.props;
 
 <div class="nav-container" id={navId}>
   <ul class="nav-links" data-nav-level="1" data-component="NavbarLinks">
-    {items.map((item) => <NavbarItem item={item} />)}
+    {items.map((item) => (
+      <NavbarItem item={item} />
+    ))}
   </ul>
 </div>

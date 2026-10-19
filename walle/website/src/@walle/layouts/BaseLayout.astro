@@ -32,22 +32,18 @@ if (Object.keys(import.meta.glob("/src/pages/wiki/index.astro")).length > 0) {
 <AbstractLayout {...Astro.props}>
   <slot name="head" slot="head" />
   <slot name="navbar">
-    {
-      /* Astro registers slot names statically: a `<slot slot="brand">` anywhere in the
-         children suppresses Navbar's default brand, even behind a falsy guard. */
-    }
-    {
-      Astro.slots.has("brand") ? (
-        <Navbar config={navbarConfig}>
-          <slot name="brand" slot="brand" />
-          {showCart && CartBadge && <CartBadge slot="actions" floating={false} />}
-        </Navbar>
-      ) : (
-        <Navbar config={navbarConfig}>
-          {showCart && CartBadge && <CartBadge slot="actions" floating={false} />}
-        </Navbar>
-      )
-    }
+    {/* Astro registers slot names statically: a `<slot slot="brand">` anywhere in the
+         children suppresses Navbar's default brand, even behind a falsy guard. */}
+    {Astro.slots.has("brand") ? (
+      <Navbar config={navbarConfig}>
+        <slot name="brand" slot="brand" />
+        {showCart && CartBadge && <CartBadge slot="actions" floating={false} />}
+      </Navbar>
+    ) : (
+      <Navbar config={navbarConfig}>
+        {showCart && CartBadge && <CartBadge slot="actions" floating={false} />}
+      </Navbar>
+    )}
   </slot>
   <main id="main-content" tabindex="-1">
     <slot />

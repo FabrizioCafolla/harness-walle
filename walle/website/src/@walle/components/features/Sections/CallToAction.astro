@@ -62,32 +62,26 @@ const actionsInverse = filled === true;
   {...rest}
 >
   <div class:list={["cta-content", { "cta-card": layout === "card" }]}>
-    {
-      hasTitle && (
-        <h2 class="cta-title">{Astro.slots.has("title") ? <slot name="title" /> : title}</h2>
-      )
-    }
-    {
-      hasSubtitle && (
-        <p class="cta-subtitle">
-          {Astro.slots.has("subtitle") ? <slot name="subtitle" /> : subtitle}
-        </p>
-      )
-    }
-    {
-      actions.length > 0 && (
-        <div class="cta-actions">
-          {actions.map((action) => (
-            <Button
-              text={action.text}
-              href={action.href}
-              variant={action.variant}
-              inverse={action.inverse ?? actionsInverse}
-            />
-          ))}
-        </div>
-      )
-    }
+    {hasTitle && (
+      <h2 class="cta-title">{Astro.slots.has("title") ? <slot name="title" /> : title}</h2>
+    )}
+    {hasSubtitle && (
+      <p class="cta-subtitle">
+        {Astro.slots.has("subtitle") ? <slot name="subtitle" /> : subtitle}
+      </p>
+    )}
+    {actions.length > 0 && (
+      <div class="cta-actions">
+        {actions.map((action) => (
+          <Button
+            text={action.text}
+            href={action.href}
+            variant={action.variant}
+            inverse={action.inverse ?? actionsInverse}
+          />
+        ))}
+      </div>
+    )}
   </div>
 </SectionWrapper>
 

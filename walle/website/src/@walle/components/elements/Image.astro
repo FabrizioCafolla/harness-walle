@@ -73,35 +73,33 @@ const classes = ["image", className ?? ""].filter(Boolean).join(" ");
 const style = ratio ? `aspect-ratio: ${ratio};` : undefined;
 ---
 
-{
-  isRemote ? (
-    <img
-      src={image.src as string}
-      alt={image.alt}
-      width={width}
-      height={height}
-      loading={loading}
-      class={classes}
-      style={style}
-      data-component="Image"
-      {...rest}
-    />
-  ) : (
-    <AstroImage
-      src={image.src as ImageMetadata}
-      alt={image.alt}
-      width={width}
-      height={height}
-      loading={loading}
-      sizes={sizes}
-      widths={widths}
-      class={classes}
-      style={style}
-      data-component="Image"
-      {...rest}
-    />
-  )
-}
+{isRemote ? (
+  <img
+    src={image.src as string}
+    alt={image.alt}
+    width={width}
+    height={height}
+    loading={loading}
+    class={classes}
+    style={style}
+    data-component="Image"
+    {...rest}
+  />
+) : (
+  <AstroImage
+    src={image.src as ImageMetadata}
+    alt={image.alt}
+    width={width}
+    height={height}
+    loading={loading}
+    sizes={sizes}
+    widths={widths}
+    class={classes}
+    style={style}
+    data-component="Image"
+    {...rest}
+  />
+)}
 
 <style>
   @layer walle.components {

@@ -115,81 +115,78 @@ const l = {
   {...rest}
 >
   <div class="filters__row">
-    {
-      search && (
-        <div class="filters__search">
-          <Icon name="fa:search" class="filters__icon" aria-hidden="true" />
-          <input
-            type="text"
-            class="filters__input"
-            placeholder={l.searchPlaceholder}
-            aria-label={l.searchLabel}
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="off"
-            spellcheck="false"
-            data-filter-search
-          />
-        </div>
-      )
-    }
-    {
-      facets.map((facet) => {
-        const dropdownId = `facet-${facet.key}-dropdown`;
-        return (
-          <div class="filters__facet" data-facet={facet.key}>
-            <div class="filters__dropdown">
-              <button
-                type="button"
-                class="filters__dropdown-btn"
-                aria-haspopup="listbox"
-                aria-expanded="false"
-                aria-controls={dropdownId}
-              >
-                <span data-facet-label data-default={l.facetSelect.replace("{label}", facet.label)}>
-                  {l.facetSelect.replace("{label}", facet.label)}
-                </span>
-                <Icon name="fa:chevron-down" class="filters__dropdown-icon" aria-hidden="true" />
-              </button>
-              <div
-                class="filters__dropdown-content"
-                id={dropdownId}
-                role="listbox"
-                aria-label={facet.label}
-                aria-multiselectable="true"
-              >
-                {facet.options.map((option, i) => {
-                  // Index keeps ids unique even when two options normalize to the
-                  // same slug (e.g. "C#" and "C++"), so the label `for` never collides.
-                  const optionId = `facet-${facet.key}-${i}-${option.toLowerCase().replace(/\s+/g, "-")}`;
-                  return (
-                    <label class="filters__option" for={optionId}>
-                      <input
-                        type="checkbox"
-                        class="filters__checkbox"
-                        value={option}
-                        name={facet.key}
-                        id={optionId}
-                      />
-                      <span class="filters__option-text">{option}</span>
-                    </label>
-                  );
-                })}
-              </div>
+    {search && (
+      <div class="filters__search">
+        <Icon name="fa:search" class="filters__icon" aria-hidden="true" />
+        <input
+          type="text"
+          class="filters__input"
+          placeholder={l.searchPlaceholder}
+          aria-label={l.searchLabel}
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          data-filter-search
+        />
+      </div>
+    )}
+    {facets.map((facet) => {
+      const dropdownId = `facet-${facet.key}-dropdown`;
+      return (
+        <div class="filters__facet" data-facet={facet.key}>
+          <div class="filters__dropdown">
+            <button
+              type="button"
+              class="filters__dropdown-btn"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-controls={dropdownId}
+            >
+              <span data-facet-label data-default={l.facetSelect.replace("{label}", facet.label)}>
+                {l.facetSelect.replace("{label}", facet.label)}
+              </span>
+              <Icon name="fa:chevron-down" class="filters__dropdown-icon" aria-hidden="true" />
+            </button>
+            <div
+              class="filters__dropdown-content"
+              id={dropdownId}
+              role="listbox"
+              aria-label={facet.label}
+              aria-multiselectable="true"
+            >
+              {facet.options.map((option, i) => {
+                // Index keeps ids unique even when two options normalize to the
+                // same slug (e.g. "C#" and "C++"), so the label `for` never collides.
+                const optionId = `facet-${facet.key}-${i}-${option.toLowerCase().replace(/\s+/g, "-")}`;
+                return (
+                  <label class="filters__option" for={optionId}>
+                    <input
+                      type="checkbox"
+                      class="filters__checkbox"
+                      value={option}
+                      name={facet.key}
+                      id={optionId}
+                    />
+                    <span class="filters__option-text">{option}</span>
+                  </label>
+                );
+              })}
             </div>
           </div>
-        );
-      })
-    }
-    <button type="button" class="filters__clear">{l.clear}</button>
+        </div>
+      );
+    })}
+    <button type="button" class="filters__clear">
+      {l.clear}
+    </button>
   </div>
   <div
     class:list={["filters__status", { "sr-only": hideStatus }]}
     role="status"
     aria-live="polite"
     aria-atomic="true"
-  >
-  </div>
+  ></div>
 </div>
 
 <noscript>

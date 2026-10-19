@@ -92,50 +92,44 @@ function resolveDirectionsUrl(
 }
 ---
 
-{
-  validMarkers.length > 0 && (
-    <section
-      aria-label={regionLabel ?? t("map.region")}
-      {...attrs}
-      class:list={["map", attrs.class]}
-    >
-      <div
-        class="map__container"
-        data-map-container
-        style={height ? `--map-height: ${height}` : undefined}
-        data-zoom={zoom}
-        data-max-zoom={maxZoom}
-        data-scroll-zoom={scrollZoom ? "true" : "false"}
-        data-tiles-url={resolvedTiles.url}
-        data-tiles-attribution={resolvedTiles.attribution}
-        data-tiles-subdomains={resolvedTiles.subdomains}
-        data-tiles-max-zoom={resolvedTiles.maxZoom}
-      />
-      <ol class="map__list" data-map-list>
-        {validMarkers.map((marker) => {
-          const directionsHref =
-            marker.href ?? resolveDirectionsUrl(marker.lat, marker.lng, resolvedDirections);
-          return (
-            <li
-              data-lat={marker.lat}
-              data-lng={marker.lng}
-              data-variant={marker.variant ?? "primary"}
-              data-title={marker.title}
-            >
-              <p class="map__marker-title">{marker.title}</p>
-              {marker.description && <p class="map__marker-description">{marker.description}</p>}
-              {directionsHref && (
-                <a href={directionsHref} target="_blank" rel="noopener noreferrer">
-                  {t("map.directions")}
-                </a>
-              )}
-            </li>
-          );
-        })}
-      </ol>
-    </section>
-  )
-}
+{validMarkers.length > 0 && (
+  <section aria-label={regionLabel ?? t("map.region")} {...attrs} class:list={["map", attrs.class]}>
+    <div
+      class="map__container"
+      data-map-container
+      style={height ? `--map-height: ${height}` : undefined}
+      data-zoom={zoom}
+      data-max-zoom={maxZoom}
+      data-scroll-zoom={scrollZoom ? "true" : "false"}
+      data-tiles-url={resolvedTiles.url}
+      data-tiles-attribution={resolvedTiles.attribution}
+      data-tiles-subdomains={resolvedTiles.subdomains}
+      data-tiles-max-zoom={resolvedTiles.maxZoom}
+    />
+    <ol class="map__list" data-map-list>
+      {validMarkers.map((marker) => {
+        const directionsHref =
+          marker.href ?? resolveDirectionsUrl(marker.lat, marker.lng, resolvedDirections);
+        return (
+          <li
+            data-lat={marker.lat}
+            data-lng={marker.lng}
+            data-variant={marker.variant ?? "primary"}
+            data-title={marker.title}
+          >
+            <p class="map__marker-title">{marker.title}</p>
+            {marker.description && <p class="map__marker-description">{marker.description}</p>}
+            {directionsHref && (
+              <a href={directionsHref} target="_blank" rel="noopener noreferrer">
+                {t("map.directions")}
+              </a>
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  </section>
+)}
 
 <style>
   @layer walle.components {

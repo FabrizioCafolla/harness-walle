@@ -14,16 +14,16 @@ const label = footerConfig.logo?.title || footerConfig.logo?.license || "";
 <footer class="footer-minimal">
   <nav class="footer-minimal__nav" aria-label={t("footer.nav")}>
     <ul>
-      {
-        navigationLinks.map((item: NavigationLink) => (
-          <li>
-            <a href={resolveInternalUrl(item.url)}>{item.name}</a>
-          </li>
-        ))
-      }
+      {navigationLinks.map((item: NavigationLink) => (
+        <li>
+          <a href={resolveInternalUrl(item.url)}>{item.name}</a>
+        </li>
+      ))}
     </ul>
   </nav>
-  <span class="footer-minimal__license">{today.getFullYear()} &copy; {label}</span>
+  <span class="footer-minimal__license">
+    {today.getFullYear()} &copy; {label}
+  </span>
 </footer>
 
 <style>

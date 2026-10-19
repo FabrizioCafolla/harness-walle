@@ -47,48 +47,44 @@ const badgeFor = (post: CollectionEntry<"posts">) =>
     </div>
 
     <div class="blog-layout__container">
-      {
-        showFilters && allCategories.length > 0 && (
-          <CollectionFilters
-            facets={[{ key: "category", label: "Category", options: allCategories }]}
-            labels={{ searchPlaceholder: "Search posts…", status: "{n} posts shown" }}
-          />
-        )
-      }
+      {showFilters && allCategories.length > 0 && (
+        <CollectionFilters
+          facets={[{ key: "category", label: "Category", options: allCategories }]}
+          labels={{ searchPlaceholder: "Search posts…", status: "{n} posts shown" }}
+        />
+      )}
 
       <slot name="before" />
-      {
-        sortedPosts.length === 0 ? (
-          <div class="blog-layout__empty">
-            <p>{label("blog.empty")}</p>
-          </div>
-        ) : (
-          <div class="blog-layout__grid">
-            {sortedPosts.map((post: CollectionEntry<"posts">) => (
-              <div
-                data-filter-item
-                data-category={(post.data.tags || []).join(",")}
-                data-search={`${post.data.title} ${post.data.description ?? ""}`}
-              >
-                <BasicCard
-                  title={post.data.title}
-                  content={post.data.description}
-                  href={resolveInternalUrl(`/blog/${post.id}`)}
-                  image={{
-                    src: resolveInternalUrl(post.data.image || "/img/posts/default.svg"),
-                    alt: post.data.title,
-                  }}
-                  badge={badgeFor(post)}
-                  publishDate={
-                    post.data.publishDate ? formatDate(post.data.publishDate.toString()) : null
-                  }
-                  target="_self"
-                />
-              </div>
-            ))}
-          </div>
-        )
-      }
+      {sortedPosts.length === 0 ? (
+        <div class="blog-layout__empty">
+          <p>{label("blog.empty")}</p>
+        </div>
+      ) : (
+        <div class="blog-layout__grid">
+          {sortedPosts.map((post: CollectionEntry<"posts">) => (
+            <div
+              data-filter-item
+              data-category={(post.data.tags || []).join(",")}
+              data-search={`${post.data.title} ${post.data.description ?? ""}`}
+            >
+              <BasicCard
+                title={post.data.title}
+                content={post.data.description}
+                href={resolveInternalUrl(`/blog/${post.id}`)}
+                image={{
+                  src: resolveInternalUrl(post.data.image || "/img/posts/default.svg"),
+                  alt: post.data.title,
+                }}
+                badge={badgeFor(post)}
+                publishDate={
+                  post.data.publishDate ? formatDate(post.data.publishDate.toString()) : null
+                }
+                target="_self"
+              />
+            </div>
+          ))}
+        </div>
+      )}
       <slot name="after" />
     </div>
   </div>

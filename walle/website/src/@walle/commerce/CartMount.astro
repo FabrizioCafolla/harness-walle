@@ -46,13 +46,18 @@ const l = {
       </svg>
     </button>
   </div>
-  <p class="cart-drawer__empty" data-cart-empty>{l.empty}</p>
+  <p class="cart-drawer__empty" data-cart-empty>
+    {l.empty}
+  </p>
   <ul class="cart-drawer__lines" data-cart-lines></ul>
   <div class="cart-drawer__foot" data-cart-foot hidden>
     <div class="cart-drawer__subtotal">
-      <span>{l.subtotal}</span><span data-cart-subtotal></span>
+      <span>{l.subtotal}</span>
+      <span data-cart-subtotal></span>
     </div>
-    <button class="cart-checkout" data-cart-checkout>{l.checkout}</button>
+    <button class="cart-checkout" data-cart-checkout>
+      {l.checkout}
+    </button>
   </div>
 </dialog>
 

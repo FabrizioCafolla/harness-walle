@@ -27,25 +27,23 @@ const title = titleOf(entry);
   <div class="wiki-page">
     <nav class="wiki-nav" aria-label="Wiki pages">
       <a href={resolveInternalUrl("/wiki")}>All pages</a>
-      {
-        sections.map((section) => (
-          <>
-            <h2 class="wiki-nav__section">{section.title}</h2>
-            <ul>
-              {section.pages.map((p) => (
-                <li>
-                  <a
-                    href={resolveInternalUrl(`/wiki/${p.id}`)}
-                    aria-current={p.id === entry.id ? "page" : undefined}
-                  >
-                    {p.title}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </>
-        ))
-      }
+      {sections.map((section) => (
+        <>
+          <h2 class="wiki-nav__section">{section.title}</h2>
+          <ul>
+            {section.pages.map((p) => (
+              <li>
+                <a
+                  href={resolveInternalUrl(`/wiki/${p.id}`)}
+                  aria-current={p.id === entry.id ? "page" : undefined}
+                >
+                  {p.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </>
+      ))}
     </nav>
     <article class="wiki-content">
       {html ? <Fragment set:html={rewriteLinks(html, entry.id, wikiIds, base)} /> : <Content />}

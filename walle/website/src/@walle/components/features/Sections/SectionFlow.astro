@@ -47,19 +47,17 @@ const {
 >
   <slot name="title" slot="title" />
   <ol class="flow-steps" aria-label={label}>
-    {
-      steps.map((step) => (
-        <li class="flow-step">
-          <div class="step-number" aria-hidden="true">
-            {step.icon ? <Icon name={step.icon} aria-hidden="true" size={20} /> : step.number}
-          </div>
-          <div class="step-content">
-            <h3>{step.title}</h3>
-            <p>{step.description}</p>
-          </div>
-        </li>
-      ))
-    }
+    {steps.map((step) => (
+      <li class="flow-step">
+        <div class="step-number" aria-hidden="true">
+          {step.icon ? <Icon name={step.icon} aria-hidden="true" size={20} /> : step.number}
+        </div>
+        <div class="step-content">
+          <h3>{step.title}</h3>
+          <p>{step.description}</p>
+        </div>
+      </li>
+    ))}
   </ol>
   <slot />
 </SectionWrapper>

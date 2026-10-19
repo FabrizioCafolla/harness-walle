@@ -62,7 +62,9 @@ const structuredData = config.app.website.structuredData;
     <slot name="head" />
   </head>
   <body data-label-scrollable={label("scrollableRegion")}>
-    <a href="#main-content" class="skip-link">{label("skipLink", skipLinkLabel)}</a>
+    <a href="#main-content" class="skip-link">
+      {label("skipLink", skipLinkLabel)}
+    </a>
     <slot />
     <Analytics
       enable={config.env.IS_PRODUCTION || false}

@@ -40,14 +40,12 @@ const {
 
   <section class="detail-section">
     <div class="container">
-      {
-        backLink && (
-          <a href={backLink.href} class="back-link">
-            <Icon name="fa:arrow-left" class="back-link__icon" aria-hidden="true" />
-            {t("breadcrumbs.back", backLink.label)}
-          </a>
-        )
-      }
+      {backLink && (
+        <a href={backLink.href} class="back-link">
+          <Icon name="fa:arrow-left" class="back-link__icon" aria-hidden="true" />
+          {t("breadcrumbs.back", backLink.label)}
+        </a>
+      )}
 
       {breadcrumbs.length > 0 && <Breadcrumbs items={breadcrumbs} />}
 

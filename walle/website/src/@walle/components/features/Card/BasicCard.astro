@@ -86,23 +86,17 @@ const truncatedContent =
   {...rest}
 >
   <article class="card__wrapper">
-    {
-      image && (
-        <div class="card__image">
-          <img src={image.src} alt={image.alt} loading="lazy" width="120" height="120" />
-        </div>
-      )
-    }
+    {image && (
+      <div class="card__image">
+        <img src={image.src} alt={image.alt} loading="lazy" width="120" height="120" />
+      </div>
+    )}
 
     <div class="card__content">
       <div class="card__meta">
-        {
-          badge && (
-            <span class={`card__badge card__badge--${badge.variant || "primary"}`}>
-              {badge.text}
-            </span>
-          )
-        }
+        {badge && (
+          <span class={`card__badge card__badge--${badge.variant || "primary"}`}>{badge.text}</span>
+        )}
         {formattedDate && <span class="card__date">{formattedDate}</span>}
       </div>
 

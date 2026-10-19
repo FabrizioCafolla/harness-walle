@@ -74,53 +74,43 @@ const alternates = config.app.seo?.alternates ?? [];
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link rel="icon" type="image/svg+xml" href={resolvedFavicon} />
 <link rel="sitemap" href={resolveInternalUrl("/sitemap-index.xml")} />
-{
-  feeds.map((feed) => (
-    <link
-      rel="alternate"
-      type="application/rss+xml"
-      title={feed.title ?? config.app.website.title}
-      href={toAbsolute(resolveInternalUrl(feed.path))}
-    />
-  ))
-}
-{
-  alternates.map((alternate) => (
-    <link
-      rel="alternate"
-      type={alternate.type}
-      title={alternate.title ?? config.app.website.title}
-      href={toAbsolute(resolveInternalUrl(alternate.href))}
-    />
-  ))
-}
+{feeds.map((feed) => (
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    title={feed.title ?? config.app.website.title}
+    href={toAbsolute(resolveInternalUrl(feed.path))}
+  />
+))}
+{alternates.map((alternate) => (
+  <link
+    rel="alternate"
+    type={alternate.type}
+    title={alternate.title ?? config.app.website.title}
+    href={toAbsolute(resolveInternalUrl(alternate.href))}
+  />
+))}
 <meta name="generator" content={Astro.generator} />
 
-{
-  configuredFonts.map((font) => (
-    // `virtual:walle-fonts` types `cssVariable` as string; Astro's `CssVariable` is a
-    // literal union of the configured values.
-    <Font
-      cssVariable={font.cssVariable as ComponentProps<typeof Font>["cssVariable"]}
-      preload={font.preload}
-    />
-  ))
-}
+{configuredFonts.map((font) => (
+  // `virtual:walle-fonts` types `cssVariable` as string; Astro's `CssVariable` is a
+  // literal union of the configured values.
+  <Font
+    cssVariable={font.cssVariable as ComponentProps<typeof Font>["cssVariable"]}
+    preload={font.preload}
+  />
+))}
 
-{
-  /* vite-plugin-pwa cannot inject these into Astro's static output (no transformIndexHtml
-     pass at build). Both files are generated at build only and 404 in dev. */
-}
-{
-  pwa.enabled && import.meta.env.PROD && (
-    <Fragment>
-      <link rel="manifest" href={pwa.manifestHref} />
-      {pwa.themeColor && <meta name="theme-color" content={pwa.themeColor} />}
-      {pwa.appleTouchIcon && <link rel="apple-touch-icon" href={pwa.appleTouchIcon} />}
-      <script is:inline defer src={pwa.registerHref} />
-    </Fragment>
-  )
-}
+{/* vite-plugin-pwa cannot inject these into Astro's static output (no transformIndexHtml
+     pass at build). Both files are generated at build only and 404 in dev. */}
+{pwa.enabled && import.meta.env.PROD && (
+  <Fragment>
+    <link rel="manifest" href={pwa.manifestHref} />
+    {pwa.themeColor && <meta name="theme-color" content={pwa.themeColor} />}
+    {pwa.appleTouchIcon && <link rel="apple-touch-icon" href={pwa.appleTouchIcon} />}
+    <script is:inline defer src={pwa.registerHref} />
+  </Fragment>
+)}
 
 <link rel="canonical" href={canonicalURL} />
 

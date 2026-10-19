@@ -25,23 +25,21 @@ const items = [
 />
 
 <div class="demo-grid">
-  {
-    items.map((item) => (
-      <div
-        data-filter-item
-        data-category={item.category}
-        data-lang={item.lang}
-        data-search={item.title}
-      >
-        <div class="demo-item">
-          <h3>{item.title}</h3>
-          <p>
-            {item.category} · {item.lang}
-          </p>
-        </div>
+  {items.map((item) => (
+    <div
+      data-filter-item
+      data-category={item.category}
+      data-lang={item.lang}
+      data-search={item.title}
+    >
+      <div class="demo-item">
+        <h3>{item.title}</h3>
+        <p>
+          {item.category} · {item.lang}
+        </p>
       </div>
-    ))
-  }
+    </div>
+  ))}
 </div>
 
 <style>

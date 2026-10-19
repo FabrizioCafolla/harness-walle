@@ -112,48 +112,42 @@ const closeIcon =
       <slot />
     </div>
 
-    {
-      controls && (
-        <>
-          <button
-            type="button"
-            class="carousel-arrow carousel-prev"
-            aria-label={previousLabel}
-            disabled
-            set:html={chevronLeft}
-          />
-          <button
-            type="button"
-            class="carousel-arrow carousel-next"
-            aria-label={nextLabel}
-            set:html={chevronRight}
-          />
-        </>
-      )
-    }
-  </div>
-
-  {
-    counter && (
-      <p class="carousel-counter" data-carousel-counter aria-live="polite">
-        <span data-carousel-current>1</span> / <span data-carousel-total>1</span>
-      </p>
-    )
-  }
-
-  {
-    zoom && (
-      <dialog class="carousel-lightbox" aria-label={label}>
+    {controls && (
+      <>
         <button
           type="button"
-          class="carousel-lightbox__close"
-          aria-label={closeLabel}
-          set:html={closeIcon}
+          class="carousel-arrow carousel-prev"
+          aria-label={previousLabel}
+          disabled
+          set:html={chevronLeft}
         />
-        <img class="carousel-lightbox__img" src="" alt="" />
-      </dialog>
-    )
-  }
+        <button
+          type="button"
+          class="carousel-arrow carousel-next"
+          aria-label={nextLabel}
+          set:html={chevronRight}
+        />
+      </>
+    )}
+  </div>
+
+  {counter && (
+    <p class="carousel-counter" data-carousel-counter aria-live="polite">
+      <span data-carousel-current>1</span> / <span data-carousel-total>1</span>
+    </p>
+  )}
+
+  {zoom && (
+    <dialog class="carousel-lightbox" aria-label={label}>
+      <button
+        type="button"
+        class="carousel-lightbox__close"
+        aria-label={closeLabel}
+        set:html={closeIcon}
+      />
+      <img class="carousel-lightbox__img" src="" alt="" />
+    </dialog>
+  )}
 </section>
 
 <style>

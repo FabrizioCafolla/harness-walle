@@ -76,14 +76,12 @@ const classes = ["price", className ?? ""].filter(Boolean).join(" ");
 ---
 
 <span class={classes} data-component="Price" data-size={size} {...rest}>
-  {
-    hasDiscount && (
-      <s class="price-compare">
-        <span class="sr-only">{originalLabel}: </span>
-        {format(price.compareAt!)}
-      </s>
-    )
-  }
+  {hasDiscount && (
+    <s class="price-compare">
+      <span class="sr-only">{originalLabel}: </span>
+      {format(price.compareAt!)}
+    </s>
+  )}
   <span class="price-current">
     {hasDiscount && <span class="sr-only">{discountedLabel}: </span>}
     {format(price.amount)}

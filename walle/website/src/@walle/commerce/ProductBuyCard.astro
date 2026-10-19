@@ -47,26 +47,22 @@ const inStock = product.variants.nodes.some((v) => v.availableForSale);
 
 <article class:list={["buy-card", className]} data-component="ProductBuyCard">
   <div class="buy-card__media">
-    {
-      cover && (
-        <img
-          src={imageUrl(cover.url)}
-          alt={cover.altText ?? product.title}
-          width={cover.width ?? 800}
-          height={cover.height ?? 800}
-          loading="lazy"
-        />
-      )
-    }
+    {cover && (
+      <img
+        src={imageUrl(cover.url)}
+        alt={cover.altText ?? product.title}
+        width={cover.width ?? 800}
+        height={cover.height ?? 800}
+        loading="lazy"
+      />
+    )}
     {!inStock && <Badge text="Sold out" muted class="buy-card__badge" />}
   </div>
 
   <div class="buy-card__body">
     {product.productType && <span class="buy-card__type">{product.productType}</span>}
-    {
-      /* Stretched link: the whole card navigates to the detail page via this one link,
-        while the buy controls below sit above it (z-index) and stay clickable. */
-    }
+    {/* Stretched link: the whole card navigates to the detail page via this one link,
+        while the buy controls below sit above it (z-index) and stay clickable. */}
     <h3 class="buy-card__title">
       <a href={href}>{product.title}</a>
     </h3>

@@ -51,33 +51,28 @@ const ld =
 {ld && <StructuredData data={ld} />}
 <nav aria-label={label("breadcrumbs.nav")} class:list={["breadcrumbs", className]} {...rest}>
   <ol>
-    {
-      items.map((item, index) => (
-        <li class={index === items.length - 1 ? "current" : ""}>
-          {index > 0 && (
-            <span class="separator" aria-hidden="true">
-              {" "}
-              /{" "}
-            </span>
-          )}
+    {items.map((item, index) => (
+      <li class={index === items.length - 1 ? "current" : ""}>
+        {index > 0 && (
+          <span class="separator" aria-hidden="true">
+            {" "}
+            /{" "}
+          </span>
+        )}
 
-          {item.href && index !== items.length - 1 ? (
-            <a href={item.href}>
-              {item.icon && <Icon name={item.icon} class="item-icon" aria-hidden="true" />}
-              <span>{item.label}</span>
-            </a>
-          ) : (
-            <span
-              class="current-item"
-              aria-current={index === items.length - 1 ? "page" : undefined}
-            >
-              {item.icon && <Icon name={item.icon} class="item-icon" aria-hidden="true" />}
-              <span>{item.label}</span>
-            </span>
-          )}
-        </li>
-      ))
-    }
+        {item.href && index !== items.length - 1 ? (
+          <a href={item.href}>
+            {item.icon && <Icon name={item.icon} class="item-icon" aria-hidden="true" />}
+            <span>{item.label}</span>
+          </a>
+        ) : (
+          <span class="current-item" aria-current={index === items.length - 1 ? "page" : undefined}>
+            {item.icon && <Icon name={item.icon} class="item-icon" aria-hidden="true" />}
+            <span>{item.label}</span>
+          </span>
+        )}
+      </li>
+    ))}
   </ol>
 </nav>
 

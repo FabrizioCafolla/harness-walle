@@ -69,29 +69,25 @@ const hasSubtitle = Boolean(subtitleHtml) || Boolean(subtitle);
   {...variantAttrs({ variant, filled, muted })}
   {...rest}
 >
-  <div class="section-wrapper__bg"><slot name="background" /></div>
+  <div class="section-wrapper__bg">
+    <slot name="background" />
+  </div>
   <div class="section-wrapper__inner">
-    {
-      hasTagline && (
-        <p class="section-wrapper__tagline">
-          {taglineHtml ? <Fragment set:html={taglineHtml} /> : tagline}
-        </p>
-      )
-    }
-    {
-      hasTitle && (
-        <Tag class="section-wrapper__title">
-          {titleHtml ? <Fragment set:html={titleHtml} /> : title}
-        </Tag>
-      )
-    }
-    {
-      hasSubtitle && (
-        <p class="section-wrapper__subtitle">
-          {subtitleHtml ? <Fragment set:html={subtitleHtml} /> : subtitle}
-        </p>
-      )
-    }
+    {hasTagline && (
+      <p class="section-wrapper__tagline">
+        {taglineHtml ? <Fragment set:html={taglineHtml} /> : tagline}
+      </p>
+    )}
+    {hasTitle && (
+      <Tag class="section-wrapper__title">
+        {titleHtml ? <Fragment set:html={titleHtml} /> : title}
+      </Tag>
+    )}
+    {hasSubtitle && (
+      <p class="section-wrapper__subtitle">
+        {subtitleHtml ? <Fragment set:html={subtitleHtml} /> : subtitle}
+      </p>
+    )}
     <slot />
   </div>
 </section>

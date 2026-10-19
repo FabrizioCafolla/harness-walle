@@ -32,14 +32,12 @@ const {
   centered={centered}
   muted={muted}
 >
-  {
-    Array.from({ length: items }, (_, i) => (
-      <div class="demo-column">
-        <h3>Column {i + 1}</h3>
-        <p>Sample content for column {i + 1}. Collapses to one column on narrow viewports.</p>
-      </div>
-    ))
-  }
+  {Array.from({ length: items }, (_, i) => (
+    <div class="demo-column">
+      <h3>Column {i + 1}</h3>
+      <p>Sample content for column {i + 1}. Collapses to one column on narrow viewports.</p>
+    </div>
+  ))}
 </SectionColumns>
 
 <style>
