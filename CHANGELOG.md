@@ -8,6 +8,11 @@ All notable changes to Walle are documented here. Format follows
 
 Open fix branch: small fixes are added here until the release.
 
+### Added
+
+- **`--navbar-backdrop` on `.site-header`.** The `backdrop-filter` of the menu (default
+  `blur(20px)`, as before), for example `blur(28px) saturate(180%)` for a glass look.
+
 ### Fixed
 
 - **Navbar links keep a visible keyboard focus ring.** `.brand-link`, `.nav-link` and
@@ -19,6 +24,12 @@ Open fix branch: small fixes are added here until the release.
 - **Twitter card tags use `name`, not `property`.** `twitter:card`, `twitter:url`, `twitter:title`,
   `twitter:description` and `twitter:image` were emitted as `<meta property=...>`, so tools that
   read `name="twitter:card"` reported the card as missing.
+- **The sticky navbar stopped following the page after about one screen.** `body` had `height: 100%`
+  on top of `min-height: 100vh`, so the box the sticky header lives in was exactly one viewport tall
+  and the header scrolled away with it. `body` now grows with its content.
+- **The navbar and table-of-contents blur never reached Chromium.** With `backdrop-filter` written
+  before `-webkit-backdrop-filter`, the build output kept only the prefixed property, which
+  Chromium reported as `none` (no blur). The prefixed one now comes first.
 - **`calculateReadingTime` counts the text of a markdown link.** The link pattern had no capture
   group, so every link counted as the literal `$1` instead of its words.
 

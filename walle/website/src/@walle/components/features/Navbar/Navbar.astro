@@ -102,6 +102,7 @@ const shouldShowBrand = hasLogo || hasTitle;
       --navbar-fg: var(--text);
       --navbar-border: color-mix(in srgb, var(--text) 8%, transparent);
       --navbar-shadow: var(--shadow-md);
+      --navbar-backdrop: blur(20px);
       --navbar-logo-height: 40px;
       --navbar-logo-height-mobile: 34px;
       --navbar-link-color: var(--navbar-fg);
@@ -141,8 +142,8 @@ const shouldShowBrand = hasLogo || hasTitle;
       top: 0;
       width: 100%;
       background: var(--navbar-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: var(--navbar-backdrop);
+      backdrop-filter: var(--navbar-backdrop);
       border-bottom: 1px solid var(--navbar-border);
       z-index: 1000;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -659,8 +660,8 @@ const shouldShowBrand = hasLogo || hasTitle;
 
       background: transparent;
       border-bottom-color: transparent;
-      backdrop-filter: none;
       -webkit-backdrop-filter: none;
+      backdrop-filter: none;
     }
 
     body:not(.menu-open):has([data-navbar-overlay]) .site-header:not(.scrolled) .brand-logo {

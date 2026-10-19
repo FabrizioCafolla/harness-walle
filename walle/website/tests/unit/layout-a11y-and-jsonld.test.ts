@@ -37,3 +37,26 @@ describe("Twitter card tags", () => {
     expect(head).not.toContain('property="twitter:');
   });
 });
+
+describe("Sticky navbar", () => {
+  it("lives in a body that grows with the page, so it stays stuck to the bottom", () => {
+    const base = read("src/@walle/styles/base.css");
+    const body = base.slice(base.indexOf("  body {"), base.indexOf("  main {"));
+    expect(body).not.toMatch(/\bheight:\s*100%/);
+    expect(body).toMatch(/min-height:\s*100vh/);
+  });
+
+  it("declares the prefixed backdrop-filter before the standard one (the minifier keeps the standard one only then)", () => {
+    for (const file of [
+      "src/@walle/components/features/Navbar/Navbar.astro",
+      "src/@walle/components/features/Blog/BlogTableOfContents.astro",
+    ]) {
+      const css = read(file);
+      const lines = css.split("\n").map((l) => l.trim());
+      lines.forEach((line, i) => {
+        if (line.startsWith("backdrop-filter:"))
+          expect(lines[i - 1]).toMatch(/^-webkit-backdrop-filter:/);
+      });
+    }
+  });
+});
