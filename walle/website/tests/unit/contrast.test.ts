@@ -4,10 +4,8 @@ import { join } from "node:path";
 import { contrastRatio } from "../../src/@walle/utils/contrast";
 
 /**
- * WCAG 2.2 AA contrast check for the default walle palette.
- * Pairings listed here are the real text/surface combinations rendered by
- * @walle components with the default theme. If a default color changes,
- * this test keeps the palette honest.
+ * WCAG 2.2 AA contrast check for the default walle palette: the text/surface pairings
+ * @walle components render with the default theme.
  */
 
 const css = readFileSync(join(__dirname, "../../src/@walle/styles/tokens.css"), "utf-8");
@@ -104,10 +102,8 @@ const pairings: [string, string, string, number][] = [
     NORMAL,
   ],
 ];
-// Badge's filled state maps to --variant-fg on --variant-bg, already covered by
-// the "[data-variant] fg on bg" describe block below: no separate literal pairing needed.
-// Its status coloring maps to --status-*-contrast on --status-*, covered by the
-// "status tokens" describe block below.
+// Badge renders --variant-fg on --variant-bg and --status-*-contrast on --status-*: covered by
+// the "[data-variant] fg on bg" and "status tokens" blocks below.
 
 describe("default palette meets WCAG 2.2 AA", () => {
   for (const [name, fg, bg, threshold] of pairings) {
@@ -140,11 +136,8 @@ describe("[data-variant] fg on bg meets WCAG 2.2 AA", () => {
   }
 });
 
-// SectionWrapper's [data-filled] redefines --text/--text-muted/--heading/--link/
-// --link-hover to --variant-fg, always read against the wrapper's own --variant-bg: the
-// exact pairing the block above already covers, so no separate case is needed for those.
-// --surface-alt is the one token it redefines to something else (--variant-bg-hover, for
-// code's background), which needs its own pairing below.
+// [data-filled] maps text, heading and link tokens to --variant-fg (covered above) and
+// --surface-alt, code's background, to --variant-bg-hover.
 describe("[data-filled] code background (--variant-fg on --variant-bg-hover) meets WCAG 2.2 AA", () => {
   for (const variant of VARIANTS) {
     it(`${variant}: --variant-fg on --variant-bg-hover >= ${NORMAL}:1`, () => {
@@ -156,15 +149,9 @@ describe("[data-filled] code background (--variant-fg on --variant-bg-hover) mee
   }
 });
 
-// SectionWrapper's [data-muted] only redefines --surface-alt, to --surface (white):
-// code's background moves off the section's own gray, onto the same white/gray-dark pairing
-// "muted text on surface (p on body)" above already covers. --text/--text-muted/--heading/
-// link colors are untouched: --surface-alt (gray-light) is close enough to --surface that
-// "muted text on surface-alt (p in gray Section)" above already stands in for them too.
+// [data-muted] only redefines --surface-alt, to --surface: covered by "muted text on surface".
 
-// Inverse: a filled variant's own --variant-color rendered as text on a neutral surface
-// (the shape an outline/unfilled variant's text takes, e.g. Button's old `white` variant:
-// --surface background, --primary text).
+// Inverse: --variant-color as text on --surface, as outline/unfilled variants render it.
 describe("[data-variant] inverse (--variant-color on --surface) meets WCAG 2.2 AA", () => {
   const surface = tokenDefault("--surface");
   for (const variant of VARIANTS) {
@@ -178,8 +165,7 @@ describe("[data-variant] inverse (--variant-color on --surface) meets WCAG 2.2 A
   }
 });
 
-// site is defined identical to primary by construction; enforce it stays that way,
-// not just that the two happen to resolve to the same color today.
+// site must be declared identically to primary, not only resolve to the same colors.
 describe('[data-variant="site"] matches [data-variant="primary"] line for line', () => {
   for (const prop of VARIANT_PROPS) {
     it(`${prop} is identical`, () => {

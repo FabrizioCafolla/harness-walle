@@ -28,15 +28,13 @@ const title = config.logo?.title || t("breadcrumbs.home");
     </a>
     <nav class="navbar-minimal__nav" aria-label={t("nav.main")}>
       <ul>
-        {
-          items.map((item: NavigationLink) => (
-            <li>
-              <a href={resolveInternalUrl(item.url)} target={item.target || "_self"}>
-                {item.name}
-              </a>
-            </li>
-          ))
-        }
+        {items.map((item: NavigationLink) => (
+          <li>
+            <a href={resolveInternalUrl(item.url)} target={item.target || "_self"}>
+              {item.name}
+            </a>
+          </li>
+        ))}
       </ul>
     </nav>
   </div>
@@ -45,9 +43,8 @@ const title = config.logo?.title || t("breadcrumbs.home");
 <style>
   @layer walle.components {
     .navbar-minimal {
-      /* Public properties. `--navbar-fg` defaults to `inherit` (as the original unthemed
-                 color did) rather than a fixed token, so pages that set their own text color on
-                 an ancestor keep working unchanged. */
+      /* Public properties. `--navbar-fg` defaults to `inherit` so a text color set on an
+         ancestor still applies. */
       --navbar-bg: transparent;
       --navbar-fg: inherit;
       --navbar-border: var(--gray);

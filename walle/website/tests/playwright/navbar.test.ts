@@ -1,9 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { siteBase } from "./storyRoutes";
 
-// The site mounts under app.json's base path: navigate there, not to origin
-// root. No trailing slash: app.json sets trailingSlash "never", so the home
-// page is `/<base>` exactly (a trailing slash 404s).
+// The home page is `/<base>` exactly: app.json sets trailingSlash "never".
 const home = siteBase || "/";
 
 test.describe("Navbar - Desktop (1280x800)", () => {
@@ -49,8 +47,7 @@ test.describe("Navbar - Desktop (1280x800)", () => {
 
   test("text nav link's accessible name matches its visible label", async ({ page }) => {
     await page.goto(home);
-    // Regression guard: a hardcoded "Go to <href>" aria-label would override the visible
-    // text on every link, breaking voice control (WCAG 2.5.3 Label in Name).
+    // An aria-label like "Go to <href>" would override the visible text (WCAG 2.5.3).
     await expect(page.getByRole("link", { name: "Home", exact: true })).toBeVisible();
   });
 
@@ -210,5 +207,31 @@ test.describe("Navbar - overlay on mobile (375x667)", () => {
     );
     await expect(page.locator("body")).toHaveClass(/menu-open/);
     await expect(page.locator(".nav-link").first()).not.toHaveCSS("color", "rgb(255, 255, 255)");
+  });
+});
+
+test.describe("Navbar - sticky and glass", () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  test("stays stuck to the top down to the bottom of a long page", async ({ page }) => {
+    await page.goto(`${siteBase}/showcase`);
+    const scrollable = await page.evaluate(
+      () => document.documentElement.scrollHeight - window.innerHeight
+    );
+    expect(scrollable).toBeGreaterThan(2000);
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await page.waitForTimeout(300);
+    const top = await page.evaluate(
+      () => document.querySelector(".site-header")!.getBoundingClientRect().top
+    );
+    expect(top).toBe(0);
+  });
+
+  test("applies the blur from --navbar-backdrop in Chromium", async ({ page }) => {
+    await page.goto(home);
+    const filter = await page.evaluate(
+      () => getComputedStyle(document.querySelector(".site-header")!).backdropFilter
+    );
+    expect(filter).toBe("blur(20px)");
   });
 });

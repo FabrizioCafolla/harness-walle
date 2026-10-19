@@ -19,8 +19,7 @@ import { getCollection } from "astro:content";
 
 const img = (p: string) => resolveInternalUrl(p);
 
-// The wiki route only exists on the design-system showcase (repo `wiki/` present), never in a
-// seeded consumer: link to it only when there are pages to link.
+// The wiki collection is empty in a seeded consumer (no repo `wiki/`).
 const hasWiki = (await getCollection("wiki")).length > 0;
 
 const groups = [
@@ -51,19 +50,18 @@ const groups = [
         during development.
       </p>
       <nav class="showcase-nav" aria-label="Showcase sections">
-        {groups.map((g) => <a href={`#${g.id}`}>{g.label}</a>)}
+        {groups.map((g) => (
+          <a href={`#${g.id}`}>{g.label}</a>
+        ))}
       </nav>
-      {
-        hasWiki && (
-          <p>
-            <Link href={resolveInternalUrl("/wiki")}>Read the design-system wiki →</Link>
-          </p>
-        )
-      }
+      {hasWiki && (
+        <p>
+          <Link href={resolveInternalUrl("/wiki")}>Read the design-system wiki →</Link>
+        </p>
+      )}
     </div>
   </section>
 
-  <!-- ELEMENTS -->
   <span id="elements" class="anchor"></span>
   <Section title="Elements">
     <div class="demo">
@@ -117,7 +115,6 @@ const groups = [
     </div>
   </Section>
 
-  <!-- CARDS -->
   <span id="cards" class="anchor"></span>
   <Section title="Cards" muted={true}>
     <div class="card-grid">
@@ -144,7 +141,6 @@ const groups = [
     </div>
   </Section>
 
-  <!-- LAYOUT -->
   <span id="layout" class="anchor"></span>
   <SectionColumns title="Layout: responsive columns" columns={3} centered={true}>
     <div class="feature">
@@ -161,13 +157,13 @@ const groups = [
     </div>
   </SectionColumns>
 
-  <!-- SECTIONS -->
   <span id="sections" class="anchor"></span>
   <Section title="Sections: filled and muted" filled={true} variant="secondary">
     <p>
       Every section shares one wrapper: the same <code>filled</code> and <code>muted</code>
       modifiers restyle its background, whichever component sits on top. See the
-      <a href={resolveInternalUrl("/wiki/architecture/style")}>styling guide</a> for the full token list.
+      <a href={resolveInternalUrl("/wiki/architecture/style")}>styling guide</a> for the full token
+      list.
     </p>
   </Section>
   <CallToAction
@@ -180,7 +176,6 @@ const groups = [
     filled={true}
   />
 
-  <!-- MEDIA -->
   <span id="media" class="anchor"></span>
   <Section title="Media: image carousel">
     <p class="media-hint">
@@ -216,7 +211,6 @@ const groups = [
     </Carousel>
   </Section>
 
-  <!-- MAP -->
   <span id="map" class="anchor"></span>
   <Section title="Map">
     <p class="media-hint">
@@ -231,7 +225,6 @@ const groups = [
     />
   </Section>
 
-  <!-- CATALOG -->
   <span id="catalog" class="anchor"></span>
   <Section title="Catalog & content" muted={true} centered={true}>
     <p>
@@ -333,8 +326,7 @@ const groups = [
     margin-top: var(--space-lg);
   }
 
-  /* Button's `inverse` modifier assumes a filled/colored background, unlike this page's own
-     surface. This swatch is that background, contextual demo chrome only. */
+  /* Filled background for Button's `inverse` modifier. */
   .demo__row--swatch {
     margin-top: var(--space-md);
     padding: var(--space-lg);
@@ -373,6 +365,4 @@ const groups = [
     font-size: 0.95rem;
     margin-bottom: var(--space-lg);
   }
-
-  /* Image sizing is owned by the Carousel (fit="uniform" by default). */
 </style>

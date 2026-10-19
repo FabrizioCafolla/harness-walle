@@ -1,10 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-// `?inline` embeds the file's bytes as a base64 data URI directly in this module's own build
-// output, immune to Vite relocating the compiled chunk elsewhere (unlike a runtime
-// `readFileSync(new URL("./fonts/Inter-Bold.woff", import.meta.url))`, which resolves against
-// wherever THIS code physically ends up after bundling, not its original source location.
-// See the ambient declaration in env.d.ts for why this import needs one.
+// `?inline` embeds the font as a base64 data URI in this module's build output; an
+// `import.meta.url` path would resolve against the bundled chunk's location. Typed in env.d.ts.
 import bundledFontDataUri from "./fonts/Inter-Bold.woff?inline";
 
 export type OgFont = {
@@ -38,8 +35,7 @@ function isSupportedFontFile(path: string): boolean {
   return SUPPORTED_EXTENSIONS.some((ext) => path.toLowerCase().endsWith(ext));
 }
 
-// Read-once-per-path cache: a build renders many OG images (one per collection entry) and
-// would otherwise re-read the same font file from disk for every single one.
+// Read-once-per-path cache: a build renders one OG image per collection entry.
 const siteFontCache = new Map<string, Buffer>();
 
 function readCached(absPath: string): Buffer {

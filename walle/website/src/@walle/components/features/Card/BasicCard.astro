@@ -86,23 +86,17 @@ const truncatedContent =
   {...rest}
 >
   <article class="card__wrapper">
-    {
-      image && (
-        <div class="card__image">
-          <img src={image.src} alt={image.alt} loading="lazy" width="120" height="120" />
-        </div>
-      )
-    }
+    {image && (
+      <div class="card__image">
+        <img src={image.src} alt={image.alt} loading="lazy" width="120" height="120" />
+      </div>
+    )}
 
     <div class="card__content">
       <div class="card__meta">
-        {
-          badge && (
-            <span class={`card__badge card__badge--${badge.variant || "primary"}`}>
-              {badge.text}
-            </span>
-          )
-        }
+        {badge && (
+          <span class={`card__badge card__badge--${badge.variant || "primary"}`}>{badge.text}</span>
+        )}
         {formattedDate && <span class="card__date">{formattedDate}</span>}
       </div>
 
@@ -166,9 +160,8 @@ const truncatedContent =
     }
 
     .card__image {
-      /* Full-bleed to the card's top edges: cancel the wrapper padding so the image
-               reaches the border, with only the top corners rounded (the wrapper clips
-               them) and a square bottom. No inset, no double border. */
+      /* Full-bleed to the card's top edges: cancels the wrapper padding so the image reaches
+         the border; the wrapper clips the top corners. */
       aspect-ratio: 1;
       overflow: hidden;
       background: var(--surface-alt);
@@ -249,7 +242,6 @@ const truncatedContent =
       flex: 1;
     }
 
-    /* Responsive adjustments */
     @media (max-width: 640px) {
       .card {
         --card-padding: 16px;
@@ -308,7 +300,6 @@ const truncatedContent =
       }
     }
 
-    /* Accessibility */
     @media (prefers-reduced-motion: reduce) {
       .card,
       .card__wrapper,
@@ -342,7 +333,6 @@ const truncatedContent =
       }
     }
 
-    /* Focus visible for keyboard navigation */
     .card:focus-visible {
       outline: 2px solid var(--focus-ring);
       outline-offset: 2px;

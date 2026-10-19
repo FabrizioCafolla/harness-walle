@@ -87,15 +87,13 @@ const classes = ["card", "product-card", className].filter(Boolean).join(" ");
     </div>
 
     <div class="product-card__content">
-      {
-        product.badge && (
-          <span
-            class={`product-card__badge product-card__badge--${product.badge.variant || "primary"}`}
-          >
-            {product.badge.text}
-          </span>
-        )
-      }
+      {product.badge && (
+        <span
+          class={`product-card__badge product-card__badge--${product.badge.variant || "primary"}`}
+        >
+          {product.badge.text}
+        </span>
+      )}
       <h3 class="product-card__name">{product.name}</h3>
       {product.description && <p class="product-card__description">{product.description}</p>}
       <Price price={product.price} />

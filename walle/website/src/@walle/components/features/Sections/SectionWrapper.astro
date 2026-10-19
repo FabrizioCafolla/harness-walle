@@ -49,11 +49,8 @@ const {
 const Tag = headingLevel;
 
 /**
- * A caller may forward `<slot name="title" slot="title" />` unconditionally, whether or not
- * its own caller actually provided that slot: Astro's compiler registers the slot as present
- * from the syntax alone, so `Astro.slots.has()` alone cannot tell "provided but empty" apart
- * from "provided with content". Rendering it and checking the result is the only reliable way;
- * an empty render then falls back to the prop instead of leaving the section headless.
+ * Astro.slots.has() is true for a forwarded slot even when the outer caller passed nothing,
+ * so the slot is rendered and checked; an empty render falls back to the prop.
  */
 const taglineHtml = Astro.slots.has("tagline") ? (await Astro.slots.render("tagline")).trim() : "";
 const titleHtml = Astro.slots.has("title") ? (await Astro.slots.render("title")).trim() : "";
@@ -72,29 +69,25 @@ const hasSubtitle = Boolean(subtitleHtml) || Boolean(subtitle);
   {...variantAttrs({ variant, filled, muted })}
   {...rest}
 >
-  <div class="section-wrapper__bg"><slot name="background" /></div>
+  <div class="section-wrapper__bg">
+    <slot name="background" />
+  </div>
   <div class="section-wrapper__inner">
-    {
-      hasTagline && (
-        <p class="section-wrapper__tagline">
-          {taglineHtml ? <Fragment set:html={taglineHtml} /> : tagline}
-        </p>
-      )
-    }
-    {
-      hasTitle && (
-        <Tag class="section-wrapper__title">
-          {titleHtml ? <Fragment set:html={titleHtml} /> : title}
-        </Tag>
-      )
-    }
-    {
-      hasSubtitle && (
-        <p class="section-wrapper__subtitle">
-          {subtitleHtml ? <Fragment set:html={subtitleHtml} /> : subtitle}
-        </p>
-      )
-    }
+    {hasTagline && (
+      <p class="section-wrapper__tagline">
+        {taglineHtml ? <Fragment set:html={taglineHtml} /> : tagline}
+      </p>
+    )}
+    {hasTitle && (
+      <Tag class="section-wrapper__title">
+        {titleHtml ? <Fragment set:html={titleHtml} /> : title}
+      </Tag>
+    )}
+    {hasSubtitle && (
+      <p class="section-wrapper__subtitle">
+        {subtitleHtml ? <Fragment set:html={subtitleHtml} /> : subtitle}
+      </p>
+    )}
     <slot />
   </div>
 </section>
@@ -179,8 +172,8 @@ const hasSubtitle = Boolean(subtitleHtml) || Boolean(subtitle);
       --heading: var(--variant-fg);
       --link: var(--variant-fg);
       --link-hover: var(--variant-fg);
-      /* code's background reuses the variant's already-audited hover shade (darker, so
-         contrast against --variant-fg only improves) rather than a new color. */
+      /* code's background reuses the variant's hover shade, already contrast-checked
+         against --variant-fg. */
       --surface-alt: var(--variant-bg-hover);
     }
 

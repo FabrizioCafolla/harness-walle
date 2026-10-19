@@ -11,19 +11,17 @@ const { items } = Astro.props;
 ---
 
 <ul class="dropdown-menu" data-component="NavbarDropdown">
-  {
-    items.map((item) => (
-      <li class="dropdown-item">
-        <NavbarLink
-          href={item.url}
-          target={item.target ?? (item.url.startsWith("http") ? "_blank" : "_self")}
-          class="dropdown-link"
-          name={item.name}
-        >
-          {item.icon && <Icon name={item.icon} aria-hidden="true" size={16} />}
-          {item.name && <span>{item.name}</span>}
-        </NavbarLink>
-      </li>
-    ))
-  }
+  {items.map((item) => (
+    <li class="dropdown-item">
+      <NavbarLink
+        href={item.url}
+        target={item.target ?? (item.url.startsWith("http") ? "_blank" : "_self")}
+        class="dropdown-link"
+        name={item.name}
+      >
+        {item.icon && <Icon name={item.icon} aria-hidden="true" size={16} />}
+        {item.name && <span>{item.name}</span>}
+      </NavbarLink>
+    </li>
+  ))}
 </ul>

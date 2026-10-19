@@ -35,22 +35,20 @@ const {
       <h2 class="section-title">{Astro.slots.has("title") ? <slot name="title" /> : title}</h2>
       <slot />
     </div>
-    {
-      image && (
-        <div class="image-container">
-          {/* image.src is `string | ImageMetadata`; Astro's <Image> only overloads on one or
+    {image && (
+      <div class="image-container">
+        {/* image.src is `string | ImageMetadata`; Astro's <Image> only overloads on one or
                the other, so a union value never resolves to either branch on its own. */}
-          <Image
-            src={image.src as string}
-            alt={image.alt}
-            width={500}
-            height={400}
-            loading="lazy"
-            class="section-image"
-          />
-        </div>
-      )
-    }
+        <Image
+          src={image.src as string}
+          alt={image.alt}
+          width={500}
+          height={400}
+          loading="lazy"
+          class="section-image"
+        />
+      </div>
+    )}
   </div>
 </SectionWrapper>
 

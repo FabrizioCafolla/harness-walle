@@ -58,29 +58,25 @@ const hasSubtitle = Astro.slots.has("subtitle") || Boolean(subtitle);
     <div class="header-extra">
       {Astro.slots.has("eyebrow") && <slot name="eyebrow" />}
       <h1 class="header-title">{Astro.slots.has("title") ? <slot name="title" /> : title}</h1>
-      {
-        hasSubtitle && (
-          <p class="header-subtitle">
-            {Astro.slots.has("subtitle") ? <slot name="subtitle" /> : subtitle}
-          </p>
-        )
-      }
+      {hasSubtitle && (
+        <p class="header-subtitle">
+          {Astro.slots.has("subtitle") ? <slot name="subtitle" /> : subtitle}
+        </p>
+      )}
       <slot />
     </div>
-    {
-      image && (
-        <div class="header-media">
-          <Image
-            src={image.src}
-            alt={image.alt}
-            width={600}
-            height={400}
-            class="header-image"
-            loading="eager"
-          />
-        </div>
-      )
-    }
+    {image && (
+      <div class="header-media">
+        <Image
+          src={image.src}
+          alt={image.alt}
+          width={600}
+          height={400}
+          class="header-image"
+          loading="eager"
+        />
+      </div>
+    )}
   </div>
 </SectionWrapper>
 

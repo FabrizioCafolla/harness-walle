@@ -1,9 +1,8 @@
 import { expect, test } from "@playwright/test";
 import { siteBase } from "./storyRoutes";
 
-// typography.fonts (Google provider, configured on the demo's own app.json) must resolve
-// through Astro's Fonts API to files served from the site's own origin: never a live request
-// to the font provider's CDN at runtime.
+// typography.fonts (Google provider in the demo app.json) must be served from the site's own
+// origin via Astro's Fonts API, never requested from the provider's CDN at runtime.
 const home = siteBase || "/";
 
 test.describe("typography.fonts", () => {

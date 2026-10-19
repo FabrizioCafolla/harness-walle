@@ -9,16 +9,14 @@ import { getCollection } from "astro:content";
 
 export type { BaseLayoutProps as Props } from "./types";
 
-// Cart UI only in commerce mode; a site with commerce off ships none of it. `cartInNavbar` puts the
-// trigger in the navbar, otherwise it floats bottom-right. `CartMount`/`CartBadge` come from
-// `virtual:walle-features`, which resolves to `null` at the module-graph level when commerce
-// is off, so that build never emits a chunk for the cart components at all.
+// `virtual:walle-features` resolves `CartMount`/`CartBadge` to `null` when commerce is off,
+// so no cart chunk is emitted. Without `cartInNavbar` the cart floats bottom-right.
 const commerce = config.app.commerce;
 const showCart = Boolean(CartMount);
 const cartInNavbar = commerce?.cartInNavbar ?? false;
 
-// "Docs" link for the showcase's /wiki pages (seed-excluded, so consumers never have them).
-// Checked before getCollection(): on a missing collection Astro logs a warning on every request.
+// /wiki pages exist only in the showcase (seed-excluded). Checked before getCollection():
+// on a missing collection Astro logs a warning on every request.
 let navbarConfig: NavbarConfig = config.navbar || {};
 if (Object.keys(import.meta.glob("/src/pages/wiki/index.astro")).length > 0) {
   const wikiPages = await getCollection("wiki");
@@ -34,25 +32,18 @@ if (Object.keys(import.meta.glob("/src/pages/wiki/index.astro")).length > 0) {
 <AbstractLayout {...Astro.props}>
   <slot name="head" slot="head" />
   <slot name="navbar">
-    {
-      /* Astro registers slot names statically from the template: a `<slot slot="brand">`
-         token anywhere in the children marks brand as "provided" on Navbar and suppresses
-         its default brand, even behind a falsy guard. So we branch instead, letting a
-         caller override just the brand while leaving Navbar's own default showing when
-         no brand slot is given. */
-    }
-    {
-      Astro.slots.has("brand") ? (
-        <Navbar config={navbarConfig}>
-          <slot name="brand" slot="brand" />
-          {showCart && CartBadge && <CartBadge slot="actions" floating={false} />}
-        </Navbar>
-      ) : (
-        <Navbar config={navbarConfig}>
-          {showCart && CartBadge && <CartBadge slot="actions" floating={false} />}
-        </Navbar>
-      )
-    }
+    {/* Astro registers slot names statically: a `<slot slot="brand">` anywhere in the
+         children suppresses Navbar's default brand, even behind a falsy guard. */}
+    {Astro.slots.has("brand") ? (
+      <Navbar config={navbarConfig}>
+        <slot name="brand" slot="brand" />
+        {showCart && CartBadge && <CartBadge slot="actions" floating={false} />}
+      </Navbar>
+    ) : (
+      <Navbar config={navbarConfig}>
+        {showCart && CartBadge && <CartBadge slot="actions" floating={false} />}
+      </Navbar>
+    )}
   </slot>
   <main id="main-content" tabindex="-1">
     <slot />

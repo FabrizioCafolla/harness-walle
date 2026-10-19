@@ -76,53 +76,49 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
     zoom={true}
     class="product-gallery"
   >
-    {
-      images.map((im, i) => (
-        <div class="pg-slide">
-          <img
-            src={productImage(im.url)}
-            alt={im.altText ?? product.title}
-            width={im.width ?? 1200}
-            height={im.height ?? 800}
-            loading={i === 0 ? "eager" : "lazy"}
-          />
-        </div>
-      ))
-    }
+    {images.map((im, i) => (
+      <div class="pg-slide">
+        <img
+          src={productImage(im.url)}
+          alt={im.altText ?? product.title}
+          width={im.width ?? 1200}
+          height={im.height ?? 800}
+          loading={i === 0 ? "eager" : "lazy"}
+        />
+      </div>
+    ))}
   </Carousel>
 
   <div slot="below" class="product-below">
     <div class="product-body" set:html={product.descriptionHtml} />
 
-    {
-      recommended.length > 0 && (
-        <section class="upsell" aria-labelledby="upsell-heading">
-          <h2 id="upsell-heading">{label("products.related")}</h2>
-          <ul class="upsell__grid">
-            {recommended.map((r) => {
-              const rv = defaultVariant(r);
-              return (
-                <li>
-                  <a class="upsell__card" href={resolveInternalUrl(`/products/${r.handle}`)}>
-                    {r.featuredImage && (
-                      <img
-                        src={productImage(r.featuredImage.url)}
-                        alt={r.featuredImage.altText ?? r.title}
-                        width={r.featuredImage.width ?? 1200}
-                        height={r.featuredImage.height ?? 800}
-                        loading="lazy"
-                      />
-                    )}
-                    <span class="upsell__title">{r.title}</span>
-                    {rv && <span class="upsell__price">{formatMoney(rv.price, locale)}</span>}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      )
-    }
+    {recommended.length > 0 && (
+      <section class="upsell" aria-labelledby="upsell-heading">
+        <h2 id="upsell-heading">{label("products.related")}</h2>
+        <ul class="upsell__grid">
+          {recommended.map((r) => {
+            const rv = defaultVariant(r);
+            return (
+              <li>
+                <a class="upsell__card" href={resolveInternalUrl(`/products/${r.handle}`)}>
+                  {r.featuredImage && (
+                    <img
+                      src={productImage(r.featuredImage.url)}
+                      alt={r.featuredImage.altText ?? r.title}
+                      width={r.featuredImage.width ?? 1200}
+                      height={r.featuredImage.height ?? 800}
+                      loading="lazy"
+                    />
+                  )}
+                  <span class="upsell__title">{r.title}</span>
+                  {rv && <span class="upsell__price">{formatMoney(rv.price, locale)}</span>}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    )}
   </div>
 
   <div slot="aside" id="buy-box" class="purchase-card" tabindex="-1">
@@ -135,15 +131,13 @@ const recommended = (await Promise.all(product.recommended.map((h) => getEntry("
     />
   </div>
 
-  {
-    showBuyButton && (
-      <div slot="below" class="pdp-sticky" data-pdp-sticky hidden>
-        <a href="#buy-box" class="pdp-sticky__cta" data-pdp-sticky-cta>
-          {addToCartLabel}
-        </a>
-      </div>
-    )
-  }
+  {showBuyButton && (
+    <div slot="below" class="pdp-sticky" data-pdp-sticky hidden>
+      <a href="#buy-box" class="pdp-sticky__cta" data-pdp-sticky-cta>
+        {addToCartLabel}
+      </a>
+    </div>
+  )}
 </DetailLayout>
 
 <style>

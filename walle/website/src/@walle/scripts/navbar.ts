@@ -63,7 +63,6 @@ function initNavbar() {
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
 
-    // Close an open dropdown first, returning focus to its trigger
     const openItem = document.querySelector(".nav-item.active");
     if (openItem) {
       const trigger = openItem.querySelector<HTMLElement>(".dropdown-trigger");
@@ -72,7 +71,6 @@ function initNavbar() {
       return;
     }
 
-    // Then the mobile menu, returning focus to the toggle button
     if (hamburger.classList.contains("active")) {
       closeAllMenus();
       hamburger.focus();
@@ -89,11 +87,9 @@ function initNavbar() {
   const handleScroll = () => {
     header?.classList.toggle("scrolled", window.scrollY > 20);
   };
-  // Deferred by one frame on purpose: reading window.scrollY inside the DOMContentLoaded
-  // handler forces a synchronous layout before the browser's own first layout (PageSpeed
-  // flagged a forced reflow on exactly this line). rAF still runs before the first paint,
-  // so a restored scroll position gets the class without a flash, but the read now happens
-  // on a page that is already laid out.
+  // Deferred by one frame: reading window.scrollY in the DOMContentLoaded handler forces a
+  // synchronous layout. rAF still runs before the first paint, so a restored scroll position
+  // gets the class without a flash.
   requestAnimationFrame(handleScroll);
   window.addEventListener("scroll", handleScroll, { passive: true });
 }

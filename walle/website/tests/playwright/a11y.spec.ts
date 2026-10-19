@@ -2,19 +2,11 @@ import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { siteBase, storyRoutes } from "./storyRoutes";
 
-// Accessibility gate: axe-core against every Astrobook story preview page
-// (per-component fixtures, auto-discovered from the astrobook/ directory so a
-// new story is covered with no extra configuration) plus the built demo-site
-// pages (layout-level checks: skip link, landmarks, document structure that
-// stories never mount).
-//
+// axe-core on every Astrobook story preview (auto-discovered) and on the demo-site pages
+// (skip link, landmarks, document structure). Fails on serious or critical violations.
 // Run with: just a11y-test
-// Fails on any serious or critical violation.
 
-// Demo-site pages (served by the same dev server under the configured base path).
-// No trailing slash: app.json sets trailingSlash "never", so `${siteBase}/`
-// would 404 (and axe would trivially pass on the 404 page). The home page is
-// `${siteBase}` exactly.
+// No trailing slash: app.json sets trailingSlash "never", so `${siteBase}/` is a 404.
 const demoPages = [
   "",
   "/showcase",

@@ -10,9 +10,8 @@ const source = readFileSync(
 );
 
 describe("HeaderStandard", () => {
-  // imageRight defaults to false, meaning the image sits before the text: without this pair
-  // of rules the image and text share the same source order in every case (AstroContainer
-  // does not bundle scoped <style> output, so this is a source-text guard, not a render one).
+  // imageRight defaults to false (image before text). AstroContainer does not bundle scoped
+  // <style> output, so this checks the source text.
   it("imageRight actually reorders the image relative to the text", () => {
     expect(source).toMatch(/\.header-grid\.has-image \.header-media\s*\{\s*order:\s*-1;\s*\}/);
     expect(source).toMatch(

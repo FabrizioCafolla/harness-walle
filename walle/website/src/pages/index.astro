@@ -74,20 +74,18 @@ const howItWorksSteps = [
         <p class="hero__lead">
           Walle is an Astro <strong>design system you copy into your repo</strong>: accessible
           components, GitHub Actions pipelines, and an AI-ready dev base. One CLI command scaffolds
-          a complete project, and <code>update</code> keeps the managed parts current without touching
-          your code.
+          a complete project, and <code>update</code> keeps the managed parts current without
+          touching your code.
         </p>
         <div class="hero__actions">
-          {
-            hasShowcase && (
-              <Button
-                text="Explore the showcase"
-                href={resolveInternalUrl("/showcase")}
-                variant="primary"
-                size="large"
-              />
-            )
-          }
+          {hasShowcase && (
+            <Button
+              text="Explore the showcase"
+              href={resolveInternalUrl("/showcase")}
+              variant="primary"
+              size="large"
+            />
+          )}
           <Button
             text="View on GitHub"
             href="https://github.com/FabrizioCafolla/harness-walle"
@@ -103,11 +101,12 @@ const howItWorksSteps = [
       <div class="hero__terminal">
         <div class="term">
           <div class="term__bar">
-            <span></span><span></span><span></span>
+            <span></span>
+            <span></span>
+            <span></span>
             <em>bash</em>
           </div>
-          <pre
-            class="term__body"><code><span class="c">$</span> bash &lt;(curl -fsSL walle/cli.sh) \
+          <pre class="term__body"><code><span class="c">$</span> bash &lt;(curl -fsSL walle/cli.sh) \
     init --project-name my-site
 
 <span class="ok">✓</span> harness-coding base
@@ -128,20 +127,18 @@ const howItWorksSteps = [
       <p>Everything an Astro site needs to go live and stay maintainable, enabled by default.</p>
     </div>
     <ul class="modules__grid">
-      {
-        modules.map((m) => (
-          <li class="module-card">
-            <span class="module-card__tag">{m.tag}</span>
-            <h3 class="module-card__title">{m.title}</h3>
-            <p class="module-card__desc">{m.description}</p>
-            <ul class="module-card__points">
-              {m.points.map((p) => (
-                <li>{p}</li>
-              ))}
-            </ul>
-          </li>
-        ))
-      }
+      {modules.map((m) => (
+        <li class="module-card">
+          <span class="module-card__tag">{m.tag}</span>
+          <h3 class="module-card__title">{m.title}</h3>
+          <p class="module-card__desc">{m.description}</p>
+          <ul class="module-card__points">
+            {m.points.map((p) => (
+              <li>{p}</li>
+            ))}
+          </ul>
+        </li>
+      ))}
     </ul>
   </section>
 
@@ -149,8 +146,7 @@ const howItWorksSteps = [
 
   <Section title="Quick start" centered={true}>
     <p>Scaffold a new project with everything included:</p>
-    <pre
-      class="code-block"><code>bash &lt;(curl -fsSL https://raw.githubusercontent.com/FabrizioCafolla/harness-walle/main/walle/cli/cli.sh) \
+    <pre class="code-block"><code>bash &lt;(curl -fsSL https://raw.githubusercontent.com/FabrizioCafolla/harness-walle/main/walle/cli/cli.sh) \
   init --project-name my-site</code></pre>
 
     <p>Pull the latest managed release into an existing project:</p>
@@ -168,16 +164,14 @@ const howItWorksSteps = [
         {hasShowcase ? "read" : "Read"} the demo blog to see the content pipeline end to end.
       </p>
       <div class="cta__actions">
-        {
-          hasShowcase && (
-            <Button
-              text="Open the showcase"
-              href={resolveInternalUrl("/showcase")}
-              inverse={true}
-              size="large"
-            />
-          )
-        }
+        {hasShowcase && (
+          <Button
+            text="Open the showcase"
+            href={resolveInternalUrl("/showcase")}
+            inverse={true}
+            size="large"
+          />
+        )}
         <Button
           text="Read the blog"
           href={resolveInternalUrl("/blog")}
@@ -191,7 +185,6 @@ const howItWorksSteps = [
 </BaseLayout>
 
 <style>
-  /* ---- Hero ---- */
   .hero {
     background: var(--primary-dark);
     color: var(--white);
@@ -232,7 +225,7 @@ const howItWorksSteps = [
     margin-bottom: var(--space-xl);
   }
 
-  /* strong inherits the hero's light color instead of the global near-black */
+  /* The global strong color is near-black. */
   .hero__lead strong {
     color: var(--white);
   }
@@ -257,10 +250,8 @@ const howItWorksSteps = [
     color: rgba(255, 255, 255, 0.65);
   }
 
-  /* Terminal */
   .hero__terminal {
-    /* Grid items default to a content-based min-width, which lets the unwrapped
-                       command line below force this track (and the page) wider than the viewport. */
+    /* Grid items default to min-width: auto: the unwrapped command line would widen the page. */
     min-width: 0;
   }
 
@@ -321,7 +312,6 @@ const howItWorksSteps = [
     color: #4ade80;
   }
 
-  /* ---- Modules ---- */
   .modules {
     max-width: 1200px;
     margin: 0 auto;
@@ -409,7 +399,6 @@ const howItWorksSteps = [
     font-weight: 700;
   }
 
-  /* ---- Shared code blocks ---- */
   .code-block {
     max-width: 820px;
     margin: 1rem auto;
@@ -424,7 +413,6 @@ const howItWorksSteps = [
     line-height: 1.6;
   }
 
-  /* ---- CTA ---- */
   .cta {
     background: var(--primary);
     color: var(--white);
@@ -454,7 +442,6 @@ const howItWorksSteps = [
     flex-wrap: wrap;
   }
 
-  /* ---- Responsive ---- */
   @media (max-width: 900px) {
     .hero__inner {
       grid-template-columns: 1fr;

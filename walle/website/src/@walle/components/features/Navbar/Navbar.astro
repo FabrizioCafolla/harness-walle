@@ -23,57 +23,53 @@ const shouldShowBrand = hasLogo || hasTitle;
   <div class="container">
     <nav class="main-nav" aria-label={t("nav.main")} data-component="Navbar" data-nav-root="true">
       <slot name="brand">
-        {
-          shouldShowBrand && (
-            <div class="brand-container">
-              <a
-                href={resolveInternalUrl(config.logo?.url || "/")}
-                title={config.logo?.title || t("breadcrumbs.home")}
-                class="brand-link"
-              >
-                {hasLogo ? (
-                  <>
+        {shouldShowBrand && (
+          <div class="brand-container">
+            <a
+              href={resolveInternalUrl(config.logo?.url || "/")}
+              title={config.logo?.title || t("breadcrumbs.home")}
+              class="brand-link"
+            >
+              {hasLogo ? (
+                <>
+                  <img
+                    src={config.logo.src}
+                    alt={config.logo.alt || config.logo.title || t("logo")}
+                    aria-label={config.logo.alt || config.logo.title || t("logo")}
+                    width={config.logo.width || 50}
+                    height={config.logo.height || 50}
+                    loading="eager"
+                    class:list={["brand-logo", config.logo.cssClasses]}
+                    fetchpriority="high"
+                  />
+                  {config.logo.srcInverse && (
                     <img
-                      src={config.logo.src}
-                      alt={config.logo.alt || config.logo.title || t("logo")}
-                      aria-label={config.logo.alt || config.logo.title || t("logo")}
+                      src={config.logo.srcInverse}
+                      alt=""
+                      aria-hidden="true"
                       width={config.logo.width || 50}
                       height={config.logo.height || 50}
                       loading="eager"
-                      class:list={["brand-logo", config.logo.cssClasses]}
-                      fetchpriority="high"
+                      class:list={["brand-logo", "brand-logo--inverse", config.logo.cssClasses]}
                     />
-                    {config.logo.srcInverse && (
-                      <img
-                        src={config.logo.srcInverse}
-                        alt=""
-                        aria-hidden="true"
-                        width={config.logo.width || 50}
-                        height={config.logo.height || 50}
-                        loading="eager"
-                        class:list={["brand-logo", "brand-logo--inverse", config.logo.cssClasses]}
-                      />
-                    )}
-                  </>
-                ) : hasTitle ? (
-                  <span class:list={["brand-title", config.logo.cssClasses]}>
-                    {config.logo.title}
-                  </span>
-                ) : null}
-              </a>
-            </div>
-          )
-        }
+                  )}
+                </>
+              ) : hasTitle ? (
+                <span class:list={["brand-title", config.logo.cssClasses]}>
+                  {config.logo.title}
+                </span>
+              ) : null}
+            </a>
+          </div>
+        )}
       </slot>
 
       <NavbarMenu items={config.items || []} navId={navId} />
 
       <slot name="actions" />
 
-      {
-        /* Last in the DOM so on mobile the reading/focus order matches the visual order
-          (brand · cart · hamburger) without CSS `order` reshuffling the tab sequence. */
-      }
+      {/* Last in the DOM so on mobile the reading/focus order matches the visual order
+          (brand · cart · hamburger) without CSS `order` reshuffling the tab sequence. */}
       <button
         id="mobile-menu-toggle"
         class="hamburger"
@@ -102,6 +98,7 @@ const shouldShowBrand = hasLogo || hasTitle;
       --navbar-fg: var(--text);
       --navbar-border: color-mix(in srgb, var(--text) 8%, transparent);
       --navbar-shadow: var(--shadow-md);
+      --navbar-backdrop: blur(20px);
       --navbar-logo-height: 40px;
       --navbar-logo-height-mobile: 34px;
       --navbar-link-color: var(--navbar-fg);
@@ -141,8 +138,8 @@ const shouldShowBrand = hasLogo || hasTitle;
       top: 0;
       width: 100%;
       background: var(--navbar-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: var(--navbar-backdrop);
+      backdrop-filter: var(--navbar-backdrop);
       border-bottom: 1px solid var(--navbar-border);
       z-index: 1000;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -182,11 +179,9 @@ const shouldShowBrand = hasLogo || hasTitle;
       align-items: center;
       text-decoration: none;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      outline: none;
     }
 
     .brand-link:focus {
-      outline: none;
       box-shadow: none;
     }
 
@@ -202,9 +197,8 @@ const shouldShowBrand = hasLogo || hasTitle;
       color: var(--primary);
     }
 
-    /* Image logo default: sizes reliably for both raster and SVG (SVGs often lack
-           intrinsic dimensions, so we constrain by height and let width follow). Height
-           is a token knob; consumers extend/override via the logo `cssClasses`. */
+    /* Image logo: constrained by height (SVGs often lack intrinsic dimensions), width
+       follows; consumers override via the logo `cssClasses`. */
     .brand-link .brand-logo {
       display: block;
       height: var(--navbar-logo-height);
@@ -258,12 +252,10 @@ const shouldShowBrand = hasLogo || hasTitle;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       letter-spacing: -0.01em;
-      outline: none;
     }
 
     .nav-link:focus,
     .nav-link:active {
-      outline: none;
       box-shadow: none;
       border: none;
     }
@@ -360,15 +352,21 @@ const shouldShowBrand = hasLogo || hasTitle;
       border-radius: var(--radius-md);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       letter-spacing: -0.01em;
-      outline: none;
     }
 
     .dropdown-link:hover,
     .dropdown-link:focus {
       color: var(--navbar-link-color-hover);
       transform: translateX(4px);
-      outline: none;
       box-shadow: none;
+    }
+
+    /* Keyboard focus stays visible on every navbar link. */
+    .brand-link:focus-visible,
+    .nav-link:focus-visible,
+    .dropdown-link:focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
     }
 
     .hamburger {
@@ -431,10 +429,8 @@ const shouldShowBrand = hasLogo || hasTitle;
         --navbar-height: 64px;
       }
 
-      /* Right cluster on mobile: brand stays left; the cart + hamburger sit together on the
-                   right (cart immediately left of the hamburger). The nav overlay (.nav-container) is
-                   fixed/out-of-flow, and DOM order is already brand · cart · hamburger, so `margin-left:
-                   auto` pushes the pair right without CSS `order`, keeping tab order == visual order. */
+      /* Mobile: `margin-left: auto` pushes cart + hamburger right; DOM order already matches
+         visual order (brand · cart · hamburger), so no CSS `order` is needed. */
       .hamburger {
         display: flex;
         margin-left: 0.5rem;
@@ -660,8 +656,8 @@ const shouldShowBrand = hasLogo || hasTitle;
 
       background: transparent;
       border-bottom-color: transparent;
-      backdrop-filter: none;
       -webkit-backdrop-filter: none;
+      backdrop-filter: none;
     }
 
     body:not(.menu-open):has([data-navbar-overlay]) .site-header:not(.scrolled) .brand-logo {

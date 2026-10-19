@@ -21,61 +21,57 @@ const shouldShowBrand = hasLogo || hasTitle;
   <div class="footer-container">
     <div class="footer-section footer-left">
       <div class="copyright">
-        {
-          shouldShowBrand && (
-            <a
-              href={resolveInternalUrl(footerConfig.logo.url)}
-              class={`brand-link ${footerConfig.logo.cssClasses || ""}`}
-            >
-              {hasLogo && (
-                <img
-                  src={footerConfig.logo.src}
-                  alt={footerConfig.logo.alt || footerConfig.logo.title || t("logo")}
-                  aria-label={footerConfig.logo.alt || footerConfig.logo.title || t("logo")}
-                  width={footerConfig.logo.width || 32}
-                  height={footerConfig.logo.height || 32}
-                  class={footerConfig.logo.cssClasses || ""}
-                />
-              )}
-              {hasTitle && (
-                <span class={footerConfig.logo.cssClasses || ""}>{footerConfig.logo.title}</span>
-              )}
-            </a>
-          )
-        }
-        <span class="license">{today.getFullYear()} &copy; {footerConfig.logo.license}</span>
+        {shouldShowBrand && (
+          <a
+            href={resolveInternalUrl(footerConfig.logo.url)}
+            class={`brand-link ${footerConfig.logo.cssClasses || ""}`}
+          >
+            {hasLogo && (
+              <img
+                src={footerConfig.logo.src}
+                alt={footerConfig.logo.alt || footerConfig.logo.title || t("logo")}
+                aria-label={footerConfig.logo.alt || footerConfig.logo.title || t("logo")}
+                width={footerConfig.logo.width || 32}
+                height={footerConfig.logo.height || 32}
+                class={footerConfig.logo.cssClasses || ""}
+              />
+            )}
+            {hasTitle && (
+              <span class={footerConfig.logo.cssClasses || ""}>{footerConfig.logo.title}</span>
+            )}
+          </a>
+        )}
+        <span class="license">
+          {today.getFullYear()} &copy; {footerConfig.logo.license}
+        </span>
       </div>
     </div>
 
     <div class="footer-section footer-center">
       <nav class="footer-nav" aria-label={t("footer.nav")}>
         <ul class="footer-nav__list">
-          {
-            navigationLinks.map((item: NavigationLink) => (
-              <li>
-                <a href={resolveInternalUrl(item.url)}>{item.name}</a>
-              </li>
-            ))
-          }
+          {navigationLinks.map((item: NavigationLink) => (
+            <li>
+              <a href={resolveInternalUrl(item.url)}>{item.name}</a>
+            </li>
+          ))}
         </ul>
       </nav>
     </div>
 
     <div class="footer-section footer-right">
       <ul class="social-links" aria-label={t("footer.social")}>
-        {
-          socialLinks.map((item: NavigationLink) => (
-            <li>
-              <a
-                href={item.url}
-                {...linkAttrs({ external: true })}
-                aria-label={item.icon?.replace("fa:", "")}
-              >
-                <Icon name={item.icon!} aria-hidden="true" size={20} />
-              </a>
-            </li>
-          ))
-        }
+        {socialLinks.map((item: NavigationLink) => (
+          <li>
+            <a
+              href={item.url}
+              {...linkAttrs({ external: true })}
+              aria-label={item.icon?.replace("fa:", "")}
+            >
+              <Icon name={item.icon!} aria-hidden="true" size={20} />
+            </a>
+          </li>
+        ))}
       </ul>
     </div>
   </div>
@@ -240,8 +236,7 @@ const shouldShowBrand = hasLogo || hasTitle;
       justify-content: center;
       width: 34px;
       height: 34px;
-      /* Circular icon shape, not a radius-scale value: kept behind a local property so
-               the token-literal check sees a var() reference rather than a bare percentage. */
+      /* Local property so the token-literal check sees a var() instead of a bare percentage. */
       --social-icon-radius: 50%;
       border-radius: var(--social-icon-radius);
       background-color: var(--footer-icon-bg);

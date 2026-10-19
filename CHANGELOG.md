@@ -4,6 +4,43 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/develop/versioning.md).
 
+## [0.11.0] - 2026-10-19
+
+### Added
+
+- **`--navbar-backdrop` on `.site-header`.** The `backdrop-filter` of the menu (default
+  `blur(20px)`, as before), for example `blur(28px) saturate(180%)` for a glass look.
+
+### Fixed
+
+- **Navbar links keep a visible keyboard focus ring.** `.brand-link`, `.nav-link` and
+  `.dropdown-link` removed their outline with no replacement, so keyboard users could not see
+  which link had focus. Each now draws `outline: 3px solid var(--focus-ring)` on `:focus-visible`.
+- **The `Organization` JSON-LD `logo` is the site image (`website.image`), not the page's own
+  image.** On a page that sets its own `headerImage` (a blog post) the logo used to become that
+  image. A site can still override it through `website.structuredData.organization.logo`.
+- **Twitter card tags use `name`, not `property`.** `twitter:card`, `twitter:url`, `twitter:title`,
+  `twitter:description` and `twitter:image` were emitted as `<meta property=...>`, so tools that
+  read `name="twitter:card"` reported the card as missing.
+- **The sticky navbar stopped following the page after about one screen.** `body` had `height: 100%`
+  on top of `min-height: 100vh`, so the box the sticky header lives in was exactly one viewport tall
+  and the header scrolled away with it. `body` now grows with its content.
+- **The navbar and table-of-contents blur never reached Chromium.** With `backdrop-filter` written
+  before `-webkit-backdrop-filter`, the build output kept only the prefixed property, which
+  Chromium reported as `none` (no blur). The prefixed one now comes first.
+- **`calculateReadingTime` counts the text of a markdown link.** The link pattern had no capture
+  group, so every link counted as the literal `$1` instead of its words.
+
+### Changed
+
+- **Dependencies:** `astro` 7.3.5, `nanostores` 1.5.4, `@typescript-eslint/*` 8.71.0 and
+  `prettier-plugin-astro` 1.1.0 (it formats `.astro` files differently: the sources are reformatted,
+  nothing else changes). `typescript` stays on 6: `typescript-eslint` does not support TypeScript 7 yet.
+- **`wiki/architecture/style.md` places `prose.css` in `walle.components`**, the layer the file
+  declares, and lists what `utilities.css` really holds.
+- **Source comments state facts only.** Several hundred lines of history, narration and reasoning
+  were removed from the component, config, CLI and test sources; no code changed.
+
 ## [0.10.0] - 2026-10-17
 
 ### Added

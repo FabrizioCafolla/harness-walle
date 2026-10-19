@@ -1,13 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { storyRoutes } from "./storyRoutes";
 
-// Astrobook visual regression: compares story preview screenshots against
-// stored baselines. Routes are auto-discovered (see storyRoutes.ts): one
-// screenshot per story (every export in every *.stories.ts file), named after
-// its full route id.
-//
-// First run / intentional changes: just astrobook-update-snapshots
-// Subsequent runs: just astrobook-test
+// Visual regression: one screenshot per story route (storyRoutes.ts), named after its id.
+// Update baselines: just astrobook-update-snapshots. Run: just astrobook-test
 
 test.describe("Astrobook visual regression", () => {
   test.use({ viewport: { width: 1280, height: 900 } });
@@ -21,8 +16,7 @@ test.describe("Astrobook visual regression", () => {
         await page.locator("pre", { hasText: /^Path: \// }).count(),
         "page is astrobook's not-found fallback: story route scheme changed"
       ).toBe(0);
-      // Threshold lives in playwright.astrobook.config.ts (expect.toHaveScreenshot):
-      // an absolute pixel count, not this story's own share of the page.
+      // Threshold: playwright.astrobook.config.ts, an absolute pixel count.
       await expect(page.locator("body")).toHaveScreenshot(`${route.id.replace(/\//g, "-")}.png`);
     });
   }

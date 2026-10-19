@@ -20,31 +20,29 @@ const itemTarget = item.target ?? (item.url.startsWith("http") ? "_blank" : "_se
   class:list={["nav-item", { "has-dropdown": hasDropdown, "nav-item--button": isButton }]}
   data-component="NavbarItem"
 >
-  {
-    hasDropdown ? (
-      <div class="dropdown-container">
-        <button class="nav-link dropdown-trigger" aria-expanded="false" aria-haspopup="true">
-          {item.icon && <Icon name={item.icon} aria-hidden="true" size={20} />}
-          {item.name && <span>{item.name}</span>}
-          <Icon name="fa:chevron-down" aria-hidden="true" size={12} class="dropdown-arrow" />
-        </button>
-        <NavbarDropdown items={item.dropdown!} />
-      </div>
-    ) : isButton ? (
-      <Button
-        href={resolveInternalUrl(item.url)}
-        target={itemTarget}
-        text={item.name ?? item.url}
-        variant={item.variant}
-        outline={item.outline}
-        icon={item.icon}
-        size="medium"
-      />
-    ) : (
-      <NavbarLink href={item.url} target={itemTarget} class="nav-link" name={item.name}>
+  {hasDropdown ? (
+    <div class="dropdown-container">
+      <button class="nav-link dropdown-trigger" aria-expanded="false" aria-haspopup="true">
         {item.icon && <Icon name={item.icon} aria-hidden="true" size={20} />}
         {item.name && <span>{item.name}</span>}
-      </NavbarLink>
-    )
-  }
+        <Icon name="fa:chevron-down" aria-hidden="true" size={12} class="dropdown-arrow" />
+      </button>
+      <NavbarDropdown items={item.dropdown!} />
+    </div>
+  ) : isButton ? (
+    <Button
+      href={resolveInternalUrl(item.url)}
+      target={itemTarget}
+      text={item.name ?? item.url}
+      variant={item.variant}
+      outline={item.outline}
+      icon={item.icon}
+      size="medium"
+    />
+  ) : (
+    <NavbarLink href={item.url} target={itemTarget} class="nav-link" name={item.name}>
+      {item.icon && <Icon name={item.icon} aria-hidden="true" size={20} />}
+      {item.name && <span>{item.name}</span>}
+    </NavbarLink>
+  )}
 </li>

@@ -32,6 +32,6 @@ export const config: DefaultConfig = {
 
 export default config;
 
-// Build-time Astro config resolver (used by astro.config.mjs). Lives in a sibling
-// module so importing the runtime `config` above doesn't drag in astro/config.
+// Build-time Astro config resolver (used by astro.config.mjs), in a separate module so the
+// runtime `config` above does not import astro/config.
 export { defineWalleConfig } from "../define-config";

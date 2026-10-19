@@ -15,8 +15,7 @@ export interface Props extends BaseProps {
   target?: "_blank" | "_self";
 
   /**
-   * Visual variant
-   * @default "primary"
+   * Visual variant. When omitted no `data-variant` is emitted and the link keeps its inline style.
    */
   variant?: Variant;
 
@@ -68,7 +67,6 @@ const {
   class: className,
 } = own;
 
-// External = absolute URL pointing at a different host than the site.
 const site = Astro.site?.host;
 let isExternal = false;
 try {
@@ -94,17 +92,16 @@ const classes = ["link", className ?? ""].filter(Boolean).join(" ");
   data-component="Link"
   {...rest}
 >
-  <slot>{text}</slot>{
-    isExternal && externalIcon && (
-      <Icon name="mdi:open-in-new" class="link-external-icon" aria-hidden="true" />
-    )
-  }
+  <slot>{text}</slot>
+  {isExternal && externalIcon && (
+    <Icon name="mdi:open-in-new" class="link-external-icon" aria-hidden="true" />
+  )}
 </a>
 
 <style>
   @layer walle.components {
     .link {
-      /* Public properties. [data-variant] below overrides these to that variant's own pair. */
+      /* Public properties */
       --link-color: var(--link);
       --link-color-hover: var(--link-hover);
       --link-decoration: underline;

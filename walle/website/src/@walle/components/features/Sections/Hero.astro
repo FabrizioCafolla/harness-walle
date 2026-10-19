@@ -77,62 +77,50 @@ const hasSubtitle = Astro.slots.has("subtitle") || Boolean(subtitle);
   <slot name="background" slot="background" />
   <div class:list={["hero-content", { "hero-content-image": image }]}>
     <div class="hero-text">
-      {
-        hasTagline && (
-          <p class="hero-tagline">
-            {Astro.slots.has("tagline") ? <slot name="tagline" /> : tagline}
-          </p>
-        )
-      }
-      {
-        hasTitle && (
-          <h1 class="hero-title">{Astro.slots.has("title") ? <slot name="title" /> : title}</h1>
-        )
-      }
-      {
-        hasSubtitle && (
-          <p class="hero-subtitle">
-            {Astro.slots.has("subtitle") ? <slot name="subtitle" /> : subtitle}
-          </p>
-        )
-      }
-      {
-        actions.length > 0 && (
-          <div class="hero-actions">
-            {actions.map((action) => (
-              <Button
-                text={action.text}
-                href={action.href}
-                variant={action.variant}
-                inverse={action.inverse}
-              />
-            ))}
-          </div>
-        )
-      }
-    </div>
-    {
-      image && (
-        <div
-          class:list={[
-            "hero-image-container",
-            { "hero-image-container-first": imagePosition === "start" },
-          ]}
-        >
-          {/* image.src is `string | ImageMetadata`; Astro's <Image> only overloads on one or
-               the other, so a union value never resolves to either branch on its own. */}
-          <Image
-            src={image.src as string}
-            alt={image.alt}
-            width={600}
-            height={480}
-            loading="eager"
-            fetchpriority="high"
-            class="hero-image"
-          />
+      {hasTagline && (
+        <p class="hero-tagline">{Astro.slots.has("tagline") ? <slot name="tagline" /> : tagline}</p>
+      )}
+      {hasTitle && (
+        <h1 class="hero-title">{Astro.slots.has("title") ? <slot name="title" /> : title}</h1>
+      )}
+      {hasSubtitle && (
+        <p class="hero-subtitle">
+          {Astro.slots.has("subtitle") ? <slot name="subtitle" /> : subtitle}
+        </p>
+      )}
+      {actions.length > 0 && (
+        <div class="hero-actions">
+          {actions.map((action) => (
+            <Button
+              text={action.text}
+              href={action.href}
+              variant={action.variant}
+              inverse={action.inverse}
+            />
+          ))}
         </div>
-      )
-    }
+      )}
+    </div>
+    {image && (
+      <div
+        class:list={[
+          "hero-image-container",
+          { "hero-image-container-first": imagePosition === "start" },
+        ]}
+      >
+        {/* image.src is `string | ImageMetadata`; Astro's <Image> only overloads on one or
+               the other, so a union value never resolves to either branch on its own. */}
+        <Image
+          src={image.src as string}
+          alt={image.alt}
+          width={600}
+          height={480}
+          loading="eager"
+          fetchpriority="high"
+          class="hero-image"
+        />
+      </div>
+    )}
   </div>
 </SectionWrapper>
 

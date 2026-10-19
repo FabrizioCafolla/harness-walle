@@ -50,8 +50,8 @@ const cssEscapedLoadingText = loadingText.replace(/\\/g, "\\\\").replace(/"/g, '
       margin-top: 3.5rem;
       top: 100px;
       background: var(--toc-bg);
-      backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
       border: 1px solid var(--toc-border);
       border-radius: var(--toc-radius);
       padding: 0;
@@ -146,7 +146,6 @@ const cssEscapedLoadingText = loadingText.replace(/\\/g, "\\\\").replace(/"/g, '
       pointer-events: none;
     }
 
-    /* Simplified focus style (no surrounding border/box) */
     .toc-nav :global(a:focus-visible) {
       outline: none;
       box-shadow: none;
@@ -154,7 +153,6 @@ const cssEscapedLoadingText = loadingText.replace(/\\/g, "\\\\").replace(/"/g, '
       border-left-color: var(--primary);
     }
 
-    /* Ensure tap/click focus on mobile doesn't show default browser outline */
     .toc-nav :global(a:focus),
     .toc-nav :global(a:active) {
       outline: none !important;
@@ -163,12 +161,12 @@ const cssEscapedLoadingText = loadingText.replace(/\\/g, "\\\\").replace(/"/g, '
       border-left-color: var(--primary);
     }
 
-    /* Remove Firefox dotted outline fallback */
+    /* Firefox's dotted inner focus border. */
     .toc-nav :global(a::-moz-focus-inner) {
       border: 0;
     }
 
-    /* Optional: provide a very subtle accessibility indicator only when navigated via keyboard */
+    /* Touch devices: subtle background on keyboard focus. */
     @media (hover: none) {
       .toc-nav :global(a:focus-visible) {
         background: var(--toc-link-active-bg);
@@ -225,7 +223,6 @@ const cssEscapedLoadingText = loadingText.replace(/\\/g, "\\\\").replace(/"/g, '
       border-radius: var(--radius-sm);
     }
 
-    /* Responsive - Tablet & Mobile */
     @media (max-width: 1024px) {
       .table-of-contents {
         --toc-radius: var(--radius-xl);
@@ -312,14 +309,13 @@ const cssEscapedLoadingText = loadingText.replace(/\\/g, "\\\\").replace(/"/g, '
       }
     }
 
-    /* Mobile Optimizations */
     @media (max-width: 768px) {
       .table-of-contents {
         --toc-bg: var(--surface);
         --toc-radius: var(--radius-xl);
         --_toc-shadow: 0 4px 16px color-mix(in srgb, var(--black) 8%, transparent);
-        backdrop-filter: none;
         -webkit-backdrop-filter: none;
+        backdrop-filter: none;
         margin-bottom: 1.5rem;
       }
 
@@ -353,7 +349,6 @@ const cssEscapedLoadingText = loadingText.replace(/\\/g, "\\\\").replace(/"/g, '
       }
     }
 
-    /* Small Mobile */
     @media (max-width: 480px) {
       .table-of-contents {
         --toc-radius: var(--radius-xl);
@@ -399,14 +394,12 @@ const cssEscapedLoadingText = loadingText.replace(/\\/g, "\\\\").replace(/"/g, '
       }
     }
 
-    /* Print */
     @media print {
       .table-of-contents {
         display: none;
       }
     }
 
-    /* Accessibility - Reduced Motion */
     @media (prefers-reduced-motion: reduce) {
       .table-of-contents,
       .toc-nav :global(a),
@@ -425,7 +418,6 @@ const cssEscapedLoadingText = loadingText.replace(/\\/g, "\\\\").replace(/"/g, '
 <script>
   import { TableOfContentsManager } from "./tableOfContents";
 
-  // Example: read optional data attributes from the aside container for configuration
   const tocEl = document.getElementById("toc");
   const options: any = {};
 
@@ -442,7 +434,6 @@ const cssEscapedLoadingText = loadingText.replace(/\\/g, "\\\\").replace(/"/g, '
         .map((s) => s.trim())
         .filter(Boolean);
 
-    // Custom attribute/class names
     const skipAttr = tocEl.getAttribute("data-skip-attr");
     if (skipAttr) options.skipAttribute = skipAttr;
     const skipClass = tocEl.getAttribute("data-skip-class");

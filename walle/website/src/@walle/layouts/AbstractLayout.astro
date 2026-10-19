@@ -24,8 +24,7 @@ const {
   skipLinkLabel,
 } = Astro.props;
 
-// The footer's icon links are the site's social profiles: the Organization node lists them as
-// `sameAs`, so the footer stays the one place they are written down.
+// Footer icon links are the site's social profiles, listed as the Organization's `sameAs`.
 const footerItems = Array.isArray(config.footer?.items) ? config.footer.items : [];
 const sameAs = footerItems
   .filter((item) => item.icon && /^https?:\/\//.test(item.url))
@@ -35,7 +34,8 @@ const siteInfo = {
   title: config.app.website.title,
   description: config.app.website.description,
   url: Astro.site ? new URL(config.app.astro.basePath || "/", Astro.site).href : "",
-  image: headerImage ? new URL(headerImage, Astro.site).href : undefined,
+  // The site's image, not the page's: a post image must not become the Organization logo.
+  image: config.app.website.image ? new URL(config.app.website.image, Astro.site).href : undefined,
   sameAs,
 };
 const structuredData = config.app.website.structuredData;
@@ -62,26 +62,22 @@ const structuredData = config.app.website.structuredData;
     <slot name="head" />
   </head>
   <body data-label-scrollable={label("scrollableRegion")}>
-    <a href="#main-content" class="skip-link">{label("skipLink", skipLinkLabel)}</a>
+    <a href="#main-content" class="skip-link">
+      {label("skipLink", skipLinkLabel)}
+    </a>
     <slot />
     <Analytics
       enable={config.env.IS_PRODUCTION || false}
       scriptContent={config.app.astro.analyticsScriptContent || ""}
     />
     <script>
-      // A11y: a scrollable region (overflowing code block, wide table, …) must be reachable by
-      // keyboard so it can be scrolled (WCAG 2.1.1 / axe `scrollable-region-focusable`). We make
-      // one focusable ONLY when it actually overflows and has no focusable content of its own, so
-      // non-scrolling blocks never become spurious tab stops. Covers consumer markdown too.
+      // A scrollable region must be keyboard-reachable (WCAG 2.1.1 / axe
+      // `scrollable-region-focusable`); only overflowing ones without focusable content get a tab stop.
       function makeScrollRegionsFocusable() {
         const focusable = "a[href],button,input,select,textarea,[tabindex]";
         const candidates = document.querySelectorAll<HTMLElement>("pre,table,[data-scrollable]");
-        // Most pages have none: bail out before touching geometry at all, so they never pay a
-        // layout for a check that cannot match anything.
         if (candidates.length === 0) return;
-        // Read every element's geometry first, write the attributes after. Interleaving the
-        // two makes the browser re-layout once per element (layout thrashing) as soon as a
-        // page really does carry a handful of tables or code blocks.
+        // Reads first, writes after: interleaving them forces a re-layout per element.
         const needsFocus: HTMLElement[] = [];
         candidates.forEach((el) => {
           if (el.hasAttribute("tabindex")) return;
@@ -95,8 +91,6 @@ const structuredData = config.app.website.structuredData;
           if (name && !el.hasAttribute("aria-label")) el.setAttribute("aria-label", name);
         });
       }
-      // One frame later: the geometry these reads need is only final once the page has been
-      // laid out anyway, and no tab stop has to exist before the first pixels do.
       const scheduleScrollRegions = () => requestAnimationFrame(makeScrollRegionsFocusable);
       document.addEventListener("DOMContentLoaded", scheduleScrollRegions);
       document.addEventListener("astro:page-load", scheduleScrollRegions);

@@ -36,10 +36,10 @@
     "@nanostores/persistent": "^1.3.5",
     "@resvg/resvg-js": "^2.6.2",
     "@vite-pwa/astro": "^1.2.0",
-    "astro": "^7.3.4",
+    "astro": "^7.3.5",
     "astro-icon": "^1.2.0",
     "leaflet": "^1.9.4",
-    "nanostores": "^1.5.3",
+    "nanostores": "^1.5.4",
     "satori": "^0.33.5"
   },
   "devDependencies": {
@@ -49,8 +49,8 @@
     "@emnapi/runtime": "^1.11.3",
     "@playwright/test": "^1.63.0",
     "@types/leaflet": "^1.9.22",
-    "@typescript-eslint/eslint-plugin": "^8.70.1",
-    "@typescript-eslint/parser": "^8.70.1",
+    "@typescript-eslint/eslint-plugin": "^8.71.0",
+    "@typescript-eslint/parser": "^8.71.0",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "astrobook": "^0.13.3",
@@ -60,7 +60,7 @@
     "eslint-plugin-markdown": "^5.1.0",
     "husky": "^9.1.7",
     "prettier": "^3.9.9",
-    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-astro": "^1.1.0",
     "typescript": "^6.0.3",
     "vitest": "^5.0.1"
   },

@@ -1,7 +1,5 @@
-// The layout Props chain, as a plain TS module: each `.astro` layout re-exports its own type
-// from here (`export type { XProps as Props } from "./types"`), so the chain is checkable by
-// plain `tsc` (an `.astro` file's own frontmatter type is only resolvable through Astro's own
-// TypeScript language-service plugin, which bare `tsc` does not have).
+// Layout Props live in a plain .ts module so bare `tsc` can check them: `.astro` frontmatter
+// types resolve only through Astro's TypeScript plugin.
 import type { CollectionEntry } from "astro:content";
 
 export interface AbstractLayoutProps {
@@ -26,7 +24,6 @@ export interface AbstractLayoutProps {
   skipLinkLabel?: string;
 }
 
-// BaseLayout adds no props of its own; it forwards everything to AbstractLayout unchanged.
 export type BaseLayoutProps = AbstractLayoutProps;
 
 export interface BlogPostLayoutProps extends BaseLayoutProps {
@@ -69,9 +66,8 @@ export interface DetailLayoutProps extends BaseLayoutProps {
     label?: string;
   };
   /**
-   * Product rendered by this page, for JSON-LD. Shaped like `ProductCard`'s `ProductData`, kept
-   * loose here rather than duplicated: that type is declared in ProductCard.astro's own
-   * frontmatter, unreachable from a plain `.ts` module the same way `.astro` types generally are.
+   * Product rendered by this page, for JSON-LD. Shaped like `ProductCard`'s `ProductData`,
+   * which lives in ProductCard.astro frontmatter and is unreachable from a `.ts` module.
    */
   product?: Record<string, unknown>;
   /**

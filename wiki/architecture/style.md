@@ -24,11 +24,11 @@ declaration for any page that bypasses `Head.astro`.
 | Layer | Contains |
 |---|---|
 | `walle.base` | `tokens.css` (every CSS variable and its default), `base.css` (resets, global element defaults, the reduced-motion kill switch) |
-| `walle.components` | Every component's own scoped `<style>` block |
-| `walle.utilities` | `utilities.css` (list-marker reset, `.sr-only`) and `prose.css` (markdown body styling) |
+| `walle.components` | Every component's own scoped `<style>` block, and `prose.css` (markdown body styling) |
+| `walle.utilities` | `utilities.css` (list-marker reset, `.sr-only`, `.skip-link`, `.container`) |
 | `site` | Consumer CSS. Always ordered last, so it always wins |
 
-`global.css` just imports the four files in that order; nothing else lives there.
+`global.css` just imports `tokens.css`, `base.css`, `prose.css` and `utilities.css` in that order; nothing else lives there.
 
 ## Dev vs. build
 

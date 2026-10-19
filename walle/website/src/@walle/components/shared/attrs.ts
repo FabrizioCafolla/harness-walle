@@ -1,8 +1,8 @@
 import type { ModifierProps, VariantProps } from "./types";
 
 /**
- * One rel rule for every link-rendering component. The caller resolves "is this host
- * external" (it has `Astro.site`, this function doesn't) and passes the result in.
+ * Shared target/rel rule for link-rendering components. The caller decides `external`
+ * (it has `Astro.site`).
  */
 export function linkAttrs({
   target,
@@ -38,11 +38,8 @@ export function variantAttrs(
 }
 
 /**
- * Separates a component's own declared props from everything meant to pass through as
- * {...rest}. Generic over `T extends object` and `K extends keyof T` so callers can pass
- * `Astro.props` and an `as const` OWN_KEYS array directly: `own` comes back as `Pick<T, K>` and
- * `rest` as `Omit<T, K>`, so destructuring either needs no cast, and destructuring a key that
- * isn't in `keys` is a real type error (the component forgot to declare that key as its own).
+ * Splits a component's own declared props from the ones passed through as {...rest}.
+ * Destructuring a key missing from `keys` out of `own` is a type error.
  */
 export function splitProps<T extends object, K extends keyof T>(
   props: T,

@@ -1,8 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
-// Isolated in its own file (see VariantPicker.locale-default.test.ts for why): this file's
-// config has no `website.language` and no `labels` at all, so every lookup must fall back to
-// the hardcoded English default.
+// Isolated in its own file (vi.mock is file-scoped): the config has no `website.language` and
+// no `labels`, so every lookup falls back to the English default.
 vi.mock("@walle/config", () => ({
   default: { app: { website: {} } },
 }));

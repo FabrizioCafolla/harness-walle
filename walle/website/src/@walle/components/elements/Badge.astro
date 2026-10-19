@@ -125,7 +125,6 @@ const hrefAttrs = href ? { href, target, rel: linkAttrs({ target }).rel } : {};
       --badge-radius: var(--radius-sm);
       --badge-padding: 0.25em 0.8em;
 
-      /* Structure */
       display: inline-flex;
       align-items: center;
       gap: 0.4em;
@@ -157,8 +156,6 @@ const hrefAttrs = href ? { href, target, rel: linkAttrs({ target }).rel } : {};
       display: inline-block;
     }
 
-    /* outline/muted map variant tokens to the public properties; status overrides both,
-           using its own tokens rather than the palette. */
     .badge[data-outline] {
       --badge-bg: transparent;
       /* --variant-outline-fg: AA-safe text color on the page surface. */
@@ -195,7 +192,6 @@ const hrefAttrs = href ? { href, target, rel: linkAttrs({ target }).rel } : {};
       --badge-fg: var(--badge-border);
     }
 
-    /* Link behavior */
     a.badge {
       cursor: pointer;
     }

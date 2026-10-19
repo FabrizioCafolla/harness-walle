@@ -2,12 +2,9 @@ import type { APIRoute } from "astro";
 import config from "@walle/config";
 
 /**
- * /robots.txt: crawler directives + sitemap pointer, built from config so it
- * stays correct for every consumer (the site URL and base path come from
- * app.json, not a hardcoded string).
+ * /robots.txt: crawler directives and sitemap URL, from the site URL and base path in app.json.
  *
- * Seed file: owned by the consumer after scaffold: tighten the rules or add
- * per-agent blocks as needed.
+ * Seed file: owned by the consumer after scaffold.
  */
 export const GET: APIRoute = ({ site }) => {
   const base = (config.app.astro.basePath || "").replace(/\/$/, "");

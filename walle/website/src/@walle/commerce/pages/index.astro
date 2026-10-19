@@ -47,55 +47,49 @@ function toCard(p: ShopifyProduct) {
   <SectionHeaderStandard title={label("products.title")} variant="primary" filled={true} />
 
   <div class="products">
-    {
-      !shopifyEnabled() && (
-        <p class="products__note">
-          Showing the bundled demo catalog. Set <code>PUBLIC_SHOPIFY_STORE</code> and
-          <code>PUBLIC_SHOPIFY_STOREFRONT_TOKEN</code> to load a live Shopify catalog with no code
-          change.
-        </p>
-      )
-    }
+    {!shopifyEnabled() && (
+      <p class="products__note">
+        Showing the bundled demo catalog. Set <code>PUBLIC_SHOPIFY_STORE</code> and
+        <code>PUBLIC_SHOPIFY_STOREFRONT_TOKEN</code> to load a live Shopify catalog with no code
+        change.
+      </p>
+    )}
 
-    {
-      types.length > 1 && (
-        <CollectionFilters
-          facets={[{ key: "type", label: label("products.type"), options: types }]}
-          labels={{
-            searchPlaceholder: label("products.searchPlaceholder"),
-            status: label("products.status"),
-          }}
-        />
-      )
-    }
+    {types.length > 1 && (
+      <CollectionFilters
+        facets={[{ key: "type", label: label("products.type"), options: types }]}
+        labels={{
+          searchPlaceholder: label("products.searchPlaceholder"),
+          status: label("products.status"),
+        }}
+      />
+    )}
 
-    {
-      products.length === 0 ? (
-        <p class="products__empty">{label("products.empty")}</p>
-      ) : (
-        <div class="products__grid">
-          {products.map((p) => (
-            <div
-              data-filter-item
-              data-type={p.productType}
-              data-search={`${p.title} ${p.tags.join(" ")}`}
-            >
-              {showBuyButton ? (
-                <ProductBuyCard
-                  product={p}
-                  locale={locale}
-                  showAddToCart={showAddToCartOnCards}
-                  showQuantity={false}
-                  addLabel={addToCartLabel}
-                />
-              ) : (
-                <ProductCard product={toCard(p)} />
-              )}
-            </div>
-          ))}
-        </div>
-      )
-    }
+    {products.length === 0 ? (
+      <p class="products__empty">{label("products.empty")}</p>
+    ) : (
+      <div class="products__grid">
+        {products.map((p) => (
+          <div
+            data-filter-item
+            data-type={p.productType}
+            data-search={`${p.title} ${p.tags.join(" ")}`}
+          >
+            {showBuyButton ? (
+              <ProductBuyCard
+                product={p}
+                locale={locale}
+                showAddToCart={showAddToCartOnCards}
+                showQuantity={false}
+                addLabel={addToCartLabel}
+              />
+            ) : (
+              <ProductCard product={toCard(p)} />
+            )}
+          </div>
+        ))}
+      </div>
+    )}
   </div>
 </BaseLayout>
 
