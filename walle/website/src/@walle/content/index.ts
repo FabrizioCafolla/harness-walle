@@ -48,8 +48,7 @@ const products = defineCollection({
 
 /**
  * Collections gated by a walle feature: `products` exists only when commerce is on.
- * `commerceMode` is passed in because this module is in Astro's content-layer graph, where
- * importing `@walle/config` pulls in vite-plugin-pwa via `defineWalleConfig` and breaks the build.
+ * `commerceMode` is passed in by the caller (the site's `content.config.ts`).
  *
  * The return type declares `products` always present: an optional or union key makes
  * Astro's generated `content.d.ts` (`Required<>`) infer `unknown` for `getCollection("products")`.

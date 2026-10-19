@@ -4,6 +4,21 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/develop/versioning.md).
 
+## [0.11.1] - Unreleased
+
+### Fixed
+
+- **The build failed with `[PARSE_ERROR] Unterminated string` at `serverIslandPlaceholderMap`
+  on rolldown 1.2.13 and later**, which `astro` 7.4.0 requires (`rolldown ^1.2.13`). Pages
+  import `@walle/config`, whose `defineWalleConfig` re-export pulled `define-config.ts` and
+  `astro/config` into the prerender bundle; Astro bundles itself there, and `astro/config` brings
+  in Astro's server-islands plugin, whose `renderChunk` rewrites its own placeholder string into
+  an unterminated literal. A new `walle-runtime-config` Vite plugin loads `config/index.ts`
+  without the re-export inside the site's Vite graph, so the runtime config no longer reaches
+  `astro/config`. `astro.config.mjs` loads through Astro's own config loader and keeps
+  `import { defineWalleConfig } from "./src/@walle/config"`: no consumer change is needed. This
+  is the failure 0.9.0 attributed to rolldown 1.2.13.
+
 ## [0.11.0] - 2026-10-19
 
 ### Added

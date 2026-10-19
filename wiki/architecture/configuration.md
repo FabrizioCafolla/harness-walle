@@ -55,7 +55,8 @@ See [style](style.md) for how these become CSS.
 
 ## How it's wired: `defineWalleConfig()`
 
-`src/@walle/define-config.ts` is imported only from `astro.config.mjs`. It parses all four
+`src/@walle/define-config.ts` is imported only from `astro.config.mjs` (see
+[the runtime-config plugin](#the-runtime-config-plugin)). It parses all four
 config files, then builds a real Astro config: native integrations (`mdx`, `sitemap`, `icon`,
 conditionally `@astrojs/node` and `@vite-pwa/astro`), and a handful of vite plugins that expose
 parsed config to component code through virtual modules (`virtual:walle-components`,
@@ -74,3 +75,15 @@ stylesheet, 35 KB of it for components no page rendered. `walleSlimBarrelsPlugin
 barrel at load time down to the exports the project's own sources actually import (it scans the
 consumer's sources for named imports), so nothing changes in how imports are written, only in
 what ends up in the graph.
+
+### The runtime-config plugin
+
+`src/@walle/config/index.ts` is both the runtime accessor (`import config from "@walle/config"`)
+and the module `astro.config.mjs` imports `defineWalleConfig` from, through a re-export of
+`define-config.ts`. Astro loads `astro.config.mjs` in a Vite server of its own, where the
+re-export is kept. Inside the site's dev server, build and vitest, `walleRuntimeConfigPlugin`
+loads `config/index.ts` without that line, so pages and components that import `config` never
+pull `define-config.ts`, `astro/config` or the integrations into the server bundle. Astro bundles
+itself into the prerender build, and with `astro/config` in it the build fails on rolldown 1.2.13
+and later (`[PARSE_ERROR] Unterminated string` at `serverIslandPlaceholderMap`).
+`tests/unit/runtime-config.test.ts` checks that the runtime graph never reaches either module.

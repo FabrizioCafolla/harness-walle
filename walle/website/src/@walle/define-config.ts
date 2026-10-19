@@ -1,6 +1,6 @@
 // Build-time walle config resolution. Imported only by astro.config.mjs (via the
-// `defineWalleConfig` re-export in ./config). Kept out of the runtime config module
-// so components importing `config` don't pull astro/config into their graph.
+// `defineWalleConfig` re-export in ./config). walleRuntimeConfigPlugin keeps it out of the
+// runtime config module, so components importing `config` don't pull astro/config into their graph.
 import AstroPWA from "@vite-pwa/astro";
 import node from "@astrojs/node";
 import mdx from "@astrojs/mdx";
@@ -368,6 +368,38 @@ function walleSlimBarrelsPlugin(root: string) {
     },
   };
 }
+
+/**
+ * Loads `config/index.ts` without its `defineWalleConfig` re-export inside the site's own Vite
+ * graph (dev server, build, vitest). Astro loads `astro.config.mjs` in a separate Vite server
+ * that does not run this plugin, so `import { defineWalleConfig } from "./src/@walle/config"`
+ * keeps working there, while pages and components that import `config` never reach this file,
+ * `astro/config` or the integrations. Astro bundles itself into the prerender build
+ * (`noExternal: ["astro"]`), and `astro/config` dynamically imports Astro's server-islands
+ * plugin, whose `renderChunk` rewrites its own placeholder string into a multi-line value:
+ * rolldown 1.2.13 and later reject that chunk with `[PARSE_ERROR] Unterminated string`.
+ */
+function walleRuntimeConfigPlugin() {
+  const file = fileURLToPath(new URL("./config/index.ts", import.meta.url));
+  return {
+    name: "walle-runtime-config",
+    enforce: "pre" as const,
+    load(id: string) {
+      if (id.split("?")[0] !== file) return null;
+      const source = readFileSync(file, "utf8");
+      const runtime = source.replace(DEFINE_CONFIG_REEXPORT, "");
+      if (runtime === source) {
+        throw new Error(
+          `walle: ${file} no longer re-exports defineWalleConfig from ../define-config`
+        );
+      }
+      return runtime;
+    },
+  };
+}
+
+const DEFINE_CONFIG_REEXPORT =
+  /^export\s*\{\s*defineWalleConfig\s*\}\s*from\s*["']\.\.\/define-config(?:\.ts)?["'];?[ \t]*$/m;
 
 type PwaConfigSection = {
   enabled?: boolean;
@@ -923,6 +955,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
         walleThemeDataPlugin(readThemeJson()),
         walleFeaturesPlugin(commerce?.mode),
         walleSlimBarrelsPlugin(process.cwd()),
+        walleRuntimeConfigPlugin(),
         ...(consumerVite.plugins ?? []),
       ],
       build: {
