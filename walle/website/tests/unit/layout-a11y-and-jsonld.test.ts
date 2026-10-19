@@ -29,3 +29,11 @@ describe("Organization logo", () => {
     expect(siteInfo).not.toContain("headerImage");
   });
 });
+
+describe("Twitter card tags", () => {
+  it("use the name attribute, as the Twitter Cards markup does", () => {
+    const head = read("src/@walle/components/features/Head.astro");
+    expect(head).toContain('<meta name="twitter:card"');
+    expect(head).not.toContain('property="twitter:');
+  });
+});

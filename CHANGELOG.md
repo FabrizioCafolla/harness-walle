@@ -16,6 +16,9 @@ Open fix branch: small fixes are added here until the release.
 - **The `Organization` JSON-LD `logo` is the site image (`website.image`), not the page's own
   image.** On a page that sets its own `headerImage` (a blog post) the logo used to become that
   image. A site can still override it through `website.structuredData.organization.logo`.
+- **Twitter card tags use `name`, not `property`.** `twitter:card`, `twitter:url`, `twitter:title`,
+  `twitter:description` and `twitter:image` were emitted as `<meta property=...>`, so tools that
+  read `name="twitter:card"` reported the card as missing.
 - **`calculateReadingTime` counts the text of a markdown link.** The link pattern had no capture
   group, so every link counted as the literal `$1` instead of its words.
 
