@@ -209,3 +209,29 @@ test.describe("Navbar - overlay on mobile (375x667)", () => {
     await expect(page.locator(".nav-link").first()).not.toHaveCSS("color", "rgb(255, 255, 255)");
   });
 });
+
+test.describe("Navbar - sticky and glass", () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  test("stays stuck to the top down to the bottom of a long page", async ({ page }) => {
+    await page.goto(`${siteBase}/showcase`);
+    const scrollable = await page.evaluate(
+      () => document.documentElement.scrollHeight - window.innerHeight
+    );
+    expect(scrollable).toBeGreaterThan(2000);
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await page.waitForTimeout(300);
+    const top = await page.evaluate(
+      () => document.querySelector(".site-header")!.getBoundingClientRect().top
+    );
+    expect(top).toBe(0);
+  });
+
+  test("applies the blur from --navbar-backdrop in Chromium", async ({ page }) => {
+    await page.goto(home);
+    const filter = await page.evaluate(
+      () => getComputedStyle(document.querySelector(".site-header")!).backdropFilter
+    );
+    expect(filter).toBe("blur(20px)");
+  });
+});
