@@ -32,6 +32,7 @@ export const config: DefaultConfig = {
 
 export default config;
 
-// Build-time Astro config resolver (used by astro.config.mjs), in a separate module so the
-// runtime `config` above does not import astro/config.
+// Build-time Astro config resolver for astro.config.mjs. Inside the site's Vite graph the
+// walle-runtime-config plugin (define-config.ts) loads this file without this line, so the
+// runtime `config` above never imports astro/config.
 export { defineWalleConfig } from "../define-config";
