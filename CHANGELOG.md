@@ -4,7 +4,7 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/develop/versioning.md).
 
-## [0.11.1] - Unreleased
+## [0.11.1] - 2026-10-19
 
 ### Fixed
 
