@@ -2,7 +2,8 @@
 import { Icon } from "astro-icon/components";
 import type { BaseProps } from "../shared/types";
 import { splitProps } from "../shared/attrs";
-import { label as t } from "@walle/utils";
+import { labeler } from "@walle/utils";
+const t = labeler(Astro.currentLocale);
 
 /**
  * Config-driven client-side filtering for any rendered collection.

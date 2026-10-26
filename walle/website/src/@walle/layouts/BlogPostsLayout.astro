@@ -2,8 +2,9 @@
 import { card as BasicCard } from "virtual:walle-components";
 import CollectionFilters from "@walle/components/features/CollectionFilters.astro";
 import BaseLayout from "./BaseLayout.astro";
-import { formatDate, label, resolveInternalUrl } from "@walle/utils";
+import { formatDate, labeler, locale as siteLocale, resolveInternalUrl } from "@walle/utils";
 import { getCollection, type CollectionEntry } from "astro:content";
+const label = labeler(Astro.currentLocale);
 
 export type { BlogPostsLayoutProps as Props } from "./types";
 
@@ -77,7 +78,9 @@ const badgeFor = (post: CollectionEntry<"posts">) =>
                 }}
                 badge={badgeFor(post)}
                 publishDate={
-                  post.data.publishDate ? formatDate(post.data.publishDate.toString()) : null
+                  post.data.publishDate
+                    ? formatDate(post.data.publishDate.toString(), siteLocale(Astro.currentLocale))
+                    : null
                 }
                 target="_self"
               />

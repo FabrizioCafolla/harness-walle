@@ -4,6 +4,28 @@ All notable changes to Walle are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project adheres to
 [Semantic Versioning](wiki/develop/versioning.md).
 
+## [0.12.0] - 2026-10-26
+
+### Added
+
+- **Multilingual sites.** An optional `i18n` block in `app.json` (`defaultLocale`,
+  `prefixDefaultLocale`, `locales` with `lang`, `label` and per-language `labels`) turns on
+  Astro's native i18n routing and the `@astrojs/sitemap` `hreflang` alternates. Pages and
+  content stay the site's: one folder per language, the same path in each is a translation.
+  A site without the block builds exactly as before. See `wiki/architecture/i18n.md`.
+- **`LanguageSwitcher`** component: links to the same page in the other languages, only those
+  the page exists in (the `translations` prop); renders nothing with fewer than two.
+- **`headerTranslations`** on every layout: two or more codes emit
+  `<link rel="alternate" hreflang>` and `x-default`. `<html lang>` and `og:locale` follow the
+  page's language.
+- **Per-language interface strings.** `label(path, override, locale?)` and `labeler(locale)`
+  resolve prop, then the language's `labels`, then the root `labels`, then the English default;
+  every component passes `Astro.currentLocale`. `locale(code?)`, `calculateReadingTime(text,
+  code?)` and the date and price formatting use the page's language.
+- **`localizedUrl()`, `stripLocale()`, `localeCodes()`** (`@walle/utils`) and
+  **`getTranslations()`** (`@walle/utils/translations`).
+- **`labels.language.nav`**, the accessible name of the switcher.
+
 ## [0.11.1] - 2026-10-19
 
 ### Fixed

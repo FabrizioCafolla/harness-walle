@@ -6,8 +6,9 @@ import { defaultVariant, formatMoney, type ShopifyProduct } from "@walle/commerc
 import type { ProductData } from "@walle/components/features/Card/ProductCard.astro";
 import { resolveInternalUrl } from "@walle/utils";
 import config from "@walle/config";
-import { label } from "@walle/utils/i18n";
+import { labeler, locale as siteLocale } from "@walle/utils/i18n";
 import { getCollection, getEntry } from "astro:content";
+const label = labeler(Astro.currentLocale);
 
 export async function getStaticPaths() {
   const products = await getCollection("products");
@@ -19,7 +20,7 @@ const { product } = Astro.props as { product: ShopifyProduct };
 // Reads `commerce.mode` directly rather than through feature-gating at the module graph level.
 const commerce = config.app.commerce;
 const showBuyButton = commerce?.mode === "shop";
-const locale = config.app.website.language ?? "en-US";
+const locale = siteLocale(Astro.currentLocale);
 const addToCartLabel = label("cart.add");
 
 const productImage = (url: string) => (url.startsWith("http") ? url : resolveInternalUrl(url));

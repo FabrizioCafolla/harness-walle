@@ -16,7 +16,14 @@ import appConfig from "../configs/app.json";
 import footerConfigJson from "../configs/footer.json";
 import navbarConfigJson from "../configs/navbar.json";
 
-import { appSchema, footerSchema, navbarSchema, parseConfig, themeSchema } from "./config/schema";
+import {
+  appSchema,
+  footerSchema,
+  navbarSchema,
+  parseConfig,
+  themeSchema,
+  type I18nConfig,
+} from "./config/schema";
 import { resolveSitePath } from "./utils/site-path";
 import { stripBase, withBase } from "./utils/base-path";
 import { contrastRatio } from "./utils/contrast";
@@ -857,6 +864,7 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
     appConfig as { commerce?: { mode?: string; pages?: { list?: string; detail?: string } } }
   ).commerce;
   const pwa = (appConfig as { pwa?: PwaConfigSection }).pwa ?? {};
+  const i18n = (appConfig as { i18n?: I18nConfig }).i18n;
   const seo =
     (
       appConfig as {
@@ -907,14 +915,24 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
         };
   const walleIntegrations = [
     mdx(),
-    sitemap(
-      sitemapExclude.length > 0
+    sitemap({
+      ...(sitemapExclude.length > 0
         ? {
             filter: (page: string) =>
               !isSitemapExcluded(new URL(page).pathname, sitemapExclude, astro.basePath),
           }
-        : undefined
-    ),
+        : {}),
+      ...(i18n
+        ? {
+            i18n: {
+              defaultLocale: i18n.defaultLocale,
+              locales: Object.fromEntries(
+                Object.entries(i18n.locales).map(([c, l]) => [c, l.lang])
+              ),
+            },
+          }
+        : {}),
+    }),
     icon(),
     walleCommerceRoutesIntegration(commerce?.mode, commerce?.pages, process.cwd()),
     walleOfflineRouteIntegration(pwa, process.cwd()),
@@ -941,6 +959,19 @@ export function defineWalleConfig(overrides: Record<string, any> = {}) {
     // routes render on demand.
     ...(astro.adapter === "node" ? { adapter: node({ mode: "standalone" }) } : {}),
     redirects,
+    // `redirectToDefaultLocale: false` leaves `/` to the site (a page or `astro.redirects`).
+    ...(i18n
+      ? {
+          i18n: {
+            defaultLocale: i18n.defaultLocale,
+            locales: Object.keys(i18n.locales),
+            routing: {
+              prefixDefaultLocale: i18n.prefixDefaultLocale ?? true,
+              redirectToDefaultLocale: false,
+            },
+          },
+        }
+      : {}),
     prefetch,
     ...(fonts.length > 0 ? { fonts } : {}),
     ...consumerScalars,

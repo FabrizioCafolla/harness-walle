@@ -2,9 +2,10 @@
 import { Icon } from "astro-icon/components";
 import type { BaseProps } from "../shared/types";
 import { splitProps } from "../shared/attrs";
-import { label } from "@walle/utils";
+import { labeler } from "@walle/utils";
 import { breadcrumbJsonLd } from "@walle/utils/structured-data";
 import StructuredData from "./StructuredData.astro";
+const label = labeler(Astro.currentLocale);
 
 export interface BreadcrumbItem {
   /**

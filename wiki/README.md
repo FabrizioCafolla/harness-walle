@@ -27,7 +27,8 @@ Walle is a copy-based Astro design system: its CLI copies the engine into your p
 - [Architecture](architecture/index.md): the website engine module by module
 - [Configuration](architecture/configuration.md), [Components](architecture/components.md),
   [Style](architecture/style.md), [E-commerce](architecture/ecommerce.md),
-  [CI/CD](architecture/ci-cd.md), [PWA](architecture/pwa.md), [SEO](architecture/seo.md)
+  [CI/CD](architecture/ci-cd.md), [PWA](architecture/pwa.md), [SEO](architecture/seo.md),
+  [Multilingual sites](architecture/i18n.md)
 
 ## AI
 

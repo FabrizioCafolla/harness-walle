@@ -7,9 +7,10 @@
  * Mounted only when `commerce.mode === "shop"`, so a site with commerce off ships none of
  * this markup or JS.
  */
-import { label as t, locale as siteLocale } from "@walle/utils";
+import { labeler, locale as siteLocale } from "@walle/utils";
+const t = labeler(Astro.currentLocale);
 
-const locale = siteLocale();
+const locale = siteLocale(Astro.currentLocale);
 const l = {
   ariaLabel: t("cart.ariaLabel"),
   title: t("cart.title"),

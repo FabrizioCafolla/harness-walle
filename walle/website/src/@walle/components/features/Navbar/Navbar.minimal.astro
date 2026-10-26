@@ -2,9 +2,10 @@
 // Minimal navbar variant: brand + flat horizontal links, no dropdowns or mobile menu.
 // Selected via `components.navbar = "minimal"` in app.json, resolved by virtual:walle-components.
 import type { NavbarConfig, NavigationLink } from "@walle/config";
-import { label as t, resolveInternalUrl } from "@walle/utils";
+import { labeler, resolveInternalUrl } from "@walle/utils";
 import type { BaseProps } from "../../shared/types";
 import { splitProps } from "../../shared/attrs";
+const t = labeler(Astro.currentLocale);
 
 export interface Props extends BaseProps<"header"> {
   config: NavbarConfig;

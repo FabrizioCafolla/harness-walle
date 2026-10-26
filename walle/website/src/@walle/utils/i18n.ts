@@ -73,6 +73,7 @@ const DEFAULTS = {
   "products.related": "You might also like",
   "products.galleryHeading": "Product gallery and details",
   "products.gallery": "{title} gallery",
+  "language.nav": "Language",
   "map.region": "Map",
   "map.directions": "Get directions",
 } as const;
@@ -90,17 +91,28 @@ function getByPath(obj: unknown, path: string): unknown {
 }
 
 /**
- * Resolves a user-facing string with the precedence prop override > site `labels` config >
- * English default. `override` is whatever a component's own prop received (usually
- * `undefined`, meaning "no per-instance override").
+ * Resolves a user-facing string with the precedence prop override > the language's `labels`
+ * (`i18n.locales.<code>.labels`) > site `labels` config > English default. `override` is whatever
+ * a component's own prop received (usually `undefined`, meaning "no per-instance override");
+ * `localeCode` is `Astro.currentLocale`, absent on a monolingual site.
  */
-export function label(path: LabelPath, override?: string): string {
+export function label(path: LabelPath, override?: string, localeCode?: string): string {
   if (override !== undefined) return override;
-  const site = getByPath(config.app.labels, path);
+  const perLocale = localeCode ? config.app.i18n?.locales[localeCode]?.labels : undefined;
+  const site = getByPath(perLocale, path) ?? getByPath(config.app.labels, path);
   return typeof site === "string" ? site : DEFAULTS[path];
 }
 
-/** The site's locale for every date/number/currency formatter. */
-export function locale(): string {
-  return config.app.website.language || "en-US";
+/** `label` bound to a language: `const t = labeler(Astro.currentLocale)`. */
+export function labeler(localeCode?: string) {
+  return (path: LabelPath, override?: string) => label(path, override, localeCode);
+}
+
+/**
+ * The BCP 47 tag for every date/number/currency formatter: the language's `lang` when a code is
+ * given and declared, otherwise the site's `website.language`.
+ */
+export function locale(localeCode?: string): string {
+  const lang = localeCode ? config.app.i18n?.locales[localeCode]?.lang : undefined;
+  return lang || config.app.website.language || "en-US";
 }

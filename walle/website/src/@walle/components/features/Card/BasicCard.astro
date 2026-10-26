@@ -1,8 +1,8 @@
 ---
-import config from "@walle/config";
-import { formatDate, label } from "@walle/utils";
+import { formatDate, labeler, locale as siteLocale } from "@walle/utils";
 import type { BaseProps, Variant } from "../../shared/types";
 import { linkAttrs, splitProps, variantAttrs } from "../../shared/attrs";
+const label = labeler(Astro.currentLocale);
 
 export interface Props extends BaseProps {
   title: string;
@@ -65,7 +65,7 @@ const {
 const cardClasses = ["card", className].filter(Boolean).join(" ");
 
 const formattedDate = publishDate
-  ? formatDate(publishDate.toString(), config.app.website.language)
+  ? formatDate(publishDate.toString(), siteLocale(Astro.currentLocale))
   : null;
 
 const truncatedContent =

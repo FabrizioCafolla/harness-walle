@@ -1,6 +1,7 @@
 ---
 import { BaseLayout } from "@walle/layouts";
-import { label } from "@walle/utils";
+import { labeler } from "@walle/utils";
+const label = labeler(Astro.currentLocale);
 
 const title = label("notFound.title");
 const message = label("notFound.message");

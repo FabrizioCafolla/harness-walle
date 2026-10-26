@@ -8,7 +8,8 @@ import type { ProductData } from "@walle/components/features/Card/ProductCard.as
 import BaseLayout from "./BaseLayout.astro";
 import { productJsonLd } from "@walle/utils/structured-data";
 import { Icon } from "astro-icon/components";
-import { label as t } from "@walle/utils";
+import { labeler } from "@walle/utils";
+const t = labeler(Astro.currentLocale);
 
 /**
  * Detail page: header over a two-column main/aside grid with breadcrumbs and an

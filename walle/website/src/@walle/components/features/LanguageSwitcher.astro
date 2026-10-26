@@ -1,0 +1,89 @@
+---
+import config from "@walle/config";
+import { labeler, localizedUrl, stripLocale } from "@walle/utils";
+import type { BaseProps } from "../shared/types";
+import { splitProps } from "../shared/attrs";
+const t = labeler(Astro.currentLocale);
+
+export interface Props extends BaseProps<"nav"> {
+  /**
+   * Language codes in which the current page exists (itself included). The switcher offers
+   * only these; with fewer than two it renders nothing.
+   */
+  translations: string[];
+}
+
+const OWN_KEYS = ["translations", "class"] as const;
+const { own, rest } = splitProps(Astro.props, OWN_KEYS);
+const { translations = [], class: className } = own;
+
+const locales = config.app.i18n?.locales ?? {};
+const path = stripLocale(Astro.url.pathname)?.path ?? "/";
+const items = translations
+  .filter((code) => code in locales)
+  .map((code) => ({
+    code,
+    lang: locales[code].lang,
+    name: locales[code].label,
+    href: localizedUrl(code, path),
+    current: code === Astro.currentLocale,
+  }));
+---
+
+{items.length > 1 && (
+  <nav aria-label={t("language.nav")} class:list={["language-switcher", className]} {...rest}>
+    <ul>
+      {items.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            lang={item.lang}
+            hreflang={item.lang}
+            aria-current={item.current ? "true" : undefined}
+          >
+            {item.name}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
+
+<style>
+  @layer walle.components {
+    .language-switcher {
+      /* Public properties */
+      --language-switcher-color: var(--primary);
+      --language-switcher-color-current: var(--text-muted);
+      --language-switcher-gap: 0.5rem;
+
+      font-size: 0.95rem;
+    }
+
+    .language-switcher ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--language-switcher-gap);
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .language-switcher a {
+      color: var(--language-switcher-color);
+      display: inline-block;
+      padding: 0.3rem 0.4rem;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+    }
+
+    .language-switcher a:hover {
+      text-decoration: underline;
+    }
+
+    .language-switcher a[aria-current="true"] {
+      color: var(--language-switcher-color-current);
+      font-weight: 600;
+    }
+  }
+</style>

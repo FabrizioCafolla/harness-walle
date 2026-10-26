@@ -29,6 +29,7 @@ SCENARIOS=(
   ".husky/ seeded at init, consumer edits survive update|scenario_husky_seed"
   "Commerce off: no cart script/styles, no /products route, no Storefront request|scenario_commerce_off"
   "Config validation: unknown key, wrong type, removed key all fail the build|scenario_config_validation"
+  "i18n: html lang, hreflang, per-language labels, switcher and sitemap alternates|scenario_i18n"
 )
 
 pass=0 failed=0 skipped=0
