@@ -16,8 +16,11 @@ export interface AbstractLayoutProps {
   headerEntryOgImage?: string | null;
   /** Meta robots directive. @default config.app.website.robots */
   headerRobots?: string;
-  /** Document `lang` attribute. @default config.app.website.language */
+  /** Document `lang` attribute. @default the page's `i18n` language, else config.app.website.language */
   headerLanguage?: string;
+  /** Language codes in which this page exists (itself included), for `<link rel="alternate" hreflang>`.
+   * Needs `i18n`; fewer than two emit nothing. */
+  headerTranslations?: string[];
   /** Article `published_time`, for pages with one (blog posts). */
   headerPublishedTime?: string | Date | null;
   /** Accessible label of the skip-to-content link. @default "Skip to content" */

@@ -2,7 +2,8 @@
 // Selected via `components.footer = "minimal"` in app.json, resolved by virtual:walle-components.
 import type { FooterConfig, NavigationLink } from "@walle/config";
 import config from "@walle/config";
-import { label as t, resolveInternalUrl } from "@walle/utils";
+import { labeler, resolveInternalUrl } from "@walle/utils";
+const t = labeler(Astro.currentLocale);
 
 const footerConfig: FooterConfig = config.footer;
 const today = new Date();

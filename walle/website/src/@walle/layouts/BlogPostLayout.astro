@@ -8,8 +8,9 @@ import StructuredData from "@walle/components/features/StructuredData.astro";
 import BaseLayout from "./BaseLayout.astro";
 import config from "@walle/config";
 import { ogImageUrl } from "@walle/og";
-import { formatDate, label } from "@walle/utils";
+import { formatDate, labeler, locale as siteLocale } from "@walle/utils";
 import { articleJsonLd } from "@walle/utils/structured-data";
+const label = labeler(Astro.currentLocale);
 
 export type { BlogPostLayoutProps as Props } from "./types";
 
@@ -23,6 +24,8 @@ const {
   image = null,
   draft = false,
   id,
+  headerLanguage,
+  headerTranslations,
 } = Astro.props;
 
 // The generated OG route exists only when the feature is on and `posts` is one of its
@@ -41,6 +44,8 @@ const entryOgImage =
   headerOgImage={image}
   headerEntryOgImage={entryOgImage}
   headerPublishedTime={publishDate}
+  headerLanguage={headerLanguage}
+  headerTranslations={headerTranslations}
 >
   <slot name="head" slot="head" />
   {!draft && (
@@ -81,10 +86,10 @@ const entryOgImage =
                     datetime={publishDate.toISOString()}
                     aria-label={label("blog.publishedOn").replace(
                       "{date}",
-                      formatDate(publishDate.toString()) ?? ""
+                      formatDate(publishDate.toString(), siteLocale(Astro.currentLocale)) ?? ""
                     )}
                   >
-                    {formatDate(publishDate.toString())}
+                    {formatDate(publishDate.toString(), siteLocale(Astro.currentLocale))}
                   </time>
                 </li>
               )}

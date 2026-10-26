@@ -31,7 +31,10 @@ export function formatDate(dateString: string, locale: string = siteLocale()): s
   }).format(date);
 }
 
-export function calculateReadingTime(content: string): {
+export function calculateReadingTime(
+  content: string,
+  localeCode?: string
+): {
   text: string;
   minutes: number;
   words: number;
@@ -57,13 +60,13 @@ export function calculateReadingTime(content: string): {
     words / wordsPerMinute + (images * imageReadingTime) / 60 + (codeBlocks * codeReadingTime) / 60
   );
 
-  const duration = new Intl.NumberFormat(siteLocale(), {
+  const duration = new Intl.NumberFormat(siteLocale(localeCode), {
     style: "unit",
     unit: "minute",
     unitDisplay: "long",
   }).format(totalMinutes);
   return {
-    text: label("readingTime").replace("{duration}", duration),
+    text: label("readingTime", undefined, localeCode).replace("{duration}", duration),
     minutes: totalMinutes,
     words: words,
   };

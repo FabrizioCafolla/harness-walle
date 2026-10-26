@@ -1,9 +1,10 @@
 ---
 import NavbarMenu from "./NavbarMenu.astro";
 import type { NavbarConfig } from "@walle/config";
-import { label as t, resolveInternalUrl } from "@walle/utils";
+import { labeler, resolveInternalUrl } from "@walle/utils";
 import type { BaseProps } from "../../shared/types";
 import { splitProps } from "../../shared/attrs";
+const t = labeler(Astro.currentLocale);
 
 export interface Props extends BaseProps<"header"> {
   config: NavbarConfig;

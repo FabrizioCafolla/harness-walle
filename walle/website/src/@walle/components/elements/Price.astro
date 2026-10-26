@@ -1,7 +1,8 @@
 ---
 import type { BaseProps, Size } from "../shared/types";
 import { splitProps } from "../shared/attrs";
-import { label as t, locale as siteLocale } from "@walle/utils";
+import { labeler, locale as siteLocale } from "@walle/utils";
+const t = labeler(Astro.currentLocale);
 
 export interface PriceData {
   /**
@@ -56,7 +57,7 @@ const OWN_KEYS = ["price", "locale", "size", "discountedLabel", "originalLabel",
 const { own, rest } = splitProps(Astro.props, OWN_KEYS);
 const {
   price,
-  locale = siteLocale(),
+  locale = siteLocale(Astro.currentLocale),
   size = "medium",
   discountedLabel: discountedLabelProp,
   originalLabel: originalLabelProp,

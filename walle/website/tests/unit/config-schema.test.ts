@@ -182,3 +182,32 @@ describe("app schema rejects unknown keys and wrong types (build-time gate)", ()
     expect(z.prettifyError(result.error!)).toContain("basePath");
   });
 });
+
+describe("app schema: i18n block", () => {
+  const base = {
+    website: { title: "t", description: "d" },
+    astro: { baseUrl: "https://example.com", basePath: "/" },
+  };
+  const locales = {
+    it: { lang: "it-IT", label: "Italiano" },
+    en: { lang: "en-US", label: "English", labels: { skipLink: "Skip" } },
+  };
+
+  it("accepts languages with their own labels and prefixDefaultLocale", () => {
+    const i18n = { defaultLocale: "it", prefixDefaultLocale: false, locales };
+    expect(appSchema.safeParse({ ...base, i18n }).success).toBe(true);
+  });
+
+  it("rejects a defaultLocale that is not one of the locales, naming the key", () => {
+    const result = appSchema.safeParse({ ...base, i18n: { defaultLocale: "fr", locales } });
+    expect(result.success).toBe(false);
+    expect(z.prettifyError(result.error!)).toContain("defaultLocale");
+  });
+
+  it("rejects a locale code that is not URL-safe and an unknown locale key", () => {
+    const bad = { defaultLocale: "it", locales: { ...locales, "e/n": locales.en } };
+    expect(appSchema.safeParse({ ...base, i18n: bad }).success).toBe(false);
+    const extra = { defaultLocale: "it", locales: { it: { ...locales.it, flag: "x" } } };
+    expect(appSchema.safeParse({ ...base, i18n: extra }).success).toBe(false);
+  });
+});

@@ -2,9 +2,10 @@
 const today = new Date();
 import type { FooterConfig, NavigationLink } from "@walle/config";
 import config from "@walle/config";
-import { label as t, resolveInternalUrl } from "@walle/utils";
+import { labeler, resolveInternalUrl } from "@walle/utils";
 import { Icon } from "astro-icon/components";
 import { linkAttrs } from "../shared/attrs";
+const t = labeler(Astro.currentLocale);
 
 const footerConfig: FooterConfig = config.footer;
 const footerItems = Array.isArray(footerConfig.items) ? footerConfig.items : [];

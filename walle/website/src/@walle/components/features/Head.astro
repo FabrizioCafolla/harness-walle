@@ -1,6 +1,12 @@
 ---
 import config from "@walle/config";
-import { resolveInternalUrl, truncateAtWord } from "@walle/utils";
+import {
+  localizedUrl,
+  locale,
+  resolveInternalUrl,
+  stripLocale,
+  truncateAtWord,
+} from "@walle/utils";
 import { ogImageUrl as siteOgImageUrl } from "@walle/og/url";
 import pwa from "virtual:walle-pwa";
 import { WALLE_LAYER_DECLARATION } from "@walle/styles/layers";
@@ -21,6 +27,8 @@ interface Props {
   favicon?: string;
   /** Article publication timestamp. */
   publishedTime?: Date | string | null;
+  /** Language codes in which this page exists (itself included); two or more emit hreflang links. */
+  translations?: string[];
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -34,6 +42,7 @@ const {
   robots = null,
   favicon = config.app.website.favicon,
   publishedTime = null,
+  translations = [],
 } = Astro.props;
 
 // The site-name suffix is dropped, not truncated, when it pushes the title past
@@ -60,7 +69,25 @@ const resolvedOgImage =
   (image ? toAbsolute(image) : undefined);
 const resolvedFavicon = favicon ? resolveInternalUrl(favicon) : undefined;
 // BCP 47 ("en-US") → Open Graph locale ("en_US")
-const ogLocale = (config.app.website.language || "").replace("-", "_") || null;
+const ogLocale =
+  (Astro.currentLocale ? locale(Astro.currentLocale) : config.app.website.language || "").replace(
+    "-",
+    "_"
+  ) || null;
+
+// hreflang for the languages the page exists in; x-default is the default language's version.
+const current = stripLocale(Astro.url.pathname);
+const i18n = config.app.i18n;
+const hreflangs =
+  i18n && current && translations.length > 1
+    ? translations
+        .filter((code) => code in i18n.locales)
+        .map((code) => ({
+          code,
+          lang: i18n.locales[code].lang,
+          href: toAbsolute(localizedUrl(code, current.path)),
+        }))
+    : [];
 
 const publishedIso = publishedTime ? new Date(publishedTime).toISOString() : null;
 
@@ -113,6 +140,14 @@ const alternates = config.app.seo?.alternates ?? [];
 )}
 
 <link rel="canonical" href={canonicalURL} />
+{hreflangs.map((alt) => (
+  <link rel="alternate" hreflang={alt.lang} href={alt.href} />
+))}
+{hreflangs
+  .filter((alt) => alt.code === i18n?.defaultLocale)
+  .map((alt) => (
+    <link rel="alternate" hreflang="x-default" href={alt.href} />
+  ))}
 
 <title>{titleSeo}</title>
 <meta name="title" content={titleSeo} />

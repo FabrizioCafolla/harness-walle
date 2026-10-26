@@ -4,7 +4,8 @@
  * chosen by `commerce.cartInNavbar` in BaseLayout. The drawer + wiring live in
  * CartMount.astro, which finds this button by `[data-cart-badge]` wherever it sits.
  */
-import { label as t } from "@walle/utils";
+import { labeler } from "@walle/utils";
+const t = labeler(Astro.currentLocale);
 
 interface Props {
   /** Floating bottom-right (default) vs inline in the navbar. @default true */

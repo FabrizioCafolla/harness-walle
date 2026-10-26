@@ -296,6 +296,8 @@ const mapLabelsSchema = z
   })
   .strict();
 
+const languageLabelsSchema = z.object({ nav: z.string().optional() }).strict();
+
 const tocLabelsSchema = z
   .object({
     heading: z.string().optional(),
@@ -358,8 +360,32 @@ const labelsSchema = z
     blog: blogLabelsSchema.optional(),
     products: productsLabelsSchema.optional(),
     map: mapLabelsSchema.optional(),
+    language: languageLabelsSchema.optional(),
   })
   .strict();
+
+// Multilingual sites. `locales` keys are the URL codes Astro routes on; `lang` is the BCP 47 tag
+// for `<html lang>`, hreflang and number/date formatting; `labels` override the base `labels` for
+// that language. Absent block = monolingual site, nothing changes.
+const i18nLocaleSchema = z
+  .object({
+    lang: z.string(),
+    label: z.string(),
+    labels: labelsSchema.optional(),
+  })
+  .strict();
+
+const i18nSchema = z
+  .object({
+    defaultLocale: z.string(),
+    prefixDefaultLocale: z.boolean().optional(),
+    locales: z.record(z.string().regex(/^[A-Za-z0-9_-]+$/), i18nLocaleSchema),
+  })
+  .strict()
+  .refine((i) => i.defaultLocale in i.locales, {
+    path: ["defaultLocale"],
+    message: "defaultLocale must be one of the keys of locales",
+  });
 
 // OG images. `enabled` defaults to false; the seeded app.json turns it on. Absent
 // `templates`/`fonts` mean walle's managed default template and bundled fallback font.
@@ -460,6 +486,7 @@ export const appSchema = z
     pwa: pwaSchema.optional(),
     commerce: commerceSchema.optional(),
     labels: labelsSchema.optional(),
+    i18n: i18nSchema.optional(),
     seo: seoSchema.optional(),
     map: mapSchema.optional(),
   })
@@ -534,6 +561,7 @@ export type ThemeConfig = z.infer<typeof themeSchema>;
 export type NavigationLink = z.infer<typeof navigationLinkSchema>;
 export type NavbarLogo = z.infer<typeof logoSchema>;
 export type LabelsConfig = z.infer<typeof labelsSchema>;
+export type I18nConfig = z.infer<typeof i18nSchema>;
 
 /** Parses `data` against `schema`, throwing a `z.prettifyError` message prefixed with `fileName`. */
 export function parseConfig<T>(schema: z.ZodType<T>, data: unknown, fileName: string): T {

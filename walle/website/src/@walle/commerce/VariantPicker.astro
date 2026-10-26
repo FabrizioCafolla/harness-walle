@@ -9,7 +9,8 @@
  * (CartMount.astro) delegates its click to `addToCart`, so a build with commerce off ships no JS.
  */
 import { defaultVariant, formatMoney, isSingleVariant, type ShopifyProduct } from "./shopify";
-import { label as t, locale as siteLocale } from "@walle/utils";
+import { labeler, locale as siteLocale } from "@walle/utils";
+const t = labeler(Astro.currentLocale);
 
 interface Props {
   product: ShopifyProduct;
@@ -32,7 +33,7 @@ interface Props {
 
 const {
   product,
-  locale = siteLocale(),
+  locale = siteLocale(Astro.currentLocale),
   showBuyButton = false,
   showQuantity = false,
   compact = false,

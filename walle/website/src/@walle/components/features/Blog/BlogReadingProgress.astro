@@ -1,5 +1,6 @@
 ---
-import { label as t } from "@walle/utils";
+import { labeler } from "@walle/utils";
+const t = labeler(Astro.currentLocale);
 
 export interface Props {
   targetSelector?: string;

@@ -23,7 +23,7 @@ beyond configs and CSS variables.
 | CI/CD | `walle/ci/`, `.github/workflows/` | Reusable composite actions and seeded workflows; see [ci-cd](ci-cd.md) |
 | OG images | `src/@walle/og/` | satori + resvg rendering behind `/og/[...slug].png`; see [seo](seo.md#og-images) |
 | Feeds | `src/@walle/feeds/` | `@astrojs/rss`-backed injected route per configured feed; see [seo](seo.md#rss-feeds) |
-| Utils | `src/@walle/utils/` | `label()`/i18n, structured-data builders, site-path resolution, base-path helpers |
+| Utils | `src/@walle/utils/` | `label()`/i18n, language URL helpers (`locale-url`, `translations`; see [i18n](i18n.md)), structured-data builders, site-path resolution, base-path helpers |
 | Scripts | `src/@walle/scripts/` | Vanilla client-side behavior for islands that don't need a framework |
 
 ## How a page is assembled

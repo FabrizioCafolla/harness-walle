@@ -8,7 +8,8 @@ import type { ProductData } from "@walle/components/features/Card/ProductCard.as
 import BaseLayout from "./BaseLayout.astro";
 import { productJsonLd } from "@walle/utils/structured-data";
 import { Icon } from "astro-icon/components";
-import { label as t } from "@walle/utils";
+import { labeler } from "@walle/utils";
+const t = labeler(Astro.currentLocale);
 
 /**
  * Detail page: header over a two-column main/aside grid with breadcrumbs and an
@@ -27,10 +28,18 @@ const {
   backLink,
   product,
   badgesAlign = "start",
+  headerLanguage,
+  headerTranslations,
 } = Astro.props;
 ---
 
-<BaseLayout headerTitle={title} headerDescription={description} headerOgImage={ogImage}>
+<BaseLayout
+  headerTitle={title}
+  headerDescription={description}
+  headerOgImage={ogImage}
+  headerLanguage={headerLanguage}
+  headerTranslations={headerTranslations}
+>
   {product && <StructuredData data={productJsonLd(product as ProductData, Astro.url.href)} />}
   <SectionHeaderStandard title={title} variant="primary" filled={true}>
     <div class:list={["detail-badges", `detail-badges--${badgesAlign}`]}>

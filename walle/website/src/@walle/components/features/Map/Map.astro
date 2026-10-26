@@ -8,8 +8,9 @@
  */
 import type { AppConfig } from "@walle/config";
 import config from "@walle/config";
-import { label as t } from "@walle/utils";
+import { labeler } from "@walle/utils";
 import type { BaseProps, Variant } from "../../shared/types";
+const t = labeler(Astro.currentLocale);
 
 type MapTiles = NonNullable<AppConfig["map"]>["tiles"];
 type Directions = NonNullable<AppConfig["map"]>["directions"];

@@ -15,6 +15,7 @@ export { default as CollectionFilters } from "./features/CollectionFilters.astro
 export { default as BasicCard } from "./features/Card/BasicCard.astro";
 export { default as ProductCard } from "./features/Card/ProductCard.astro";
 export { default as Head } from "./features/Head.astro";
+export { default as LanguageSwitcher } from "./features/LanguageSwitcher.astro";
 export { default as Map } from "./features/Map/Map.astro";
 export { navbar as Navbar } from "virtual:walle-components";
 export { footer as Footer } from "virtual:walle-components";

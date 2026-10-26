@@ -6,6 +6,17 @@ vi.mock("@walle/config", () => ({
   default: {
     app: {
       website: { language: "it-IT" },
+      i18n: {
+        defaultLocale: "it",
+        locales: {
+          it: { lang: "it-IT", label: "Italiano" },
+          en: {
+            lang: "en-GB",
+            label: "English",
+            labels: { skipLink: "Skip to the content", language: { nav: "Languages" } },
+          },
+        },
+      },
       labels: {
         skipLink: "Vai al contenuto",
         carousel: { next: "Successivo" },
@@ -14,7 +25,7 @@ vi.mock("@walle/config", () => ({
   },
 }));
 
-const { label, locale } = await import("../../src/@walle/utils/i18n");
+const { label, labeler, locale } = await import("../../src/@walle/utils/i18n");
 
 describe("locale", () => {
   it("returns the site's configured language", () => {
@@ -46,5 +57,36 @@ describe("label precedence: prop override > site label > default", () => {
 
   it("an empty string override is respected, not treated as absent", () => {
     expect(label("skipLink", "")).toBe("");
+  });
+});
+
+describe("per-language labels", () => {
+  it("a language's label wins over the base labels", () => {
+    expect(label("skipLink", undefined, "en")).toBe("Skip to the content");
+  });
+
+  it("falls back to the base labels, then the default, for keys the language leaves out", () => {
+    expect(label("carousel.next", undefined, "en")).toBe("Successivo");
+    expect(label("carousel.previous", undefined, "en")).toBe("Previous slide");
+  });
+
+  it("a language without labels, or an unknown one, reads the base labels", () => {
+    expect(label("skipLink", undefined, "it")).toBe("Vai al contenuto");
+    expect(label("skipLink", undefined, "xx")).toBe("Vai al contenuto");
+  });
+
+  it("a prop override still wins over the language", () => {
+    expect(label("skipLink", "Mine", "en")).toBe("Mine");
+  });
+
+  it("labeler binds the language", () => {
+    expect(labeler("en")("language.nav")).toBe("Languages");
+    expect(labeler()("language.nav")).toBe("Language");
+  });
+
+  it("locale(code) is the language's BCP 47 tag, the site language without one", () => {
+    expect(locale("en")).toBe("en-GB");
+    expect(locale("xx")).toBe("it-IT");
+    expect(locale()).toBe("it-IT");
   });
 });

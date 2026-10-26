@@ -5,13 +5,14 @@ import ProductBuyCard from "@walle/commerce/ProductBuyCard.astro";
 import { resolveInternalUrl } from "@walle/utils";
 import { defaultVariant, shopifyEnabled, type ShopifyProduct } from "@walle/commerce/shopify";
 import config from "@walle/config";
-import { label } from "@walle/utils/i18n";
+import { labeler, locale as siteLocale } from "@walle/utils/i18n";
 import { getCollection } from "astro:content";
+const label = labeler(Astro.currentLocale);
 
 // Reads `commerce.mode` directly rather than through feature-gating at the module graph level.
 const commerce = config.app.commerce;
 const showBuyButton = commerce?.mode === "shop";
-const locale = config.app.website.language ?? "en-US";
+const locale = siteLocale(Astro.currentLocale);
 const addToCartLabel = label("cart.add");
 const showAddToCartOnCards = commerce?.showAddToCartOnCards ?? true;
 

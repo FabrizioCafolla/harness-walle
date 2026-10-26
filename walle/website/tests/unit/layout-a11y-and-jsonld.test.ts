@@ -30,6 +30,16 @@ describe("Organization logo", () => {
   });
 });
 
+describe("Language props reach the document", () => {
+  it("forwards headerLanguage and headerTranslations from every layout built on BaseLayout", () => {
+    for (const name of ["BlogPostLayout", "BlogPostsLayout", "DetailLayout"]) {
+      const layout = read(`src/@walle/layouts/${name}.astro`);
+      expect(layout, name).toContain("headerLanguage={headerLanguage}");
+      expect(layout, name).toContain("headerTranslations={headerTranslations}");
+    }
+  });
+});
+
 describe("Twitter card tags", () => {
   it("use the name attribute, as the Twitter Cards markup does", () => {
     const head = read("src/@walle/components/features/Head.astro");

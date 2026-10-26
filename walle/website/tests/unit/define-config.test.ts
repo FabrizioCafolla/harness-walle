@@ -146,6 +146,33 @@ describe("defineWalleConfig", () => {
     expect(config.prefetch).toEqual({ prefetchAll: false, defaultStrategy: "load" });
   });
 
+  it("passes no i18n to Astro when app.json declares none", () => {
+    expect(defineWalleConfig().i18n).toBeUndefined();
+  });
+
+  it("maps app.json i18n to Astro's i18n, leaving the root redirect to the site", () => {
+    (appConfigMock as Record<string, unknown>).i18n = {
+      defaultLocale: "it",
+      locales: {
+        it: { lang: "it-IT", label: "Italiano" },
+        en: { lang: "en-US", label: "English" },
+      },
+    };
+    expect(defineWalleConfig().i18n).toEqual({
+      defaultLocale: "it",
+      locales: ["it", "en"],
+      routing: { prefixDefaultLocale: true, redirectToDefaultLocale: false },
+    });
+  });
+
+  it("rejects an i18n defaultLocale that is not a declared locale", () => {
+    (appConfigMock as Record<string, unknown>).i18n = {
+      defaultLocale: "fr",
+      locales: { it: { lang: "it-IT", label: "Italiano" } },
+    };
+    expect(() => defineWalleConfig()).toThrow(/defaultLocale/);
+  });
+
   it("concatenates consumer integrations onto the walle defaults instead of replacing them", () => {
     const marker = { name: "consumer-integration", hooks: {} };
     const config = defineWalleConfig({ integrations: [marker] });
