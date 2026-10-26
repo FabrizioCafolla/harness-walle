@@ -81,6 +81,13 @@ same paths.
 interface strings in `app.json` `labels` (`skipLink`, `cart.*`, `filters.*`, `notFound.*`,
 `readingTime`, ...); a component prop still overrides a label for one instance.
 
+A site in several languages declares `app.json` `i18n` (`defaultLocale`, `locales` with `lang`,
+`label` and per-language `labels`, optional `prefixDefaultLocale`). Pages and content stay the
+site's: `src/pages/<code>/` or `[lang]`, content in one folder per language with the same path in
+each. Put `LanguageSwitcher` in the header and pass `headerTranslations` (the codes a page exists
+in) to the layout; `getTranslations()` (`@walle/utils/translations`) answers it for a collection
+entry. Without `i18n` nothing changes.
+
 ## Validate
 
 ```bash

@@ -22,7 +22,8 @@ the consumer zones below, and follow the customization ladder (skill `walle-cust
   built-in name or a `./src/...` path; to wrap the original, import it by file path, not from
   `@walle/components`.
 - **Language:** `website.language` drives every date, price and number; translate walle's
-  interface strings in `app.json` `labels`.
+  interface strings in `app.json` `labels`. Several languages: `app.json` `i18n` (`locales` with
+  `lang`, `label`, per-language `labels`), `LanguageSwitcher` and `headerTranslations` on the layout.
 - **Features (off unless enabled in `app.json`):** `commerce.mode` (`off`, `catalog`, `shop`),
   `pwa.enabled` and `pwa.offline`, `seo.ogImage`, `seo.feeds`, `astro.redirects`,
   `astro.adapter: "node"` for routes with `prerender = false`, `map` defaults for the `Map`

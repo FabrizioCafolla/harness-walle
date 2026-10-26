@@ -28,10 +28,18 @@ const {
   backLink,
   product,
   badgesAlign = "start",
+  headerLanguage,
+  headerTranslations,
 } = Astro.props;
 ---
 
-<BaseLayout headerTitle={title} headerDescription={description} headerOgImage={ogImage}>
+<BaseLayout
+  headerTitle={title}
+  headerDescription={description}
+  headerOgImage={ogImage}
+  headerLanguage={headerLanguage}
+  headerTranslations={headerTranslations}
+>
   {product && <StructuredData data={productJsonLd(product as ProductData, Astro.url.href)} />}
   <SectionHeaderStandard title={title} variant="primary" filled={true}>
     <div class:list={["detail-badges", `detail-badges--${badgesAlign}`]}>

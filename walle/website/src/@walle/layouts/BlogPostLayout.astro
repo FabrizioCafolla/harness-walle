@@ -24,6 +24,8 @@ const {
   image = null,
   draft = false,
   id,
+  headerLanguage,
+  headerTranslations,
 } = Astro.props;
 
 // The generated OG route exists only when the feature is on and `posts` is one of its
@@ -42,6 +44,8 @@ const entryOgImage =
   headerOgImage={image}
   headerEntryOgImage={entryOgImage}
   headerPublishedTime={publishDate}
+  headerLanguage={headerLanguage}
+  headerTranslations={headerTranslations}
 >
   <slot name="head" slot="head" />
   {!draft && (

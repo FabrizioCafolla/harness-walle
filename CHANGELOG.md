@@ -15,7 +15,7 @@ All notable changes to Walle are documented here. Format follows
   A site without the block builds exactly as before. See `wiki/architecture/i18n.md`.
 - **`LanguageSwitcher`** component: links to the same page in the other languages, only those
   the page exists in (the `translations` prop); renders nothing with fewer than two.
-- **`headerTranslations`** on every layout: two or more codes emit
+- **`headerTranslations`** and `headerLanguage` on every layout (`BaseLayout`, blog and detail layouts): two or more codes emit
   `<link rel="alternate" hreflang>` and `x-default`. `<html lang>` and `og:locale` follow the
   page's language.
 - **Per-language interface strings.** `label(path, override, locale?)` and `labeler(locale)`

@@ -108,6 +108,7 @@ for how to set these.
 | `Footer` (minimal) | `--footer-bg`, `--footer-fg`, `--footer-link-color`, `--footer-link-color-hover`, `--footer-border`, `--footer-gap` |
 | `Navbar` (standard) | `--navbar-bg`, `--navbar-fg`, `--navbar-border`, `--navbar-shadow`, `--navbar-backdrop`, `--navbar-height`, `--navbar-logo-height`, `--navbar-logo-height-mobile`, `--navbar-link-color`, `--navbar-link-color-hover`, `--navbar-link-active-color`, `--navbar-link-active-bg`, `--navbar-link-radius`, `--navbar-mobile-bg`, `--navbar-mobile-divider`, `--navbar-mobile-link-padding`, `--navbar-mobile-link-padding-narrow`, `--navbar-mobile-link-radius`, `--navbar-hamburger-bg-hover`, `--navbar-overlay-fg`, `--navbar-overlay-link-active-bg`, `--navbar-overlay-button-bg`, `--navbar-overlay-button-fg`, `--navbar-overlay-button-border`, `--navbar-overlay-button-bg-hover`, `--navbar-dropdown-bg`, `--navbar-dropdown-radius` |
 | `Navbar` (minimal) | `--navbar-bg`, `--navbar-fg`, `--navbar-border`, `--navbar-link-color`, `--navbar-link-color-hover` |
+| `LanguageSwitcher` | `--language-switcher-color`, `--language-switcher-color-current`, `--language-switcher-gap` |
 | `Breadcrumbs` | `--breadcrumbs-color`, `--breadcrumbs-current-color`, `--breadcrumbs-separator-color`, `--breadcrumbs-color-hover`, `--breadcrumbs-bg-hover` |
 | `BlogArticleNavigation` | `--article-nav-bg`, `--article-nav-border`, `--article-nav-radius`, `--article-nav-link-color`, `--article-nav-link-color-hover` |
 | `BlogReadingProgress` | `--progress-color` |
@@ -202,6 +203,12 @@ the same `items`, so the visible trail and the markup cannot diverge. Hrefs reso
 item without `href` has no `item`. The block is on by default; pass `jsonLd={false}` to
 suppress it, for example when a site already writes its own. Because it reads `items`, not the
 DOM, the last crumb is present even where CSS hides it on narrow screens.
+
+## LanguageSwitcher
+
+`<LanguageSwitcher translations={codes} />` lists the languages a page exists in, as links to the
+same page in each one (`lang` and `hreflang` set, the current one `aria-current="true"`). It renders
+nothing with fewer than two languages and needs the `i18n` block; see [i18n](i18n.md).
 
 ## Map
 

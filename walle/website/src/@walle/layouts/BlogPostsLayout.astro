@@ -14,6 +14,8 @@ const {
   postsCollection = "posts",
   filterTags,
   showFilters = true,
+  headerLanguage,
+  headerTranslations,
 } = Astro.props;
 
 let postsToUse = posts && posts.length > 0 ? posts : await getCollection(postsCollection);
@@ -40,7 +42,11 @@ const badgeFor = (post: CollectionEntry<"posts">) =>
   post.data.tags?.length ? { text: post.data.tags[0], variant: "secondary" as const } : undefined;
 ---
 
-<BaseLayout headerTitle={headerTitle}>
+<BaseLayout
+  headerTitle={headerTitle}
+  headerLanguage={headerLanguage}
+  headerTranslations={headerTranslations}
+>
   <slot name="head" slot="head" />
   <div class="blog-layout">
     <div class="blog-layout__header">
